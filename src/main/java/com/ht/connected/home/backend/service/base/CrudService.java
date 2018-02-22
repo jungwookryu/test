@@ -1,8 +1,11 @@
 package com.ht.connected.home.backend.service.base;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 public interface CrudService<T, P> {
 	
@@ -11,7 +14,12 @@ public interface CrudService<T, P> {
 	
 	@NotNull
 	List<T> getAll();
-
-    void delete(P id);
 	
+	T getOne(P p);
+	
+	@NotNull
+	Page<T> getAll(PageRequest pageRequest);
+	
+    void delete(P p);
+    
 }

@@ -7,14 +7,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import com.ht.connected.home.backend.repository.UsersRepository;
-import com.ht.connected.home.backend.service.impl.base.CrudImplService;
+import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 
 public class CommonServiceTest extends MockUtil{
 	
 	@Mock
     public UsersRepository usersRepository;
 	@Mock
-    public CrudImplService<Class, Integer> crudImplService;
+    public CrudServiceImpl<Class, Integer> crudImplService;
 
 	@Before
 	public void setUpMockUtil() {

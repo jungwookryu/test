@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ht.connected.home.backend.service.impl.base.CrudImplService;
+import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
@@ -30,7 +30,7 @@ public class CrudImplServiceTest extends CommonServiceTest{
 
     @Mock
     public
-    CrudImplService<Class, Serializable> crudImplService;
+    CrudServiceImpl<Class, Serializable> crudImplService;
 
     @Before
     public void setUp() {

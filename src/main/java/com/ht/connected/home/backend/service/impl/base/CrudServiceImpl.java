@@ -5,14 +5,16 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ht.connected.home.backend.service.base.CrudService;
 
-public class CrudImplService<T, P extends Serializable> implements CrudService<T, P> {
+public class CrudServiceImpl<T, P extends Serializable> implements CrudService<T, P> {
 	private final JpaRepository<T, P> jpaRepository;
 
-	public CrudImplService(@NotNull JpaRepository<T, P> jpaRepository) {
+	public CrudServiceImpl(@NotNull JpaRepository<T, P> jpaRepository) {
 		this.jpaRepository = jpaRepository;
 	}
 
@@ -24,8 +26,17 @@ public class CrudImplService<T, P extends Serializable> implements CrudService<T
 		return jpaRepository.findAll();
 	}
 
-	public void delete(P id) {
-		jpaRepository.delete(id);
+	public void delete(P p) {
+		jpaRepository.delete(p);
+	}
+
+	public Page<T> getAll(PageRequest pageRequest) {
+		return jpaRepository.findAll(pageRequest);
+	}
+
+	public T getOne(P p) {
+		jpaRepository.getOne(p);
+		return jpaRepository.getOne(p);
 	}
 
 }
