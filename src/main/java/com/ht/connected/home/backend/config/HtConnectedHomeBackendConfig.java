@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-@EnableJpaRepositories("com.ht.connected.home.front.repository")
-@EntityScan("com.ht.connected.home.fornt.model.entity")
-@ComponentScan(basePackages = "com.ht.connected.home.front")
+@EnableJpaRepositories("com.ht.connected.home.backend.repository")
+@EntityScan("com.ht.connected.home.backend.model.entity")
+@ComponentScan(basePackages = "com.ht.connected.home.backend")
 public class HtConnectedHomeBackendConfig {
 }
 

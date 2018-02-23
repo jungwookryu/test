@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class GateWayServiceImpl extends CrudServiceImpl<Gateway , Integer> {
+	
 	private GateWayRepository gateWayRepository;
 
 	@Autowired

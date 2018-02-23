@@ -1,12 +1,14 @@
 package com.ht.connected.home.backend.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * Project : HT-CONNECTED-HOME-SERVER Package :
@@ -25,7 +27,8 @@ public class CommonCode {
 	@Id
 	@NotNull
 	@Column(name = "no")
-	private String no;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int no;
 	
 	@Column(name = "code_id")
 	private String codeId;

@@ -9,10 +9,10 @@
  */
 package com.ht.connected.home.backend.repository;
 
+import com.ht.connected.home.backend.model.entity.ConfigInfo;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import com.ht.connected.home.backend.model.entity.ConfigInfo;
 
 /**
  * @author ijlee
@@ -20,5 +20,4 @@ import com.ht.connected.home.backend.model.entity.ConfigInfo;
  */
 @Repository
 public interface ConfigInfoRepository extends JpaRepository<ConfigInfo, Integer> {
-
 }

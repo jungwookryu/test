@@ -9,10 +9,10 @@
  */
 package com.ht.connected.home.backend.repository;
 
+import com.ht.connected.home.backend.model.entity.Groups;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import com.ht.connected.home.backend.model.entity.Groups;
 
 /**
  * @author ijlee
@@ -20,5 +20,5 @@ import com.ht.connected.home.backend.model.entity.Groups;
  */
 @Repository
 public interface GroupsRepository extends JpaRepository<Groups, Integer> {
-
+ 
 }

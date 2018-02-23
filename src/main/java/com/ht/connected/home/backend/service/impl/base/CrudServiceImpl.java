@@ -7,16 +7,12 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Service;
 
-@Service
 public class CrudServiceImpl<T, P extends Serializable> implements CrudService<T, P> {
 	
-	@Autowired
 	private final JpaRepository<T, P> jpaRepository;
 
 	public CrudServiceImpl(@NotNull JpaRepository<T, P> jpaRepository) {
@@ -45,8 +41,12 @@ public class CrudServiceImpl<T, P extends Serializable> implements CrudService<T
 
 	@Override
 	public T getOne(P p) {
-		jpaRepository.getOne(p);
 		return jpaRepository.getOne(p);
+	}
+	
+	@Override
+	public T findOne(P p) {
+		return jpaRepository.findOne(p);
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.ht.connected.home.backend.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -9,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import com.fasterxml.jackson.annotation.JsonInclude;
 /**
  * Project : HT-CONNECTED-HOME-SERVER Package :
  * com.ht.connected.home.front.model.entity File : Users.java Description : 사용자
@@ -30,7 +31,7 @@ public class Users {
 	@Id
 	@Column(name = "no")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private String no;
+	private int no;
 	
 	@Column(name = "user_id", nullable = false)
 	private String userId;
@@ -101,14 +102,14 @@ public class Users {
 	/**
 	 * @return the no
 	 */
-	public String getNo() {
+	public int getNo() {
 		return no;
 	}
 
 	/**
 	 * @param no the no to set
 	 */
-	public void setNo(String no) {
+	public void setNo(int no) {
 		this.no = no;
 	}
 

@@ -21,5 +21,7 @@ public interface CrudService<T, P> {
 	Page<T> getAll(PageRequest pageRequest);
 	
     void delete(P p);
+
+	T findOne(P p);
     
 }
