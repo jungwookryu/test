@@ -10,5 +10,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan("com.ht.connected.home.backend.model.entity")
 @ComponentScan(basePackages = "com.ht.connected.home.backend")
 public class HtConnectedHomeBackendConfig {
+	
+
 }
+
+
 

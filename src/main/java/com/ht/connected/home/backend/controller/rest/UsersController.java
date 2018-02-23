@@ -34,11 +34,11 @@ public class UsersController extends CommonController {
 	}
 	
 	@GetMapping
-	public ResponseEntity<HashMap<String, List<Users>>> getUser(@RequestBody Users users) {
-		HashMap<String, List<Users>> map = new HashMap<>();
-		List<Users> rtnUsers = userService.getAll();
+	public ResponseEntity<HashMap<String, List>> getUser() {
+		HashMap<String, List> map = new HashMap<>();
+		List rtnUsers = userService.getAll();
 		map.put("users",rtnUsers);
-		return new ResponseEntity<HashMap<String, List<Users>>>(map, HttpStatus.OK); 
+		return new ResponseEntity<HashMap<String, List>>(map, HttpStatus.OK); 
 	}
 	
 	@GetMapping("/user/{userId}")
