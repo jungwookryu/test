@@ -3,13 +3,14 @@ package com.ht.connected.home.backend.service;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
+import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -19,8 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
@@ -37,7 +36,7 @@ public class CrudImplServiceTest extends CommonServiceTest{
 
     }
     
-	@Ignore
+	
 	public void insert() {
 		
 		Class anyClass = mock(Class.class);

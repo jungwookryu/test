@@ -12,9 +12,7 @@ package com.ht.connected.home.backend.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.ht.connected.home.backend.model.entity.Certification;
 import com.ht.connected.home.backend.model.entity.Device;
-import com.ht.connected.home.backend.model.entity.Users;
 
 /**
  * @author ijlee

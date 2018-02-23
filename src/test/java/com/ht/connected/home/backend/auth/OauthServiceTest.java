@@ -1,9 +1,8 @@
-package com.ht.connected.home.front.auth;
+package com.ht.connected.home.backend.auth;
 
 
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,13 +1,14 @@
 package com.ht.connected.home.backend.service;
 
+import com.ht.connected.home.backend.repository.UsersRepository;
+import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
+
 import java.util.ArrayList;
 
 import org.junit.Before;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import com.ht.connected.home.backend.repository.UsersRepository;
-import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 
 public class CommonServiceTest extends MockUtil{
 	
