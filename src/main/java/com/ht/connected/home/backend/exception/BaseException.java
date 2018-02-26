@@ -31,6 +31,7 @@ public class BaseException extends Exception {
     public BaseException(String defaultMessage) {
         this(defaultMessage, null, null);
     }
+    
     /**
      * BaseException 생성자
      * @param wrappedException 발생한 Exception 내포함.
