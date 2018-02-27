@@ -25,5 +25,34 @@ public class UsersServiceImpl extends CrudServiceImpl<Users, Integer> {
 	public List<Users> getUser(String userId){
 		return userRepository.findByUserId(userId);
 	}
+/*	
+//	private Authentication authentication()
+	  @Override
+	  public AuthenticationToken createToken(HttpServletRequest request)
+	  {
+	    AuthenticationToken token = null;
+	    String authorization = request.getHeader(HEADER_AUTHORIZATION);
 
+	    if (!Strings.isNullOrEmpty(authorization))
+	    {
+	      String[] parts = authorization.split("\\s+");
+
+	      if (parts.length > 0)
+	      {
+	        token = createToken(request, parts[0], parts[1]);
+
+	        if (token == null)
+	        {
+	          logger.warn("could not create token from authentication header");
+	        }
+	      }
+	      else
+	      {
+	        logger.warn("found malformed authentication header");
+	      }
+	    }
+
+	    return token;
+	  }
+	}*/
 }

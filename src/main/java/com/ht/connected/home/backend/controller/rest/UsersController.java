@@ -24,42 +24,42 @@ import org.springframework.web.bind.annotation.RestController;
 public class UsersController extends CommonController {
 
 	UsersService userService;
-	
+
 	@PostMapping
 	public ResponseEntity<HashMap<String, Users>> createUser(@RequestBody Users users) {
 		HashMap<String, Users> map = new HashMap<>();
 		Users rtnUsers = userService.insert(users);
-		map.put("users",rtnUsers);
-		return new ResponseEntity<HashMap<String, Users>>(map, HttpStatus.OK); 
+		map.put("users", rtnUsers);
+		return new ResponseEntity<HashMap<String, Users>>(map, HttpStatus.OK);
 	}
-	
+
 	@GetMapping
 	public ResponseEntity<HashMap<String, List>> getUser() {
 		HashMap<String, List> map = new HashMap<>();
 		List rtnUsers = userService.getAll();
-		map.put("users",rtnUsers);
-		return new ResponseEntity<HashMap<String, List>>(map, HttpStatus.OK); 
+		map.put("users", rtnUsers);
+		return new ResponseEntity<HashMap<String, List>>(map, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/user/{userId}")
 	public ResponseEntity<HashMap<String, List<Users>>> getUser(@PathVariable("userId") String userId) {
 		HashMap<String, List<Users>> map = new HashMap<>();
 		List<Users> rtnUsers = userService.getUser(userId);
-		map.put("users",rtnUsers);
-		return new ResponseEntity<HashMap<String, List<Users>>>(map, HttpStatus.OK); 
+		map.put("users", rtnUsers);
+		return new ResponseEntity<HashMap<String, List<Users>>>(map, HttpStatus.OK);
 	}
-	
+
 	@DeleteMapping("/{no}")
 	public ResponseEntity<HttpStatus> deleteUser(@PathVariable("no") int no) {
 		userService.delete(no);
-		return new ResponseEntity<HttpStatus>(HttpStatus.OK); 
+		return new ResponseEntity<HttpStatus>(HttpStatus.OK);
 	}
-	
+
 	@PutMapping
-	public ResponseEntity<HashMap<String, Users>> modifyUser(@PathVariable("no") int no,@RequestBody Users users) {
+	public ResponseEntity<HashMap<String, Users>> modifyUser(@PathVariable("no") int no, @RequestBody Users users) {
 		HashMap<String, Users> map = new HashMap<>();
 		Users rtnUsers = userService.insert(users);
-		map.put("users",rtnUsers);
-		return new ResponseEntity<HashMap<String, Users>>(map, HttpStatus.OK); 
+		map.put("users", rtnUsers);
+		return new ResponseEntity<HashMap<String, Users>>(map, HttpStatus.OK);
 	}
 }

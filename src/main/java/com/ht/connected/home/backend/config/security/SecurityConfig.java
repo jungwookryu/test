@@ -3,7 +3,6 @@ package com.ht.connected.home.backend.config.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,7 +10,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationManager;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
@@ -20,9 +18,6 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	
-	 @Autowired
-     private AuthenticationProvider authenticationProvider;
-	 
 	 @Autowired
      private LogoutSuccessHandler logoutSuccessHandler;
 
@@ -56,24 +51,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 //        return new AES256CBC();
 //    }
 //    
-    @Bean(name = "authenticationManager")
-    public AuthenticationManager authenticationManager() {
-        try {
-            return super.authenticationManager();
-        }catch(Exception e){
-
-        	logger.debug("<<<<<<<<<<<<<authenticationManager<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-            e.printStackTrace();
-            logger.debug("<<<<<<<<<<<<<authenticationManager<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-        }
-        return new OAuth2AuthenticationManager();
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(authenticationProvider);
-    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         
@@ -94,5 +71,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	        .invalidateHttpSession(true)
 	        .and()
             .exceptionHandling().accessDeniedHandler((AccessDeniedHandler) new AccessDeniedException("not.enough.privileges"));
+    }
+    
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.inMemoryAuthentication()
+                .withUser("user").password("password").roles("USER")
+                .and()
+                .withUser("admin").password("password").roles("ADMIN");
     }
 }
