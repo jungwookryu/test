@@ -18,8 +18,8 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	
-	 @Autowired
-     private LogoutSuccessHandler logoutSuccessHandler;
+	@Autowired
+	private LogoutSuccessHandler logoutSuccessHandler;
 
 	/**
 	 * Role that users accessing the endpoint must have.
@@ -57,20 +57,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         http
         	.csrf().disable()
             .authorizeRequests()
+            .antMatchers("/group/*").access("hasRole('" + ROLE_OWNER + "')")
+            .antMatchers("/admin/**").access("hasRole('" + ROLE_ADMIN+"')")
+            .antMatchers("/autheication/*").access("hasRole('" + ROLE_ADMIN + "')")
             .antMatchers("/passwordReset/**").access("hasRole('" + ROLE_PASSWD_SET +"')")
             .antMatchers("/user/**").access("hasRole('" + ROLE_USER + "')")
-            .antMatchers("/group/*").access("hasRole('" + ROLE_OWNER + "')")
-            .antMatchers("/autheication/*").access("hasRole('" + ROLE_ADMIN + "')")
-            .antMatchers("/admin/**").access("hasRole('" + ROLE_ADMIN+"')")
             .antMatchers("**").permitAll()
 	        .antMatchers("/error/*").permitAll()
 	        .and()
 	        .logout()
+	        .logoutUrl("/logout")
 	        .logoutSuccessHandler(logoutSuccessHandler)
-	        .logoutSuccessUrl("/index")
+	        .logoutSuccessUrl("/login")
 	        .invalidateHttpSession(true)
 	        .and()
             .exceptionHandling().accessDeniedHandler((AccessDeniedHandler) new AccessDeniedException("not.enough.privileges"));
+        
     }
     
     @Autowired

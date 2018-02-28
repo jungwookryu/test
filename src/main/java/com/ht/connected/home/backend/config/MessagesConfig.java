@@ -2,7 +2,6 @@ package com.ht.connected.home.backend.config;
 
 import java.util.Locale;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,11 +26,10 @@ public class MessagesConfig {
         return resourceBundleMessageSource;
     }
     
-    @Bean
-    @Qualifier("errorMessageSource")
-    public MessageSource ErrorMessageSource() {
+    @Bean(name="errorMessageSource")
+    public MessageSource errorMessageSource() {
         ResourceBundleMessageSource errorResourceBundleMessageSource = new ResourceBundleMessageSource();
-        errorResourceBundleMessageSource.setBasename("error/errorMessages");
+        errorResourceBundleMessageSource.setBasename("classpath:/resource/error/");
         return errorResourceBundleMessageSource;
     }
 }
