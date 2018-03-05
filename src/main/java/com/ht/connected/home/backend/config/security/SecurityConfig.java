@@ -2,25 +2,16 @@ package com.ht.connected.home.backend.config.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 @Configuration
-@EnableWebSecurity
+//@EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	
-	@Autowired
-	private LogoutSuccessHandler logoutSuccessHandler;
-
 	/**
 	 * Role that users accessing the endpoint must have.
 	 */
@@ -46,11 +37,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationManager.class);
     
-//    @Bean
-//    public AES256CBC passwordEncoder() {
-//        return new AES256CBC();
-//    }
-//    
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         
@@ -66,20 +52,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	        .antMatchers("/error/*").permitAll()
 	        .and()
 	        .logout()
-	        .logoutUrl("/logout")
-	        .logoutSuccessHandler(logoutSuccessHandler)
-	        .logoutSuccessUrl("/login")
-	        .invalidateHttpSession(true)
+	        .logoutSuccessUrl("/logout?logout")
 	        .and()
-            .exceptionHandling().accessDeniedHandler((AccessDeniedHandler) new AccessDeniedException("not.enough.privileges"));
-        
+            .exceptionHandling().accessDeniedPage("/403");
     }
     
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("user").password("password").roles("USER")
-                .and()
-                .withUser("admin").password("password").roles("ADMIN");
-    }
+
+    
+
 }

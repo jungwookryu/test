@@ -1,25 +1,26 @@
 package com.ht.connected.home.backend.exception;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 @ControllerAdvice
 @RestController
 public class GlobalControllerException{
 	
-	@Resource(name = "errorMessageSource")
-    ReloadableResourceBundleMessageSource errMessageSource;
+	@Autowired
+	@Qualifier(value = "errorMessageSource")
+    MessageSource errMessageSource;
 	
 	protected Logger logger;
 
@@ -69,13 +70,14 @@ public class GlobalControllerException{
 		
 	}
 	
-	public GlobalControllerException(String string, Object object, Object object2) {
-		// TODO Auto-generated constructor stub
+	public GlobalControllerException(String s, Object object, Object object2) {
+		logger.debug(s);
+		
 	}
 	
 	// Total control - setup a model and return the view name yourself. Or
 	// consider subclassing ExceptionHandlerExceptionResolver (see below).
-	@ExceptionHandler(Exception.class)
+	/*@ExceptionHandler(Exception.class)
 	public ModelAndView handleError(HttpServletRequest req, Exception ex) {
 		logger.error("Request: " + req.getRequestURL() + " raised " + ex);
 
@@ -85,5 +87,5 @@ public class GlobalControllerException{
 		mav.setViewName("error");
 		return mav;
 	}
-	
+	*/
 }

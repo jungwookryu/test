@@ -24,12 +24,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LoginController extends CommonController{
 
-	@Autowired
 	UsersService usersService;
 
 	@Autowired
 	@Qualifier("errorMessageSource")
 	MessageSource errorMessageSource;
+	
+	@Autowired
+	public LoginController(UsersService usersService) {
+		this.usersService = usersService;
+	}
+	
 	
 	@SuppressWarnings("unused")
 	@PostMapping

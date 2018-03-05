@@ -19,17 +19,19 @@ public class MessagesConfig {
         return sessionLocaleResolver;
     }
 	
-    @Bean
+    @Bean(name="messageSource")
     public MessageSource messageSource() {
         ResourceBundleMessageSource resourceBundleMessageSource = new ResourceBundleMessageSource();
-        resourceBundleMessageSource.setBasename("messages");
+        resourceBundleMessageSource.setBasename("/messages/messages**");
+        resourceBundleMessageSource.setDefaultEncoding("UTF-8");
         return resourceBundleMessageSource;
     }
     
     @Bean(name="errorMessageSource")
     public MessageSource errorMessageSource() {
         ResourceBundleMessageSource errorResourceBundleMessageSource = new ResourceBundleMessageSource();
-        errorResourceBundleMessageSource.setBasename("classpath:/resource/error/");
+        errorResourceBundleMessageSource.setBasename("/error/errorMessages**");
+        errorResourceBundleMessageSource.setDefaultEncoding("UTF-8");
         return errorResourceBundleMessageSource;
     }
 }

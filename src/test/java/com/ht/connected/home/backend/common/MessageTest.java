@@ -42,6 +42,7 @@ public class MessageTest {
 		Assert.assertEquals(localMessage, "english");
 	}
 	
+	@Test	
 	public String localeMessage(String code, Locale locale) {
 		return errorMessageSource.getMessage(code, new Object[] {}, locale);
 	}

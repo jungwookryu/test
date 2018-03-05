@@ -34,12 +34,12 @@ public class Users {
 	private int no;
 	
 	@Column(name = "user_id", nullable = false)
-	private String userId;
+	private String userId; 
 	
 	@Column(name = "username", nullable = false)
 	private String username;
 	
-	@Column(name = "user_Email")
+	@Column(name = "user_email")
 	private String userMail;
 	
 	@Column(name = "password")
@@ -83,7 +83,7 @@ public class Users {
 		
 	@Column(name = "redirectied_code")
 	private String redirectiedCode;
-
+	
 	public Users(String userId, String password) {
 		this.userId = userId;
 		this.password = password;
