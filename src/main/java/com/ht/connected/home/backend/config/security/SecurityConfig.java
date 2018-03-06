@@ -25,6 +25,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	 * Role that users accessing the endpoint must have.
 	 */
     public static final String ROLE_ADMIN = "ROLE_ADMIN";
+    
+    public static final String ROLE_ACTIVE = "ROLE_ACTIVE";
+    
     /**
 	 * Role that users accessing the endpoint must have.
 	 */
@@ -47,9 +50,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
             .antMatchers("/admin/**").access("hasRole('" + ROLE_ADMIN+"')")
             .antMatchers("/autheication/*").access("hasRole('" + ROLE_ADMIN + "')")
             .antMatchers("/passwordReset/**").access("hasRole('" + ROLE_PASSWD_SET +"')")
-            .antMatchers("/user/**").access("hasRole('" + ROLE_USER + "')")
-            .antMatchers("**").permitAll()
+            .antMatchers("/user/**").access("hasRole('" + ROLE_ACTIVE +"')")
 	        .antMatchers("/error/*").permitAll()
+	        .antMatchers("/login").permitAll()
 	        .and()
 	        .logout()
 	        .logoutSuccessUrl("/logout?logout")

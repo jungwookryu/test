@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class LoggerTest {
 	private static final Logger logger = LoggerFactory.getLogger(LoggerTest.class);
-	
+	 
 	@Test
 	public void consoleLogTest() {
 		logger.info("infoConsoleTest");

@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 public class CustomLoginException extends Exception {
 
     public CustomLoginException() {
-    }
+    } 
     
     /**
      * 203 status

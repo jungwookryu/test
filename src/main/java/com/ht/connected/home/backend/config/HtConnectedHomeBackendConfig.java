@@ -8,9 +8,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @Configuration
 @EnableJpaRepositories("com.ht.connected.home.backend.repository")
 @EntityScan("com.ht.connected.home.backend.model.entity")
-@ComponentScan(basePackages = "com.ht.connected.home.backend")
+@ComponentScan(basePackages = "com.ht.connected.home")
 public class HtConnectedHomeBackendConfig {
-	
 
 }
 

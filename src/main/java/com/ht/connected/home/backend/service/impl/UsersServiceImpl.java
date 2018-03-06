@@ -26,6 +26,25 @@ public class UsersServiceImpl extends CrudServiceImpl<Users, Integer> implements
 	public List<Users> getUser(String userId){
 		return userRepository.findByUserId(userId);
 	}
+	
+	@Override
+	public Users modify(int no, Users user) {
+	 	Users actualUser = (Users) userRepository.getOne(no);
+	 	
+	 	
+	 	
+	 	
+		return null;
+	}
+
+	@Override
+	public Boolean getExistUser(String userId) {
+		if((this.getUser(userId)).size()>0) {
+			return true;
+		}
+		return false;
+	}
+	
 /*	
 //	private Authentication authentication()
 	  @Override
@@ -56,4 +75,6 @@ public class UsersServiceImpl extends CrudServiceImpl<Users, Integer> implements
 	    return token;
 	  }
 	}*/
+
+	
 }

@@ -15,7 +15,7 @@ public interface CrudService<T, P> {
 	@NotNull
 	List<T> getAll();
 	
-	T getOne(P p);
+	T getOne(P p); 
 	
 	@NotNull
 	Page<T> getAll(PageRequest pageRequest);
@@ -23,5 +23,5 @@ public interface CrudService<T, P> {
     void delete(P p);
 
 	T findOne(P p);
-    
+	
 }

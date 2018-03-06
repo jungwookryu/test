@@ -6,6 +6,7 @@ import com.ht.connected.home.backend.service.UsersService;
 import java.util.HashMap;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -23,20 +24,48 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/users")
 public class UsersController extends CommonController {
 
-	UsersService userService;
+	UsersService usersService;
 
+	@Autowired
+	public UsersController(UsersService usersService) {
+		this.usersService = usersService;
+	}
+	/**
+	 * 201, 204, 500, 403
+	 * @param users
+	 * @return
+	 */
 	@PostMapping
-	public ResponseEntity<HashMap<String, Users>> createUser(@RequestBody Users users) {
+	public ResponseEntity createUser(@RequestBody Users users) {
+		
+		boolean rtnUser = usersService.getExistUser(users.getUserId());
+		if(rtnUser) {
+			return new ResponseEntity("exist userId", HttpStatus.FORBIDDEN);
+		}
 		HashMap<String, Users> map = new HashMap<>();
-		Users rtnUsers = userService.insert(users);
+		Users rtnUsers = usersService.insert(users);
 		map.put("users", rtnUsers);
-		return new ResponseEntity<HashMap<String, Users>>(map, HttpStatus.OK);
+		return new ResponseEntity("user created sucess", HttpStatus.CREATED);
+		
+	}
+	/**
+	 * 201,204 
+	 * @param userId
+	 * @return
+	 */
+	@GetMapping({"userId"})
+	public ResponseEntity getExistUser(@PathVariable("userId") String userId) {
+		boolean rtnUser = usersService.getExistUser(userId);
+		if(rtnUser) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity(HttpStatus.CREATED);
 	}
 
-	@GetMapping
-	public ResponseEntity<HashMap<String, List>> getUser() {
+	@GetMapping("/user/")
+	public ResponseEntity<HashMap<String, List>> getUsers() {
 		HashMap<String, List> map = new HashMap<>();
-		List rtnUsers = userService.getAll();
+		List rtnUsers = usersService.getAll();
 		map.put("users", rtnUsers);
 		return new ResponseEntity<HashMap<String, List>>(map, HttpStatus.OK);
 	}
@@ -44,21 +73,21 @@ public class UsersController extends CommonController {
 	@GetMapping("/user/{userId}")
 	public ResponseEntity<HashMap<String, List<Users>>> getUser(@PathVariable("userId") String userId) {
 		HashMap<String, List<Users>> map = new HashMap<>();
-		List<Users> rtnUsers = userService.getUser(userId);
+		List<Users> rtnUsers = usersService.getUser(userId);
 		map.put("users", rtnUsers);
 		return new ResponseEntity<HashMap<String, List<Users>>>(map, HttpStatus.OK);
 	}
 
-	@DeleteMapping("/{no}")
+	@DeleteMapping("/user/{no}")
 	public ResponseEntity<HttpStatus> deleteUser(@PathVariable("no") int no) {
-		userService.delete(no);
+		usersService.delete(no);
 		return new ResponseEntity<HttpStatus>(HttpStatus.OK);
 	}
 
-	@PutMapping
+	@PutMapping("/user/{no}")
 	public ResponseEntity<HashMap<String, Users>> modifyUser(@PathVariable("no") int no, @RequestBody Users users) {
 		HashMap<String, Users> map = new HashMap<>();
-		Users rtnUsers = userService.insert(users);
+		Users rtnUsers = usersService.modify(no, users);
 		map.put("users", rtnUsers);
 		return new ResponseEntity<HashMap<String, Users>>(map, HttpStatus.OK);
 	}

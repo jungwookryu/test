@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface UsersService extends CrudService<Users, Integer> {
 	List<Users> getUser(String userId);
+	Boolean getExistUser(String userId);
+	Users modify(int no, Users user);
 }

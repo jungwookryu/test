@@ -16,17 +16,20 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @ControllerAdvice
 @RestController
+@RequestMapping("authentication")
 public class LoginController extends CommonController{
-
+ 
 	UsersService usersService;
 
-	@Autowired
+	@Autowired 
 	@Qualifier("errorMessageSource")
 	MessageSource errorMessageSource;
 	
@@ -35,9 +38,17 @@ public class LoginController extends CommonController{
 		this.usersService = usersService;
 	}
 	
+	/**200,401,500
+	 * get Authentication accessToken get 
+	 * */
+	@GetMapping
+	public ResponseEntity getAuthentication(HttpServletRequest request) {
+		logger.info("login start");
+		
+		return new ResponseEntity(null, HttpStatus.FORBIDDEN);
+	}
 	
-	@SuppressWarnings("unused")
-	@PostMapping
+	@PostMapping("login")
 	public ResponseEntity login(@RequestBody Users users, HttpServletRequest request) {
 		logger.info("login start");
 		HashMap<String, Users> map = new HashMap<>();

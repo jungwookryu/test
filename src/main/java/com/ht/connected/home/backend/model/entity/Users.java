@@ -22,10 +22,10 @@ import javax.persistence.Table;
  * @version : 1.0
  * @since : 2018.02.14
  */
-
 @Entity
 @Table(name = "users")
 @JsonInclude(JsonInclude.Include.NON_NULL)
+
 public class Users {
 
 	@Id
@@ -367,6 +367,9 @@ public class Users {
 				+ ", authorityCode=" + authorityCode + ", authorities=" + authorities + ", locale=" + locale
 				+ ", redirectiedCode=" + redirectiedCode + "]";
 	}
-
 	
+	
+	
+	
+
 }
