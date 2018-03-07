@@ -7,8 +7,6 @@ import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +16,7 @@ public class UsersServiceImpl extends CrudServiceImpl<Users, Integer> implements
 	private UsersRepository userRepository;
 
 	@Autowired
-	public UsersServiceImpl(@NotNull UsersRepository usersRepository) {
+	public UsersServiceImpl( UsersRepository usersRepository) {
 		super(usersRepository);
 		this.userRepository = usersRepository;
 	}

@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.security.GeneralSecurityException;
 import java.security.Key;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +32,9 @@ import org.apache.commons.codec.binary.Base64;
  */
 public class Common {
  
-    /**
+    private static String iv;
+	private static Key keySpec;
+	/**
      * 날짜계산
      * @return string string
      */
@@ -55,8 +58,7 @@ public class Common {
     /**
      * 요청 파라미터들의 빈값 또는 null값 확인을 하나의 메소드로 처리할 수 있도록 생성한 메소드 요청 파라미터 중 빈값 또는
      * null값인 파라미터가 있는 경우, false를 리턴한다.
-     *
-     * @param params
+     *     * @param params
      * @return
      */
     public static boolean stringNullCheck(String... params) {
@@ -201,8 +203,7 @@ public class Common {
         return map;
 
     }
-    private String iv;
-	private Key keySpec;
+
 
 	/**
 	 * 16자리의 키값을 입력하여 객체를 생성한다.
@@ -237,7 +238,7 @@ public class Common {
 	 * @throws GeneralSecurityException
 	 * @throws UnsupportedEncodingException
 	 */
-	public String encrypt(String str)
+	public static String encrypt(String str)
 			throws NoSuchAlgorithmException, GeneralSecurityException, UnsupportedEncodingException {
 		Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
 		c.init(Cipher.ENCRYPT_MODE, keySpec, new IvParameterSpec(iv.getBytes()));
@@ -256,11 +257,44 @@ public class Common {
 	 * @throws GeneralSecurityException
 	 * @throws UnsupportedEncodingException
 	 */
-	public String decrypt(String str)
+	public static String decrypt(String str)
 			throws NoSuchAlgorithmException, GeneralSecurityException, UnsupportedEncodingException {
 		Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
 		c.init(Cipher.DECRYPT_MODE, keySpec, new IvParameterSpec(iv.getBytes()));
 		byte[] byteStr = Base64.decodeBase64(str.getBytes());
 		return new String(c.doFinal(byteStr), "UTF-8");
 	}
+	
+	
+	/**
+	 * 암호화
+	 * 
+	 * @param str SHA-256 ,MD5, SH1 
+	 * @param password password
+	 * @return 암호화 문자열
+	 * @throws NoSuchAlgorithmException 
+	 */
+	public static String encryptHash(String sSHA, String password) {
+
+		String encryptPassword = ""; 
+		
+		try {
+			MessageDigest sh = MessageDigest.getInstance(sSHA);
+			sh.update(password.getBytes()); 
+			byte byteData[] = sh.digest();
+			StringBuffer sb = new StringBuffer(); 
+			for(int i = 0 ; i < byteData.length ; i++){
+				sb.append(Integer.toString((byteData[i]&0xff) + 0x100, 16).substring(1));
+			}
+			encryptPassword = sb.toString();
+			return encryptPassword;
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "";
+		}
+		 
+		
+	}
+
 }

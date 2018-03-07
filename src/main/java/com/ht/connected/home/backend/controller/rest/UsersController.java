@@ -3,13 +3,13 @@ package com.ht.connected.home.backend.controller.rest;
 import com.ht.connected.home.backend.model.entity.Users;
 import com.ht.connected.home.backend.service.UsersService;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@ControllerAdvice
 @RestController
 @RequestMapping("/users")
 public class UsersController extends CommonController {
@@ -34,18 +33,21 @@ public class UsersController extends CommonController {
 	 * 201, 204, 500, 403
 	 * @param users
 	 * @return
+	 * @throws NoSuchAlgorithmException 
 	 */
 	@PostMapping
-	public ResponseEntity createUser(@RequestBody Users users) {
+	public ResponseEntity createUser(@RequestBody Users users){
 		
 		boolean rtnUser = usersService.getExistUser(users.getUserId());
 		if(rtnUser) {
 			return new ResponseEntity("exist userId", HttpStatus.FORBIDDEN);
 		}
-		HashMap<String, Users> map = new HashMap<>();
+		Users createUser = new Users(users.getUserId(), users.getPassword());
+		createUser.setUserMail(users.getUserMail());
+		createUser.setUsername(users.getUsername());
 		Users rtnUsers = usersService.insert(users);
-		map.put("users", rtnUsers);
-		return new ResponseEntity("user created sucess", HttpStatus.CREATED);
+		logger.debug(rtnUsers.toString());
+		return new ResponseEntity(rtnUsers, HttpStatus.CREATED);
 		
 	}
 	/**

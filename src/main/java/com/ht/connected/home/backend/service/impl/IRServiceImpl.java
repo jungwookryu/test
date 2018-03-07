@@ -5,8 +5,6 @@ import com.ht.connected.home.backend.repository.IRRepository;
 import com.ht.connected.home.backend.service.IRService;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 
-import javax.validation.constraints.NotNull;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +13,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR , Integer> implements IRSe
 	private IRRepository irRepository;
 
 	@Autowired
-	public IRServiceImpl(@NotNull IRRepository irRepository) {
+	public IRServiceImpl( IRRepository irRepository) {
 		super(irRepository);
 		this.irRepository = irRepository;
 	}

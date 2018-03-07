@@ -63,7 +63,7 @@ public class LoginController extends CommonController{
 		
 		AuthorizationException authorizationException = 
 				new AuthorizationException(errorMessageSource.getMessage("failed.authentication ", null , request.getLocale()));
-		new CustomLoginException().customLoginException(authorizationException);
+		new CustomLoginException(authorizationException);
 		logger.info("login end");
 		return new ResponseEntity(null, HttpStatus.FORBIDDEN);
 	}

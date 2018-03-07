@@ -3,7 +3,6 @@ package com.ht.connected.home.backend.config.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
@@ -38,7 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	 */
     public static final String ROLE_PASSWD_SET = "ROLE_PASSWD_SET";
 	
-    private static final Logger logger = LoggerFactory.getLogger(AuthenticationManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
     
     @Override
     protected void configure(HttpSecurity http) throws Exception {

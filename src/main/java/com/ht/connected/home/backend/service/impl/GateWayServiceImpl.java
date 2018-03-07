@@ -5,8 +5,6 @@ import com.ht.connected.home.backend.repository.GateWayRepository;
 import com.ht.connected.home.backend.service.GateWayService;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 
-import javax.validation.constraints.NotNull;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +14,7 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway , Integer> imple
 	private GateWayRepository gateWayRepository;
 
 	@Autowired
-	public GateWayServiceImpl(@NotNull GateWayRepository gateWayRepository) {
+	public GateWayServiceImpl(GateWayRepository gateWayRepository) {
 		super(gateWayRepository);
 		this.gateWayRepository = gateWayRepository;
 	}

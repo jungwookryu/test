@@ -1,28 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <!-- By default, encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
+        <!-- By default, encoders are assigned the hubType ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
         <encoder>
             <pattern>%d{yyyyMMdd HH:mm:ss.SSS} [%thread] %-3level %logger{5} - %msg %n</pattern>
         </encoder>
     </appender>
-    <logger name="com.ht.connected.home.front.HtConnectedHomeServerApplicationHtconn" level="DEBUG" />
-<!--        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/common/oauth.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            파일이 하루에 한개씩 생성된다
-            <fileNamePattern>/common/oauth.%d{yyyy-MM-dd}.log</fileNamePattern>
- 
-            maxHIstory 설정은 위 부분에 롤링 정책에 따라 적용되 된다고 보면된다. 위 설정데로 라면 30일이 지난 파일은 삭제가 된다.
-            <maxHistory>7</maxHistory>
-        </rollingPolicy>
- 
-        <encoder>
-            <pattern>%d{yyyyMMdd HH:mm:ss.SSS} [%thread] %-3level %logger{5} - %msg %n</pattern>
-        </encoder>
-    </appender> -->
-
-
     <!--
     <appender name="LogstashAppender" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         remoteHost and port are optional (default values shown) 
@@ -53,20 +36,17 @@
     </logger>
 -->
     <logger name="jdbc" level="OFF"/>
-  
+
     <logger name="jdbc.sqlonly" level="DEBUG" additivity="false">>
-        <!-- <appender-ref ref="STDOUT" /> -->
-        <appender-ref ref="FILE" />
-    </logger>  
-  
-    <logger name="jdbc.resultsettable" level="DEBUG" additivity="false">> 
-        <!-- <appender-ref ref="STDOUT" />  -->
-        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT"/>
     </logger>
-  
+
+    <logger name="jdbc.resultsettable" level="DEBUG" additivity="false">>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
     <root level="INFO">
         <!-- <appender-ref ref="LogstashAppender" /> -->
-        <!-- <appender-ref ref="STDOUT" /> -->
-        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

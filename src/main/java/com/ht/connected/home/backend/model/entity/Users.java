@@ -1,6 +1,6 @@
 package com.ht.connected.home.backend.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ht.connected.home.backend.common.Common;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,8 +24,6 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "users")
-@JsonInclude(JsonInclude.Include.NON_NULL)
-
 public class Users {
 
 	@Id
@@ -84,9 +82,12 @@ public class Users {
 	@Column(name = "redirectied_code")
 	private String redirectiedCode;
 	
-	public Users(String userId, String password) {
+	public Users(String userId, String password){
 		this.userId = userId;
-		this.password = password;
+		this.password = Common.encryptHash("SHA-256", password);
+		this.createdTime = new Date().getTime();
+		this.lastmodifiedTime = new Date().getTime();
+		this.setActive(true);
 	}
 
 	public Users(String userId, String username, String userMail) {

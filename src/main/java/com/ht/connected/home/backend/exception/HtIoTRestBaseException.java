@@ -1,5 +1,6 @@
 package com.ht.connected.home.backend.exception;
 
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;

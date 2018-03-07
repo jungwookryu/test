@@ -10,10 +10,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+
 @RunWith(SpringRunner.class)
 @ContextConfiguration(initializers = ConfigFileApplicationContextInitializer.class)
 @ActiveProfiles("test")
-public class MockUtil
+public class MockUtil 
 {
 
 //    @Autowired
@@ -24,7 +25,7 @@ public class MockUtil
      * service excute end then
      * return List
      */
-	public static final  int userNo =  0 ;
+	public static final  int userNo = 0 ;
 	public static final  String username = "username" ;
 	public static final  String userId = "userId" ;
 	public static final  String userEmail =  "userEmail" ;

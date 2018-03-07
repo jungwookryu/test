@@ -1,88 +1,69 @@
-/*package com.ht.connected.home.backend.exception;
+package com.ht.connected.home.backend.exception;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
+import org.hibernate.exception.GenericJDBCException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 @ControllerAdvice
-@RestController
 public class GlobalControllerException{
 	
-//	@Autowired
-//	@Qualifier(value = "errorMessageSource")
-//    MessageSource errMessageSource;
+	@Autowired
+	@Qualifier(value = "errorMessageSource")
+	private MessageSource errorMessageSource;
 	
-	protected Logger logger;
-
-    protected String message;
+	private MessageSourceAccessor accessor = new MessageSourceAccessor(errorMessageSource, Locale.KOREA);;
+	
+	protected Logger logger = LoggerFactory.getLogger(GlobalControllerException.class);
+    protected static String message = "defalut.Base.Exception";
     protected String messageKey;
     protected Object[] messageParameters;
     protected Exception wrappedException;
     
-	public GlobalControllerException() {
-		this("BaseException without message", null, null);
-		logger = LoggerFactory.getLogger(getClass());
-	}
-	
-	*//**
-	* GlobalControllerException 생성자
-	* @param defaultMessage 메세지 지정
-	*//*
-    public GlobalControllerException(String defaultMessage) {
-        this(defaultMessage, null, null);
-    }
-
-    *//**
-     * GlobalControllerException 생성자
-     * @param wrappedException 발생한 Exception 내포함.
-     *//*
-
-    public GlobalControllerException(Throwable wrappedException) {
-        this("BaseException without message", null, wrappedException);
-    }
     
+    @ExceptionHandler(RestClientException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+  	public ResponseEntity<String> onExampleError(RestClientException exception) {
+    	exception.printStackTrace();
+  		return ResponseEntity.badRequest().body("server error");
+  	}
     
-	@ExceptionHandler(RuntimeException.class)
-	public String handleBaseRuntimeException(RuntimeException re) {
-		re.printStackTrace();
-		return re.getMessage();
-	}
-	
-	@ExceptionHandler(Exception.class)
-	public String handleBaseException(Exception e) {
-		e.printStackTrace();
-		return e.getMessage();
-	}
 
-	@ResponseStatus(value = HttpStatus.CONFLICT, reason = "Data integrity violation") // 409
-	@ExceptionHandler(DataIntegrityViolationException.class)
-	public void conflict(HttpServletRequest req, Exception ex) {
-		
+    @ExceptionHandler(AuthenticationException.class)
+	public ResponseEntity<String> authenticationException(
+			AuthenticationException exception) {
+		exception.printStackTrace();
+		return ResponseEntity.badRequest()
+				.body("AuthenticationException request: " + exception.getMessage());
+	}
+    
+    @ExceptionHandler(GenericJDBCException.class)
+	public ResponseEntity<String> genericJDBCException(
+			GenericJDBCException exception) {
+		exception.printStackTrace();
+		return ResponseEntity.badRequest()
+				.body("GenericJDBCException request: " + exception.getMessage());
+	}
+    
+	@ExceptionHandler(NoHandlerFoundException.class)
+	public ResponseEntity<String> noHandlerFoundHandler(
+			NoHandlerFoundException exception) {
+		exception.printStackTrace();
+		return ResponseEntity.badRequest()
+				.body("Invalid request: " + exception.getMessage());
 	}
 	
-	public GlobalControllerException(String s, Object object, Object object2) {
-		logger.debug(s);
-		
-	}
-	
-	// Total control - setup a model and return the view name yourself. Or
-	// consider subclassing ExceptionHandlerExceptionResolver (see below).
-	@ExceptionHandler(Exception.class)
-	public ModelAndView handleError(HttpServletRequest req, Exception ex) {
-		logger.error("Request: " + req.getRequestURL() + " raised " + ex);
-
-		ModelAndView mav = new ModelAndView();
-		mav.addObject("exception", ex);
-		mav.addObject("url", req.getRequestURL());
-		mav.setViewName("error");
-		return mav;
-	}
-	
-}*/
+}

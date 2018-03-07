@@ -8,7 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 /**
  * Project : HT-CONNECTED-HOME-SERVER Package :
@@ -25,7 +24,6 @@ import javax.validation.constraints.NotNull;
 public class CommonCode {
 
 	@Id
-	@NotNull
 	@Column(name = "no")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int no;

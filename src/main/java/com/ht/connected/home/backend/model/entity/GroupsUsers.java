@@ -6,14 +6,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "groups_users")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GroupsUsers {
 	
-	@NotNull
 	@Id
 	@Column(name = "no")
 	private String no;

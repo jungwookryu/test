@@ -24,7 +24,7 @@ public final class UsersEntityTestData extends MockUtil
         return rtnList;
     }
 
-	public static Users createScUser() {
+	public static Users createScUser(){
 		Users rtnUsers = new Users(userId, password);
 		return rtnUsers;
 	}
