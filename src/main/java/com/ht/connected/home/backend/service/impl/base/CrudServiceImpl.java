@@ -1,5 +1,6 @@
 package com.ht.connected.home.backend.service.impl.base;
 
+import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.service.base.CrudService;
 
 import java.io.Serializable;
@@ -9,7 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public class CrudServiceImpl<T, P extends Serializable> implements CrudService<T, P> {
+public class CrudServiceImpl<T, P extends Serializable> extends Common implements CrudService<T, P> {
 	
 	private final JpaRepository<T, P> jpaRepository;
 

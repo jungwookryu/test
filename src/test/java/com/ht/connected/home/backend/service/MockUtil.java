@@ -32,6 +32,8 @@ public class MockUtil
 	public static final  String password =  "password";
 	public static final  String encryptStr =  "password";
 	public static final  String decryptStr =  password;
+	public static final  String resetPasswordFile =  "resetPassword.html";
+	public static final  String contextUrl =  "test/authPassword";
 	
 //	public static Class anyClass = mock(Class.class);
 	public static Users users = UsersEntityTestData.createScUser();

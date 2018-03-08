@@ -6,6 +6,7 @@ import com.ht.connected.home.backend.service.UsersService;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,11 @@ public class UsersServiceImpl extends CrudServiceImpl<Users, Integer> implements
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public boolean sendEmail(Map map) {
+		return sendEmail(map);
 	}
 	
 /*	
