@@ -27,12 +27,11 @@ public class UsersServiceImpl extends CrudServiceImpl<Users, Integer> implements
 	
 	@Override
 	public Users modify(int no, Users user) {
-	 	Users actualUser = (Users) userRepository.getOne(no);
-	 	
-	 	
-	 	
-	 	
-		return null;
+		Users passwordUser = getUser(user.getUserId()).get(0);
+		user.setPassword(passwordUser.getRePassword());
+		user.setNo(no);
+		Users modyfyUser = (Users) save(user);
+		return modyfyUser;
 	}
 
 	@Override

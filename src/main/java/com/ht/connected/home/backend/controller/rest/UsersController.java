@@ -1,11 +1,14 @@
 package com.ht.connected.home.backend.controller.rest;
 
+import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.model.entity.Users;
 import com.ht.connected.home.backend.service.UsersService;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +21,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+ 
 @RestController
 @RequestMapping("/users")
 public class UsersController extends CommonController {
@@ -36,32 +39,19 @@ public class UsersController extends CommonController {
 	 * @throws NoSuchAlgorithmException 
 	 */
 	@PostMapping
-	public ResponseEntity createUser(@RequestBody Users users){
+	public ResponseEntity createUser(@RequestBody Users users, HttpServletRequest request){
 		
 		boolean rtnUser = usersService.getExistUser(users.getUserId());
 		if(rtnUser) {
 			return new ResponseEntity("exist userId", HttpStatus.FORBIDDEN);
 		}
-		Users createUser = new Users(users.getUserId(), users.getPassword());
-		createUser.setUserMail(users.getUserMail());
-		createUser.setUsername(users.getUsername());
+		users.setLocale(request.getLocale().toString());
+		users.setPassword(Common.encryptHash("SHA-256", users.getPassword()));
 		Users rtnUsers = usersService.insert(users);
-		logger.debug(rtnUsers.toString());
-		return new ResponseEntity(rtnUsers, HttpStatus.CREATED);
 		
-	}
-	/**
-	 * 201,204 
-	 * @param userId
-	 * @return
-	 */
-	@GetMapping({"userId"})
-	public ResponseEntity getExistUser(@PathVariable("userId") String userId) {
-		boolean rtnUser = usersService.getExistUser(userId);
-		if(rtnUser) {
-			return new ResponseEntity(HttpStatus.NO_CONTENT);
-		}
+		logger.debug(rtnUsers.toString());
 		return new ResponseEntity(HttpStatus.CREATED);
+		
 	}
 
 	@GetMapping("/user/")

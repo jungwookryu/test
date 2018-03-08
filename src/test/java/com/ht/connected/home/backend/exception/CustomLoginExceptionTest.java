@@ -41,7 +41,7 @@ public class CustomLoginExceptionTest {
 		
 		AuthorizationException authorizationException = 
 				new AuthorizationException(errorMessageSource.getMessage("failed.authentication ", null , Locale.ENGLISH));
-		new CustomLoginException().customLoginException(authorizationException);
+		new CustomLoginException(authorizationException);
 		
 		Mockito.doNothing().when(authorizationException);
 

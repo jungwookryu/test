@@ -46,5 +46,10 @@ public class CrudServiceImpl<T, P extends Serializable> implements CrudService<T
 	public T findOne(P p) {
 		return jpaRepository.findOne(p);
 	}
+	@Override
+	public T save(T t) {
+		return jpaRepository.save(t);
+	}
+
 	
 }

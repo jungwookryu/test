@@ -38,15 +38,15 @@ public class GlobalControllerException{
     @ResponseStatus(HttpStatus.BAD_REQUEST)
   	public ResponseEntity<String> onExampleError(RestClientException exception) {
     	exception.printStackTrace();
-  		return ResponseEntity.badRequest().body("server error");
+  		return ResponseEntity.badRequest().body("notAccceptable");
   	}
-    
+
 
     @ExceptionHandler(AuthenticationException.class)
 	public ResponseEntity<String> authenticationException(
 			AuthenticationException exception) {
 		exception.printStackTrace();
-		return ResponseEntity.badRequest()
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 				.body("AuthenticationException request: " + exception.getMessage());
 	}
     
@@ -54,8 +54,8 @@ public class GlobalControllerException{
 	public ResponseEntity<String> genericJDBCException(
 			GenericJDBCException exception) {
 		exception.printStackTrace();
-		return ResponseEntity.badRequest()
-				.body("GenericJDBCException request: " + exception.getMessage());
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body("server error: " + exception.getMessage());
 	}
     
 	@ExceptionHandler(NoHandlerFoundException.class)

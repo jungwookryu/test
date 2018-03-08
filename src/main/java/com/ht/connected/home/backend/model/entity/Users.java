@@ -1,7 +1,5 @@
 package com.ht.connected.home.backend.model.entity;
 
-import com.ht.connected.home.backend.common.Common;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -56,10 +54,10 @@ public class Users {
 	private String status;
 	
 	@Column(name = "created_time")
-	private long createdTime;
+	private Date createdTime;
 	
 	@Column(name = "lastmodified_time")
-	private long lastmodifiedTime;
+	private Date lastmodifiedTime;
 	
 	@Column(name = "active")
 	private boolean active;
@@ -84,9 +82,6 @@ public class Users {
 	
 	public Users(String userId, String password){
 		this.userId = userId;
-		this.password = Common.encryptHash("SHA-256", password);
-		this.createdTime = new Date().getTime();
-		this.lastmodifiedTime = new Date().getTime();
 		this.setActive(true);
 	}
 
@@ -155,12 +150,18 @@ public class Users {
 	public void setUserMail(String userMail) {
 		this.userMail = userMail;
 	}
+	/**
+	 * @return the password
+	 */
+	public String getRePassword() {
+		return password;
+	}
 
 	/**
 	 * @return the password
 	 */
 	public String getPassword() {
-		return password;
+		return "__dummyPassword__";
 	}
 
 	/**
@@ -229,32 +230,32 @@ public class Users {
 	/**
 	 * @return the createdTime
 	 */
-	public String getCreatedTime() {
-		Date date = new Date(createdTime);
-		SimpleDateFormat df1 = new SimpleDateFormat("yyyy MM dd : hh");
-		return df1.format(date);
+	public String getCreatedTime(Date createdTime) {
+//		Date date = new Date(createdTime);
+		SimpleDateFormat df1 = new SimpleDateFormat("yyyyMMdd hh:ss");
+		return df1.format(createdTime);
 	}
 
 	/**
 	 * @param createdTime the createdTime to set
 	 */
-	public void setCreatedTime(long createdTime) {
+	public void setCreatedTime(Date createdTime) {
 		this.createdTime = createdTime;
 	}
 
 	/**
 	 * @return the lastmodifiedTime
 	 */
-	public String getLastmodifiedTime() {
-		Date date = new Date(lastmodifiedTime);
-		SimpleDateFormat df1 = new SimpleDateFormat("yyyy MM dd : hh");
-		return df1.format(date);
+	public String getLastmodifiedTime(Date lastmodifiedTime) {
+//		Date date = new Date(lastmodifiedTime);
+		SimpleDateFormat df1 = new SimpleDateFormat("yyyyMMdd hh:ss");
+		return df1.format(lastmodifiedTime);
 	}
 
 	/**
 	 * @param lastmodifiedTime the lastmodifiedTime to set
 	 */
-	public void setLastmodifiedTime(long lastmodifiedTime) {
+	public void setLastmodifiedTime(Date lastmodifiedTime) {
 		this.lastmodifiedTime = lastmodifiedTime;
 	}
 
