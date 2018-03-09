@@ -9,15 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
- * Created by mg on 2016-07-05.
+ * Created by ijlee on 2018-02-05.
  */
+@PropertySource("classpath:/emailConfig.properties")
 @Configuration
 public class EmailConfig {
+	
     @Autowired
     private Environment env;
 

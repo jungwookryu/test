@@ -31,6 +31,5 @@ public class MessagesConfig {
         errorResourceBundleMessageSource.setBasename("/error/errorMessages");
         errorResourceBundleMessageSource.setDefaultEncoding("UTF-8");
         return errorResourceBundleMessageSource;
-    
    }
 }

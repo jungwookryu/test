@@ -52,6 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
             .antMatchers("/user/**").access("hasRole('" + ROLE_ACTIVE +"')")
 	        .antMatchers("/error/*").permitAll()
 	        .antMatchers("/login").permitAll()
+	        .antMatchers("/**").permitAll()
 	        .and()
 	        .logout()
 	        .logoutSuccessUrl("/logout?logout")
