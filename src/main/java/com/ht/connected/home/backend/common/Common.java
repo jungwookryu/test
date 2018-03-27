@@ -182,7 +182,7 @@ public class Common {
 	 * 사용자 아이디 또는 이름 검색을 위한 List 필터
 	 */
 	@SuppressWarnings("unchecked")
-	public static List<Users> fillterUser(String getUserEmail, List<Users> list) {
+	public static List<Users> fillterUser(String userEmail, List<Users> list) {
 		List rtnList = new ArrayList();
 		list.forEach(user -> {
 			if (Common.empty(getUserEmail)) {
