@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
 /**
  * Project : HT-CONNECTED-HOME-SERVER Package :
  * com.ht.connected.home.front.model.entity File : Users.java Description : 사용자
@@ -28,73 +29,58 @@ public class Users {
 	@Column(name = "no")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int no;
-	
-	@Column(name = "user_id", nullable = false)
-	private String userId; 
-	
-	@Column(name = "username", nullable = false)
-	private String username;
-	
+
 	@Column(name = "user_email")
-	private String userMail;
-	
+	private String userEmail;
+
 	@Column(name = "password")
 	private String password;
-	
-	@Column(name = "password_set")
-	private String passwordSet;
-	
+
 	@Column(name = "nick_name")
 	private String nickName;
-	
-	@Column(name = "token")
-	private String token;
-	
+
+	@Column(name = "push_token")
+	private String pushToken;
+
 	@Column(name = "status")
 	private String status;
-	
+
 	@Column(name = "created_time")
 	private Date createdTime;
-	
+
 	@Column(name = "lastmodified_time")
 	private Date lastmodifiedTime;
-	
+
 	@Column(name = "active")
 	private boolean active;
-	
-	@Column(name = "admin")
-	private boolean admin;
-	
+
 	@Column(name = "authority")
 	private String authority;
-	
-	@Column(name = "authority_code")
-	private String authorityCode;
-	
-	@Column(name = "authorities")
-	private String authorities;
-	
+
 	@Column(name = "locale")
 	private String locale;
-		
+
 	@Column(name = "redirectied_code")
 	private String redirectiedCode;
+
+	@Column(name = "connected_type")
+	private String connectedType;
+
+	@Column(name = "push_type")
+	private String pushType;
 	
-	public Users(String userId, String password){
-		this.userId = userId;
+	public Users(String userEmail, String password) {
+		this.userEmail = userEmail;
 		this.setActive(true);
 	}
 
-	public Users(String userId, String username, String userMail) {
-		this.userId = userId;
-		this.username = username;
-		this.userMail = userMail;
+	public Users(String userEmail) {
+		this.userEmail = userEmail;
 	}
 
 	public Users() {
-		// TODO Auto-generated constructor stub
 	}
-	
+
 	/**
 	 * @return the no
 	 */
@@ -103,53 +89,14 @@ public class Users {
 	}
 
 	/**
-	 * @param no the no to set
+	 * @param no
+	 *            the no to set
 	 */
 	public void setNo(int no) {
 		this.no = no;
 	}
 
-	/**
-	 * @return the userId
-	 */
-	public String getUserId() {
-		return userId;
-	}
 
-	/**
-	 * @param userId the userId to set
-	 */
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	/**
-	 * @return the username
-	 */
-	public String getUsername() {
-		return username;
-	}
-
-	/**
-	 * @param username the username to set
-	 */
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	/**
-	 * @return the userMail
-	 */
-	public String getUserMail() {
-		return userMail;
-	}
-
-	/**
-	 * @param userMail the userMail to set
-	 */
-	public void setUserMail(String userMail) {
-		this.userMail = userMail;
-	}
 	/**
 	 * @return the password
 	 */
@@ -165,27 +112,6 @@ public class Users {
 	}
 
 	/**
-	 * @param password the password to set
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	/**
-	 * @return the passwordSet
-	 */
-	public String getPasswordSet() {
-		return passwordSet;
-	}
-
-	/**
-	 * @param passwordSet the passwordSet to set
-	 */
-	public void setPasswordSet(String passwordSet) {
-		this.passwordSet = passwordSet;
-	}
-
-	/**
 	 * @return the nickName
 	 */
 	public String getNickName() {
@@ -193,7 +119,8 @@ public class Users {
 	}
 
 	/**
-	 * @param nickName the nickName to set
+	 * @param nickName
+	 *            the nickName to set
 	 */
 	public void setNickName(String nickName) {
 		this.nickName = nickName;
@@ -202,15 +129,16 @@ public class Users {
 	/**
 	 * @return the token
 	 */
-	public String getToken() {
-		return token;
+	public String getPushToken() {
+		return this.pushToken;
 	}
 
 	/**
-	 * @param token the token to set
+	 * @param token
+	 *            the token to set
 	 */
-	public void setToken(String token) {
-		this.token = token;
+	public void setToken(String pushToken) {
+		this.pushToken = pushToken;
 	}
 
 	/**
@@ -221,7 +149,8 @@ public class Users {
 	}
 
 	/**
-	 * @param status the status to set
+	 * @param status
+	 *            the status to set
 	 */
 	public void setStatus(String status) {
 		this.status = status;
@@ -231,13 +160,14 @@ public class Users {
 	 * @return the createdTime
 	 */
 	public String getCreatedTime(Date createdTime) {
-//		Date date = new Date(createdTime);
+		// Date date = new Date(createdTime);
 		SimpleDateFormat df1 = new SimpleDateFormat("yyyyMMdd hh:ss");
 		return df1.format(createdTime);
 	}
 
 	/**
-	 * @param createdTime the createdTime to set
+	 * @param createdTime
+	 *            the createdTime to set
 	 */
 	public void setCreatedTime(Date createdTime) {
 		this.createdTime = createdTime;
@@ -247,13 +177,14 @@ public class Users {
 	 * @return the lastmodifiedTime
 	 */
 	public String getLastmodifiedTime(Date lastmodifiedTime) {
-//		Date date = new Date(lastmodifiedTime);
+		// Date date = new Date(lastmodifiedTime);
 		SimpleDateFormat df1 = new SimpleDateFormat("yyyyMMdd hh:ss");
 		return df1.format(lastmodifiedTime);
 	}
 
 	/**
-	 * @param lastmodifiedTime the lastmodifiedTime to set
+	 * @param lastmodifiedTime
+	 *            the lastmodifiedTime to set
 	 */
 	public void setLastmodifiedTime(Date lastmodifiedTime) {
 		this.lastmodifiedTime = lastmodifiedTime;
@@ -267,24 +198,11 @@ public class Users {
 	}
 
 	/**
-	 * @param active the active to set
+	 * @param active
+	 *            the active to set
 	 */
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	/**
-	 * @return the admin
-	 */
-	public boolean getAdmin() {
-		return admin;
-	}
-
-	/**
-	 * @param admin the admin to set
-	 */
-	public void setAdmin(boolean admin) {
-		this.admin = admin;
 	}
 
 	/**
@@ -295,39 +213,13 @@ public class Users {
 	}
 
 	/**
-	 * @param authority the authority to set
+	 * @param authority
+	 *            the authority to set
 	 */
 	public void setAuthority(String authority) {
 		this.authority = authority;
 	}
 
-	/**
-	 * @return the authorityCode
-	 */
-	public String getAuthorityCode() {
-		return authorityCode;
-	}
-
-	/**
-	 * @param authorityCode the authorityCode to set
-	 */
-	public void setAuthorityCode(String authorityCode) {
-		this.authorityCode = authorityCode;
-	}
-
-	/**
-	 * @return the authorities
-	 */
-	public String getAuthorities() {
-		return authorities;
-	}
-
-	/**
-	 * @param authorities the authorities to set
-	 */
-	public void setAuthorities(String authorities) {
-		this.authorities = authorities;
-	}
 
 	/**
 	 * @return the locale
@@ -337,7 +229,8 @@ public class Users {
 	}
 
 	/**
-	 * @param locale the locale to set
+	 * @param locale
+	 *            the locale to set
 	 */
 	public void setLocale(String locale) {
 		this.locale = locale;
@@ -351,27 +244,97 @@ public class Users {
 	}
 
 	/**
-	 * @param redirectiedCode the redirectiedCode to set
+	 * @param redirectiedCode
+	 *            the redirectiedCode to set
 	 */
 	public void setRedirectiedCode(String redirectiedCode) {
 		this.redirectiedCode = redirectiedCode;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "Users [no=" + no + ", userId=" + userId + ", username=" + username + ", userMail=" + userMail
-				+ ", password=" + password + ", passwordSet=" + passwordSet + ", nickName=" + nickName + ", token="
-				+ token + ", status=" + status + ", createdTime=" + createdTime + ", lastmodifiedTime="
-				+ lastmodifiedTime + ", active=" + active + ", admin=" + admin + ", authority=" + authority
-				+ ", authorityCode=" + authorityCode + ", authorities=" + authorities + ", locale=" + locale
-				+ ", redirectiedCode=" + redirectiedCode + "]";
+		return "Users [no=" + no + ", userEmail=" + userEmail
+				+ ", password=" + password + ", nickName=" + nickName + ", push_token="
+				+ pushToken + ", status=" + status + ", createdTime=" + createdTime + ", lastmodifiedTime="
+				+ lastmodifiedTime + ", active=" + active + ", authority=" + authority
+				+ ", locale=" + locale + ", redirectiedCode=" + redirectiedCode
+				+ ", connected_type=" + connectedType + ", push_type=" + pushType
+				+ "]";
 	}
-	
-	
-	
-	
+
+	/**
+	 * @return the userEmail
+	 */
+	public String getUserEmail() {
+		return userEmail;
+	}
+
+	/**
+	 * @param userEmail the userEmail to set
+	 */
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
+	}
+
+	/**
+	 * @return the connectedType
+	 */
+	public String getConnectedType() {
+		return connectedType;
+	}
+
+	/**
+	 * @param connectedType the connectedType to set
+	 */
+	public void setConnectedType(String connectedType) {
+		this.connectedType = connectedType;
+	}
+
+	/**
+	 * @return the pushType
+	 */
+	public String getPushType() {
+		return pushType;
+	}
+
+	/**
+	 * @param pushType the pushType to set
+	 */
+	public void setPushType(String pushType) {
+		this.pushType = pushType;
+	}
+
+	/**
+	 * @return the createdTime
+	 */
+	public Date getCreatedTime() {
+		return createdTime;
+	}
+
+	/**
+	 * @return the lastmodifiedTime
+	 */
+	public Date getLastmodifiedTime() {
+		return lastmodifiedTime;
+	}
+
+	/**
+	 * @param password the password to set
+	 */
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	/**
+	 * @param pushToken the pushToken to set
+	 */
+	public void setPushToken(String pushToken) {
+		this.pushToken = pushToken;
+	}
 
 }

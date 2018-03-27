@@ -1,69 +1,94 @@
 package com.ht.connected.home.backend.controller.rest;
 
-import com.ht.connected.home.backend.exception.CustomLoginException;
-import com.ht.connected.home.backend.model.entity.Users;
 import com.ht.connected.home.backend.service.UsersService;
-
-import java.util.HashMap;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.shiro.authz.AuthorizationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
- 
+
 @RestController
-@RequestMapping("/authentication")
-public class LoginController extends CommonController{
- 
+@RequestMapping("/auth")
+public class LoginController extends CommonController {
+
 	UsersService usersService;
 
-	@Autowired 
+	@Autowired
 	@Qualifier("errorMessageSource")
 	MessageSource errorMessageSource;
-	
+
 	@Autowired
 	public LoginController(UsersService usersService) {
 		this.usersService = usersService;
 	}
-	
-	/**200,401,500
-	 * get Authentication accessToken get 
-	 * */
+
+	/**
+	 * 200,401,500 get Authentication accessToken get
+	 */
 	@GetMapping
 	public ResponseEntity getAuthentication(HttpServletRequest request) {
 		logger.info("login start");
-		
+
 		return new ResponseEntity(null, HttpStatus.FORBIDDEN);
 	}
+
+//	@PostMapping("/token")
+//	public ResponseEntity getAuthenticationOriginal(HttpServletRequest request) {
+//		logger.debug("token start");
+//
+//		return new ResponseEntity(null, HttpStatus.OK);
+//	}	
 	
-	@PostMapping("login")
-	public ResponseEntity login(@RequestBody Users users, HttpServletRequest request) {
+	/**
+	 * 302,401,500 get Authentication accessToken get
+	 * 
+	 * @return
+	 * @return json User
+	 * @throws AuthenticationException 
+	 */
+	/**
+	@PostMapping("/login")
+	public ResponseEntity login(@RequestBody Users users, HttpServletRequest request) throws AuthenticationException {
 		logger.info("login start");
 		HashMap<String, Users> map = new HashMap<>();
 		List<Users> lstUsers = usersService.getUser(users.getUserId());
-		final Users rtnUser;
-		//사용자 정보를 넣어준다. 
-		lstUsers.forEach(lusers -> {
-			if(users.getPassword().equals(lusers.getPassword())){
-				new ResponseEntity(lstUsers, HttpStatus.FORBIDDEN);
+		Users rtnUser = null;
+		final String userPassword = Common.encryptHash("SHA-256", users.getPassword());
+		// 사용자 정보를 넣어준다.
+		for (Users lusers : lstUsers) {
+			if (userPassword.equals(lusers.getRePassword())) {
+//				JwtAccessTokenConverter authenticationToken = new JwtAccessTokenConverter();
+//				Tokens.createAuthenticationToken(request, users.getUserId(), userPassword);
+
+				HttpHeaders responseHeaders = new HttpHeaders();
+				responseHeaders.set("message", "login sucess");
+				rtnUser = lusers;
+				responseHeaders.set("access-token", "access-token");
 			}
-		});
-		
-		AuthorizationException authorizationException = 
-				new AuthorizationException(errorMessageSource.getMessage("failed.authentication ", null , request.getLocale()));
-		new CustomLoginException(authorizationException);
+		}
+		if (rtnUser != null) {
+			return new ResponseEntity(rtnUser, HttpStatus.OK);
+		}
+
+		// AuthorizationException authorizationException =
+		// new
+		// AuthorizationException(errorMessageSource.getMessage("failed.authentication
+		// ", null , request.getLocale()));
+				// new AuthorizationException("Not Acceptable");
+
+		// new CustomLoginException(authorizationException);
 		logger.info("login end");
-		return new ResponseEntity(null, HttpStatus.FORBIDDEN);
+		HttpHeaders responseHeaders = new HttpHeaders();
+		responseHeaders.set("message", "Not Found");
+		return new ResponseEntity("Not Foun", responseHeaders, HttpStatus.UNAUTHORIZED);
+//		throw new AuthenticationException("Not Found");
 	}
+	*/
 
 }

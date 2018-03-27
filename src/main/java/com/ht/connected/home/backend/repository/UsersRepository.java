@@ -11,8 +11,6 @@ package com.ht.connected.home.backend.repository;
 
 import com.ht.connected.home.backend.model.entity.Users;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -22,5 +20,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UsersRepository extends JpaRepository<Users, Integer> {
-	List<Users> findByUserId(String userid);
+	Users findByUserEmail(String userEmail);
 }
