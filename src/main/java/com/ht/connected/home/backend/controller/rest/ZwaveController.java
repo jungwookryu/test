@@ -12,6 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
 import com.ht.connected.home.backend.service.ZwaveService;
 
+/**
+ * Rest API Zwave 요청 처리 컨트롤러
+ * @author 구정화
+ *
+ */
 @RestController
 @RequestMapping("/zwave")
 public class ZwaveController {
@@ -20,6 +25,8 @@ public class ZwaveController {
 
 	/**
 	 * 모든 요청에 version 이 있다 모든 요청을 처리가능
+	 * 인증프로토몰과 실서비스 프로토몰 공통 사용 (execute 인자값 확인)
+	 * 
 	 *
 	 * @param classKey
 	 * @param commandKey
@@ -31,7 +38,7 @@ public class ZwaveController {
 	public Object getRequestVersion(@PathVariable("classKey") String classKey,
 			@PathVariable("commandKey") String commandKey, @PathVariable("version") String version,
 			@RequestBody HashMap<String, Object> req) {
-		ZwaveRequest zwaveCommonRequest = new ZwaveRequest(req, classKey, commandKey, version);
-		return zwaveService.execute(req, zwaveCommonRequest, true);
+		ZwaveRequest zwaveRequest = new ZwaveRequest(req, classKey, commandKey, version);
+		return zwaveService.execute(req, zwaveRequest, true);
 	}
 }
