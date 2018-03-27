@@ -185,11 +185,11 @@ public class Common {
 	public static List<Users> fillterUser(String userEmail, List<Users> list) {
 		List rtnList = new ArrayList();
 		list.forEach(user -> {
-			if (Common.empty(getUserEmail)) {
+			if (Common.empty(userEmail)) {
 				list.add(user);
 			}
-			if (Common.notEmpty(getUserEmail)) {
-				if ((user.getUserEmail().contains(getUserEmail)) || (user.getUserEmail().contains(getUserEmail))) {
+			if (Common.notEmpty(userEmail)) {
+				if (user.getUserEmail().contains(userEmail)) {
 					list.add(user);
 				}
 			}
