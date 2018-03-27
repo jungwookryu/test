@@ -4,14 +4,13 @@ import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 
-@PropertySource("classpath:mqtt.properties")
+/**
+ * zwave 요청시 토픽 URI 경로 구분자(/)로 분할하여 getter통해 쉽게 사용하기 위한 클래스
+ * @author 구정화
+ *
+ */
 public class ZwaveRequest {
-	
-	@Value("${spring.mqtt.channel.gateway}")
-	String springMqttChannelGateway;
 
 	private static final Log logging = LogFactory.getLog(ZwaveRequest.class);
 
@@ -31,12 +30,23 @@ public class ZwaveRequest {
 
 	private String version;
 
+	/**
+	 * 경로를 배열로 받을경우 생성자
+	 * @param topic
+	 */
 	public ZwaveRequest(String[] topic) {
 		this.serialNo = topic[2];
 		this.classKey = topic[6];
 		this.commandKey = topic[7];
 	}
 
+	/**
+	 * ZwaveController에서 생성할 경우 생성자
+	 * @param req
+	 * @param classKey
+	 * @param commandKey
+	 * @param version
+	 */
 	public ZwaveRequest(HashMap<String, Object> req, String classKey, String commandKey, String version) {
 		this.email = req.get("user_email").toString();
 		this.serialNo = req.get("serialNo").toString();
@@ -76,15 +86,25 @@ public class ZwaveRequest {
 		this.version = version;
 	}
 
-	public String getMqttPublishTopic() {
+	/**
+	 * mqtt publish 토픽 생성
+	 * @param topicLeadingPath
+	 * @return
+	 */
+	public String getMqttPublishTopic(String topicLeadingPath) {
 		String[] segments = new String[] { "device", "zwave", "certi", classKey, commandKey, version,
 				getHexString(nodeId), getHexString(endpointId), securityOption };
-		String topic = springMqttChannelGateway.replace("+", serialNo).replace("#", String.join("/", segments));
+		String topic = topicLeadingPath + String.join("/", segments); 
 		logging.info("====================== ZWAVE PROTO MQTT PUBLISH TOPIC ======================");
 		logging.info(topic);
 		return topic;
 	}
 
+	/**
+	 * 호스트에 전달하는 토픽에 Node ID와 Endpoint ID는 헥사값 
+	 * @param number
+	 * @return
+	 */
 	private String getHexString(Integer number) {
 		return "0x" + String.format("%2s", Integer.toHexString(number)).replace(' ', '0');
 	}
