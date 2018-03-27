@@ -25,6 +25,12 @@ import org.springframework.messaging.MessagingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.repository.GateWayRepository;
 
+
+/**
+ * 스프링 mqtt 설정 클래스
+ * @author 구정화
+ *
+ */
 @Configuration
 @PropertySource("classpath:mqtt.properties")
 public class MqttConfig {
@@ -39,10 +45,6 @@ public class MqttConfig {
 	String springMqttPassword;
 	@Value("${spring.mqtt.client-id-prefix}")
 	String springMqttClientIdPrefix;
-	@Value("${spring.mqtt.channel.gateway}")
-	String springMqttChannelGateway;
-	@Value("${spring.mqtt.channel.wallpad}")
-	String springMqttChannelWallPad;
 	@Value("${spring.mqtt.channel.server}")
 	String springMqttChannelServer;
 
@@ -55,6 +57,10 @@ public class MqttConfig {
 	@Autowired
 	private GateWayRepository gatewayRepository;
 
+	/**
+	 * MQTT 클라언트 생성
+	 * @return
+	 */
 	@Bean
 	public MqttPahoClientFactory mqttClientFactory() {
 		DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
@@ -64,16 +70,28 @@ public class MqttConfig {
 		return factory;
 	}
 
+	/**
+	 * subscriber가 사용할 채널
+	 * @return
+	 */
 	@Bean
 	public MessageChannel mqttInputChannel() {
 		return new DirectChannel();
 	}
 
+	/**
+	 * publisher가 사용할 채널
+	 * @return
+	 */
 	@Bean
 	public MessageChannel mqttOutboundChannel() {
 		return new DirectChannel();
 	}
 
+	/**
+	 * Subscriber
+	 * @return
+	 */
 	@Bean
 	public MessageProducer MqttInbound() {
 		MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(
@@ -85,6 +103,10 @@ public class MqttConfig {
 		return adapter;
 	}
 
+	/**
+	 * Publisher
+	 * @return
+	 */
 	@Bean
 	@ServiceActivator(inputChannel = "mqttOutboundChannel")
 	public MessageHandler MqttOutbound() {
@@ -95,11 +117,20 @@ public class MqttConfig {
 		return messageHandler;
 	}
 
+	/**
+	 * 메세지 발송 처리 
+	 * @author 구정화
+	 *
+	 */
 	@MessagingGateway(defaultRequestChannel = "mqttOutboundChannel")
 	public interface MqttGateway {
 		void sendToMqtt(String data);
 	}
 
+	/**
+	 * Subscribe 메시지 핸들링 
+	 * @return
+	 */
 	@Bean
 	@ServiceActivator(inputChannel = "mqttInputChannel")
 	public MessageHandler handler() {
