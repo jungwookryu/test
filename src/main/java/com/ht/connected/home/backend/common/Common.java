@@ -169,7 +169,7 @@ public class Common {
 	 */
 	public static Users getUserByUserName(String username, List<Users> lstUser) {
 		for (Users aLstUser : lstUser) {
-			if (username.equals(aLstUser.getUsername())) {
+			if (username.equals(aLstUser.getUserEmail())) {
 				return aLstUser;
 			}
 		}
@@ -182,14 +182,14 @@ public class Common {
 	 * 사용자 아이디 또는 이름 검색을 위한 List 필터
 	 */
 	@SuppressWarnings("unchecked")
-	public static List<Users> fillterUser(String username, List<Users> list) {
+	public static List<Users> fillterUser(String getUserEmail, List<Users> list) {
 		List rtnList = new ArrayList();
 		list.forEach(user -> {
-			if (Common.empty(username)) {
+			if (Common.empty(getUserEmail)) {
 				list.add(user);
 			}
-			if (Common.notEmpty(username)) {
-				if ((user.getUsername().contains(username)) || (user.getUsername().contains(username))) {
+			if (Common.notEmpty(getUserEmail)) {
+				if ((user.getUserEmail().contains(getUserEmail)) || (user.getUserEmail().contains(getUserEmail))) {
 					list.add(user);
 				}
 			}

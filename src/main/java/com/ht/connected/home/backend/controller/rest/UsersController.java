@@ -11,6 +11,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
- 
+
 @RestController
 @RequestMapping("/users")
 public class UsersController extends CommonController {
@@ -32,29 +33,33 @@ public class UsersController extends CommonController {
 	public UsersController(UsersService usersService) {
 		this.usersService = usersService;
 	}
+
 	/**
-	 * 201, 204, 500, 403
+	 * 201, 204, 500, 406
+	 * 
 	 * @param users
 	 * @return
-	 * @throws NoSuchAlgorithmException 
+	 * @throws NoSuchAlgorithmException
 	 */
 	@PostMapping
-	public ResponseEntity createUser(@RequestBody Users users, HttpServletRequest request){
-		
-		boolean rtnUser = usersService.getExistUser(users.getUserId());
-		if(rtnUser) {
-			return new ResponseEntity("exist userId", HttpStatus.FORBIDDEN);
+	public ResponseEntity createUser(@RequestBody Users users, HttpServletRequest request) {
+
+		boolean rtnUser = usersService.getExistUser(users.getUserEmail());
+		if (rtnUser) {
+			HttpHeaders responseHeaders = new HttpHeaders();
+			responseHeaders.set("message", "exist useremail");
+			return new ResponseEntity("exist userId", responseHeaders, HttpStatus.NOT_ACCEPTABLE);
 		}
 		users.setLocale(request.getLocale().toString());
 		users.setPassword(Common.encryptHash("SHA-256", users.getPassword()));
 		Users rtnUsers = usersService.insert(users);
-		
+
 		logger.debug(rtnUsers.toString());
 		return new ResponseEntity(HttpStatus.CREATED);
-		
+
 	}
 
-	@GetMapping("/user/")
+	@GetMapping
 	public ResponseEntity<HashMap<String, List>> getUsers() {
 		HashMap<String, List> map = new HashMap<>();
 		List rtnUsers = usersService.getAll();
@@ -63,15 +68,19 @@ public class UsersController extends CommonController {
 	}
 
 	@GetMapping("/user/{userId}")
-	public ResponseEntity<HashMap<String, List<Users>>> getUser(@PathVariable("userId") String userId) {
-		HashMap<String, List<Users>> map = new HashMap<>();
-		List<Users> rtnUsers = usersService.getUser(userId);
-		map.put("users", rtnUsers);
-		return new ResponseEntity<HashMap<String, List<Users>>>(map, HttpStatus.OK);
+	public ResponseEntity<HashMap<String, Users>> getUser(@PathVariable("userId") String userId) {
+		HashMap map = new HashMap<>();
+		Users rtnUsers = usersService.getUser(userId);
+		if (null!=rtnUsers) {
+			map.put("users", rtnUsers);
+			return new ResponseEntity(map, HttpStatus.OK);
+		}
+		return new ResponseEntity(map, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/user/{no}")
 	public ResponseEntity<HttpStatus> deleteUser(@PathVariable("no") int no) {
+		Users user = usersService.getOne(no);
 		usersService.delete(no);
 		return new ResponseEntity<HttpStatus>(HttpStatus.OK);
 	}

@@ -1,13 +1,14 @@
 package com.ht.connected.home.backend.service;
 
+import com.ht.connected.home.backend.model.entity.UserDetail;
 import com.ht.connected.home.backend.model.entity.Users;
 import com.ht.connected.home.backend.service.base.CrudService;
 
-import java.util.List;
-
 
 public interface UsersService extends CrudService<Users, Integer> {
-	List<Users> getUser(String userId);
+	Users getUser(String userId);
 	Boolean getExistUser(String userId);
 	Users modify(int no,Users user);
+	void register(UserDetail userDetail);
+	
 }
