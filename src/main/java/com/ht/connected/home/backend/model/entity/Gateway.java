@@ -24,8 +24,8 @@ public class Gateway {
 	@Column(name = "id")
 	private String id;
 
-	@Column(name = "connected_control_code")
-	private String connectedControlCode;
+	@Column(name = "ip")
+	private String ip;
 
 	@Column(name = "ssid")
 	private String ssid;
@@ -36,32 +36,11 @@ public class Gateway {
 	@Column(name = "serial")
 	private String serial;
 
-	@Column(name = "active")
-	private String active;
+	@Column(name = "version")
+	private String version;
 
-	@Column(name = "update_no")
-	private String updateNo;
-
-	@Column(name = "security_mode")
-	private String securityMode;
-
-	@Column(name = "security_event")
-	private String securityEvent;
-
-	@Column(name = "security_user_no")
-	private String securityUserNo;
-
-	@Column(name = "security_in_time")
-	private String securityInTime;
-
-	@Column(name = "security_out_time")
-	private String securityOutTime;
-
-	@Column(name = "unread_push_message_count")
-	private String unreadPushMessageCount;
-
-	@Column(name = "alive_wakeup")
-	private String aliveWakeup;
+	@Column(name = "status")
+	private String status;
 
 	@Column(name = "created_user_id")
 	private String createdUserId;
@@ -72,20 +51,9 @@ public class Gateway {
 	@Column(name = "lastmodified_time")
 	private String lastModifiedTime;
 
-	@Column(name = "description")
-	private String description;
-
 	public Gateway() {
 		super();
 		// TODO Auto-generated constructor stub
-	}
-
-	public int getNo() {
-		return no;
-	}
-
-	public void setNo(int no) {
-		this.no = no;
 	}
 
 	public String getNickname() {
@@ -104,12 +72,12 @@ public class Gateway {
 		this.id = id;
 	}
 
-	public String getConnectedControlCode() {
-		return connectedControlCode;
+	public String getIp() {
+		return ip;
 	}
 
-	public void setConnectedControlCode(String connectedControlCode) {
-		this.connectedControlCode = connectedControlCode;
+	public void setIp(String ip) {
+		this.ip = ip;
 	}
 
 	public String getSsid() {
@@ -136,76 +104,20 @@ public class Gateway {
 		this.serial = serial;
 	}
 
-	public String getActive() {
-		return active;
+	public String getVersion() {
+		return version;
 	}
 
-	public void setActive(String active) {
-		this.active = active;
+	public void setVersion(String version) {
+		this.version = version;
 	}
 
-	public String getUpdateNo() {
-		return updateNo;
+	public String getStatus() {
+		return status;
 	}
 
-	public void setUpdateNo(String updateNo) {
-		this.updateNo = updateNo;
-	}
-
-	public String getSecurityMode() {
-		return securityMode;
-	}
-
-	public void setSecurityMode(String securityMode) {
-		this.securityMode = securityMode;
-	}
-
-	public String getSecurityEvent() {
-		return securityEvent;
-	}
-
-	public void setSecurityEvent(String securityEvent) {
-		this.securityEvent = securityEvent;
-	}
-
-	public String getSecurityUserNo() {
-		return securityUserNo;
-	}
-
-	public void setSecurityUserNo(String securityUserNo) {
-		this.securityUserNo = securityUserNo;
-	}
-
-	public String getSecurityInTime() {
-		return securityInTime;
-	}
-
-	public void setSecurityInTime(String securityInTime) {
-		this.securityInTime = securityInTime;
-	}
-
-	public String getSecurityOutTime() {
-		return securityOutTime;
-	}
-
-	public void setSecurityOutTime(String securityOutTime) {
-		this.securityOutTime = securityOutTime;
-	}
-
-	public String getUnreadPushMessageCount() {
-		return unreadPushMessageCount;
-	}
-
-	public void setUnreadPushMessageCount(String unreadPushMessageCount) {
-		this.unreadPushMessageCount = unreadPushMessageCount;
-	}
-
-	public String getAliveWakeup() {
-		return aliveWakeup;
-	}
-
-	public void setAliveWakeup(String aliveWakeup) {
-		this.aliveWakeup = aliveWakeup;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public String getCreatedUserId() {
@@ -230,14 +142,6 @@ public class Gateway {
 
 	public void setLastModifiedTime(String lastModifiedTime) {
 		this.lastModifiedTime = lastModifiedTime;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 }
