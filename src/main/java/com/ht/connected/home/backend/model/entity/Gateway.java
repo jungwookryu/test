@@ -16,153 +16,228 @@ public class Gateway {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "no")
-	private String no;
+	private int no;
 
-	@Column(name = "user_no")
-	private String userNo;
-	
-	@Column(name = "group_no")
-	private String groupNo;
-	
-	@Column(name = "gateway_no")
-	private String gatewayNo;
-	
-	@Column(name = "group_role")
-	private String groupRole;
+	@Column(name = "nickname")
+	private String nickname;
 
-	/**
-	 * @return the no
-	 */
-	public String getNo() {
+	@Column(name = "id")
+	private String id;
+
+	@Column(name = "connected_control_code")
+	private String connectedControlCode;
+
+	@Column(name = "ssid")
+	private String ssid;
+
+	@Column(name = "bssid")
+	private String bssid;
+
+	@Column(name = "serial")
+	private String serial;
+
+	@Column(name = "active")
+	private String active;
+
+	@Column(name = "update_no")
+	private String updateNo;
+
+	@Column(name = "security_mode")
+	private String securityMode;
+
+	@Column(name = "security_event")
+	private String securityEvent;
+
+	@Column(name = "security_user_no")
+	private String securityUserNo;
+
+	@Column(name = "security_in_time")
+	private String securityInTime;
+
+	@Column(name = "security_out_time")
+	private String securityOutTime;
+
+	@Column(name = "unread_push_message_count")
+	private String unreadPushMessageCount;
+
+	@Column(name = "alive_wakeup")
+	private String aliveWakeup;
+
+	@Column(name = "created_user_id")
+	private String createdUserId;
+
+	@Column(name = "created_time")
+	private String createdTime;
+
+	@Column(name = "lastmodified_time")
+	private String lastModifiedTime;
+
+	@Column(name = "description")
+	private String description;
+
+	public Gateway() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public int getNo() {
 		return no;
 	}
 
-	/**
-	 * @param no the no to set
-	 */
-	public void setNo(String no) {
+	public void setNo(int no) {
 		this.no = no;
 	}
 
-	/**
-	 * @return the userNo
-	 */
-	public String getUserNo() {
-		return userNo;
+	public String getNickname() {
+		return nickname;
 	}
 
-	/**
-	 * @param userNo the userNo to set
-	 */
-	public void setUserNo(String userNo) {
-		this.userNo = userNo;
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 
-	/**
-	 * @return the groupNo
-	 */
-	public String getGroupNo() {
-		return groupNo;
+	public String getId() {
+		return id;
 	}
 
-	/**
-	 * @param groupNo the groupNo to set
-	 */
-	public void setGroupNo(String groupNo) {
-		this.groupNo = groupNo;
+	public void setId(String id) {
+		this.id = id;
 	}
 
-	/**
-	 * @return the gatewayNo
-	 */
-	public String getGatewayNo() {
-		return gatewayNo;
+	public String getConnectedControlCode() {
+		return connectedControlCode;
 	}
 
-	/**
-	 * @param gatewayNo the gatewayNo to set
-	 */
-	public void setGatewayNo(String gatewayNo) {
-		this.gatewayNo = gatewayNo;
+	public void setConnectedControlCode(String connectedControlCode) {
+		this.connectedControlCode = connectedControlCode;
 	}
 
-	/**
-	 * @return the groupRole
-	 */
-	public String getGroupRole() {
-		return groupRole;
+	public String getSsid() {
+		return ssid;
 	}
 
-	/**
-	 * @param groupRole the groupRole to set
-	 */
-	public void setGroupRole(String groupRole) {
-		this.groupRole = groupRole;
+	public void setSsid(String ssid) {
+		this.ssid = ssid;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Gateway [no=" + no + ", userNo=" + userNo + ", groupNo=" + groupNo + ", gatewayNo=" + gatewayNo
-				+ ", groupRole=" + groupRole + ", getNo()=" + getNo() + ", getUserNo()=" + getUserNo()
-				+ ", getGroupNo()=" + getGroupNo() + ", getGatewayNo()=" + getGatewayNo() + ", getGroupRole()="
-				+ getGroupRole() + "]";
+	public String getBssid() {
+		return bssid;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((gatewayNo == null) ? 0 : gatewayNo.hashCode());
-		result = prime * result + ((groupNo == null) ? 0 : groupNo.hashCode());
-		result = prime * result + ((groupRole == null) ? 0 : groupRole.hashCode());
-		result = prime * result + ((no == null) ? 0 : no.hashCode());
-		result = prime * result + ((userNo == null) ? 0 : userNo.hashCode());
-		return result;
+	public void setBssid(String bssid) {
+		this.bssid = bssid;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Gateway other = (Gateway) obj;
-		if (gatewayNo == null) {
-			if (other.gatewayNo != null)
-				return false;
-		} else if (!gatewayNo.equals(other.gatewayNo))
-			return false;
-		if (groupNo == null) {
-			if (other.groupNo != null)
-				return false;
-		} else if (!groupNo.equals(other.groupNo))
-			return false;
-		if (groupRole == null) {
-			if (other.groupRole != null)
-				return false;
-		} else if (!groupRole.equals(other.groupRole))
-			return false;
-		if (no == null) {
-			if (other.no != null)
-				return false;
-		} else if (!no.equals(other.no))
-			return false;
-		if (userNo == null) {
-			if (other.userNo != null)
-				return false;
-		} else if (!userNo.equals(other.userNo))
-			return false;
-		return true;
+	public String getSerial() {
+		return serial;
 	}
+
+	public void setSerial(String serial) {
+		this.serial = serial;
+	}
+
+	public String getActive() {
+		return active;
+	}
+
+	public void setActive(String active) {
+		this.active = active;
+	}
+
+	public String getUpdateNo() {
+		return updateNo;
+	}
+
+	public void setUpdateNo(String updateNo) {
+		this.updateNo = updateNo;
+	}
+
+	public String getSecurityMode() {
+		return securityMode;
+	}
+
+	public void setSecurityMode(String securityMode) {
+		this.securityMode = securityMode;
+	}
+
+	public String getSecurityEvent() {
+		return securityEvent;
+	}
+
+	public void setSecurityEvent(String securityEvent) {
+		this.securityEvent = securityEvent;
+	}
+
+	public String getSecurityUserNo() {
+		return securityUserNo;
+	}
+
+	public void setSecurityUserNo(String securityUserNo) {
+		this.securityUserNo = securityUserNo;
+	}
+
+	public String getSecurityInTime() {
+		return securityInTime;
+	}
+
+	public void setSecurityInTime(String securityInTime) {
+		this.securityInTime = securityInTime;
+	}
+
+	public String getSecurityOutTime() {
+		return securityOutTime;
+	}
+
+	public void setSecurityOutTime(String securityOutTime) {
+		this.securityOutTime = securityOutTime;
+	}
+
+	public String getUnreadPushMessageCount() {
+		return unreadPushMessageCount;
+	}
+
+	public void setUnreadPushMessageCount(String unreadPushMessageCount) {
+		this.unreadPushMessageCount = unreadPushMessageCount;
+	}
+
+	public String getAliveWakeup() {
+		return aliveWakeup;
+	}
+
+	public void setAliveWakeup(String aliveWakeup) {
+		this.aliveWakeup = aliveWakeup;
+	}
+
+	public String getCreatedUserId() {
+		return createdUserId;
+	}
+
+	public void setCreatedUserId(String createdUserId) {
+		this.createdUserId = createdUserId;
+	}
+
+	public String getCreatedTime() {
+		return createdTime;
+	}
+
+	public void setCreatedTime(String createdTime) {
+		this.createdTime = createdTime;
+	}
+
+	public String getLastModifiedTime() {
+		return lastModifiedTime;
+	}
+
+	public void setLastModifiedTime(String lastModifiedTime) {
+		this.lastModifiedTime = lastModifiedTime;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 }
