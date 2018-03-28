@@ -20,5 +20,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface GateWayRepository extends JpaRepository<Gateway, Integer> {
- 
+	public Gateway findBySerial(String serial);
 }
