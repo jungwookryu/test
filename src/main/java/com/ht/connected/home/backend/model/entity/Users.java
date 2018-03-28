@@ -30,7 +30,7 @@ public class Users {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int no;
 
-	@Column(name = "user_email")
+	@Column(name = "user_email", nullable=false, unique = true)
 	private String userEmail;
 
 	@Column(name = "password")
