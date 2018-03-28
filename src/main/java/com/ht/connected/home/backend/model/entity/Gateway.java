@@ -16,153 +16,132 @@ public class Gateway {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "no")
-	private String no;
+	private int no;
 
-	@Column(name = "user_no")
-	private String userNo;
-	
-	@Column(name = "group_no")
-	private String groupNo;
-	
-	@Column(name = "gateway_no")
-	private String gatewayNo;
-	
-	@Column(name = "group_role")
-	private String groupRole;
+	@Column(name = "nickname")
+	private String nickname;
 
-	/**
-	 * @return the no
-	 */
-	public String getNo() {
-		return no;
+	@Column(name = "id")
+	private String id;
+
+	@Column(name = "ip")
+	private String ip;
+
+	@Column(name = "ssid")
+	private String ssid;
+
+	@Column(name = "bssid")
+	private String bssid;
+
+	@Column(name = "serial")
+	private String serial;
+
+	@Column(name = "version")
+	private String version;
+
+	@Column(name = "status")
+	private String status;
+
+	@Column(name = "created_user_id")
+	private String createdUserId;
+
+	@Column(name = "created_time")
+	private String createdTime;
+
+	@Column(name = "lastmodified_time")
+	private String lastModifiedTime;
+
+	public Gateway() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * @param no the no to set
-	 */
-	public void setNo(String no) {
-		this.no = no;
+	public String getNickname() {
+		return nickname;
 	}
 
-	/**
-	 * @return the userNo
-	 */
-	public String getUserNo() {
-		return userNo;
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 
-	/**
-	 * @param userNo the userNo to set
-	 */
-	public void setUserNo(String userNo) {
-		this.userNo = userNo;
+	public String getId() {
+		return id;
 	}
 
-	/**
-	 * @return the groupNo
-	 */
-	public String getGroupNo() {
-		return groupNo;
+	public void setId(String id) {
+		this.id = id;
 	}
 
-	/**
-	 * @param groupNo the groupNo to set
-	 */
-	public void setGroupNo(String groupNo) {
-		this.groupNo = groupNo;
+	public String getIp() {
+		return ip;
 	}
 
-	/**
-	 * @return the gatewayNo
-	 */
-	public String getGatewayNo() {
-		return gatewayNo;
+	public void setIp(String ip) {
+		this.ip = ip;
 	}
 
-	/**
-	 * @param gatewayNo the gatewayNo to set
-	 */
-	public void setGatewayNo(String gatewayNo) {
-		this.gatewayNo = gatewayNo;
+	public String getSsid() {
+		return ssid;
 	}
 
-	/**
-	 * @return the groupRole
-	 */
-	public String getGroupRole() {
-		return groupRole;
+	public void setSsid(String ssid) {
+		this.ssid = ssid;
 	}
 
-	/**
-	 * @param groupRole the groupRole to set
-	 */
-	public void setGroupRole(String groupRole) {
-		this.groupRole = groupRole;
+	public String getBssid() {
+		return bssid;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Gateway [no=" + no + ", userNo=" + userNo + ", groupNo=" + groupNo + ", gatewayNo=" + gatewayNo
-				+ ", groupRole=" + groupRole + ", getNo()=" + getNo() + ", getUserNo()=" + getUserNo()
-				+ ", getGroupNo()=" + getGroupNo() + ", getGatewayNo()=" + getGatewayNo() + ", getGroupRole()="
-				+ getGroupRole() + "]";
+	public void setBssid(String bssid) {
+		this.bssid = bssid;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((gatewayNo == null) ? 0 : gatewayNo.hashCode());
-		result = prime * result + ((groupNo == null) ? 0 : groupNo.hashCode());
-		result = prime * result + ((groupRole == null) ? 0 : groupRole.hashCode());
-		result = prime * result + ((no == null) ? 0 : no.hashCode());
-		result = prime * result + ((userNo == null) ? 0 : userNo.hashCode());
-		return result;
+	public String getSerial() {
+		return serial;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Gateway other = (Gateway) obj;
-		if (gatewayNo == null) {
-			if (other.gatewayNo != null)
-				return false;
-		} else if (!gatewayNo.equals(other.gatewayNo))
-			return false;
-		if (groupNo == null) {
-			if (other.groupNo != null)
-				return false;
-		} else if (!groupNo.equals(other.groupNo))
-			return false;
-		if (groupRole == null) {
-			if (other.groupRole != null)
-				return false;
-		} else if (!groupRole.equals(other.groupRole))
-			return false;
-		if (no == null) {
-			if (other.no != null)
-				return false;
-		} else if (!no.equals(other.no))
-			return false;
-		if (userNo == null) {
-			if (other.userNo != null)
-				return false;
-		} else if (!userNo.equals(other.userNo))
-			return false;
-		return true;
+	public void setSerial(String serial) {
+		this.serial = serial;
 	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getCreatedUserId() {
+		return createdUserId;
+	}
+
+	public void setCreatedUserId(String createdUserId) {
+		this.createdUserId = createdUserId;
+	}
+
+	public String getCreatedTime() {
+		return createdTime;
+	}
+
+	public void setCreatedTime(String createdTime) {
+		this.createdTime = createdTime;
+	}
+
+	public String getLastModifiedTime() {
+		return lastModifiedTime;
+	}
+
+	public void setLastModifiedTime(String lastModifiedTime) {
+		this.lastModifiedTime = lastModifiedTime;
+	}
+
 }
