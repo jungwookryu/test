@@ -167,9 +167,9 @@ public class Common {
 	 * 사용자 이름, 사용자 list 를 가져와서 사용자 정보를 return해준다. 전체 사용자 조회를 하여 사용자 정보 를 가져와야 할 경우
 	 * 사용.
 	 */
-	public static Users getUserByUserName(String username, List<Users> lstUser) {
+	public static Users getUserByUserEmail(String userEmail, List<Users> lstUser) {
 		for (Users aLstUser : lstUser) {
-			if (username.equals(aLstUser.getUserEmail())) {
+			if (userEmail.equals(aLstUser.getUserEmail())) {
 				return aLstUser;
 			}
 		}
