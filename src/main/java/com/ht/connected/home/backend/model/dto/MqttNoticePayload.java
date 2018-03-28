@@ -2,6 +2,12 @@ package com.ht.connected.home.backend.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+
+/**
+ * 호스트 등록 요청 데이터 객체 모델
+ * @author 구정화
+ *
+ */
 public class MqttNoticePayload implements MqttPayload {
 
 	public static final String register = "register";
