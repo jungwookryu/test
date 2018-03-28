@@ -48,7 +48,7 @@ public class UsersController extends CommonController {
 		if (rtnUser) {
 			HttpHeaders responseHeaders = new HttpHeaders();
 			responseHeaders.set("message", "exist useremail");
-			return new ResponseEntity("exist userId", responseHeaders, HttpStatus.NOT_ACCEPTABLE);
+			return new ResponseEntity("exist userEmail", responseHeaders, HttpStatus.NOT_ACCEPTABLE);
 		}
 		users.setLocale(request.getLocale().toString());
 		users.setPassword(Common.encryptHash("SHA-256", users.getPassword()));

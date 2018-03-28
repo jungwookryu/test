@@ -20,6 +20,9 @@ public class UserDetailService implements UserDetailsService {
 	@Autowired
 	private UsersRepository usersRepository;
 
+	@Autowired
+	private UsersService usersService;
+	
 	private static final Logger logger = LoggerFactory.getLogger(UserDetailService.class);
 
 	@Override
@@ -27,8 +30,8 @@ public class UserDetailService implements UserDetailsService {
 		if ((String.valueOf(userEmail) == "null") || ("".equals(userEmail))) {
 			logger.error("username is empty {} ", userEmail);
 		}
-		Users user = usersRepository.findByUserEmail(userEmail);
-		if (null != user) {
+		Users user = usersService.getUser(userEmail);
+		if (usersService.getExistUser(userEmail)) {
 			UserDetail userDetails = new UserDetail(user);
 			return userDetails;
 		} else {
@@ -37,9 +40,9 @@ public class UserDetailService implements UserDetailsService {
 	}
 
 	public Users findUserDetailByUsername(String userEmail) throws UsernameNotFoundException {
-		Users UserDetail = usersRepository.findByUserEmail(userEmail);
-		if (null != UserDetail) {
-			return UserDetail;
+		Users userDetail = usersService.getUser(userEmail);
+		if (null!=userDetail) {
+			return userDetail;
 		} else {
 			throw new UsernameNotFoundException(String.format("Username[%s] not found", userEmail));
 		}

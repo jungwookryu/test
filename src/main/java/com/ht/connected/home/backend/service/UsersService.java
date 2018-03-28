@@ -6,8 +6,8 @@ import com.ht.connected.home.backend.service.base.CrudService;
 
 
 public interface UsersService extends CrudService<Users, Integer> {
-	Users getUser(String userId);
-	Boolean getExistUser(String userId);
+	Users getUser(String userEmail);
+	Boolean getExistUser(String userEmail);
 	Users modify(int no,Users user);
 	void register(UserDetail userDetail);
 	
