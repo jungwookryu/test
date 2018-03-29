@@ -52,7 +52,7 @@ public class Users {
 	private Date lastmodifiedTime;
 
 	@Column(name = "active")
-	private boolean active;
+	private int active;
 
 	@Column(name = "authority")
 	private String authority;
@@ -71,7 +71,6 @@ public class Users {
 	
 	public Users(String userEmail, String password) {
 		this.userEmail = userEmail;
-		this.setActive(true);
 	}
 
 	public Users(String userEmail) {
@@ -193,7 +192,7 @@ public class Users {
 	/**
 	 * @return the active
 	 */
-	public boolean getActive() {
+	public int getActive() {
 		return active;
 	}
 
@@ -201,7 +200,7 @@ public class Users {
 	 * @param active
 	 *            the active to set
 	 */
-	public void setActive(boolean active) {
+	public void setActive(int active) {
 		this.active = active;
 	}
 

@@ -51,6 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
     @Override
 	protected void configure(HttpSecurity http) throws Exception {
+    	logger.debug("configure::::::::::HttpSecurity::::::::::::start1"+SecurityProperties.ACCESS_OVERRIDE_ORDER);
         http
         .authorizeRequests()
         .antMatchers("/","/**").permitAll()
