@@ -65,7 +65,7 @@ public class AuthorizationSeverConfig extends AuthorizationServerConfigurerAdapt
 			.pathMapping("/oauth/token", "/authentication/login");
 			
 			endpoints.authenticationManager(this.authenticationManager).tokenServices(tokenServices())
-					.tokenStore(tokenStore()).accessTokenConverter(accessTokenConverter());
+			.tokenStore(tokenStore()).accessTokenConverter(accessTokenConverter());
 		} catch (Exception e) {
 			logger.info("AuthorizationServerEndpointsConfigurer exception");
 			e.printStackTrace();
