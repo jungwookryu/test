@@ -26,7 +26,6 @@ import javax.activation.DataHandler;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -37,10 +36,10 @@ import javax.mail.util.ByteArrayDataSource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author ijlee
@@ -49,12 +48,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class Common {
 
-	@Autowired
-	public EmailConfig emailConfig;
-
 	private static String iv;
 	private static Key keySpec;
-
 	/**
 	 * 날짜계산
 	 * 
@@ -174,7 +169,6 @@ public class Common {
 			}
 		}
 		Users emptyUser = new Users();
-		emptyUser.setActive(false);
 		return emptyUser;
 	}
 
@@ -318,29 +312,33 @@ public class Common {
 		}
 
 	}
-
-	public boolean sendEmail(Map body) throws IOException, MessagingException {
+/**
+ * 
+ * @param body : Map User "rtnUsers"
+ * @return
+ * @throws IOException
+ * @throws MessagingException
+ */
+	public static boolean sendEmail(Map body, EmailConfig emailConfig) {
 		Boolean bRtn = false;
 		try {
-			String userId = (String) body.getOrDefault("userId", "");
-			String refreshToken = (String) body.getOrDefault("refreshToken", "");
-
-			// 硫붿씪 愿��젴 �젙蹂�
+			
+			ClassLoader classLoader = Common.class.getClassLoader();
 			Properties properties = emailConfig.properties();
+			
+			/** 사용자 이메일**/
+			Users users = (Users) body.getOrDefault("rtnUsers", new Users());
+			String receiveUserEmail = users.getUserEmail();
+			String redirectied_code = users.getRedirectiedCode();
 
-			// 硫붿씪 �궡�슜
 			String username = (String) body.getOrDefault("username", properties.get("mail.smtp.username"));
 			String userEmail = (String) body.getOrDefault("userEmail", properties.get("mail.smtp.userEmail"));
-			ClassLoader classLoader = getClass().getClassLoader();
 			String sFile = (String) body.getOrDefault("sFile", properties.get("mail.smtp.sFile"));
+			String activeUrl = (String) body.getOrDefault("activeUrl", properties.get("mail.smtp.active.authUrl"));
 			String authUrl = (String) body.getOrDefault("authUrl", properties.get("mail.smtp.authUrl"));
 			String subject = (String) body.getOrDefault("subject", properties.get("mail.smtp.subject"));
 			String contextUrl = (String) body.getOrDefault("contextUrl", properties.get("mail.smtp.contextUrl"));
-			// �씤利�
-			Authenticator auth = emailConfig.auth();
-
-			// 硫붿씪 �꽭�뀡
-			Session session = Session.getInstance(properties, auth);
+			Session session = Session.getInstance(properties, emailConfig.auth());
 
 			File file = new File(classLoader.getResource(sFile).getFile());
 			System.out.println(file.getAbsolutePath());
@@ -350,10 +348,10 @@ public class Common {
 
 			if (elementAhref.size() != 0) {
 				elementAhref.get(0).attr("href",
-						authUrl + "/" + contextUrl + "?userId=" + userId + "&refreshToken=" + refreshToken);
+						activeUrl + authUrl + "/" + contextUrl + "?user_email=" + receiveUserEmail + "&redirectied_code=" + redirectied_code);
 			}
 			if (elementSpan.size() != 0) {
-				elementSpan.get(0).childNode(0).attr("text", userId);
+				elementSpan.get(0).childNode(0).attr("text", receiveUserEmail);
 			}
 
 			MimeMessage msg = new MimeMessage(session);
@@ -367,7 +365,7 @@ public class Common {
 			msg.setContent(doc.outerHtml(), "text/html;charset=" + "EUC-KR");
 			msg.setFrom(new InternetAddress(userEmail, username));
 			msg.setReplyTo(InternetAddress.parse(userEmail, false));
-			msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(userId, false));
+			msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(receiveUserEmail, false));
 			Transport.send(msg);
 			bRtn = true;
 		} catch (IOException | MessagingException e) {
@@ -376,6 +374,12 @@ public class Common {
 		}
 		return bRtn;
 
+	}
+	
+	public String randomCode() {
+		String rtnRandomeCode="";
+		rtnRandomeCode = RandomStringUtils.randomAlphanumeric(12).toUpperCase() + RandomStringUtils.randomAlphanumeric(7).toUpperCase();
+		return rtnRandomeCode;
 	}
 
 }

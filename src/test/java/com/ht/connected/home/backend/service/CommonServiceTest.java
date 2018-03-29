@@ -12,6 +12,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.test.context.ActiveProfiles;
@@ -26,8 +27,11 @@ public class CommonServiceTest extends MockUtil {
     public UsersRepository usersRepository;
 	@Mock
     public CrudServiceImpl<Class, Integer> crudImplService;
-
+	@InjectMocks
+	public UsersService usersService;
+	
 	public static Common common = new Common();
+	
 	@Before
 	public void setUpMockUtil() {
 		Mockito.when(usersRepository.findAll()).thenReturn(lstUsers);
@@ -35,12 +39,14 @@ public class CommonServiceTest extends MockUtil {
 		Mockito.when(crudImplService.getAll()).thenReturn(new ArrayList());
 		Mockito.doNothing().when(usersRepository).delete(userNo); 		
 	 }
+	
+	
 	@Test
     public void sendEmail() throws Exception {
         HashMap map = new HashMap();
-        map.put("resetPassword",userId);
+        map.put("rtnUsers",users);
         map.put("sFile", resetPasswordFile);
         map.put("contextUrl", contextUrl);
-        common.sendEmail(map);
-    }
+//        common.sendEmail(map);
+	}
 }

@@ -24,18 +24,18 @@ public class EmailConfig {
     @Autowired
     private Environment env;
 
-    @Bean
+    @Bean(name="mailProperties")
     public MailProperties mailProperties() {
 
         MailProperties mailProperties = new MailProperties();
-        mailProperties.setHost(env.getRequiredProperty("spring.mail.smtp.host"));
-        mailProperties.setPort(Integer.valueOf(env.getRequiredProperty("spring.mail.smtp.port")));
-        mailProperties.setUsername(env.getRequiredProperty("spring.mail.smtp.userEmail"));
-        mailProperties.setPassword(env.getRequiredProperty("spring.mail.smtp.password"));
+        mailProperties.setHost(env.getRequiredProperty("mail.smtp.host"));
+        mailProperties.setPort(Integer.valueOf(env.getRequiredProperty("mail.smtp.port")));
+        mailProperties.setUsername(env.getRequiredProperty("mail.smtp.userEmail"));
+        mailProperties.setPassword(env.getRequiredProperty("mail.smtp.password"));
         return mailProperties;
     }
 
-    @Bean
+    @Bean(name="mailSender")
     public JavaMailSender mailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(mailProperties() .getHost());
@@ -47,7 +47,7 @@ public class EmailConfig {
         return mailSender;
     }
 
-    @Bean
+    @Bean(name="emailProperties")
     public Properties properties() {
         MailProperties mailProperties = mailProperties();
         Properties props = new Properties();
@@ -56,21 +56,22 @@ public class EmailConfig {
         props.put("mail.smtp.socketFactory.port",mailProperties.getPort()); //SSL Port
         props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory"); //SSL Factory Class
         props.put("mail.smtp.port",mailProperties.getPort());
-        props.put("mail.smtp.auth",env.getRequiredProperty("spring.mail.smtp.properties.auth")); //Enabling SMTP Authentication
-        props.put("mail.smtp.maximumTotalQps",env.getRequiredProperty("spring.mail.smtp.properties.maximumTotalQps"));
-        props.put("mail.smtp.authUrl",env.getRequiredProperty("spring.mail.smtp.properties.authUrl"));
-//        props.put("mail.smtp.imgUrl",env.getRequiredProperty("spring.mail.smtp.properties.imgUrl"));
-        props.put("mail.smtp.sFile",env.getRequiredProperty("spring.mail.smtp.properties.sFile"));
-//        props.put("mail.smtp.sDir",env.getRequiredProperty("spring.mail.smtp.properties.sDir"));
-        props.put("mail.smtp.subject",env.getRequiredProperty("spring.mail.smtp.properties.subject"));
-        props.put("mail.smtp.username",env.getRequiredProperty("spring.mail.smtp.username"));
-        props.put("mail.smtp.userEmail",env.getRequiredProperty("spring.mail.smtp.userEmail"));
-        props.put("mail.smtp.contextUrl",env.getRequiredProperty("spring.mail.smtp.properties.contextUrl"));
+        props.put("mail.smtp.auth",env.getRequiredProperty("mail.smtp.properties.auth")); //Enabling SMTP Authentication
+        props.put("mail.smtp.maximumTotalQps",env.getRequiredProperty("mail.smtp.properties.maximumTotalQps"));
+        props.put("mail.smtp.authUrl",env.getRequiredProperty("mail.smtp.properties.authUrl"));
+        props.put("mail.smtp.sFile",env.getRequiredProperty("mail.smtp.properties.sFile"));
+        props.put("mail.smtp.subject",env.getRequiredProperty("mail.smtp.properties.subject"));
+        props.put("mail.smtp.username",env.getRequiredProperty("mail.smtp.username"));
+        props.put("mail.smtp.userEmail",env.getRequiredProperty("mail.smtp.userEmail"));
+        props.put("mail.smtp.contextUrl",env.getRequiredProperty("mail.smtp.properties.contextUrl"));
+        String sActive = env.getRequiredProperty("spring.profiles.active");
+        props.put("mail.smtp.active.authUrl", env.getRequiredProperty("mail.smtp.properties."+sActive+".authUrl")+env.getRequiredProperty("server.port"));
+        
         return props;
     }
 
     // 인증
-    @Bean
+    @Bean(name="emailAuth")
     public Authenticator auth() {
         Authenticator auth = new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {

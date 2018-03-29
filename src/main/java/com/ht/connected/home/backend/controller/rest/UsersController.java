@@ -50,9 +50,7 @@ public class UsersController extends CommonController {
 			responseHeaders.set("message", "exist useremail");
 			return new ResponseEntity("exist userEmail", responseHeaders, HttpStatus.NOT_ACCEPTABLE);
 		}
-		users.setLocale(request.getLocale().toString());
-		users.setPassword(Common.encryptHash("SHA-256", users.getPassword()));
-		Users rtnUsers = usersService.insert(users);
+		Users rtnUsers = usersService.register(users);
 
 		logger.debug(rtnUsers.toString());
 		return new ResponseEntity(HttpStatus.CREATED);

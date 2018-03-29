@@ -36,7 +36,7 @@ public class MockUtil
 	public static final  String contextUrl =  "test/authPassword";
 	
 //	public static Class anyClass = mock(Class.class);
-	public static Users users = UsersEntityTestData.createScUser();
+	public static Users users = UsersEntityTestData.createUser();
     public static List<Users> lstUsers = UsersEntityTestData.getLstUsers();
 
 }

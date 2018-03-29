@@ -20,12 +20,12 @@ public final class UsersEntityTestData extends MockUtil
     public static List<Users> getLstUsers()
     {
         List<Users> rtnList = new ArrayList();
-        rtnList.add(createScUser());
+        rtnList.add(createUser());
         return rtnList;
     }
 
-	public static Users createScUser(){
-		Users rtnUsers = new Users(userId, password);
+	public static Users createUser(){
+		Users rtnUsers = new Users(userEmail, password);
 		return rtnUsers;
 	}
 

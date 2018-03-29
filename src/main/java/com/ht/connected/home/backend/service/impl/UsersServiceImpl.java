@@ -1,14 +1,14 @@
 package com.ht.connected.home.backend.service.impl;
 
 import com.ht.connected.home.backend.common.Common;
-import com.ht.connected.home.backend.model.entity.UserDetail;
+import com.ht.connected.home.backend.config.service.EmailConfig;
 import com.ht.connected.home.backend.model.entity.Users;
 import com.ht.connected.home.backend.repository.UsersRepository;
 import com.ht.connected.home.backend.service.UsersService;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +20,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class UsersServiceImpl extends CrudServiceImpl<Users, Integer> implements UsersService{
 
+
+	@Autowired
+	public EmailConfig emailConfig;
+	
 	public UsersServiceImpl(JpaRepository<Users, Integer> jpaRepository) {
 		super(jpaRepository);
 		// TODO Auto-generated constructor stub
@@ -59,16 +63,24 @@ public class UsersServiceImpl extends CrudServiceImpl<Users, Integer> implements
 	}
 	
 	@Override
-	public boolean sendEmail(Map map) {
-		return sendEmail(map);
-	}
-
-	@Override
-	public void register(UserDetail uerDetail) {
-		Users users = new Users(uerDetail.getUserEmail(), uerDetail.getPassword());
+	public Users register(Users users) {
 		users.setPassword(Common.encryptHash("SHA-256", users.getPassword()));
-		insert(users);
-		
+		users.setRedirectiedCode(randomCode());
+		users.setActive(0);
+		Users rtnUsers = insert(users);
+		authSendEmail(rtnUsers);
+//		authSendEmail(users);
+		return rtnUsers;
+//		return users;
 	}
  
+	public boolean authSendEmail(Users rtnUsers) {
+		HashMap map = new HashMap<>();
+		if (null!=rtnUsers) {
+			map.put("rtnUsers", rtnUsers);
+			map.put("authUrl", "");
+			return Common.sendEmail(map, emailConfig);
+		}
+		return false;
+	}
 }
