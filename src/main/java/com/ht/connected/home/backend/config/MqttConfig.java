@@ -1,5 +1,6 @@
 package com.ht.connected.home.backend.config;
 
+import static java.util.Objects.isNull;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -23,11 +24,14 @@ import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ht.connected.home.backend.model.entity.Gateway;
 import com.ht.connected.home.backend.repository.GateWayRepository;
-
+import com.ht.connected.home.backend.service.mqtt.MessageArrivedComponent;
+import com.ht.connected.home.backend.service.mqtt.MqttPayloadExecutor;
 
 /**
  * 스프링 mqtt 설정 클래스
+ * 
  * @author 구정화
  *
  */
@@ -59,6 +63,7 @@ public class MqttConfig {
 
 	/**
 	 * MQTT 클라언트 생성
+	 * 
 	 * @return
 	 */
 	@Bean
@@ -72,6 +77,7 @@ public class MqttConfig {
 
 	/**
 	 * subscriber가 사용할 채널
+	 * 
 	 * @return
 	 */
 	@Bean
@@ -81,6 +87,7 @@ public class MqttConfig {
 
 	/**
 	 * publisher가 사용할 채널
+	 * 
 	 * @return
 	 */
 	@Bean
@@ -90,6 +97,7 @@ public class MqttConfig {
 
 	/**
 	 * Subscriber
+	 * 
 	 * @return
 	 */
 	@Bean
@@ -105,6 +113,7 @@ public class MqttConfig {
 
 	/**
 	 * Publisher
+	 * 
 	 * @return
 	 */
 	@Bean
@@ -118,7 +127,8 @@ public class MqttConfig {
 	}
 
 	/**
-	 * 메세지 발송 처리 
+	 * 메세지 발송 처리
+	 * 
 	 * @author 구정화
 	 *
 	 */
@@ -128,7 +138,8 @@ public class MqttConfig {
 	}
 
 	/**
-	 * Subscribe 메시지 핸들링 
+	 * Subscribe 메시지 핸들링
+	 * 
 	 * @return
 	 */
 	@Bean
@@ -141,6 +152,22 @@ public class MqttConfig {
 				String topic = String.valueOf(message.getHeaders().get("mqtt_topic"));
 				String payload = String.valueOf(message.getPayload());
 				LOGGER.info("messageArrived: Topic=" + topic + ", Payload=" + payload);
+
+				MessageArrivedComponent messageArrivedComponent = beanFactory.getBean(MessageArrivedComponent.class);
+				messageArrivedComponent.init(topic, payload);
+				Gateway gateway = gatewayRepository.findBySerial(messageArrivedComponent.getSerial());
+				MqttPayloadExecutor executor = messageArrivedComponent.getExecutor();
+				Object returnData = null;
+				if (!isNull(executor)) {
+					try {
+						returnData = executor.execute(messageArrivedComponent, gateway);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				if (!isNull(returnData)) {
+
+				}
 			}
 
 		};
