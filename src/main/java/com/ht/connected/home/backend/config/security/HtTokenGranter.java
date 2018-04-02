@@ -36,9 +36,10 @@ import org.springframework.security.oauth2.provider.token.AuthorizationServerTok
 			Map<String, String> params = tokenRequest.getRequestParameters();
 			
 			String username = params.containsKey("user_email") ? params.get("user_email") : "";
-			Map map = tokenRequest.getRequestParameters();
-			map.put("", )
-			tokenRequest.setRequestParameters(map.);
+			String grantType = params.containsKey("grant_type") ? params.get("password") : "";
+			params.put("username",username);
+			params.replace("grant_type",grantType);
+			tokenRequest.setRequestParameters(params);
 			List<GrantedAuthority> authorities = params.containsKey("authorities") ? AuthorityUtils
 					.createAuthorityList(OAuth2Utils.parseParameterList(params.get("authorities")).toArray(new String[0]))
 					: AuthorityUtils.NO_AUTHORITIES;
