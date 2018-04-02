@@ -2,6 +2,7 @@ package com.ht.connected.home.backend.common;
 
 import com.ht.connected.home.backend.config.service.EmailConfig;
 import com.ht.connected.home.backend.model.entity.Users;
+import com.ht.connected.home.backend.service.impl.UsersServiceImpl;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +41,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author ijlee
@@ -50,6 +53,7 @@ public class Common {
 
 	private static String iv;
 	private static Key keySpec;
+	private static Logger logger = LoggerFactory.getLogger(UsersServiceImpl.class);
 	/**
 	 * 날짜계산
 	 * 
@@ -294,10 +298,12 @@ public class Common {
 	public static String encryptHash(String sSHA, String password) {
 
 		String encryptPassword = "";
-
+		logger.debug("password::::::::::::"+password);
 		try {
 			MessageDigest sh = MessageDigest.getInstance(sSHA);
+			logger.debug("sh::::::::::::"+sh);
 			sh.update(password.getBytes());
+			
 			byte byteData[] = sh.digest();
 			StringBuffer sb = new StringBuffer();
 			for (int i = 0; i < byteData.length; i++) {

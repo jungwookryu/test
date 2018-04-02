@@ -1,6 +1,5 @@
 package com.ht.connected.home.backend.controller.rest;
 
-import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.model.entity.Users;
 import com.ht.connected.home.backend.service.UsersService;
 
@@ -49,11 +48,12 @@ public class UsersController extends CommonController {
 			HttpHeaders responseHeaders = new HttpHeaders();
 			responseHeaders.set("message", "exist useremail");
 			return new ResponseEntity("exist userEmail", responseHeaders, HttpStatus.NOT_ACCEPTABLE);
+		}else {
+			Users rtnUsers = usersService.register(users);
+	
+			logger.debug(rtnUsers.toString());
+			return new ResponseEntity(HttpStatus.CREATED);
 		}
-		Users rtnUsers = usersService.register(users);
-
-		logger.debug(rtnUsers.toString());
-		return new ResponseEntity(HttpStatus.CREATED);
 
 	}
 

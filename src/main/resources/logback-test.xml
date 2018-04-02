@@ -15,7 +15,7 @@
 	</appender>
 	<appender name="File"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>./log/iot_connected_home.log</file>
+		<file>/iot_connected_home.log</file>
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-3level %logger{5} %msg%n</Pattern>
 		</encoder>

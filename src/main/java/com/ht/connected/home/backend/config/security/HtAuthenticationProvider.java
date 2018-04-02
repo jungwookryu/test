@@ -1,5 +1,6 @@
 package com.ht.connected.home.backend.config.security;
 import com.ht.connected.home.backend.common.Common;
+import com.ht.connected.home.backend.model.entity.UserDetail;
 import com.ht.connected.home.backend.service.UserDetailService;
 
 import java.util.ArrayList;
@@ -61,8 +62,13 @@ public class HtAuthenticationProvider extends AbstractUserDetailsAuthenticationP
     
     @Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		String name = authentication.getName();
-		String encoderPass = authentication.getCredentials().toString();
+    	UserDetail users = (UserDetail)authentication.getDetails();
+    	String userEmail = users.getUserEmail();
+		String name = userEmail;
+//		String encoderPass = authentication.getCredentials().toString();
+		String encoderPass = users.getPassword();
+		encoderPass = Common.encryptHash("SHA-256", encoderPass);
+		
 		UserDetails userDetails = userDetailsService.loadUserByUsername(name);
 		if (!encoderPass.equals(userDetails.getPassword())) {
 			logger.error("Authentication failed for user = " + name);
@@ -78,5 +84,4 @@ public class HtAuthenticationProvider extends AbstractUserDetailsAuthenticationP
 		logger.info("Succesful Authentication with user = " + name);
 		return auth;
 	}
-
 }
