@@ -1,6 +1,6 @@
 #!/bin/sh
 #------------------------------------------------------------------------------
-# HT Connected Home Service Server start/stop script 
+# HT Connected Home Server start/stop script 
 #------------------------------------------------------------------------------
 # programmer : hyocheol ahn
 #------------------------------------------------------------------------------
@@ -8,14 +8,15 @@
 #------------------------------------------------------------------------------
 
 # program directory
+#root_dir="/home/websearch/HyundaiTel"
 root_dir="./"
-program="iot.connected.home.server"
-program_name="HTConnectedHomeServer"
+program="iot.cloud.server"
+program_name="HTCloudServer"
 
 jar_list="ht-iot-connected-home-backend-server-*.jar"
 
-logfile="$root_dir/serverdog.log"
-this_script="iot-connected-home-server.sh"
+logfile="$root_dir/serverstartlog.log"
+this_script="iot-server.sh"
 JAVA="java -Xmx256m"
 
 # get process pid
@@ -74,10 +75,13 @@ start_program(){
   $JAVA -jar $jar_list $program &
 }
 
-watchdog(){	
+watchdog(){
+	# 최소 실행시 프로세스가 정상적으로 동작할 수 있도록 일정시간 대기한다.
 	echo "watchdog: Starting..."
 	sleep 60
-	while [ 1 ]; do		
+	while [ 1 ]; do
+	
+		# 프로세스가 존재하지 않는 경우, 프로세스를 다시 시작하여 준다.
 		pids=`getpids $program`
 		if [ "$pids" = "" ]; then
 			start_program
