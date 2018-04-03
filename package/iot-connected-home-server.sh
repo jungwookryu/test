@@ -9,14 +9,14 @@
 
 # program directory
 #root_dir="/home/websearch/HyundaiTel"
-root_dir="./"
+root_dir="."
 program="iot.cloud.server"
 program_name="HTCloudServer"
 
 jar_list="ht-iot-connected-home-backend-server-*.jar"
 
 logfile="$root_dir/serverstartlog.log"
-this_script="iot-server.sh"
+this_script="iot-connected-home-server.sh"
 JAVA="java -Xmx256m"
 
 # get process pid
