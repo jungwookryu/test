@@ -2,6 +2,7 @@ package com.ht.connected.home.backend.config.security;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.security.Key;
 import java.security.KeyPair;
@@ -37,7 +38,8 @@ public class SecretKeyProvider {
             NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException {
     	 logger.info("path::::"+this.getClass().getResource("").getPath());
     	 logger.info("path::::"+this.getClass().getResource("mykeys.jks").getPath());
-        FileInputStream is = new FileInputStream("mykeys.jks");
+        //FileInputStream is = new FileInputStream("mykeys.jks");
+    	InputStream is = this.getClass().getClassLoader().getResourceAsStream("mykeys.jks");
 
         KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
         keystore.load(is, "mypass".toCharArray());
