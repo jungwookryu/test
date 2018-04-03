@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="ant.build" default="build.all"  xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+
+<!-- =====================================================================
+     - Global properties.  See the build.properties for information on
+     ===================================================================== -->	
+	<property environment="env" />
+	<property name="env.PATH" value="${env.Path}" /><!-- because windows -->	
+	<property name="SRC_DIR" value="../"/>
+	<property name="ssh.host.uri" value="${SERVER_URI}"/>
+	<property name="ssh.host.port" value="22"/>
+	<property name="ssh.host.user.id" value="${USER_ID}"/>
+	<property name="ssh.host.user.pwd" value="${USER_PWD}"/>
+	<property name="server.version.no" value="0.0.0"/>
+
+<!-- =====================================================================
+     - set class path for ant-contrib.jar
+     ===================================================================== -->
+	<path id="contrib_classpath">
+		<fileset dir="./">
+			<include name="ant-contrib.jar" />			
+			<include name="maverick-ant.jar" />
+		</fileset>
+	</path>
+
+<!-- ===================================================================== 
+     - define script for build dependency.
+     ===================================================================== --> 
+  <script language="javascript">
+		
+	var serverUrl = project.getProperty('SERVER_URI');	
+	if( serverUrl == null){		
+		project.setProperty('ssh.host.uri','192.168.2.239');
+	}
+	var userID = project.getProperty('USER_ID');	
+	if( userID == null){		
+		project.setProperty('ssh.host.user.id','hyundaitel');
+	}
+	var userPWD = project.getProperty('USER_PWD');	
+	if( userPWD == null){		
+		project.setProperty('ssh.host.user.pwd','@alTmzhfldk');
+	}
+			
+  </script>
+
+<!-- =====================================================================
+     - define taskdef : antcontrib lib => if, for , foreeach
+     ===================================================================== -->
+  <taskdef classpathref="contrib_classpath" resource="net/sf/antcontrib/antlib.xml" />
+  <taskdef classpathref="contrib_classpath" name="ssh" classname="com.sshtools.ant.Ssh" />
+
+  <scriptdef name="get.version.no" language="javascript">
+    <attribute name="path"/>  	
+	load("nashorn:mozilla_compat.js");
+    importClass(java.io.File);
+    importClass(java.io.FileReader);
+    importClass(java.io.BufferedReader);
+    importClass(java.io.FileWriter);
+    importClass(java.io.BufferedWriter);   
+       
+    var isDependency = 'false';
+    var pkgManifest = attributes.get('path');
+	echo = project.createTask("echo");
+	echo.setMessage("FILE PAHT : " + pkgManifest);
+	echo.perform();
+    var file = new File(pkgManifest);	
+    fr = new FileReader(file);	
+    br = new BufferedReader(fr);  
+    var versionNo = null;
+	var versionLine = null;
+    while(( line = br.readLine()) != null){     	
+      if(line.contains('Version')){
+        versionNo = line.substring(8);
+		versionLine = line;
+	    break;
+      }
+    }
+	project.setProperty('package.version.no',versionNo);	
+	project.setProperty('package.version.line',versionLine);	
+  </scriptdef>
+  <scriptdef name="which" language="javascript">
+	  <attribute name="command" />
+	  <attribute name="property" />
+	  load("nashorn:mozilla_compat.js");
+
+		var cmd   = attributes.get("command")  || "";
+		var prop  = attributes.get("property") || "";
+		if ("" == cmd ) throw new Error("The attribute 'command' is required for the Which task.");
+		if ("" == prop) throw new Error("The attribute 'property' is required for the Which task.");
+		var path  = project.getProperty("env.PATH")    || "";
+		var exts  = project.getProperty("env.PATHEXT") || ""; // only windows will have this
+		var uri   = null;
+		var res   = cmd + ".uri";
+		var which = project.createTask("whichresource");
+		which.setProperty(res);
+		which.createClasspath().createPath().setPath(path);
+		for each (var ext in exts.split(";")) {
+		  which.setResource(cmd + ext);
+		  which.execute();
+		  uri = project.getProperty(res);
+		  if (null !== uri) {
+			importClass(Packages.org.apache.tools.ant.util.FileUtils);
+			importClass(java.io.File);
+			var file = new File(FileUtils.getFileUtils().fromURI(uri));
+			var parentFile = file.getParentFile().getParentFile();
+			//project.setNewProperty(prop, FileUtils.getFileUtils().fromURI(uri));
+			project.setNewProperty(prop, parentFile);			
+			break;
+		  }
+		}	  
+  </scriptdef>
+<!-- ===================================================================== 
+     - This is macro about git commands.
+     ===================================================================== -->  
+  <macrodef name = "git">
+    <attribute name = "command" />
+    <attribute name = "dir" default = "" />
+    <element name = "args" optional = "true" />
+    <sequential>
+      <echo message = "git @{command}" />
+      <exec executable = "git" dir = "@{dir}" failonerror = "true">
+        <arg value = "@{command}" />
+        <args/>
+      </exec>
+    </sequential>
+  </macrodef>
+<!-- ===================================================================== 
+     - This is macro about maven commands.
+     ===================================================================== -->  
+  <macrodef name="maven">    
+    <attribute name="maven.home" default="${MAVEN_HOME}" />
+	<attribute name="basedir" />
+    <attribute name="resultproperty" default="maven.result" />
+    <element name="args" implicit="true" optional="true" />
+    <sequential>
+      <java classname="org.codehaus.classworlds.Launcher" fork="true"
+            dir="@{basedir}" resultproperty="@{resultproperty}">
+        <jvmarg value="-Xmx512m"/>
+        <classpath>
+          <fileset dir="@{maven.home}/boot">
+            <include name="*.jar" />
+          </fileset>
+          <fileset dir="@{maven.home}/lib">
+            <include name="*.jar" />
+          </fileset>
+        </classpath>
+        <sysproperty key="classworlds.conf" value="@{maven.home}/bin/m2.conf" />
+        <sysproperty key="maven.home" value="@{maven.home}" />
+		<sysproperty key="maven.multiModuleProjectDirectory" value="@{maven.home}"/>
+        <args/>
+      </java>
+    </sequential>
+  </macrodef>
+
+<!-- ===================================================================== 
+     - set parameter for build and packaging.
+     ===================================================================== --> 
+  <target name="set.param"  description="execute reverse build.">
+    <echo> build setting parameter........</echo>	
+	<get.version.no path="${basedir}/pkginfo.manifest" />	
+	<var name="server.version.no" unset="true"/>
+	<property name="server.version.no" value="${package.version.no}"/>	
+	
+	<echo> ssh.host.uri : ${ssh.host.uri}</echo>
+	<echo> ssh.host.user.id : ${ssh.host.user.id} </echo>
+	<echo> ssh.host.user.pwd : ${ssh.host.user.pwd} </echo>
+	<echo> server.version.no : ${server.version.no} </echo>
+  </target>
+  
+<!-- ===================================================================== 
+     - clean process.
+     ===================================================================== -->
+  <target name="clean" depends="set.param" description="request the maven clean cmd">
+   
+	<delete dir="maven.build.result" />
+	<which command="mvn" property="mvn.home" />
+	<property name="MAVEN_HOME" value="${mvn.home}"/>		
+	<mkdir dir="maven.build.result" /> 
+	<maven basedir="../"             
+		 resultproperty="maven.build.result">
+		<arg line="clean" />
+	</maven>
+  </target>
+  
+<!-- ===================================================================== 
+     - package process.
+     ===================================================================== -->
+  <target name="package" depends="set.param" description="request the maven package cmd">
+	<which command="mvn" property="mvn.home" />
+	<property name="MAVEN_HOME" value="${mvn.home}"/>		
+	<mkdir dir="maven.build.result" /> 
+	<maven basedir="../"             
+		 resultproperty="maven.build.result">
+		<arg line="--batch-mode -Drelease.version=${server.version.no} package verify" />
+	</maven>
+	<copy todir="maven.build.result" overwrite="true">
+      <fileset dir="../target" includes="*.zip" erroronmissingdir="false" />
+    </copy>
+  </target>
+ 
+<!-- ===================================================================== 
+     - deplay install process.
+     ===================================================================== -->
+  <target name="deploy" depends="set.param" description="process the deploy and install">
+	<echo>server deploy start...........</echo> 
+	<echo>server url: ${ssh.host.uri}</echo> 
+	<echo>server port: ${ssh.host.port}</echo> 
+	<echo>server user id: ${ssh.host.user.id}</echo> 
+	<echo>server user pwd: ${ssh.host.user.pwd}</echo> 
+	
+	<tstamp> 
+          <format property="TODAY" pattern="yyyy-MM-dd-HH-mm" locale="en"/>
+	</tstamp>
+
+	<ssh host="${ssh.host.uri}" port="${ssh.host.port}" username="${ssh.host.user.id}" password="${ssh.host.user.pwd}" version="2">			
+			
+			<exec cmd="./iot-connected-server/iot-ht-server/iot-connected-home-server.sh stop" />		
+			<exec cmd="mkdir ./iot-connected-server" />
+			<exec cmd="cd ./iot-connected-server" />
+			<exec cmd="rm -rf ht-iot-connected-home-backend-server-*.zip" />
+			<exec cmd="mv iot-ht-server iot-ht-server-${TODAY}" />
+			<sftp action="put" remotedir="./iot-connected-server" verbose="true">
+	            <fileset dir="maven.build.result">
+	                <include name="*.zip" />
+	            </fileset>
+	        </sftp>
+			
+			<exec cmd="unzip ht-iot-connected-home-backend-server-*.zip -d ./" />
+			<exec cmd="chmod +x iot-ht-server/iot-connected-home-server.sh" />
+			<exec cmd="cd iot-ht-server/" />			
+			<exec cmd="./iot-connected-home-server.sh start" />
+	</ssh>
+	
+  </target> 
+  <target name="build.all" depends="set.param, clean, package, deploy" description="Build and Packaging for all plugins in requested git"/>
+
+</project>
