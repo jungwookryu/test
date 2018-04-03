@@ -1,5 +1,6 @@
 package com.ht.connected.home.backend.config.security;
 
+import com.ht.connected.home.backend.model.entity.Users;
 import com.ht.connected.home.backend.service.UserDetailService;
 
 import java.io.IOException;
@@ -117,9 +118,10 @@ public class AuthorizationSeverConfig extends AuthorizationServerConfigurerAdapt
 
 			@Override
 			public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
-				String userName = authentication.getUserAuthentication().getName();
+				String userEmail = authentication.getUserAuthentication().getName();
+				Users users = userDetailsService.findUserDetailByUsername(userEmail);
 				final Map<String, Object> additionalInformation = new HashMap<>();
-				additionalInformation.put("userName", userName);
+				additionalInformation.put("nickname", users.getNickName());
 				((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInformation);
 				OAuth2AccessToken enhancedToken = super.enhance(accessToken, authentication);
 				return enhancedToken;

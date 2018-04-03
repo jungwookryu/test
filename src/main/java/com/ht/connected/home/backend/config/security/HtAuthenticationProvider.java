@@ -63,6 +63,7 @@ public class HtAuthenticationProvider extends AbstractUserDetailsAuthenticationP
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		String name = authentication.getName();
 		String encoderPass = authentication.getCredentials().toString();
+		encoderPass = Common.encryptHash("SHA-256", encoderPass);
 		UserDetails userDetails = userDetailsService.loadUserByUsername(name);
 		if (!encoderPass.equals(userDetails.getPassword())) {
 			logger.error("Authentication failed for user = " + name);
@@ -78,5 +79,4 @@ public class HtAuthenticationProvider extends AbstractUserDetailsAuthenticationP
 		logger.info("Succesful Authentication with user = " + name);
 		return auth;
 	}
-
 }

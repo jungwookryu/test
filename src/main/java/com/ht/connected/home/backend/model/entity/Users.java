@@ -1,5 +1,7 @@
 package com.ht.connected.home.backend.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -27,46 +29,60 @@ public class Users {
 
 	@Id
 	@Column(name = "no")
+	@JsonProperty("no")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int no;
 
 	@Column(name = "user_email", nullable=false, unique = true)
+	@JsonProperty("user_email")
 	private String userEmail;
 
 	@Column(name = "password")
+	@JsonProperty("password")
 	private String password;
 
 	@Column(name = "nick_name")
+	@JsonProperty("nickname")
 	private String nickName;
 
 	@Column(name = "push_token")
+	@JsonProperty("push_token")
 	private String pushToken;
 
 	@Column(name = "status")
+	@JsonProperty("status")
 	private String status;
 
 	@Column(name = "created_time")
+	@JsonProperty("created_time")
 	private Date createdTime;
 
 	@Column(name = "lastmodified_time")
+	@JsonProperty("lastmodified_time")
 	private Date lastmodifiedTime;
 
 	@Column(name = "active")
+	@JsonProperty("active")
 	private int active;
 
 	@Column(name = "authority")
+	@JsonProperty("authority")
 	private String authority;
 
 	@Column(name = "locale")
+	@JsonProperty("locale")
 	private String locale;
 
 	@Column(name = "redirectied_code")
+	@JsonProperty("redirectied_code")
 	private String redirectiedCode;
 
 	@Column(name = "connected_type")
+	@JsonProperty("connected_type")
 	private String connectedType;
 
 	@Column(name = "push_type")
+	@JsonProperty("push_type")
 	private String pushType;
 	
 	public Users(String userEmail, String password) {
@@ -107,7 +123,7 @@ public class Users {
 	 * @return the password
 	 */
 	public String getPassword() {
-		return "__dummyPassword__";
+		return this.password;
 	}
 
 	/**

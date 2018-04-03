@@ -10,7 +10,4 @@ public class HtConnectedHomeServerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HtConnectedHomeServerApplication.class, args);
 	}
-
-	
-
 }

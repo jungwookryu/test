@@ -14,6 +14,8 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -22,7 +24,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class SecretKeyProvider {
-
+	private static final Logger logger = LoggerFactory.getLogger(SecretKeyProvider.class);
 
     public String getKey() throws URISyntaxException,
             KeyStoreException, IOException,
@@ -33,6 +35,8 @@ public class SecretKeyProvider {
     private KeyPair getKeyPair() throws
             KeyStoreException, IOException,
             NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException {
+    	 logger.info("path::::"+this.getClass().getResource("").getPath());
+    	 logger.info("path::::"+this.getClass().getResource("mykeys.jks").getPath());
         FileInputStream is = new FileInputStream("mykeys.jks");
 
         KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
