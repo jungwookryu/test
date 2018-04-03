@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+	<property name="LOG_DIR" value="logs" />
+    <property name="LOG_PATH_NAME" value="${LOG_DIR}/iot_connected_home.log" />
 	<timestamp key="bySecond" datePattern="yyyy-MM-dd HH:mm:ss" />
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<!-- By default, encoders are assigned the hubType ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
@@ -15,15 +17,14 @@
 	</appender>
 	<appender name="File"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>/log/iot_connected_home.log</file>
+		<file>${LOG_PATH_NAME}</file>
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-3level %logger{5} %msg%n</Pattern>
 		</encoder>
 
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- rollover daily -->
-			<fileNamePattern>/log/iot_connected_home.%d{yyyy-MM-dd}.%i.log
-			</fileNamePattern>
+			<fileNamePattern>${LOG_PATH_NAME}.%d{yyyy-MM-dd}.log</fileNamePattern>
 			<timeBasedFileNamingAndTriggeringPolicy
 				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
 				<maxFileSize>100MB</maxFileSize>
