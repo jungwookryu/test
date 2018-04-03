@@ -68,13 +68,13 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
     public void configure(HttpSecurity http) throws Exception {
     	logger.debug("configure::::::::::HttpSecurity::::::::::::start22222222222"+SecurityProperties.ACCESS_OVERRIDE_ORDER);
-        http
+        http.authorizeRequests()
+        	.antMatchers("/authentication/**").permitAll()
+        	.antMatchers("/users").permitAll()
+        	.and()
         	.requestMatcher(new OAuthRequestedMatcher())
             .anonymous().disable()
             .authorizeRequests()
-			.antMatchers("/auth/**").permitAll()
-			.antMatchers("/users").permitAll()
-			.antMatchers("/adduser").permitAll()
 			.antMatchers("/","/**").permitAll()
             .antMatchers(HttpMethod.OPTIONS).permitAll();
 //    			.antMatchers("/authentication/login").permitAll()

@@ -83,7 +83,7 @@ public class Users {
 
 	@Column(name = "push_type")
 	@JsonProperty("push_type")
-	private String pushType;
+	private int pushType;
 	
 	public Users(String userEmail, String password) {
 		this.userEmail = userEmail;
@@ -313,16 +313,16 @@ public class Users {
 	/**
 	 * @return the pushType
 	 */
-	public String getPushType() {
+	public int getPushType() {
 		return pushType;
 	}
 
 	/**
 	 * @param pushType the pushType to set
 	 */
-	public void setPushType(String pushType) {
+	public void setPushType(int pushType) {
 		this.pushType = pushType;
-	}
+	} 
 
 	/**
 	 * @return the createdTime
