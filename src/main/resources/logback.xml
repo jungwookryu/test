@@ -15,18 +15,18 @@
 	</appender>
 	<appender name="File"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>./log/iot_connected_home.log</file>
+		<file>/log/iot_connected_home.log</file>
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-3level %logger{5} %msg%n</Pattern>
 		</encoder>
 
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- rollover daily -->
-			<fileNamePattern>debug.%d{yyyy-MM-dd}.%i.log
+			<fileNamePattern>/log/iot_connected_home.%d{yyyy-MM-dd}.%i.log
 			</fileNamePattern>
 			<timeBasedFileNamingAndTriggeringPolicy
 				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-				<maxFileSize>10MB</maxFileSize>
+				<maxFileSize>100MB</maxFileSize>
 			</timeBasedFileNamingAndTriggeringPolicy>
 		</rollingPolicy>
 
