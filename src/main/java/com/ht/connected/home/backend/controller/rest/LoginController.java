@@ -40,16 +40,22 @@ public class LoginController extends CommonController {
 			@RequestParam Map<String, String> parameters) throws HttpRequestMethodNotSupportedException {
 		return tokenEndpoint.getAccessToken(principal, parameters);
 	}
-
+ 
 	@PostMapping(value = "/authentication/login")
 	public ResponseEntity<OAuth2AccessToken> postAccessToken(Principal principal,
 			@RequestParam Map<String, String> parameters) throws HttpRequestMethodNotSupportedException {
 		parameters.put("grant_type", parameters.getOrDefault("grant_type", "password"));
 		String userEmail = parameters.getOrDefault("user_email", "");
-		if ("".equals(userEmail)) {
+		String userName = parameters.getOrDefault("username", "");
+		if ("".equals(userEmail) && "".equals(userName)) {
 			throw new BadClientCredentialsException();
 		}
-		parameters.put("user_name", parameters.getOrDefault("user_email", ""));
+		if (("".equals(userEmail)) &&(!"".equals(userName))) {
+			parameters.put("user_email", userName);
+		}
+		if ((!"".equals(userEmail)) &&("".equals(userName))) {
+			parameters.put("username",userEmail);
+		}
 		return tokenEndpoint.postAccessToken(principal, parameters);
 	}
 

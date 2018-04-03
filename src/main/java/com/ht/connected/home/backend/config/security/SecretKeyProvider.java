@@ -35,8 +35,8 @@ public class SecretKeyProvider {
     private KeyPair getKeyPair() throws
             KeyStoreException, IOException,
             NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException {
-    	 logger.debug("path::::"+this.getClass().getResource("").getPath()); 
-    	FileInputStream file = new FileInputStream("./mykeys.jks");
+    	 logger.info("path::::"+this.getClass().getResource("").getPath());
+    	 logger.info("path::::"+this.getClass().getResource("mykeys.jks").getPath());
         FileInputStream is = new FileInputStream("mykeys.jks");
 
         KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
