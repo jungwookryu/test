@@ -22,7 +22,7 @@ public class CommonController extends Common {
 	 *
 	 * @return Authentication
 	 */
-
+	String authUserEmail = "0906sm@gmail.com";
 	public Authentication getAuthentication() {
 		if (SecurityContextHolder.getContext() == null) {
 			throw new InternalAuthenticationServiceException("세션이 존재하지 않습니다.", new Exception("세션에러"));
@@ -38,5 +38,8 @@ public class CommonController extends Common {
 		SecurityContextLogoutHandler ctxLogOut = new SecurityContextLogoutHandler(); // concern
 		Authentication auth = getAuthentication(); // concern you
 		ctxLogOut.logout(httpServletRequest, httpServletResponse, auth);
+	}
+	public String getAuthUserEmail(String access_token) {
+		return authUserEmail;
 	}
 }
