@@ -2,10 +2,9 @@ package com.ht.connected.home.backend.common;
 
 import com.ht.connected.home.backend.config.service.EmailConfig;
 import com.ht.connected.home.backend.model.entity.Users;
-import com.ht.connected.home.backend.service.impl.UsersServiceImpl;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.security.GeneralSecurityException;
@@ -53,7 +52,8 @@ public class Common {
 
 	private static String iv;
 	private static Key keySpec;
-	private static Logger logger = LoggerFactory.getLogger(UsersServiceImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(Common.class);
+	
 	/**
 	 * 날짜계산
 	 * 
@@ -325,11 +325,10 @@ public class Common {
  * @throws IOException
  * @throws MessagingException
  */
-	public static boolean sendEmail(Map body, EmailConfig emailConfig) {
+	public static boolean sendEmail(Map body, EmailConfig emailConfig, InputStream inputStremaFile) {
 		Boolean bRtn = false;
 		try {
 			
-			ClassLoader classLoader = Common.class.getClassLoader();
 			Properties properties = emailConfig.properties();
 			
 			/** 사용자 이메일**/
@@ -339,16 +338,14 @@ public class Common {
 
 			String username = (String) body.getOrDefault("username", properties.get("mail.smtp.username"));
 			String userEmail = (String) body.getOrDefault("userEmail", properties.get("mail.smtp.userEmail"));
-			String sFile = (String) body.getOrDefault("sFile", properties.get("mail.smtp.sFile"));
+//			String sFile = (String) body.getOrDefault("sFile", properties.get("mail.smtp.sFile"));
 			String activeUrl = (String) body.getOrDefault("activeUrl", properties.get("mail.smtp.active.authUrl"));
 			String authUrl = (String) body.getOrDefault("authUrl", properties.get("mail.smtp.authUrl"));
 			String subject = (String) body.getOrDefault("subject", properties.get("mail.smtp.subject"));
 			String contextUrl = (String) body.getOrDefault("contextUrl", properties.get("mail.smtp.contextUrl"));
 			Session session = Session.getInstance(properties, emailConfig.auth());
-
-			File file = new File(classLoader.getResource(sFile).getFile());
-			System.out.println(file.getAbsolutePath());
-			Document doc = Jsoup.parse(file, "UTF-8");
+			
+			Document doc = Jsoup.parse(inputStremaFile, "UTF-8", "./");
 			Elements elementAhref = doc.select("a[href]");
 			Elements elementSpan = doc.select("span");
 
@@ -386,6 +383,8 @@ public class Common {
 		String rtnRandomeCode="";
 		rtnRandomeCode = RandomStringUtils.randomAlphanumeric(12).toUpperCase() + RandomStringUtils.randomAlphanumeric(7).toUpperCase();
 		return rtnRandomeCode;
+		
 	}
+	
 
 }
