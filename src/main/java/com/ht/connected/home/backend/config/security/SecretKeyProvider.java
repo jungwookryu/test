@@ -39,7 +39,6 @@ public class SecretKeyProvider {
     private KeyPair getKeyPair() throws
             KeyStoreException, IOException,
             NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException {
-    	
     	InputStream filePath =getClass().getClassLoader().getResourceAsStream(keyProvider);
     	if(null==filePath) {
     		throw new UnrecoverableKeyException();
