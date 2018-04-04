@@ -7,8 +7,10 @@ import com.ht.connected.home.backend.repository.UsersRepository;
 import com.ht.connected.home.backend.service.UsersService;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,17 +71,19 @@ public class UsersServiceImpl extends CrudServiceImpl<Users, Integer> implements
 		users.setActive(0);
 		Users rtnUsers = insert(users);
 		authSendEmail(rtnUsers);
-//		authSendEmail(users);
 		return rtnUsers;
-//		return users;
+
 	}
  
 	public boolean authSendEmail(Users rtnUsers) {
 		HashMap map = new HashMap<>();
+		Properties properties = emailConfig.properties();
 		if (null!=rtnUsers) {
 			map.put("rtnUsers", rtnUsers);
 			map.put("authUrl", "");
-			return Common.sendEmail(map, emailConfig);
+			String sFile = properties.get("mail.smtp.sFile").toString();
+			InputStream filePath =getClass().getClassLoader().getResourceAsStream(sFile);
+			return Common.sendEmail(map, emailConfig,filePath );
 		}
 		return false;
 	}
