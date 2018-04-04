@@ -1,6 +1,5 @@
 package com.ht.connected.home.backend.config.security;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -17,6 +16,7 @@ import java.security.cert.CertificateException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,6 +27,9 @@ import org.springframework.stereotype.Component;
 public class SecretKeyProvider {
 	private static final Logger logger = LoggerFactory.getLogger(SecretKeyProvider.class);
 
+	@Value("${spring.keyProvider}")
+	String keyProvider;
+	
     public String getKey() throws URISyntaxException,
             KeyStoreException, IOException,
             NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException{
@@ -36,13 +39,12 @@ public class SecretKeyProvider {
     private KeyPair getKeyPair() throws
             KeyStoreException, IOException,
             NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException {
-    	 logger.info("path::::"+this.getClass().getResource("").getPath());
-    	 logger.info("path::::"+this.getClass().getResource("mykeys.jks").getPath());
-        //FileInputStream is = new FileInputStream("mykeys.jks");
-    	InputStream is = this.getClass().getClassLoader().getResourceAsStream("mykeys.jks");
-
+    	InputStream filePath =getClass().getClassLoader().getResourceAsStream(keyProvider);
+    	if(null==filePath) {
+    		throw new UnrecoverableKeyException();
+    	}
         KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-        keystore.load(is, "mypass".toCharArray());
+        keystore.load(filePath, "mypass".toCharArray());
 
         String alias = "mykeys";
 
