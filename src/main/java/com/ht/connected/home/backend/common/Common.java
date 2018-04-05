@@ -351,7 +351,7 @@ public class Common {
 
 			if (elementAhref.size() != 0) {
 				elementAhref.get(0).attr("href",
-						activeUrl + authUrl + "/" + contextUrl + "?user_email=" + receiveUserEmail + "&redirectied_code=" + redirectied_code);
+						activeUrl + authUrl + "/" + contextUrl + "?user_email=" + receiveUserEmail + "&redirected_code=" + redirectied_code);
 			}
 			if (elementSpan.size() != 0) {
 				elementSpan.get(0).childNode(0).attr("text", receiveUserEmail);
@@ -371,6 +371,7 @@ public class Common {
 			msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(receiveUserEmail, false));
 			Transport.send(msg);
 			bRtn = true;
+			logger.info("sendEmail::"+userEmail+"::sucess");
 		} catch (IOException | MessagingException e) {
 			e.printStackTrace();
 
