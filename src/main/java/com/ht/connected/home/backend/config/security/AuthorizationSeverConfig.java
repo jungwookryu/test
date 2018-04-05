@@ -53,20 +53,18 @@ public class AuthorizationSeverConfig extends AuthorizationServerConfigurerAdapt
 
 	@Autowired
 	DataSource dataSource;
-	
+
 	@Autowired
 	UserDetailService userDetailsService;
-	
+
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
-	
+
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
 		try {
-			endpoints
-			.pathMapping("/oauth/token", "/authentication/login");
-			
+			endpoints.pathMapping("/oauth/token", "/authentication/login");
 			endpoints.authenticationManager(this.authenticationManager).tokenServices(tokenServices())
-			.tokenStore(tokenStore()).accessTokenConverter(accessTokenConverter());
+					.tokenStore(tokenStore()).accessTokenConverter(accessTokenConverter());
 		} catch (Exception e) {
 			logger.info("AuthorizationServerEndpointsConfigurer exception");
 			e.printStackTrace();
@@ -76,9 +74,8 @@ public class AuthorizationSeverConfig extends AuthorizationServerConfigurerAdapt
 	@Override
 	public void configure(AuthorizationServerSecurityConfigurer oauthServer) {
 		try {
-			oauthServer.tokenKeyAccess("isAnonymous() || hasAuthority('ROLE_ADMIN') || hasAuthority('ROLE_USER')");
-			oauthServer.checkTokenAccess("hasAuthority('ROLE_ADMIN') || hasAuthority('ROLE_USER')");
-						
+			oauthServer.tokenKeyAccess("isAnonymous() || hasAuthority('ROLE_TRUSTED_CLIENT')")
+					.checkTokenAccess("hasAuthority('ROLE_TRUSTED_CLIENT')");
 		} catch (Exception e) {
 			logger.info("AuthorizationServerSecurityConfigurer exception");
 			e.printStackTrace();
@@ -99,30 +96,34 @@ public class AuthorizationSeverConfig extends AuthorizationServerConfigurerAdapt
 	@Bean
 	public TokenStore tokenStore() {
 		try {
-		return new JwtTokenStore(accessTokenConverter());
+			return new JwtTokenStore(accessTokenConverter());
 		} catch (Exception e) {
 			logger.info("tokenStore exception");
 			e.printStackTrace();
 			return null;
 		}
-		
+
 	}
 
 	@Autowired
 	private SecretKeyProvider keyProvider;
 
 	@Bean
-	public JwtAccessTokenConverter accessTokenConverter()  {
+	public JwtAccessTokenConverter accessTokenConverter() {
 
 		JwtAccessTokenConverter converter = new JwtAccessTokenConverter() {
 
 			@Override
 			public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
-				String userEmail = authentication.getUserAuthentication().getName();
-				Users users = userDetailsService.findUserDetailByUsername(userEmail);
-				final Map<String, Object> additionalInformation = new HashMap<>();
-				additionalInformation.put("nickname", users.getNickName());
-				((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInformation);
+				if (authentication.isAuthenticated()) {
+					if (null != authentication.getUserAuthentication()) {
+						String userEmail = authentication.getUserAuthentication().getName();
+						Users users = userDetailsService.findUserDetailByUsername(userEmail);
+						final Map<String, Object> additionalInformation = new HashMap<>();
+						additionalInformation.put("nickname", users.getNickName());
+						((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInformation);
+					}
+				}
 				OAuth2AccessToken enhancedToken = super.enhance(accessToken, authentication);
 				return enhancedToken;
 			}

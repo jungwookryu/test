@@ -3,6 +3,7 @@ package com.ht.connected.home.backend.controller.rest;
 import com.ht.connected.home.backend.model.entity.Users;
 import com.ht.connected.home.backend.service.UsersService;
 
+import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,10 +40,12 @@ public class UsersController extends CommonController {
 	 * 
 	 * @param users
 	 * @return
+	 * @throws UnsupportedEncodingException 
+	 * @throws IllegalArgumentException 
 	 * @throws NoSuchAlgorithmException
 	 */
 	@PostMapping
-	public ResponseEntity createUser(@RequestBody Users users, HttpServletRequest request) {
+	public ResponseEntity createUser(@RequestBody Users users, HttpServletRequest request) throws IllegalArgumentException, UnsupportedEncodingException {
 
 		boolean rtnUser = usersService.getExistUser(users.getUserEmail());
 		if (rtnUser) {
@@ -65,10 +69,12 @@ public class UsersController extends CommonController {
 		return new ResponseEntity<HashMap<String, List>>(map, HttpStatus.OK);
 	}
 
-	@GetMapping("/user/{userId}")
-	public ResponseEntity<HashMap<String, Users>> getUser(@PathVariable("userId") String userId) {
+	@GetMapping("/user/{userEmail}")
+	public ResponseEntity<HashMap<String, Users>> getUser(@PathVariable("userEmail") String userEmail) throws IllegalArgumentException, UnsupportedEncodingException {
 		HashMap map = new HashMap<>();
-		Users rtnUsers = usersService.getUser(userId);
+		String authUserEmail = getAuthUserEmail();
+		 SecurityContextHolder.getContext().getAuthentication().getName();
+		Users rtnUsers = usersService.getUser(userEmail);
 		if (null!=rtnUsers) {
 			map.put("users", rtnUsers);
 			return new ResponseEntity(map, HttpStatus.OK);

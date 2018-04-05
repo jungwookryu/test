@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -53,13 +52,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	protected void configure(HttpSecurity http) throws Exception {
     	logger.debug("configure::::::::::HttpSecurity::::::::::::start1"+SecurityProperties.ACCESS_OVERRIDE_ORDER);
         http
+        .csrf().disable()
         .authorizeRequests()
-        .antMatchers("/","/**").permitAll()
+        .antMatchers("/users").permitAll()
         .anyRequest().authenticated()
-        .antMatchers(HttpMethod.OPTIONS).permitAll()
-        .and().httpBasic()
+        .antMatchers("/users/**").access("hasRole('" + "ROLE_USER" + "') or hasRole('" + "ROLE_USER" + "')")
+        .antMatchers("/zwave/**").access("hasRole('" + "ROLE_USER" + "') or hasRole('" + "ROLE_USER" + "')")
+        .antMatchers("/users/user/**").access("hasRole('" + "ROLE_USER" + "') or hasRole('" + "ROLE_USER" + "')")
+        .antMatchers("/authentication/**").access("hasRole('" + "ROLE_USER" + "') or hasRole('" + "ROLE_USER" + "')")
         .and()
-        .csrf().disable();
+        .exceptionHandling().accessDeniedPage("/error/403")
+        .and().logout()
+		.logoutSuccessUrl("/logout?logout")
+        .invalidateHttpSession(true)
+        ;
 	}
 
 

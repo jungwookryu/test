@@ -42,45 +42,50 @@ public class LoginController extends CommonController {
 			@RequestParam Map<String, String> parameters) throws HttpRequestMethodNotSupportedException {
 		return tokenEndpoint.getAccessToken(principal, parameters);
 	}
- /**
-  * 
-  * @param principal
-  * @param parameters
-  * @return
-  * @throws HttpRequestMethodNotSupportedException
-  */
+
+	/**
+	 * 
+	 * @param principal
+	 * @param parameters
+	 * @return
+	 * @throws HttpRequestMethodNotSupportedException
+	 */
 	@PostMapping(value = "/authentication/login")
 	public ResponseEntity<OAuth2AccessToken> postAccessToken(Principal principal,
-			@RequestParam Map<String, String> parameters, @RequestBody Users users) throws HttpRequestMethodNotSupportedException {
-		
-		if((null==users.getPushToken()) || (null==users.getConnectedType())){
-			throw new BadClientCredentialsException();
+			@RequestParam Map<String, String> parameters, @RequestBody Users users)
+			throws HttpRequestMethodNotSupportedException {
+		String grant_type = parameters.getOrDefault("grant_type", "");
+		if ("".equals(grant_type)) {
+			parameters.put("grant_type", "password");
+
+			if ((null == users.getPushToken()) || (null == users.getConnectedType())) {
+				throw new BadClientCredentialsException();
+			}
+
+			String userEmail = parameters.getOrDefault("user_email", "");
+			String userName = parameters.getOrDefault("username", "");
+			if ("".equals(userEmail) && "".equals(userName)) {
+				throw new BadClientCredentialsException();
+			}
+			if (("".equals(userEmail)) && (!"".equals(userName))) {
+				userEmail = userName;
+				parameters.put("user_email", userName);
+			}
+			if ((!"".equals(userEmail)) && ("".equals(userName))) {
+				parameters.put("username", userEmail);
+			}
+			Users rtnUsers = usersService.getUser(userEmail);
+			if (null == rtnUsers) {
+				throw new BadClientCredentialsException();
+			}
+
+			rtnUsers.setPushToken(users.getPushToken());
+			rtnUsers.setPushType(users.getPushType());
+			rtnUsers.setConnectedType(users.getConnectedType());
+
+			Users returnUsers = usersService.save(rtnUsers);
+			logger.debug("returnUsers:::" + returnUsers.toString());
 		}
-		
-		parameters.put("grant_type", parameters.getOrDefault("grant_type", "password"));
-		String userEmail = parameters.getOrDefault("user_email", "");
-		String userName = parameters.getOrDefault("username", "");
-		if ("".equals(userEmail) && "".equals(userName)) {
-			throw new BadClientCredentialsException();
-		}
-		if (("".equals(userEmail)) &&(!"".equals(userName))) {
-			userEmail=userName;
-			parameters.put("user_email", userName);
-		}
-		if ((!"".equals(userEmail)) &&("".equals(userName))) {
-			parameters.put("username",userEmail);
-		}
-		Users rtnUsers = usersService.getUser(userEmail);
-		if(null == rtnUsers) {
-			throw new BadClientCredentialsException();
-		}
-		
-		rtnUsers.setPushToken(users.getPushToken());
-		rtnUsers.setPushType(users.getPushType());
-		rtnUsers.setConnectedType(users.getConnectedType());
-		
-		Users returnUsers = usersService.save(rtnUsers);
-		logger.debug("returnUsers:::"+returnUsers.toString());
 		return tokenEndpoint.postAccessToken(principal, parameters);
 	}
 
