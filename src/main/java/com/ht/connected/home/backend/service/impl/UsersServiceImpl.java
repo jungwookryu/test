@@ -42,7 +42,7 @@ public class UsersServiceImpl extends CrudServiceImpl<Users, Integer> implements
 		if (user.size()>0) {
 			return user.get(0);
 		} else {
-			throw new UsernameNotFoundException(String.format("username[%s] not found", userEmail));
+			throw new UsernameNotFoundException(String.format("userEmail[%s] not found", userEmail));
 		}
 		
 	}

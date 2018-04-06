@@ -27,31 +27,6 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 	@Value("${security.oauth2.resource.id}")
     private String resourceId;
-    /**
-	 * Role that users accessing the endpoint must have.
-	 */
-	public static final String ROLE_OWNER = "ROLE_OWNER";
-	/**
-	 * Role that users accessing the endpoint must have.
-	 */
-	public static final String ROLE_USER = "ROLE_USER";
-
-	/**
-	 * Role that users accessing the endpoint must have.
-	 */
-	public static final String ROLE_ADMIN = "ROLE_ADMIN";
-
-	public static final String ROLE_ACTIVE = "ROLE_ACTIVE";
-
-	/**
-	 * Role that users accessing the endpoint must have.
-	 */
-	public static final String ROLE_CREATE_Y = "ROLE_CREATE_Y";
-
-	/**
-	 * Role that users accessing the endpoint must have.
-	 */
-	public static final String ROLE_PASSWD_SET = "ROLE_PASSWD_SET";
     @Autowired
     private DefaultTokenServices tokenServices;
 
@@ -69,28 +44,18 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     public void configure(HttpSecurity http) throws Exception {
     	logger.debug("configure::::::::::HttpSecurity::::::::::::start22222222222"+SecurityProperties.ACCESS_OVERRIDE_ORDER);
         http.authorizeRequests()
-        	.antMatchers("/authentication/**").permitAll()
-        	.antMatchers("/users").permitAll()
+   			.antMatchers("/authentication/login").permitAll()
+   	        .antMatchers(HttpMethod.GET, "/addUser").permitAll()
+   	        .antMatchers(HttpMethod.POST,"/users").permitAll()
+			.antMatchers("/passwordReset/**").permitAll()
+			.antMatchers("/error/*").permitAll()
         	.and()
         	.requestMatcher(new OAuthRequestedMatcher())
-            .anonymous().disable()
+        	.anonymous().disable()
             .authorizeRequests()
-			.antMatchers("/","/**").permitAll()
+            .antMatchers("/**/**").permitAll()
             .antMatchers(HttpMethod.OPTIONS).permitAll();
-//    			.antMatchers("/authentication/login").permitAll()
-//    			.antMatchers("/group/*").access("hasRole('" + ROLE_OWNER + "') or hasRole('" + ROLE_USER + "')")
-//    			.antMatchers("/admin/**").access("hasRole('" + ROLE_OWNER + "') or hasRole('" + ROLE_USER + "')")
-//    			.antMatchers("/autheication/*").access("hasRole('" + ROLE_OWNER + "') or hasRole('" + ROLE_USER + "')")
-//    			.antMatchers("/passwordReset/**").access("hasRole('" + ROLE_OWNER + "') or hasRole('" + ROLE_USER + "')")
-//    			.antMatchers("/user/**").access("hasRole('" + ROLE_OWNER + "') or hasRole('" + ROLE_USER + "')")
-//    			.antMatchers("/error/*").permitAll().antMatchers("/login")
-//    			.permitAll()
-//                .antMatchers("/","/**").permitAll();
-//    			.and().logout()
-//    			.logoutSuccessUrl("/logout?logout").and().exceptionHandling().accessDeniedPage("/403");
-//                .antMatchers("/api/hello").access("hasAnyRole('USER')")
-//                .antMatchers("/api/me").hasAnyRole("USER", "ADMIN")
-//                .antMatchers("/api/register").hasAuthority("ROLE_REGISTER");
+			
     }
 
     private static class OAuthRequestedMatcher implements RequestMatcher {
@@ -99,10 +64,9 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
             // Determine if the client request contained an OAuth Authorization
             boolean haveOauth2Token = (auth != null) && auth.startsWith("Bearer");
             boolean haveAccessToken = request.getParameter("access_token")!=null;
+            
             return haveOauth2Token || haveAccessToken;
         }
     }
-
-
 
 }

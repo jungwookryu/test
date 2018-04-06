@@ -53,13 +53,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	protected void configure(HttpSecurity http) throws Exception {
     	logger.debug("configure::::::::::HttpSecurity::::::::::::start1"+SecurityProperties.ACCESS_OVERRIDE_ORDER);
         http
+        .csrf().disable()
         .authorizeRequests()
-        .antMatchers("/","/**").permitAll()
         .anyRequest().authenticated()
-        .antMatchers(HttpMethod.OPTIONS).permitAll()
-        .and().httpBasic()
+        .antMatchers(HttpMethod.GET, "/addUser").permitAll()
+        .antMatchers(HttpMethod.POST,"/users").permitAll()
+        .antMatchers(HttpMethod.GET,"/users").permitAll()
+        .antMatchers(HttpMethod.DELETE,"/users").permitAll()
+        .antMatchers(HttpMethod.PUT,"/users").permitAll()
+        .antMatchers("/users/**").permitAll()
+        .antMatchers("/zwave/**").permitAll()
+        .antMatchers("/users/user/**").permitAll()
+        .antMatchers("/authentication/**").permitAll()
         .and()
-        .csrf().disable();
+        .exceptionHandling().accessDeniedPage("/error/403")
+        .and().logout()
+		.logoutSuccessUrl("/logout?logout")
+        .invalidateHttpSession(true)
+        ;
 	}
 
 

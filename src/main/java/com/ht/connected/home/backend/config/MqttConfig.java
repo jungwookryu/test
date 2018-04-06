@@ -1,6 +1,13 @@
 package com.ht.connected.home.backend.config;
 
 import static java.util.Objects.isNull;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ht.connected.home.backend.model.entity.Gateway;
+import com.ht.connected.home.backend.repository.GateWayRepository;
+import com.ht.connected.home.backend.service.mqtt.MessageArrivedComponent;
+import com.ht.connected.home.backend.service.mqtt.MqttPayloadExecutor;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -22,12 +29,6 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ht.connected.home.backend.model.entity.Gateway;
-import com.ht.connected.home.backend.repository.GateWayRepository;
-import com.ht.connected.home.backend.service.mqtt.MessageArrivedComponent;
-import com.ht.connected.home.backend.service.mqtt.MqttPayloadExecutor;
 
 /**
  * 스프링 mqtt 설정 클래스
