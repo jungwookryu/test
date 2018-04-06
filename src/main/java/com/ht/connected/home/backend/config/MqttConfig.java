@@ -1,7 +1,12 @@
 package com.ht.connected.home.backend.config;
 
+import static java.util.Objects.isNull;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ht.connected.home.backend.model.entity.Gateway;
 import com.ht.connected.home.backend.repository.GateWayRepository;
+import com.ht.connected.home.backend.service.mqtt.MessageArrivedComponent;
+import com.ht.connected.home.backend.service.mqtt.MqttPayloadExecutor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -145,25 +150,25 @@ public class MqttConfig {
 
 			@Override
 			public void handleMessage(Message<?> message) throws MessagingException {
-//				String topic = String.valueOf(message.getHeaders().get("mqtt_topic"));
-//				String payload = String.valueOf(message.getPayload());
-//				LOGGER.info("messageArrived: Topic=" + topic + ", Payload=" + payload);
-//
-//				MessageArrivedComponent messageArrivedComponent = beanFactory.getBean(MessageArrivedComponent.class);
-//				messageArrivedComponent.init(topic, payload);
-//				Gateway gateway = gatewayRepository.findBySerial(messageArrivedComponent.getSerial());
-//				MqttPayloadExecutor executor = messageArrivedComponent.getExecutor();
-//				Object returnData = null;
-//				if (!isNull(executor)) {
-//					try {
-//						returnData = executor.execute(messageArrivedComponent, gateway);
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//					}
-//				}
-//				if (!isNull(returnData)) {
-//
-//				}
+				String topic = String.valueOf(message.getHeaders().get("mqtt_topic"));
+				String payload = String.valueOf(message.getPayload());
+				LOGGER.info("messageArrived: Topic=" + topic + ", Payload=" + payload);
+
+				MessageArrivedComponent messageArrivedComponent = beanFactory.getBean(MessageArrivedComponent.class);
+				messageArrivedComponent.init(topic, payload);
+				Gateway gateway = gatewayRepository.findBySerial(messageArrivedComponent.getSerial());
+				MqttPayloadExecutor executor = messageArrivedComponent.getExecutor();
+				Object returnData = null;
+				if (!isNull(executor)) {
+					try {
+						returnData = executor.execute(messageArrivedComponent, gateway);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				if (!isNull(returnData)) {
+
+				}
 			}
 
 		};
