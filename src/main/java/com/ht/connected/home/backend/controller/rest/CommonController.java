@@ -42,6 +42,9 @@ public class CommonController extends Common {
 		Authentication auth = getAuthentication(); // concern you
 		ctxLogOut.logout(httpServletRequest, httpServletResponse, auth);
 	}
+	public String getAuthUserEmail(String access_token) {
+		return getAuthUserEmail();
+	}
 
 	public String getAuthUserEmail() {
 		return (String) getAuthentication().getPrincipal();
