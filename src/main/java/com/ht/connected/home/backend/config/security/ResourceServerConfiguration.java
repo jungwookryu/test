@@ -45,15 +45,16 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     	logger.debug("configure::::::::::HttpSecurity::::::::::::start22222222222"+SecurityProperties.ACCESS_OVERRIDE_ORDER);
         http.authorizeRequests()
    			.antMatchers("/authentication/login").permitAll()
-        	.antMatchers("/users").permitAll()
-        	.antMatchers("/adduser").permitAll()
+   	        .antMatchers(HttpMethod.GET, "/addUser").permitAll()
+   	        .antMatchers(HttpMethod.POST,"/users").permitAll()
 			.antMatchers("/passwordReset/**").permitAll()
 			.antMatchers("/error/*").permitAll()
         	.and()
         	.requestMatcher(new OAuthRequestedMatcher())
-        	 .anonymous().disable()
-             .authorizeRequests()
-             .antMatchers(HttpMethod.OPTIONS).permitAll();
+        	.anonymous().disable()
+            .authorizeRequests()
+            .antMatchers("/**/**").permitAll()
+            .antMatchers(HttpMethod.OPTIONS).permitAll();
 			
     }
 
@@ -63,6 +64,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
             // Determine if the client request contained an OAuth Authorization
             boolean haveOauth2Token = (auth != null) && auth.startsWith("Bearer");
             boolean haveAccessToken = request.getParameter("access_token")!=null;
+            
             return haveOauth2Token || haveAccessToken;
         }
     }

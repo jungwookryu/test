@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -54,12 +55,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         http
         .csrf().disable()
         .authorizeRequests()
-        .antMatchers("/users").permitAll()
         .anyRequest().authenticated()
-        .antMatchers("/users/**").access("hasRole('" + "ROLE_USER" + "') or hasRole('" + "ROLE_USER" + "')")
-        .antMatchers("/zwave/**").access("hasRole('" + "ROLE_USER" + "') or hasRole('" + "ROLE_USER" + "')")
-        .antMatchers("/users/user/**").access("hasRole('" + "ROLE_USER" + "') or hasRole('" + "ROLE_USER" + "')")
-        .antMatchers("/authentication/**").access("hasRole('" + "ROLE_USER" + "') or hasRole('" + "ROLE_USER" + "')")
+        .antMatchers(HttpMethod.GET, "/addUser").permitAll()
+        .antMatchers(HttpMethod.POST,"/users").permitAll()
+        .antMatchers(HttpMethod.GET,"/users").permitAll()
+        .antMatchers(HttpMethod.DELETE,"/users").permitAll()
+        .antMatchers(HttpMethod.PUT,"/users").permitAll()
+        .antMatchers("/users/**").permitAll()
+        .antMatchers("/zwave/**").permitAll()
+        .antMatchers("/users/user/**").permitAll()
+        .antMatchers("/authentication/**").permitAll()
         .and()
         .exceptionHandling().accessDeniedPage("/error/403")
         .and().logout()
