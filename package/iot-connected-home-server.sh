@@ -18,6 +18,7 @@ jar_list="ht-iot-connected-home-backend-server-*.jar"
 logfile="$root_dir/serverstartlog.log"
 this_script="iot-connected-home-server.sh"
 JAVA="java -Xmx256m"
+spring_opt="-Dspring.profiles.active=$2"
 
 # get process pid
 getpids(){
@@ -32,10 +33,10 @@ start() {
 	if [ "$pids" != "" ]; then
 		echo "$program_name: already running"
   else
-    echo "$program_name: Starting..."
+    echo "$program_name-$spring_opt: Starting..."
     ulimit -c unlimited
     ulimit -n 65530
-    $JAVA -jar $jar_list $program &
+    $JAVA -jar $spring_opt $jar_list $program &
 	fi
 }
 
