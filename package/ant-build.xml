@@ -11,6 +11,7 @@
 	<property name="ssh.host.port" value="22"/>
 	<property name="ssh.host.user.id" value="${USER_ID}"/>
 	<property name="ssh.host.user.pwd" value="${USER_PWD}"/>
+	<property name="spring.profile" value="${SPRING_PROFILE}"/>
 	<property name="server.version.no" value="0.0.0"/>
 
 <!-- =====================================================================
@@ -39,6 +40,11 @@
 	var userPWD = project.getProperty('USER_PWD');	
 	if( userPWD == null){		
 		project.setProperty('ssh.host.user.pwd','@alTmzhfldk');
+	}
+  	
+  	var springProfile = project.getProperty('SPRING_PROFILE');	
+	if( springProfile == null){		
+		project.setProperty('spring.profile','dev');
 	}
 			
   </script>
@@ -165,6 +171,7 @@
 	<echo> ssh.host.user.id : ${ssh.host.user.id} </echo>
 	<echo> ssh.host.user.pwd : ${ssh.host.user.pwd} </echo>
 	<echo> server.version.no : ${server.version.no} </echo>
+  	<echo> spring.profile : ${spring.profile} </echo>
   </target>
   
 <!-- ===================================================================== 
@@ -209,6 +216,7 @@
 	<echo>server port: ${ssh.host.port}</echo> 
 	<echo>server user id: ${ssh.host.user.id}</echo> 
 	<echo>server user pwd: ${ssh.host.user.pwd}</echo> 
+  	<echo>spring profiles active: ${spring.profile}</echo>
 	
 	<tstamp> 
           <format property="TODAY" pattern="yyyy-MM-dd-HH-mm" locale="en"/>
@@ -230,7 +238,7 @@
 			<exec cmd="unzip ht-iot-connected-home-backend-server-*.zip -d ./" />
 			<exec cmd="chmod +x iot-ht-server/iot-connected-home-server.sh" />
 			<exec cmd="cd iot-ht-server/" />			
-			<exec cmd="./iot-connected-home-server.sh start" />
+			<exec cmd="./iot-connected-home-server.sh start ${spring.profile}" />
 	</ssh>
 	
   </target> 
