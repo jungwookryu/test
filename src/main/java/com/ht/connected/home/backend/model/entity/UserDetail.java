@@ -307,7 +307,6 @@ public class UserDetail implements UserDetails {
 	@Override
 	public List<GrantedAuthority> getAuthorities() {
 		List<GrantedAuthority> authorities = new ArrayList<>();
-		roles.forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));
 		return authorities;
 	}
 

@@ -43,23 +43,21 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
     public void configure(HttpSecurity http) throws Exception {
     	logger.debug("configure::::::::::HttpSecurity::::::::::::start22222222222"+SecurityProperties.ACCESS_OVERRIDE_ORDER);
-        http.authorizeRequests()
-   			.antMatchers("/authentication/login").permitAll()
-   	        .antMatchers(HttpMethod.GET, "/addUser").permitAll()
-   	        .antMatchers(HttpMethod.POST,"/users").permitAll()
-			.antMatchers("/passwordReset/**").permitAll()
-			.antMatchers("/error/*").permitAll()
-        	.and()
-        	.requestMatcher(new OAuthRequestedMatcher())
-        	.anonymous().disable()
-            .authorizeRequests()
-            .antMatchers("/*/**").permitAll()
-            .antMatchers(HttpMethod.OPTIONS).permitAll();
-			
+    	http
+    	.requestMatcher(new OAuthRequestedMatcher())
+        .authorizeRequests()
+        .antMatchers("/authentication/login").permitAll()
+        .antMatchers(HttpMethod.GET, "/addUser").permitAll()
+        .antMatchers(HttpMethod.POST,"/users").permitAll()
+        .antMatchers("/passwordReset/**").permitAll()
+        .antMatchers("/error/*").permitAll()
+        .and()
+        .authorizeRequests()
+        .anyRequest().access("#oauth2.hasScope('read') or (!#oauth2.isOAuth() and hasRole('ROLE_USER'))");
     }
 
     private static class OAuthRequestedMatcher implements RequestMatcher {
-        public boolean matches(HttpServletRequest request) {
+        public boolean matches(HttpServletRequest request) {               
             String auth = request.getHeader("Authorization");
             // Determine if the client request contained an OAuth Authorization
             boolean haveOauth2Token = (auth != null) && (auth.startsWith("Bearer") || auth.startsWith("bearer"));

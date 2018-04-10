@@ -3,6 +3,7 @@ import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.service.UserDetailService;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.security.authentication.dao.AbstractUserDetailsAuthen
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 @Component
@@ -71,8 +73,9 @@ public class HtAuthenticationProvider extends AbstractUserDetailsAuthenticationP
 		}
 
 		// find out the exited users
-		List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
-//		grantedAuthorities.add(new SimpleGrantedAuthority());
+		List<GrantedAuthority> grantedAuthorities = (List<GrantedAuthority>) userDetails.getAuthorities();
+		grantedAuthorities.add(new SimpleGrantedAuthority("User"));
+		grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(name, encoderPass,
 				authentication.getAuthorities());
 
