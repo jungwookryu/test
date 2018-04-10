@@ -53,7 +53,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         	.requestMatcher(new OAuthRequestedMatcher())
         	.anonymous().disable()
             .authorizeRequests()
-            .antMatchers("/**/**").permitAll()
+            .antMatchers("/*/**").permitAll()
             .antMatchers(HttpMethod.OPTIONS).permitAll();
 			
     }
@@ -62,7 +62,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         public boolean matches(HttpServletRequest request) {
             String auth = request.getHeader("Authorization");
             // Determine if the client request contained an OAuth Authorization
-            boolean haveOauth2Token = (auth != null) && auth.startsWith("Bearer");
+            boolean haveOauth2Token = (auth != null) && (auth.startsWith("Bearer") || auth.startsWith("bearer"));
             boolean haveAccessToken = request.getParameter("access_token")!=null;
             
             return haveOauth2Token || haveAccessToken;
