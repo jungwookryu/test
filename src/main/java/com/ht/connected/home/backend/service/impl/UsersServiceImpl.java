@@ -2,12 +2,15 @@ package com.ht.connected.home.backend.service.impl;
 
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.config.service.EmailConfig;
+import com.ht.connected.home.backend.model.dto.UserRole;
+import com.ht.connected.home.backend.model.dto.UserActive;
 import com.ht.connected.home.backend.model.entity.Users;
 import com.ht.connected.home.backend.repository.UsersRepository;
 import com.ht.connected.home.backend.service.UsersService;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 
 import java.io.InputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
@@ -18,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.handler.UserRoleAuthorizationInterceptor;
 
 @Service
 public class UsersServiceImpl extends CrudServiceImpl<Users, Integer> implements UsersService{
@@ -50,6 +54,7 @@ public class UsersServiceImpl extends CrudServiceImpl<Users, Integer> implements
 	@Override
 	public Users modify(int no, Users user) {
 		Users passwordUser = getUser(user.getUserEmail());
+		user.setLastmodifiedTime(new Date());
 		user.setPassword(passwordUser.getRePassword());
 		user.setNo(no);
 		Users modyfyUser = (Users) save(user);
@@ -68,7 +73,10 @@ public class UsersServiceImpl extends CrudServiceImpl<Users, Integer> implements
 	public Users register(Users users) {
 		users.setPassword(Common.encryptHash("SHA-256", users.getPassword()));
 		users.setRedirectiedCode(randomCode());
-		users.setActive(0);
+		users.setActive(UserActive.NOT_EMAIL_AUTH.ordinal());
+		users.setAuthority(UserRole.ROLE_USER.name());
+		users.setPushType(9);
+		users.setCreatedTime(new Date());
 		Users rtnUsers = insert(users);
 		authSendEmail(rtnUsers);
 		return rtnUsers;

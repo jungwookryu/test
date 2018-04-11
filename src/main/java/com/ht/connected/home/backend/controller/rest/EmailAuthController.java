@@ -1,8 +1,10 @@
 package com.ht.connected.home.backend.controller.rest;
 
+import com.ht.connected.home.backend.model.dto.UserActive;
 import com.ht.connected.home.backend.model.entity.Users;
 import com.ht.connected.home.backend.service.UsersService;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +32,8 @@ public class EmailAuthController extends CommonController {
 		Users rtnUsers = usersService.getUser(userEmail);
 		if (null!=rtnUsers) {
 			if(redirected_code.equals(rtnUsers.getRedirectiedCode())){
-				rtnUsers.setActive(1);
+				rtnUsers.setActive(UserActive.EMAIL_AUTH.ordinal());
+
 				usersService.modify(rtnUsers.getNo(), rtnUsers);
 			}
 		}
