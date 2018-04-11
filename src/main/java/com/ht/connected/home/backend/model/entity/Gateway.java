@@ -1,17 +1,19 @@
 package com.ht.connected.home.backend.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "gateway")
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties({ "no", "id", "ip", "ssid", "bssid", "version", "status", "createdUserId",
+		"createdTime", "lastModifiedTime" })
 public class Gateway {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +41,9 @@ public class Gateway {
 	@Column(name = "version")
 	private String version;
 
+	@Column(name = "model")
+	private String model;
+
 	@Column(name = "status")
 	private String status;
 
@@ -51,9 +56,23 @@ public class Gateway {
 	@Column(name = "lastmodified_time")
 	private String lastModifiedTime;
 
+	@Transient
+	private String userNickname;
+
+	@Transient
+	private String userEmail;
+
 	public Gateway() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+
+	public int getNo() {
+		return no;
+	}
+
+	public void setNo(int no) {
+		this.no = no;
 	}
 
 	public String getNickname() {
@@ -143,5 +162,31 @@ public class Gateway {
 	public void setLastModifiedTime(String lastModifiedTime) {
 		this.lastModifiedTime = lastModifiedTime;
 	}
+
+	public String getModel() {
+		return model;
+	}
+
+	public void setModel(String model) {
+		this.model = model;
+	}
+
+	public String getUserNickname() {
+		return userNickname;
+	}
+
+	public void setUserNickname(String userNickname) {
+		this.userNickname = userNickname;
+	}
+
+	public String getUserEmail() {
+		return userEmail;
+	}
+
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
+	}
+	
+	
 
 }
