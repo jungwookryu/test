@@ -1,5 +1,6 @@
 package com.ht.connected.home.backend.config.security;
 import com.ht.connected.home.backend.common.Common;
+import com.ht.connected.home.backend.model.dto.UserActive;
 import com.ht.connected.home.backend.service.UserDetailService;
 
 import java.util.ArrayList;
@@ -74,10 +75,8 @@ public class HtAuthenticationProvider extends AbstractUserDetailsAuthenticationP
 
 		// find out the exited users
 		List<GrantedAuthority> grantedAuthorities = (List<GrantedAuthority>) userDetails.getAuthorities();
-		grantedAuthorities.add(new SimpleGrantedAuthority("User"));
-		grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(name, encoderPass,
-				authentication.getAuthorities());
+		        grantedAuthorities);
 
 		logger.info("Succesful Authentication with user = " + name);
 		return auth;

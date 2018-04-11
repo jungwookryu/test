@@ -18,6 +18,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
+import com.ht.connected.home.backend.model.dto.UserActive;
+import com.ht.connected.home.backend.model.dto.UserRole;
+
 @Configuration
 @EnableWebSecurity(debug = true)
 @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
@@ -57,14 +60,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         http
             .csrf().disable()
             .authorizeRequests()
+            .antMatchers("/adduser*").permitAll()
             .antMatchers("/authentication/login").permitAll()
-            .antMatchers(HttpMethod.GET, "/addUser").permitAll()
             .antMatchers(HttpMethod.POST,"/users").permitAll()
             .antMatchers("/passwordReset/**").permitAll()
             .antMatchers("/error/*").permitAll()
             .and()
             .authorizeRequests()
-            .anyRequest().access("hasRole('ROLE_USER')")
+            .anyRequest().access("hasRole('"+UserRole.ROLE_USER.name()
+                       +"') and (hasRole('"+UserActive.EMAIL_AUTH.name()+"') or hasRole('"+UserActive.PASSWORD_RESET.name()+"'))")
             .anyRequest().authenticated()
             .and()
             .exceptionHandling().accessDeniedPage("/error/403")

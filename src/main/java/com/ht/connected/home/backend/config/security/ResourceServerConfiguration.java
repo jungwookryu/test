@@ -46,8 +46,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     	http
     	.requestMatcher(new OAuthRequestedMatcher())
         .authorizeRequests()
+        .antMatchers("/adduser").permitAll()
         .antMatchers("/authentication/login").permitAll()
-        .antMatchers(HttpMethod.GET, "/addUser").permitAll()
         .antMatchers(HttpMethod.POST,"/users").permitAll()
         .antMatchers("/passwordReset/**").permitAll()
         .antMatchers("/error/*").permitAll()
