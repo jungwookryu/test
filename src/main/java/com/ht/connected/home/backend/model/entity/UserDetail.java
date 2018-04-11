@@ -10,6 +10,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.ht.connected.home.backend.model.dto.UserActive;
+import com.ht.connected.home.backend.model.dto.UserRole;
+
 /**
  * @author COM
  *
@@ -33,7 +36,7 @@ public class UserDetail implements UserDetails {
 	private boolean accountNonExpired, accountNonLocked, credentialsNonExpired, enabled;
 
 	protected Logger logger = LoggerFactory.getLogger(getClass());
-	private List<GrantedAuthority> authorities;
+	private List<GrantedAuthority> authorities = new ArrayList();
 
 	public UserDetail() {
 		this.accountNonExpired = true;
@@ -51,6 +54,8 @@ public class UserDetail implements UserDetails {
 		this.accountNonLocked = true;
 		this.credentialsNonExpired = true;
 		this.enabled = true;
+		this.authorities.add(new SimpleGrantedAuthority(users.getAuthority()));
+		this.authorities.add(new SimpleGrantedAuthority(UserActive.values()[users.getActive()].name()));
 		logger.debug("DashboardAuthenticationDetails end");
 	}
 
