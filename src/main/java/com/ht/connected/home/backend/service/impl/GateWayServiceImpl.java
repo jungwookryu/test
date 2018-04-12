@@ -32,7 +32,7 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway , Integer> imple
 
     @Autowired
     GateWayRepository gatewayRepository;
-
+ 
     @Autowired
     UserGatewayRepository userGatewayRepository;
     

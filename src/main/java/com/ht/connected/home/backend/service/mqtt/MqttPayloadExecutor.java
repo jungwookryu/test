@@ -1,7 +1,7 @@
 package com.ht.connected.home.backend.service.mqtt;
 
+import com.ht.connected.home.backend.model.dto.MqttMessageArrived;
 import com.ht.connected.home.backend.model.entity.Gateway;
-import com.ht.connected.home.backend.service.mqtt.MessageArrivedComponent;
 
 /**
  * Executor들의 인터페이스
@@ -18,5 +18,5 @@ public interface MqttPayloadExecutor {
 	 * @return
 	 * @throws Exception
 	 */
-	Object execute(MessageArrivedComponent mqttTopicHandler, Gateway gateway) throws Exception;
+	Object execute(MqttMessageArrived mqttMessageArrived, Gateway gateway) throws Exception;
 }
