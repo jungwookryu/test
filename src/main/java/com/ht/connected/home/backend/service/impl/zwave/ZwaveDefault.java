@@ -33,7 +33,6 @@ public class ZwaveDefault {
 	@Autowired
 	GateWayRepository gatewayRepository;
 
-
 	@Autowired
 	BeanFactory beanFactory;
 
@@ -44,9 +43,7 @@ public class ZwaveDefault {
 	protected ObjectMapper objectMapper;
 
 	@SuppressWarnings("rawtypes")
-
 	public ResponseEntity publish(HashMap<String, Object> req, ZwaveRequest zwaveRequest) throws JsonProcessingException {
-
 		String topic = getMqttPublishTopic(zwaveRequest);
 		publish(topic, getPublishPayload(req));
 		return new ResponseEntity(null);
@@ -58,7 +55,6 @@ public class ZwaveDefault {
 		MqttGateway gateway = beanFactory.getBean(MqttGateway.class);
 			String payload = objectMapper.writeValueAsString(publishPayload);
 			gateway.sendToMqtt(payload);
-
 	}
 
 	public void publish(String topic) {
@@ -75,7 +71,6 @@ public class ZwaveDefault {
 	 */
 	public void updateCertification(ZwaveRequest zwaveRequest, String payload) {
 		Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
-
 		Certification certification = new Certification();
 		certification.setPayload(payload);
 		certification.setController("zwave");
@@ -89,7 +84,6 @@ public class ZwaveDefault {
 			certificationRepository.delete(certPayloadExistList);
 		}
 		certificationRepository.save(certification);
-
 	}
 
 	/**
