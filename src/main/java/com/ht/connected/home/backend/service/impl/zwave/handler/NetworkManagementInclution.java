@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +20,14 @@ import com.ht.connected.home.backend.model.entity.Zwave;
 import com.ht.connected.home.backend.repository.ZwaveRepository;
 import com.ht.connected.home.backend.service.ZwaveService;
 import com.ht.connected.home.backend.service.impl.zwave.ZwaveClassKey;
+
 import com.ht.connected.home.backend.service.impl.zwave.ZwaveCommandKey;
 import com.ht.connected.home.backend.service.impl.zwave.ZwaveDefault;
 
 @Service
 @Scope(value = "prototype")
 public class NetworkManagementInclution extends ZwaveDefault implements ZwaveService {
+
     
     @Autowired
     ZwaveRepository zwaveRepository;

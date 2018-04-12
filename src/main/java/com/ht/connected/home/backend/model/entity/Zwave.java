@@ -124,5 +124,4 @@ public class Zwave {
     public void setLastModifiedDate(Date lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
-
 }
