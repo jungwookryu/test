@@ -1,5 +1,7 @@
 package com.ht.connected.home.backend.model.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,116 +13,116 @@ import javax.persistence.Table;
 @Table(name = "zwave")
 public class Zwave {
 
-	@Id
-	@Column(name = "no")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	int no;
+    @Id
+    @Column(name = "no")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    int no;
 
-	@Column(name = "gateway_no")
-	String gatewayNo;
+    @Column(name = "gateway_no")
+    int gatewayNo;
 
-	@Column(name = "node_id")
-	String nodeId;
+    @Column(name = "node_id")
+    int nodeId;
 
-	@Column(name = "endpoint_id")
-	String endpointId;
+    @Column(name = "endpoint_id")
+    int endpointId;
 
-	@Column(name = "nickname")
-	String nickname;
+    @Column(name = "nickname")
+    String nickname;
 
-	@Column(name = "cmd")
-	String cmd;
+    @Column(name = "cmd")
+    String cmd;
 
-	@Column(name = "event")
-	String event;
+    @Column(name = "event")
+    String event;
 
-	@Column(name = "status")
-	String status;
+    @Column(name = "status")
+    String status;
 
-	@Column(name = "crerated_time")
-	String creratedTime;
+    @Column(name = "crerated_time")
+    Date creratedTime;
 
-	@Column(name = "lastmodified_date")
-	String lastModifiedDate;
+    @Column(name = "lastmodified_date")
+    Date lastModifiedDate;
 
-	public int getNo() {
-		return no;
-	}
+    public int getNo() {
+        return no;
+    }
 
-	public void setNo(int no) {
-		this.no = no;
-	}
+    public void setNo(int no) {
+        this.no = no;
+    }
 
-	public String getGatewayNo() {
-		return gatewayNo;
-	}
+    public int getGatewayNo() {
+        return gatewayNo;
+    }
 
-	public void setGatewayNo(String gatewayNo) {
-		this.gatewayNo = gatewayNo;
-	}
+    public void setGatewayNo(int gatewayNo) {
+        this.gatewayNo = gatewayNo;
+    }
 
-	public String getNodeId() {
-		return nodeId;
-	}
+    public int getNodeId() {
+        return nodeId;
+    }
 
-	public void setNodeId(String nodeId) {
-		this.nodeId = nodeId;
-	}
+    public void setNodeId(int nodeId) {
+        this.nodeId = nodeId;
+    }
 
-	public String getEndpointId() {
-		return endpointId;
-	}
+    public int getEndpointId() {
+        return endpointId;
+    }
 
-	public void setEndpointId(String endpointId) {
-		this.endpointId = endpointId;
-	}
+    public void setEndpointId(int endpointId) {
+        this.endpointId = endpointId;
+    }
 
-	public String getNickname() {
-		return nickname;
-	}
+    public String getNickname() {
+        return nickname;
+    }
 
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
-	}
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
-	public String getCmd() {
-		return cmd;
-	}
+    public String getCmd() {
+        return cmd;
+    }
 
-	public void setCmd(String cmd) {
-		this.cmd = cmd;
-	}
+    public void setCmd(String cmd) {
+        this.cmd = cmd;
+    }
 
-	public String getEvent() {
-		return event;
-	}
+    public String getEvent() {
+        return event;
+    }
 
-	public void setEvent(String event) {
-		this.event = event;
-	}
+    public void setEvent(String event) {
+        this.event = event;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public String getCreratedTime() {
-		return creratedTime;
-	}
+    public Date getCreratedTime() {
+        return creratedTime;
+    }
 
-	public void setCreratedTime(String creratedTime) {
-		this.creratedTime = creratedTime;
-	}
+    public void setCreratedTime(Date creratedTime) {
+        this.creratedTime = creratedTime;
+    }
 
-	public String getLastModifiedDate() {
-		return lastModifiedDate;
-	}
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
+    }
 
-	public void setLastModifiedDate(String lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
+    public void setLastModifiedDate(Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
 
 }
