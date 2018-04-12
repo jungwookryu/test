@@ -1,11 +1,42 @@
 package com.ht.connected.home.backend.model.dto;
 
+import java.util.HashMap;
 
-/**
- * 호스트 Manager 관리용 MQTT 발송 payload 인터페이스
- * @author 구정화
- *
- */
-public interface MqttPayload {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class MqttPayload {
+
+	@JsonProperty(value = "result_code")
+	private int resultCode;
+
+	@JsonProperty(value = "result_msg")
+	private String resultMessage;
+
+	@JsonProperty(value = "result_data")
+	private HashMap<String, Object> resultData;
+
+	public int getResultCode() {
+		return resultCode;
+	}
+
+	public void setResultCode(int resultCode) {
+		this.resultCode = resultCode;
+	}
+
+	public String getResultMessage() {
+		return resultMessage;
+	}
+
+	public void setResultMessage(String resultMessage) {
+		this.resultMessage = resultMessage;
+	}
+
+	public HashMap<String, Object> getResultData() {
+		return resultData;
+	}
+
+	public void setResultData(HashMap<String, Object> resultData) {
+		this.resultData = resultData;
+	}
 
 }
