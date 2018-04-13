@@ -13,6 +13,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.util.StringUtils;
 
 /**
  * Created by ijlee on 2018-02-05.
@@ -65,6 +66,9 @@ public class EmailConfig {
         props.put("mail.smtp.userEmail",env.getRequiredProperty("mail.smtp.userEmail"));
         props.put("mail.smtp.contextUrl",env.getRequiredProperty("mail.smtp.properties.contextUrl"));
         String sActive = env.getRequiredProperty("spring.profiles.active");
+        if(StringUtils.isEmpty(sActive)) {
+            sActive="dev";
+        }
         props.put("mail.smtp.active.authUrl", env.getRequiredProperty("mail.smtp.properties."+sActive+".authUrl")+env.getRequiredProperty("server.port"));
         
         return props;
