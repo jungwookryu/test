@@ -50,6 +50,9 @@ public class NetworkManagementProxy extends ZwaveDefault implements ZwaveService
             if (!isNull(resultData)) {
                 data = objectMapper.writeValueAsString(resultData);
                 if (zwaveRequest.getCommandKey().equals(ZwaveCommandKey.NODE_LIST_REPORT)) {
+                    /**
+                     * 기기 리스트 수신시  새로 등록한 기기가 있을경우
+                     */
                     Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
                     if(!isNull(gateway)) {
                         Zwave zwave = zwaveRepository.findByGatewayNoAndCmd(gateway.getNo(),
