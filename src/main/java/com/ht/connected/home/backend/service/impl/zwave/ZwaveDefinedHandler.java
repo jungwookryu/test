@@ -2,6 +2,7 @@ package com.ht.connected.home.backend.service.impl.zwave;
 
 import java.util.HashMap;
 
+import com.ht.connected.home.backend.config.service.ZwaveClassKey;
 import com.ht.connected.home.backend.service.impl.zwave.handler.NetworkManagementInclution;
 import com.ht.connected.home.backend.service.impl.zwave.handler.NetworkManagementProxy;
 
