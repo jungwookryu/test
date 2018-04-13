@@ -42,6 +42,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 /**
  * @author ijlee
@@ -95,7 +96,7 @@ public class Common {
 	 */
 	public static Boolean empty(Object obj) {
 		if (obj instanceof String) {
-			return "".equals(obj.toString().trim());
+			return StringUtils.isEmpty(obj.toString().trim());
 		} else if (obj instanceof List) {
 			return ((List) obj).isEmpty();
 		} else if (obj instanceof Map) {

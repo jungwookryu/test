@@ -1,5 +1,6 @@
 package com.ht.connected.home.backend.controller.rest;
 
+import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.model.entity.Users;
 import com.ht.connected.home.backend.service.UsersService;
 
@@ -55,7 +56,7 @@ public class LoginController extends CommonController {
 			@RequestParam Map<String, String> parameters, @RequestBody Users users)
 			throws HttpRequestMethodNotSupportedException {
 		String grant_type = parameters.getOrDefault("grant_type", "");
-		if ("".equals(grant_type)) {
+		if (Common.empty(grant_type)) {
 			parameters.put("grant_type", "password");
 
 			if ((null == users.getPushToken()) || (null == users.getConnectedType())) {
@@ -64,14 +65,14 @@ public class LoginController extends CommonController {
 
 			String userEmail = parameters.getOrDefault("user_email", "");
 			String userName = parameters.getOrDefault("username", "");
-			if ("".equals(userEmail) && "".equals(userName)) {
+			if (Common.empty(userEmail) && Common.empty(userName)) {
 				throw new BadClientCredentialsException();
 			}
-			if (("".equals(userEmail)) && (!"".equals(userName))) {
+			if (Common.empty(userEmail) && Common.notEmpty(userName)) {
 				userEmail = userName;
 				parameters.put("user_email", userName);
 			}
-			if ((!"".equals(userEmail)) && ("".equals(userName))) {
+	         if (Common.notEmpty(userEmail) && Common.empty(userName)) {
 				parameters.put("username", userEmail);
 			}
 			Users rtnUsers = usersService.getUser(userEmail);
