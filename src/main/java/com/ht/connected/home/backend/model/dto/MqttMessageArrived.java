@@ -50,7 +50,6 @@ public class MqttMessageArrived {
 	 */
 	public String getControllerMethod() {
 		List<String> segments = new ArrayList<>();
-		segments.add(direction);
 		segments.add(controller);
 		segments.add(method);
 		return String.join("/", segments);
@@ -63,7 +62,6 @@ public class MqttMessageArrived {
 	 */
 	public String getControllerMethodContext() {
 		List<String> segments = new ArrayList<>();
-		segments.add(direction);
 		segments.add(controller);
 		segments.add(method);
 		if (context != null) {
