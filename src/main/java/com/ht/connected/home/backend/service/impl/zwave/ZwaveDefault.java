@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ht.connected.home.backend.config.MqttConfig.MqttGateway;
+import com.ht.connected.home.backend.config.service.MqttConfig.MqttGateway;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
 import com.ht.connected.home.backend.model.entity.Certification;
 import com.ht.connected.home.backend.model.entity.Gateway;

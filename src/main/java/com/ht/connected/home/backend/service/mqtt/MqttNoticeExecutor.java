@@ -12,7 +12,7 @@ import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ht.connected.home.backend.config.MqttConfig.MqttGateway;
+import com.ht.connected.home.backend.config.service.MqttConfig.MqttGateway;
 import com.ht.connected.home.backend.model.dto.MqttMessageArrived;
 import com.ht.connected.home.backend.model.dto.MqttPayload;
 import com.ht.connected.home.backend.model.entity.Gateway;
