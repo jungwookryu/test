@@ -31,7 +31,7 @@ public class ZwaveDefault {
 	protected boolean isCert = false;
 
 	@Autowired
-	protected GateWayRepository gatewayRepository;
+	GateWayRepository gatewayRepository;
 
 	@Autowired
 	BeanFactory beanFactory;
@@ -43,23 +43,18 @@ public class ZwaveDefault {
 	protected ObjectMapper objectMapper;
 
 	@SuppressWarnings("rawtypes")
-	public ResponseEntity publish(HashMap<String, Object> req, ZwaveRequest zwaveRequest) {
+	public ResponseEntity publish(HashMap<String, Object> req, ZwaveRequest zwaveRequest) throws JsonProcessingException {
 		String topic = getMqttPublishTopic(zwaveRequest);
 		publish(topic, getPublishPayload(req));
 		return new ResponseEntity(null);
 	}
 
-	public void publish(String topic, HashMap<String, Object> publishPayload) {
+	public void publish(String topic, HashMap<String, Object> publishPayload) throws JsonProcessingException {
 		MqttPahoMessageHandler messageHandler = (MqttPahoMessageHandler) beanFactory.getBean("MqttOutbound");
 		messageHandler.setDefaultTopic(topic);
 		MqttGateway gateway = beanFactory.getBean(MqttGateway.class);
-		try {
 			String payload = objectMapper.writeValueAsString(publishPayload);
 			gateway.sendToMqtt(payload);
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	public void publish(String topic) {
@@ -76,21 +71,19 @@ public class ZwaveDefault {
 	 */
 	public void updateCertification(ZwaveRequest zwaveRequest, String payload) {
 		Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
-		if(!isNull(gateway)) {
-			Certification certification = new Certification();
-			certification.setPayload(payload);
-			certification.setController("zwave");
-			certification.setSerial(zwaveRequest.getSerialNo());
-			certification.setModel(gateway.getModel());
-			certification.setMethod(zwaveRequest.getClassKey());
-			certification.setContext(zwaveRequest.getCommandKey());
-			List<Certification> certPayloadExistList = certificationRepository.findBySerialAndMethodAndContext(
-					certification.getSerial(), certification.getMethod(), certification.getContext());
-			if (certPayloadExistList.size() > 0) {
-				certificationRepository.delete(certPayloadExistList);
-			}
-			certificationRepository.save(certification);
+		Certification certification = new Certification();
+		certification.setPayload(payload);
+		certification.setController("zwave");
+		certification.setSerial(zwaveRequest.getSerialNo());
+		certification.setModel(gateway.getModel());
+		certification.setMethod(zwaveRequest.getClassKey());
+		certification.setContext(zwaveRequest.getCommandKey());
+		List<Certification> certPayloadExistList = certificationRepository.findBySerialAndMethodAndContext(
+				certification.getSerial(), certification.getMethod(), certification.getContext());
+		if (certPayloadExistList.size() > 0) {
+			certificationRepository.delete(certPayloadExistList);
 		}
+		certificationRepository.save(certification);
 	}
 
 	/**

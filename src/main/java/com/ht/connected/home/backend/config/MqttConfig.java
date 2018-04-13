@@ -71,7 +71,7 @@ public class MqttConfig {
     static private HashMap<String, Class> executors = new HashMap<>();
 
     static {
-        executors.put("manager/noti", MqttNoticeExecutor.class);
+        executors.put("app/manager/noti", MqttNoticeExecutor.class);
     }
 
     /**
