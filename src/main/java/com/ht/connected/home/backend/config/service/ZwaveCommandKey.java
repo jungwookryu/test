@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.service.impl.zwave;
+package com.ht.connected.home.backend.config.service;
 
 public class ZwaveCommandKey {
 

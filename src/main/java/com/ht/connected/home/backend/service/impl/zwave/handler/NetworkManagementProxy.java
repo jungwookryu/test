@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.ht.connected.home.backend.config.service.ZwaveCommandKey;
 import com.ht.connected.home.backend.model.dto.MqttPayload;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
 import com.ht.connected.home.backend.service.ZwaveService;
-import com.ht.connected.home.backend.service.impl.zwave.ZwaveCommandKey;
 import com.ht.connected.home.backend.service.impl.zwave.ZwaveDefault;
 
 @Service
