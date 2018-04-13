@@ -2,6 +2,7 @@ package com.ht.connected.home.backend.controller.rest;
 
 import java.util.HashMap;
 import java.util.List;
+import static java.util.Objects.isNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.connected.home.backend.config.service.ZwaveClassKey;
+import com.ht.connected.home.backend.config.service.ZwaveCommandKey;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
 import com.ht.connected.home.backend.model.entity.Certification;
 import com.ht.connected.home.backend.repository.CertificationRepository;
@@ -28,10 +31,10 @@ import com.ht.connected.home.backend.service.impl.ZwaveServiceImpl;
 @RestController
 @RequestMapping("/zwave")
 public class ZwaveController {
-    
+
     @Autowired
     private ZwaveServiceImpl zwaveService;
-    
+
     @Autowired
     private CertificationRepository certificationRepository;
 
@@ -46,7 +49,7 @@ public class ZwaveController {
      * @return
      */
     @PostMapping(value = "/{classKey}/{commandKey}/{version}")
-    public Object getRequestVersion(@PathVariable("classKey") String classKey,
+    public ResponseEntity getRequestVersion(@PathVariable("classKey") String classKey,
             @PathVariable("commandKey") String commandKey, @PathVariable("version") String version,
             @RequestBody HashMap<String, Object> req) {
         ZwaveRequest zwaveRequest = new ZwaveRequest(req, classKey, commandKey, version);
@@ -55,8 +58,8 @@ public class ZwaveController {
 
     @PostMapping
     public ResponseEntity regist(@RequestBody HashMap<String, Object> req) {
-        String classKey = "0x34";
-        String commandKey = "0x01";
+        String classKey = ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION;
+        String commandKey = ZwaveCommandKey.NODE_ADD;
         req.put("nodeId", 0);
         req.put("endpointId", 0);
         req.put("option", 0);
@@ -67,9 +70,14 @@ public class ZwaveController {
 
     @GetMapping(value = "/{serial}")
     public ResponseEntity getList(@PathVariable("serial") String serial) {
-        List<Certification> certification = certificationRepository.findBySerialAndMethodAndContext(serial, "0x52", "0x02");
-        certification.get(0).getPayload();
-        return new ResponseEntity<>(certification.get(0).getPayload(), HttpStatus.ACCEPTED);
+        ResponseEntity response = new ResponseEntity(HttpStatus.NOT_FOUND);
+        List<Certification> certification = certificationRepository.findBySerialAndMethodAndContext(serial,
+                ZwaveClassKey.NETWORK_MANAGEMENT_PROXY, ZwaveCommandKey.NODE_LIST_REPORT);
+        if(!isNull(certification)) {
+            certification.get(0).getPayload();    
+            response = new ResponseEntity<>(certification.get(0).getPayload(), HttpStatus.ACCEPTED);
+        }
+        return response;
     }
 
     @PutMapping
@@ -78,7 +86,7 @@ public class ZwaveController {
         String commandKey = (String) req.get("cmdkey");
         String version = (String) req.get("version");
         ZwaveRequest zwaveRequest = new ZwaveRequest(req, classKey, commandKey, version);
-        return zwaveService.execute(req, zwaveRequest, false);      
+        return zwaveService.execute(req, zwaveRequest, false);
     }
 
 }
