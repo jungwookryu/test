@@ -67,7 +67,7 @@ public class MqttNoticeExecutor implements MqttPayloadExecutor {
 			List<Users> users = userRepository.findByUserEmail(map.get("user_email"));
 			Users user = users.get(0);
 			if (map.get("type").equals(REGISTER) && isNull(gateway)) {
-				gateway = updateGateway(mqttMessageArrived, gateway);
+				gateway = updateGateway(mqttMessageArrived, gateway, map);
 				updateUserGateway(gateway, user.getNo());
 				String topic = String.format("/server/app/%s/%s/manager/noti", gateway.getModel(),
 						gateway.getSerial());
@@ -90,12 +90,13 @@ public class MqttNoticeExecutor implements MqttPayloadExecutor {
 	 * @param gateway
 	 * @return
 	 */
-	private Gateway updateGateway(MqttMessageArrived mqttMessageArrived, Gateway gateway) {
+	private Gateway updateGateway(MqttMessageArrived mqttMessageArrived, Gateway gateway, HashMap<String, String> map) {
 		if (isNull(gateway)) {
 			gateway = new Gateway();
 		}
 		gateway.setSerial(mqttMessageArrived.getSerial());
 		gateway.setModel(mqttMessageArrived.getModel());
+		gateway.setBssid(map.get("macaddress"));
 		gatewayRepository.save(gateway);
 		return gateway;
 	}
