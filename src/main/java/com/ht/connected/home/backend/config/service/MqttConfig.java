@@ -2,7 +2,6 @@ package com.ht.connected.home.backend.config.service;
 
 import static java.util.Objects.isNull;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
@@ -25,6 +24,7 @@ import org.springframework.integration.mqtt.support.DefaultPahoMessageConverter;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
+import org.springframework.messaging.MessagingException;
 
 import com.ht.connected.home.backend.model.dto.MqttMessageArrived;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
@@ -34,7 +34,6 @@ import com.ht.connected.home.backend.service.base.ZwaveBase;
 import com.ht.connected.home.backend.service.impl.zwave.ZwaveDefinedHandler;
 import com.ht.connected.home.backend.service.mqtt.MqttNoticeExecutor;
 import com.ht.connected.home.backend.service.mqtt.MqttPayloadExecutor;
-import org.springframework.messaging.MessagingException;
 
 /**
  * 스프링 mqtt 설정 클래스
@@ -66,7 +65,7 @@ public class MqttConfig {
 
     @Autowired
     private GateWayRepository gatewayRepository;
-    
+
     @SuppressWarnings("rawtypes")
     static private HashMap<String, Class> executors = new HashMap<>();
 
@@ -170,27 +169,23 @@ public class MqttConfig {
                 if (topicSplited.length > 5) {
                     if (topicSplited[6].equals(springMqttCertificationTopicSegment)) {
                         ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
-                            ZwaveBase<Object> handler = new ZwaveBase<>(
-                                    beanFactory.getBean(ZwaveDefinedHandler.handlers.get(zwaveRequest.getClassKey())));
-                                try {
-                                    handler.subscribe(zwaveRequest, payload);
-                                } catch (IOException e) {
-                                    // TODO Auto-generated catch block
-                                    e.printStackTrace();
-                                }
+                        ZwaveBase<Object> handler = new ZwaveBase<>(
+                                beanFactory.getBean(ZwaveDefinedHandler.handlers.get(zwaveRequest.getClassKey())));
+
+                        handler.subscribe(zwaveRequest, payload);
                     } else {
-                        MqttMessageArrived mqttMessageArrived = new MqttMessageArrived(topic, payload);                     
+                        MqttMessageArrived mqttMessageArrived = new MqttMessageArrived(topic, payload);
                         Gateway gateway = gatewayRepository.findBySerial(mqttMessageArrived.getSerial());
                         MqttPayloadExecutor executor = getExecutor(mqttMessageArrived);
                         Object returnData = null;
                         if (!isNull(executor)) {
                             LOGGER.info("MQTT message executor found");
-                                try {
-                                    returnData = executor.execute(mqttMessageArrived, gateway);
-                                } catch (Exception e) {
-                                    // TODO Auto-generated catch block
-                                    e.printStackTrace();
-                                }
+                            try {
+                                returnData = executor.execute(mqttMessageArrived, gateway);
+                            } catch (Exception e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                            }
                         } else {
                             LOGGER.info("MQTT main controller message executor not found");
                         }
@@ -198,11 +193,11 @@ public class MqttConfig {
 
                         }
                     }
-                }else {
+                } else {
                     LOGGER.info("MQTT topic is not implemented");
                 }
             }
-            
+
             @SuppressWarnings({ "unchecked", "rawtypes" })
             public MqttPayloadExecutor getExecutor(MqttMessageArrived mqttMessageArrived) {
                 MqttPayloadExecutor serviceExecutor = null;

@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
 import com.ht.connected.home.backend.service.ZwaveService;
 import com.ht.connected.home.backend.service.impl.zwave.ZwaveDefinedHandler;
@@ -24,15 +23,23 @@ import com.ht.connected.home.backend.service.impl.zwave.ZwaveDefinedHandler;
 @Service
 public class ZwaveServiceImpl {
 
-	private static final Log logging = LogFactory.getLog(ZwaveServiceImpl.class);
+    private static final Log logging = LogFactory.getLog(ZwaveServiceImpl.class);
 
-	@Autowired
-	BeanFactory beanFactory;
+    @Autowired
+    BeanFactory beanFactory;
 
-	public Object execute(HashMap<String, Object> req, ZwaveRequest zwaveRequest, boolean isCert) throws JsonProcessingException {
-		ZwaveService handler = (ZwaveService) beanFactory
-				.getBean(ZwaveDefinedHandler.handlers.get(zwaveRequest.getClassKey()));
-		return handler.execute(req, zwaveRequest, isCert);
-	}
+    public ResponseEntity execute(HashMap<String, Object> req, ZwaveRequest zwaveRequest, boolean isCert) {
+        try {
+            logging.info(zwaveRequest.getClassKey());
+            ZwaveService handler = (ZwaveService) beanFactory
+                    .getBean(ZwaveDefinedHandler.handlers.get(zwaveRequest.getClassKey()));
+            return handler.execute(req, zwaveRequest, isCert);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            logging.info(String.format("Zwave Handler not defined for classKey %s", zwaveRequest.getClassKey()));
+            ResponseEntity response = new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
+            return response;
+        }
+    }
 
 }
