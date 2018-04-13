@@ -51,25 +51,29 @@ public class NetworkManagementProxy extends ZwaveDefault implements ZwaveService
                 data = objectMapper.writeValueAsString(resultData);
                 if (zwaveRequest.getCommandKey().equals(ZwaveCommandKey.NODE_LIST_REPORT)) {
                     Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
-                    Zwave zwave = zwaveRepository.findByGatewayNoAndCmd(gateway.getNo(),
-                            ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION + ZwaveCommandKey.NODE_ADD_STATUS);
-                    if (!isNull(zwave)) {
-                        List<Certification> certification = certificationRepository.findBySerialAndMethodAndContext(
-                                zwaveRequest.getSerialNo(), ZwaveClassKey.NETWORK_MANAGEMENT_PROXY,
-                                ZwaveCommandKey.NODE_LIST_REPORT);
-                        String nodeListPayload = certification.get(0).getPayload();
-                        ZwaveNodeListReport zwaveNodeListReport = objectMapper.readValue(nodeListPayload,
-                                ZwaveNodeListReport.class);
-                        ZwaveNodeListReport.NodeListItem nodeListItem = zwaveNodeListReport.getNodelist().stream()
-                                .filter(node -> node.getNodeid().equals(String.valueOf(zwave.getNodeId())))
-                                .collect(Collectors.toList()).get(0);
-                        nodeListPayload = objectMapper.writeValueAsString(nodeListItem);
-                        MqttPayload mqttMessage = new MqttPayload();
-                        HashMap<String,Object> nodeListMap = objectMapper.readValue(nodeListPayload, HashMap.class);
-                        mqttMessage.setResultData(nodeListMap);
-                        String topic = String.format("/server/app/%s/%s/zwave/certi/%s/%s/v1", gateway.getModel(),
-                                gateway.getSerial(), ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION, ZwaveCommandKey.NODE_ADD);
-                        publish(topic, mqttMessage);
+                    if(!isNull(gateway)) {
+                        Zwave zwave = zwaveRepository.findByGatewayNoAndCmd(gateway.getNo(),
+                                ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION + ZwaveCommandKey.NODE_ADD_STATUS);
+                        if (!isNull(zwave)) {
+                            List<Certification> certification = certificationRepository.findBySerialAndMethodAndContext(
+                                    zwaveRequest.getSerialNo(), ZwaveClassKey.NETWORK_MANAGEMENT_PROXY,
+                                    ZwaveCommandKey.NODE_LIST_REPORT);
+                            String nodeListPayload = certification.get(0).getPayload();
+                            ZwaveNodeListReport zwaveNodeListReport = objectMapper.readValue(nodeListPayload,
+                                    ZwaveNodeListReport.class);
+                            ZwaveNodeListReport.NodeListItem nodeListItem = zwaveNodeListReport.getNodelist().stream()
+                                    .filter(node -> node.getNodeid().equals(String.valueOf(zwave.getNodeId())))
+                                    .collect(Collectors.toList()).get(0);
+                            nodeListPayload = objectMapper.writeValueAsString(nodeListItem);
+                            MqttPayload mqttMessage = new MqttPayload();
+                            HashMap<String,Object> nodeListMap = objectMapper.readValue(nodeListPayload, HashMap.class);
+                            mqttMessage.setResultData(nodeListMap);
+                            String topic = String.format("/server/app/%s/%s/zwave/certi/%s/%s/v1", gateway.getModel(),
+                                    gateway.getSerial(), ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION, ZwaveCommandKey.NODE_ADD);
+                            publish(topic, mqttMessage);
+                        }
+                    }else {
+                        logging.info(String.format("Gateway Serial Number(%s) is not registered", zwaveRequest.getSerialNo()));; 
                     }
                 }
             }
