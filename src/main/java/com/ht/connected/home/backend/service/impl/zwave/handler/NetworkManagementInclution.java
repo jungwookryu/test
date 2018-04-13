@@ -26,6 +26,8 @@ import com.ht.connected.home.backend.service.impl.zwave.ZwaveDefault;
 @Scope(value = "prototype")
 public class NetworkManagementInclution extends ZwaveDefault implements ZwaveService {
     
+    private final static String NEW_NODE = "new";
+    
     @Autowired
     ZwaveRepository zwaveRepository;
 
@@ -76,6 +78,11 @@ public class NetworkManagementInclution extends ZwaveDefault implements ZwaveSer
         }
     }
 
+    /**
+     * 신규 등록 ZWAVE 기기 디비 저장  
+     * @param zwaveRequest
+     * @param mqttPayload
+     */
     private void addZwaveRegistEvent(ZwaveRequest zwaveRequest, MqttPayload mqttPayload) {
         Zwave zwave = new Zwave();
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
@@ -83,7 +90,7 @@ public class NetworkManagementInclution extends ZwaveDefault implements ZwaveSer
         zwave.setGatewayNo(gateway.getNo());
         zwave.setNodeId(Integer.valueOf(mqttPayload.getResultData().get("newNodeId").toString()));
         zwave.setEndpointId(0);
-        zwave.setEvent("");
+        zwave.setEvent(NEW_NODE);
         zwave.setStatus("");
         zwave.setNickname("");
         zwave.setCreratedTime(new Date());
