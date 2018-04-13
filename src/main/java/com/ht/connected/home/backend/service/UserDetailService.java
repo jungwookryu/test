@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 public class UserDetailService implements UserDetailsService {
@@ -27,7 +28,7 @@ public class UserDetailService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
-		if ((String.valueOf(userEmail) == "null") || ("".equals(userEmail))) {
+		if (StringUtils.isEmpty(String.valueOf(userEmail))) {
 			logger.error("username is empty {} ", userEmail);
 		}
 		Users user = usersService.getUser(userEmail);
