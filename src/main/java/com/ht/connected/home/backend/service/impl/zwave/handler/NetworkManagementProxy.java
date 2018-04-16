@@ -74,6 +74,7 @@ public class NetworkManagementProxy extends ZwaveDefault implements ZwaveService
                             String topic = String.format("/server/app/%s/%s/zwave/certi/%s/%s/v1", gateway.getModel(),
                                     gateway.getSerial(), ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION, ZwaveCommandKey.NODE_ADD);
                             publish(topic, mqttMessage);
+                            zwaveRepository.delete(zwave);
                         }
                     }else {
                         logging.info(String.format("Gateway Serial Number(%s) is not registered", zwaveRequest.getSerialNo()));; 
