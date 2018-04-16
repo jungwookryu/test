@@ -74,7 +74,6 @@ public class MqttNoticeExecutor implements MqttPayloadExecutor {
 				MqttPahoMessageHandler messageHandler = (MqttPahoMessageHandler) beanFactory.getBean("MqttOutbound");
 				messageHandler.setDefaultTopic(topic);
 				MqttGateway mqttGateway = beanFactory.getBean(MqttGateway.class);
-				new MqttPayload();
 				mqttGateway.sendToMqtt("");
 			} else if (map.get("type").equals(BOOT) && !isNull(gateway)) {
 
