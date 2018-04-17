@@ -59,6 +59,8 @@ public class MqttConfig {
     String springMqttChannelServer;
     @Value("${spring.mqtt.certification.topic-segment}")
     String springMqttCertificationTopicSegment;
+    @Value("${mqtt.topic.manager.noti}")
+    static String mqttTopicManagerNoti;
 
     @Autowired
     private BeanFactory beanFactory;
@@ -70,7 +72,7 @@ public class MqttConfig {
     static private HashMap<String, Class> executors = new HashMap<>();
 
     static {
-        executors.put("manager/noti", MqttNoticeExecutor.class);
+        executors.put(mqttTopicManagerNoti, MqttNoticeExecutor.class);
     }
 
     /**
