@@ -9,7 +9,7 @@ target/
 .settings
 .springBeans
 logs/
-
+log/
 ### IntelliJ IDEA ###
 .idea
 *.iws
