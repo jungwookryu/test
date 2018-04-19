@@ -13,123 +13,123 @@ import com.ht.connected.home.backend.model.entity.Gateway;
 
 public class ZwaveRequest {
 
-	private String email;
+    private String email;
 
-	private String serialNo;
+    private String serialNo;
 
-	private Integer nodeId;
+    private Integer nodeId;
 
-	private Integer endpointId;
+    private Integer endpointId;
 
-	private String securityOption;
+    private String securityOption;
 
-	private String classKey;
+    private String classKey;
 
-	private String commandKey;
+    private String commandKey;
 
-	private String version;
+    private String version;
 
-	private Gateway gateway;
+    private Gateway gateway;
 
-	/**
-	 * 경로를 배열로 받을경우 생성자
-	 * 
-	 * @param topic
-	 */
-	public ZwaveRequest(String[] topic) {
-		this.serialNo = topic[4];
-		this.classKey = topic[7];
-		this.commandKey = topic[8];
-	}
+    /**
+     * 경로를 배열로 받을경우 생성자
+     * 
+     * @param topic
+     */
+    public ZwaveRequest(String[] topic) {
+        this.serialNo = topic[4];
+        this.classKey = topic[7];
+        this.commandKey = topic[8];
+    }
 
-	/**
-	 * ZwaveController에서 생성할 경우 생성자
-	 * 
-	 * @param req
-	 * @param classKey
-	 * @param commandKey
-	 * @param version
-	 */
-	public ZwaveRequest(HashMap<String, Object> req, String classKey, String commandKey, String version) {		
-		this.serialNo = req.get("serial").toString();
-		this.nodeId = Integer.valueOf(req.get("nodeId").toString());
-		this.endpointId = Integer.valueOf(req.get("endpointId").toString());
-		this.securityOption = req.get("option").toString();
-		this.classKey = classKey;
-		this.commandKey = commandKey;
-		this.version = version;		
-	}
+    /**
+     * ZwaveController에서 생성할 경우 생성자
+     * 
+     * @param req
+     * @param classKey
+     * @param commandKey
+     * @param version
+     */
+    public ZwaveRequest(HashMap<String, Object> req, String classKey, String commandKey, String version) {      
+        this.serialNo = req.get("serial").toString();
+        this.nodeId = Integer.valueOf(req.get("nodeId").toString());
+        this.endpointId = Integer.valueOf(req.get("endpointId").toString());
+        this.securityOption = req.get("option").toString();
+        this.classKey = classKey;
+        this.commandKey = commandKey;
+        this.version = version;     
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public String getSerialNo() {
-		return serialNo;
-	}
+    public String getSerialNo() {
+        return serialNo;
+    }
 
-	public String getClassKey() {
-		return classKey;
-	}
+    public String getClassKey() {
+        return classKey;
+    }
 
-	public String getCommandKey() {
-		return commandKey;
-	}
+    public String getCommandKey() {
+        return commandKey;
+    }
 
-	public String getVersion() {
-		return version;
-	}
+    public String getVersion() {
+        return version;
+    }
 
-	public void setVersion(String version) {
-		this.version = version;
-	}
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-	public Integer getNodeId() {
-		return nodeId;
-	}
+    public Integer getNodeId() {
+        return nodeId;
+    }
 
-	public void setNodeId(Integer nodeId) {
-		this.nodeId = nodeId;
-	}
+    public void setNodeId(Integer nodeId) {
+        this.nodeId = nodeId;
+    }
 
-	public Integer getEndpointId() {
-		return endpointId;
-	}
+    public Integer getEndpointId() {
+        return endpointId;
+    }
 
-	public void setEndpointId(Integer endpointId) {
-		this.endpointId = endpointId;
-	}
+    public void setEndpointId(Integer endpointId) {
+        this.endpointId = endpointId;
+    }
 
-	public String getSecurityOption() {
-		return securityOption;
-	}
+    public String getSecurityOption() {
+        return securityOption;
+    }
 
-	public void setSecurityOption(String securityOption) {
-		this.securityOption = securityOption;
-	}
+    public void setSecurityOption(String securityOption) {
+        this.securityOption = securityOption;
+    }
 
-	public Gateway getGateway() {
-		return gateway;
-	}
+    public Gateway getGateway() {
+        return gateway;
+    }
 
-	public void setGateway(Gateway gateway) {
-		this.gateway = gateway;
-	}
+    public void setGateway(Gateway gateway) {
+        this.gateway = gateway;
+    }
 
-	public void setSerialNo(String serialNo) {
-		this.serialNo = serialNo;
-	}
+    public void setSerialNo(String serialNo) {
+        this.serialNo = serialNo;
+    }
 
-	public void setClassKey(String classKey) {
-		this.classKey = classKey;
-	}
+    public void setClassKey(String classKey) {
+        this.classKey = classKey;
+    }
 
-	public void setCommandKey(String commandKey) {
-		this.commandKey = commandKey;
-	}
+    public void setCommandKey(String commandKey) {
+        this.commandKey = commandKey;
+    }
 
 }
