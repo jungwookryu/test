@@ -60,20 +60,13 @@ public class MqttConfig {
     @Value("${spring.mqtt.certification.topic-segment}")
     String springMqttCertificationTopicSegment;
     @Value("${mqtt.topic.manager.noti}")
-    static String mqttTopicManagerNoti;
+    String mqttTopicManagerNoti;
 
     @Autowired
     private BeanFactory beanFactory;
 
     @Autowired
     private GateWayRepository gatewayRepository;
-
-    @SuppressWarnings("rawtypes")
-    static private HashMap<String, Class> executors = new HashMap<>();
-
-    static {
-        executors.put(mqttTopicManagerNoti, MqttNoticeExecutor.class);
-    }
 
     /**
      * MQTT 클라언트 생성
@@ -203,6 +196,9 @@ public class MqttConfig {
             @SuppressWarnings({ "unchecked", "rawtypes" })
             public MqttPayloadExecutor getExecutor(MqttMessageArrived mqttMessageArrived) {
                 MqttPayloadExecutor serviceExecutor = null;
+                HashMap<String, Class> executors = new HashMap<>();
+                executors.put(mqttTopicManagerNoti, MqttNoticeExecutor.class);
+                
                 Class executor = executors.get(mqttMessageArrived.getControllerMethodContext());
                 if (executor == null) {
                     executor = executors.get(mqttMessageArrived.getControllerMethod());
