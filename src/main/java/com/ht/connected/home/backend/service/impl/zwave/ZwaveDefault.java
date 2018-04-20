@@ -97,8 +97,8 @@ public class ZwaveDefault {
             certification.setController("zwave");
             certification.setSerial(zwaveRequest.getSerialNo());
             certification.setModel(gateway.getModel());
-            certification.setMethod(zwaveRequest.getClassKey());
-            certification.setContext(zwaveRequest.getCommandKey());
+            certification.setMethod(Integer.toString(zwaveRequest.getClassKey()));
+            certification.setContext(Integer.toString(zwaveRequest.getCommandKey()));
             List<Certification> certPayloadExistList = certificationRepository.findBySerialAndMethodAndContext(
                     certification.getSerial(), certification.getMethod(), certification.getContext());
             if (certPayloadExistList.size() > 0) {
@@ -119,7 +119,7 @@ public class ZwaveDefault {
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
         if(!isNull(gateway)) {
             String[] segments = new String[] { "/server", target, gateway.getModel(), gateway.getSerial(), "zwave", "certi",
-                    zwaveRequest.getClassKey(), zwaveRequest.getCommandKey(), zwaveRequest.getVersion(),
+                    Integer.toString(zwaveRequest.getClassKey()), Integer.toString(zwaveRequest.getCommandKey()), zwaveRequest.getVersion(),
                     getHexString(zwaveRequest.getNodeId()), getHexString(zwaveRequest.getEndpointId()),
                     zwaveRequest.getSecurityOption() };
             topic = String.join("/", segments);

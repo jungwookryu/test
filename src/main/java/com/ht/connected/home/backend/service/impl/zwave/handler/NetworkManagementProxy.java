@@ -33,8 +33,8 @@ public class NetworkManagementProxy extends ZwaveDefault implements ZwaveService
     @Override
     public ResponseEntity execute(HashMap<String, Object> req, ZwaveRequest zwaveRequest, boolean isCert) {
         this.isCert = isCert;
-        if (zwaveRequest.getCommandKey().equals(ZwaveCommandKey.NODE_LIST_REPORT)
-                || zwaveRequest.getCommandKey().equals(ZwaveCommandKey.NODE_INFO_CACHED_REPORT)) {
+        if ((zwaveRequest.getCommandKey()==ZwaveCommandKey.NODE_LIST_REPORT)
+                || (zwaveRequest.getCommandKey()==ZwaveCommandKey.NODE_INFO_CACHED_REPORT)) {
             return getPayload(req, zwaveRequest);
         } else {
             return publish(req, zwaveRequest);
@@ -49,18 +49,18 @@ public class NetworkManagementProxy extends ZwaveDefault implements ZwaveService
             String data = "";
             if (!isNull(resultData)) {
                 data = objectMapper.writeValueAsString(resultData);
-                if (zwaveRequest.getCommandKey().equals(ZwaveCommandKey.NODE_LIST_REPORT)) {
+                if (zwaveRequest.getCommandKey()==ZwaveCommandKey.NODE_LIST_REPORT) {
                     /**
                      * 기기 리스트 수신시  새로 등록한 기기가 있을경우
                      */
                     Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
                     if(!isNull(gateway)) {
                         Zwave zwave = zwaveRepository.findByGatewayNoAndCmd(gateway.getNo(),
-                                ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION + ZwaveCommandKey.NODE_ADD_STATUS);
+                                Integer.toString(ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION) + "+" +Integer.toString(ZwaveCommandKey.NODE_ADD_STATUS));
                         if (!isNull(zwave)) {
                             List<Certification> certification = certificationRepository.findBySerialAndMethodAndContext(
-                                    zwaveRequest.getSerialNo(), ZwaveClassKey.NETWORK_MANAGEMENT_PROXY,
-                                    ZwaveCommandKey.NODE_LIST_REPORT);
+                                    zwaveRequest.getSerialNo(),  Integer.toString(ZwaveClassKey.NETWORK_MANAGEMENT_PROXY),
+                                    Integer.toString(ZwaveCommandKey.NODE_LIST_REPORT));
                             String nodeListPayload = certification.get(0).getPayload();
                             ZwaveNodeListReport zwaveNodeListReport = objectMapper.readValue(nodeListPayload,
                                     ZwaveNodeListReport.class);

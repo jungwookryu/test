@@ -24,7 +24,7 @@ public class Basic extends ZwaveDefault implements ZwaveService {
     @Override
     public ResponseEntity execute(HashMap<String, Object> req, ZwaveRequest zwaveRequest, boolean isCert) {
         this.isCert = isCert;
-        if (zwaveRequest.getCommandKey().equals(ZwaveCommandKey.BASIC_REPORT)) {
+        if (zwaveRequest.getCommandKey()==ZwaveCommandKey.BASIC_REPORT) {
             return getPayload(req, zwaveRequest);
         } else {
             return publish(req, zwaveRequest);
@@ -33,7 +33,7 @@ public class Basic extends ZwaveDefault implements ZwaveService {
 
     @Override
     public void subscribe(ZwaveRequest zwaveRequest, String payload) {
-        if (zwaveRequest.getCommandKey().equals(ZwaveCommandKey.BASIC_REPORT)) {
+        if (zwaveRequest.getCommandKey()==ZwaveCommandKey.BASIC_REPORT) {
             updateCertification(zwaveRequest, payload);
         }
     }

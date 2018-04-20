@@ -34,13 +34,13 @@ public class NetworkManagementInclution extends ZwaveDefault implements ZwaveSer
     @Override
     public ResponseEntity execute(HashMap<String, Object> req, ZwaveRequest zwaveRequest, boolean isCert) {
         this.isCert = isCert;
-        if (zwaveRequest.getCommandKey().equals(ZwaveCommandKey.NODE_ADD_STATUS)
-                || zwaveRequest.getCommandKey().equals(ZwaveCommandKey.NODE_REMOVE_STATUS)
-                || zwaveRequest.getCommandKey().equals(ZwaveCommandKey.FAILED_NODE_REMOVE_STATUS)
-                || zwaveRequest.getCommandKey().equals(ZwaveCommandKey.FAILED_NODE_REPLACE_STATUS)
-                || zwaveRequest.getCommandKey().equals(ZwaveCommandKey.NODE_NEIGHBOR_UPDATE_STATUS)
-                || zwaveRequest.getCommandKey().equals(ZwaveCommandKey.RETURN_ROUTE_ASSIGN_COMPLETE)
-                || zwaveRequest.getCommandKey().equals(ZwaveCommandKey.RETURN_ROUTE_DELETE_COMPLETE)) {
+        if ((zwaveRequest.getCommandKey()==ZwaveCommandKey.NODE_ADD_STATUS)
+                || (zwaveRequest.getCommandKey()==ZwaveCommandKey.NODE_REMOVE_STATUS)
+                || (zwaveRequest.getCommandKey()==ZwaveCommandKey.FAILED_NODE_REMOVE_STATUS)
+                || (zwaveRequest.getCommandKey()==ZwaveCommandKey.FAILED_NODE_REPLACE_STATUS)
+                || (zwaveRequest.getCommandKey()==ZwaveCommandKey.NODE_NEIGHBOR_UPDATE_STATUS)
+                || (zwaveRequest.getCommandKey()==ZwaveCommandKey.RETURN_ROUTE_ASSIGN_COMPLETE)
+                || (zwaveRequest.getCommandKey()==ZwaveCommandKey.RETURN_ROUTE_DELETE_COMPLETE)) {
             return getPayload(req, zwaveRequest);
         } else {
             return publish(req, zwaveRequest);
@@ -51,13 +51,13 @@ public class NetworkManagementInclution extends ZwaveDefault implements ZwaveSer
     public void subscribe(ZwaveRequest zwaveRequest, String payload) {
         try {
             MqttPayload mqttPayload = objectMapper.readValue(payload, MqttPayload.class);
-            if (zwaveRequest.getCommandKey().equals(ZwaveCommandKey.NODE_ADD_STATUS)) {
+            if (zwaveRequest.getCommandKey() == ZwaveCommandKey.NODE_ADD_STATUS) {
                 /**
                  * newNodeId 가 있을경우 등록 성공이고 없을경우 등록완료 전으로 상태 메세지를 확인한다.
                  */
                 if (!isNull(mqttPayload.getResultData().get("newNodeId"))) {
-                    zwaveRequest.setClassKey("0x52");
-                    zwaveRequest.setCommandKey("0x02");
+                    zwaveRequest.setClassKey(0x52);
+                    zwaveRequest.setCommandKey(0x02);
                     zwaveRequest.setNodeId(0);
                     zwaveRequest.setEndpointId(0);
                     zwaveRequest.setVersion("v1");
@@ -86,7 +86,7 @@ public class NetworkManagementInclution extends ZwaveDefault implements ZwaveSer
     private void addZwaveRegistEvent(ZwaveRequest zwaveRequest, MqttPayload mqttPayload) {
         Zwave zwave = new Zwave();
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
-        zwave.setCmd(ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION + ZwaveCommandKey.NODE_ADD_STATUS);
+        zwave.setCmd(Integer.toString(ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION) +"/"+Integer.toString(ZwaveCommandKey.NODE_ADD_STATUS));
         zwave.setGatewayNo(gateway.getNo());
         zwave.setNodeId(Integer.valueOf(mqttPayload.getResultData().get("newNodeId").toString()));
         zwave.setEndpointId(0);
@@ -102,10 +102,10 @@ public class NetworkManagementInclution extends ZwaveDefault implements ZwaveSer
     public ResponseEntity publish(HashMap<String, Object> req, ZwaveRequest zwaveRequest) {
         String topic = getMqttPublishTopic(zwaveRequest, "host");
         if (!isCert) {
-            if (zwaveRequest.getCommandKey().equals(ZwaveCommandKey.NODE_ADD)) {
+            if (zwaveRequest.getCommandKey() == ZwaveCommandKey.NODE_ADD) {
                 HashMap<String, Object> payload = new HashMap<>();
                 ZwaveNodeAdd zwaveNodeAdd = new ZwaveNodeAdd();
-                zwaveNodeAdd.setMode(req.get("mode").toString());
+                zwaveNodeAdd.setMode(ZwaveCommandKey.NODE_ADD);
                 payload.put("set_data", zwaveNodeAdd);
                 publish(topic, payload);
                 logging.info("====================== ZWAVE PROTO MQTT NODE_ADD PUBLISH TOPIC ======================");

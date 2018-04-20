@@ -13,9 +13,9 @@ public class ZwaveDefinedHandler {
     public static HashMap<String, Class> handlers = new HashMap<>();
 
     static {
-        handlers.put(ZwaveClassKey.NETWORK_MANAGEMENT_PROXY, NetworkManagementProxy.class);
-        handlers.put(ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION, NetworkManagementInclution.class);
-        handlers.put(ZwaveClassKey.BASIC, Basic.class);
+        handlers.put(Integer.toString(ZwaveClassKey.NETWORK_MANAGEMENT_PROXY), NetworkManagementProxy.class);
+        handlers.put(Integer.toString(ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION), NetworkManagementInclution.class);
+        handlers.put(Integer.toString(ZwaveClassKey.BASIC), Basic.class);
     }
 
 }

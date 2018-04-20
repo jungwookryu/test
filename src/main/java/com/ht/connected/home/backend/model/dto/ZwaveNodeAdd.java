@@ -6,7 +6,7 @@ public class ZwaveNodeAdd {
 
 	private String reserved = "0";
 
-	private String mode = "0x01";
+	private int mode = 1;
 
 	public String getSeqNo() {
 		return seqNo;
@@ -25,10 +25,10 @@ public class ZwaveNodeAdd {
 	}
 
 	public String getMode() {
-		return mode;
+		return Integer.toString(mode);
 	}
 
-	public void setMode(String mode) {
+	public void setMode(int mode) {
 		this.mode = mode;
 	}
 

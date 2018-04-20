@@ -52,14 +52,14 @@ public class ZwaveController {
     public ResponseEntity getRequestVersion(@PathVariable("classKey") String classKey,
             @PathVariable("commandKey") String commandKey, @PathVariable("version") String version,
             @RequestBody HashMap<String, Object> req) {
-        ZwaveRequest zwaveRequest = new ZwaveRequest(req, classKey, commandKey, version);
+        ZwaveRequest zwaveRequest = new ZwaveRequest(req, Integer.parseInt(classKey),  Integer.parseInt(commandKey), version);
         return zwaveService.execute(req, zwaveRequest, true);
     }
 
     @PostMapping
     public ResponseEntity regist(@RequestBody HashMap<String, Object> req) {
-        String classKey = ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION;
-        String commandKey = ZwaveCommandKey.NODE_ADD;
+        int classKey = ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION;
+        int commandKey = ZwaveCommandKey.NODE_ADD;
         req.put("nodeId", 0);
         req.put("endpointId", 0);
         req.put("option", 0);
@@ -72,7 +72,7 @@ public class ZwaveController {
     public ResponseEntity getList(@PathVariable("serial") String serial) {
         ResponseEntity response = new ResponseEntity(HttpStatus.NOT_FOUND);
         List<Certification> certification = certificationRepository.findBySerialAndMethodAndContext(serial,
-                ZwaveClassKey.NETWORK_MANAGEMENT_PROXY, ZwaveCommandKey.NODE_LIST_REPORT);
+                Integer.toString(ZwaveClassKey.NETWORK_MANAGEMENT_PROXY), Integer.toString(ZwaveCommandKey.NODE_LIST_REPORT));
         if(!isNull(certification)) {
             certification.get(0).getPayload();    
             response = new ResponseEntity<>(certification.get(0).getPayload(), HttpStatus.ACCEPTED);
@@ -82,8 +82,8 @@ public class ZwaveController {
 
     @PutMapping
     public ResponseEntity control(@RequestBody HashMap<String, Object> req) {
-        String classKey = (String) req.get("classkey");
-        String commandKey = (String) req.get("cmdkey");
+        int classKey = Integer.parseInt((String)req.get("cmdkey"));
+        int commandKey = Integer.parseInt((String)req.get("cmdkey"));
         String version = (String) req.get("version");
         ZwaveRequest zwaveRequest = new ZwaveRequest(req, classKey, commandKey, version);
         return zwaveService.execute(req, zwaveRequest, false);
