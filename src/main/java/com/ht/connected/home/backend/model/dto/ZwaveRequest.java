@@ -2,6 +2,7 @@ package com.ht.connected.home.backend.model.dto;
 
 import java.util.HashMap;
 
+import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.model.entity.Gateway;
 
 /**
@@ -23,9 +24,9 @@ public class ZwaveRequest {
 
     private String securityOption;
 
-    private String classKey;
+    private int classKey;
 
-    private String commandKey;
+    private int commandKey;
 
     private String version;
 
@@ -38,8 +39,8 @@ public class ZwaveRequest {
      */
     public ZwaveRequest(String[] topic) {
         this.serialNo = topic[4];
-        this.classKey = topic[7];
-        this.commandKey = topic[8];
+        this.classKey = ByteUtil.getStringtoInt(topic[7]);
+        this.commandKey = ByteUtil.getStringtoInt(topic[8]);
     }
 
     /**
@@ -50,7 +51,7 @@ public class ZwaveRequest {
      * @param commandKey
      * @param version
      */
-    public ZwaveRequest(HashMap<String, Object> req, String classKey, String commandKey, String version) {      
+    public ZwaveRequest(HashMap<String, Object> req, int classKey, int commandKey, String version) {      
         this.serialNo = req.get("serial").toString();
         this.nodeId = Integer.valueOf(req.get("nodeId").toString());
         this.endpointId = Integer.valueOf(req.get("endpointId").toString());
@@ -72,11 +73,11 @@ public class ZwaveRequest {
         return serialNo;
     }
 
-    public String getClassKey() {
+    public int getClassKey() {
         return classKey;
     }
 
-    public String getCommandKey() {
+    public int getCommandKey() {
         return commandKey;
     }
 
@@ -124,11 +125,11 @@ public class ZwaveRequest {
         this.serialNo = serialNo;
     }
 
-    public void setClassKey(String classKey) {
+    public void setClassKey(int classKey) {
         this.classKey = classKey;
     }
 
-    public void setCommandKey(String commandKey) {
+    public void setCommandKey(int commandKey) {
         this.commandKey = commandKey;
     }
 

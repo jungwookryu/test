@@ -1,33 +1,28 @@
 package com.ht.connected.home.backend.controller.mqtt;
-import com.ht.connected.home.backend.model.rabbit.producer.Message;
-import com.ht.connected.home.backend.model.rabbit.producer.Producer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-@RestController
-@RequestMapping("/producer")
+import com.ht.connected.home.backend.model.rabbit.producer.Message;
+
+@Component
 public class ProducerRestController {
 
     @Autowired
-    Producer producer;
+    private RabbitTemplate rabbitTemplate;
 
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    String add(@RequestBody Message message) throws Exception {
+    @Value("${spring.activemq.queueName}")
+    String activemqQueueName;
+    private static final Logger logger = LoggerFactory.getLogger(ProducerRestController.class);
 
-        /**
-         * TODO add message to queue
-         * TODO what you get is a message object that is created from the
-         * TODO POST request. You can use the content of the message object to
-         * TODO put a new message into the queue.
-         */
-
-        producer.send(message);
-        return "Received message: " + message.getMessageType() + "::" + message.getMessageBody();
-
+    public void onSend(String val) {
+        logger.info("Sending message... Start");
+        rabbitTemplate.convertAndSend(activemqQueueName, new Message("routingKey", val));
+        logger.info("Sending message... End");
     }
+
 }

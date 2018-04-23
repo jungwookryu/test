@@ -59,4 +59,28 @@ public class ByteUtil {
         }
         return new BigDecimal(value).movePointLeft(precision).doubleValue();
     }
+    static public int convertByteToInt(byte msb) {
+        return msb ;
+    }
+    
+    /**
+     * 호스트에 전달하는 토픽에 Node ID와 Endpoint ID는 헥사값
+     * 
+     * @param number
+     * @return
+     */
+    static public String getHexString(Integer number) {
+        return "0x" + String.format("%2s", Integer.toHexString(number)).replace(' ', '0');
+    }
+    
+    /**
+     * 호스트에 전달하는 토픽에 Node ID와 Endpoint ID는 헥사값
+     * 
+     * @param number
+     * @return
+     */
+    static public int getStringtoInt(String snumber) {
+        snumber = snumber.replace("0x","");
+        return Integer.parseInt(String.format("%2s", snumber));
+    }
 }

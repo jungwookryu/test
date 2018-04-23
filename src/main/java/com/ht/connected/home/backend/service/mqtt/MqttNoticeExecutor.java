@@ -12,9 +12,7 @@ import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ht.connected.home.backend.config.service.MqttConfig.MqttGateway;
 import com.ht.connected.home.backend.model.dto.MqttMessageArrived;
-import com.ht.connected.home.backend.model.dto.MqttPayload;
 import com.ht.connected.home.backend.model.entity.Gateway;
 import com.ht.connected.home.backend.model.entity.UserGateway;
 import com.ht.connected.home.backend.model.entity.Users;
@@ -72,9 +70,9 @@ public class MqttNoticeExecutor implements MqttPayloadExecutor {
 				String topic = String.format("/server/app/%s/%s/manager/noti", gateway.getModel(),
 						gateway.getSerial());
 				MqttPahoMessageHandler messageHandler = (MqttPahoMessageHandler) beanFactory.getBean("MqttOutbound");
-				messageHandler.setDefaultTopic(topic);
-				MqttGateway mqttGateway = beanFactory.getBean(MqttGateway.class);
-				mqttGateway.sendToMqtt("");
+//				messageHandler.setDefaultTopic(topic);
+//				MqttGateway mqttGateway = beanFactory.getBean(MqttGateway.class);
+//				mqttGateway.sendToMqtt("");
 			} else if (map.get("type").equals(BOOT) && !isNull(gateway)) {
 
 			}
