@@ -19,10 +19,10 @@ public class ProducerRestController {
     String activemqQueueName;
     private static final Logger logger = LoggerFactory.getLogger(ProducerRestController.class);
 
-    public void onSend(String val) {
-        logger.info("Sending message... Start");
-        rabbitTemplate.convertAndSend(activemqQueueName, new Message("routingKey", val));
-        logger.info("Sending message... End");
-    }
+//    public void onSend(String val) {
+//        logger.info("Sending message... Start");
+//        rabbitTemplate.convertAndSend(activemqQueueName, new Message("routingKey", val));
+//        logger.info("Sending message... End");
+//    }
 
 }

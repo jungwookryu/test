@@ -9,12 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.BeanFactory;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
@@ -23,6 +23,7 @@ import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
 
 import com.ht.connected.home.backend.common.ByteUtil;
+import com.ht.connected.home.backend.config.service.MqttConfig.MqttGateway;
 import com.ht.connected.home.backend.config.service.ZwaveClassKey;
 import com.ht.connected.home.backend.config.service.ZwaveCommandKey;
 import com.ht.connected.home.backend.model.dto.MqttMessageArrived;
@@ -124,7 +125,8 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
                         gateway.getSerial());
                 MqttPahoMessageHandler messageHandler = (MqttPahoMessageHandler) beanFactory.getBean("MqttOutbound");
                 messageHandler.setDefaultTopic(topic);
-                publish("");
+                MqttGateway mqttGateway = beanFactory.getBean(MqttGateway.class);
+                mqttGateway.sendToMqtt("");
             } else if (map.get("type").equals(BOOT) && !isNull(gateway)) {
 
             }
@@ -180,11 +182,6 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
         return null;
     }
 
-    @Override
-    public Gateway subscribe(Gateway zwaveRequest, Integer payload) {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
     @Override
     public Gateway publish(Gateway req, Gateway zwaveRequest) {
@@ -256,7 +253,10 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
      * @param topic
      */
     public void publish(String topic) {
-//        gateway.sendToMqtt("");
+        MqttPahoMessageHandler messageHandler = (MqttPahoMessageHandler) beanFactory.getBean("MqttOutbound");
+        messageHandler.setDefaultTopic(topic);
+        MqttGateway gateway = beanFactory.getBean(MqttGateway.class);
+        gateway.sendToMqtt("");
     }
 
     /**
@@ -306,6 +306,12 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     public ResponseEntity getPayload(HashMap<String, Object> req, ZwaveRequest zwaveRequest) {
         ResponseEntity responseEntity = new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
         return responseEntity;
+    }
+
+    @Override
+    public void subscribe(Gateway zwaveRequest, Integer payload) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

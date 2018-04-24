@@ -4,6 +4,7 @@ import com.ht.connected.home.backend.common.ByteUtil;
 
 public class ZwaveClassKey {
 
+    //0x52
 	public static byte NETWORK_MANAGEMENT_PROXY = 0x52;
 	public static byte NETWORK_MANAGEMENT_BASIC = 0x4D;
 	public static int NETWORK_MANAGEMENT_INCLUSION = 0x34;

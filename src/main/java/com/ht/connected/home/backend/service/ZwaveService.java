@@ -15,7 +15,7 @@ import com.ht.connected.home.backend.service.base.ZwaveBase;
  * @author 구정화
  *
  */
-public interface ZwaveService extends ZwaveBase<Zwave, Integer>{
+public interface ZwaveService extends ZwaveBase{
     
     ResponseEntity execute(HashMap<String, Object> req, ZwaveRequest zwaveRequest, boolean isCert) throws JsonProcessingException;
 
