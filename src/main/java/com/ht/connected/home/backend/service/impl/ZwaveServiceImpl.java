@@ -293,7 +293,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
                     /**
                      * newNodeId 가 있을경우 등록 성공이고 없을경우 등록완료 전으로 상태 메세지를 확인한다.
                      */
-                    if (!isNull(mqttPayload.getResultData().get("newNodeId"))) {
+                    if (!isNull(mqttPayload.getResultData().getOrDefault("newNodeId",""))) {
                         zwaveRequest.setClassKey(0x52);
                         zwaveRequest.setCommandKey(0x02);
                         zwaveRequest.setNodeId(0);
