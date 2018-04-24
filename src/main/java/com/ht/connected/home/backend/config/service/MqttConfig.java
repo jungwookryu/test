@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.integration.annotation.MessagingGateway;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.DirectChannel;
@@ -27,6 +28,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
+import org.springframework.util.StringUtils;
 
 import com.ht.connected.home.backend.model.dto.Category;
 import com.ht.connected.home.backend.model.dto.MqttMessageArrived;
@@ -46,9 +48,14 @@ import com.ht.connected.home.backend.service.mqtt.MqttPayloadExecutor;
 public class MqttConfig {
 
     private static final Log LOGGER = LogFactory.getLog(MqttConfig.class);
-
+    @Autowired
+    private Environment env;
     @Value("${spring.mqtt.broker-url}")
     String springMqttBrokerUrl;
+    @Value("${spring.mqtt.dev.broker-url}")
+    String springMqttDevBrokerUrl;
+    @Value("${spring.mqtt.local.broker-url}")
+    String springMqttLocalBrokerUrl;
     @Value("${spring.mqtt.user}")
     String springMqttUser;
     @Value("${spring.mqtt.password}")
@@ -80,7 +87,16 @@ public class MqttConfig {
     @Bean
     public MqttPahoClientFactory mqttClientFactory() {
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
-        factory.setServerURIs(springMqttBrokerUrl);
+        String sActive = env.getRequiredProperty("spring.profiles.active");
+        if(StringUtils.isEmpty(sActive)) {
+            sActive="dev";
+        }
+        
+        String springMqttBrokerUrlActual = env.getRequiredProperty("spring.mqtt."+sActive+".broker-url");
+        if(StringUtils.isEmpty(sActive)) {
+            springMqttBrokerUrlActual=springMqttBrokerUrl;
+        }
+        factory.setServerURIs(springMqttBrokerUrlActual);
         factory.setUserName(springMqttUser);
         factory.setPassword(springMqttPassword);
         return factory;
