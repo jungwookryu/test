@@ -56,9 +56,7 @@ public class MqttConfig {
     String springMqttDevBrokerUrl;
     @Value("${spring.mqtt.local.broker-url}")
     String springMqttLocalBrokerUrl;
-    @Value("${spring.mqtt.test.broker-url}")
-    String springMqttTestBrokerUrl;
-    @Value("${spring.active.profile}")
+    @Value("${spring.mqtt.user}")
     String springMqttUser;
     @Value("${spring.mqtt.password}")
     String springMqttPassword;
