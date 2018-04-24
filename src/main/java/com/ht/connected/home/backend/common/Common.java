@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.json.JSONObject;
+//import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.config.service.EmailConfig;
 import com.ht.connected.home.backend.model.entity.Users;
 
@@ -371,11 +371,11 @@ public class Common {
 
     }
 
-    public static String convertMaptoJsonString(Map map) {
+/*    public static String convertMaptoJsonString(Map map) {
         String rtnString =""; 
         ObjectMapper objectMapper = new ObjectMapper();
         JSONObject jsonObject = objectMapper.convertValue(map, JSONObject.class);
         jsonObject.toString();
         return rtnString;
-    }
+    }*/
 }
