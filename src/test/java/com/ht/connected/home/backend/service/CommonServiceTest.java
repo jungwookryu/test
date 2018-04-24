@@ -22,31 +22,31 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CommonServiceTest extends MockUtil {
-	
-	@Mock
+
+    @Mock
     public UsersRepository usersRepository;
-	@Mock
+    @Mock
     public CrudServiceImpl<Class, Integer> crudImplService;
-	@InjectMocks
-	public UsersService usersService;
-	
-	public static Common common = new Common();
-	
-	@Before
-	public void setUpMockUtil() {
-		Mockito.when(usersRepository.findAll()).thenReturn(lstUsers);
-//		Mockito.when(crudImplService.insert(Class.class)).thenReturn(anyClass);
-		Mockito.when(crudImplService.getAll()).thenReturn(new ArrayList());
-		Mockito.doNothing().when(usersRepository).delete(userNo); 		
-	 }
-	
-	
-	@Test
+    @InjectMocks
+    public UsersService usersService;
+
+    public static Common common = new Common();
+
+    @Before
+    public void setUpMockUtil() {
+        Mockito.when(usersRepository.findAll()).thenReturn(lstUsers);
+        // Mockito.when(crudImplService.insert(Class.class)).thenReturn(anyClass);
+        Mockito.when(crudImplService.getAll()).thenReturn(new ArrayList());
+        Mockito.doNothing().when(usersRepository).delete(userNo);
+    }
+
+    @Test
     public void sendEmail() throws Exception {
         HashMap map = new HashMap();
-        map.put("rtnUsers",users);
+        map.put("rtnUsers", users);
         map.put("sFile", resetPasswordFile);
         map.put("contextUrl", contextUrl);
-//        common.sendEmail(map);
-	}
+        // common.sendEmail(map);
+    }
+
 }

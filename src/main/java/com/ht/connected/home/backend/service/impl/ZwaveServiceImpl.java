@@ -166,8 +166,8 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
             certification.setController("zwave");
             certification.setSerial(zwaveRequest.getSerialNo());
             certification.setModel(gateway.getModel());
-            certification.setMethod(Integer.toString(zwaveRequest.getClassKey()));
-            certification.setContext(Integer.toString(zwaveRequest.getCommandKey()));
+            certification.setMethod(ByteUtil.getHexString(zwaveRequest.getClassKey()));
+            certification.setContext(ByteUtil.getHexString(zwaveRequest.getCommandKey()));
             List<Certification> certPayloadExistList = certificationRepository.findBySerialAndMethodAndContext(
                     certification.getSerial(), certification.getMethod(), certification.getContext());
             if (certPayloadExistList.size() > 0) {
@@ -255,10 +255,10 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
                         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
                         if (!isNull(gateway)) {
                             Zwave zwave = zwaveRepository.findByGatewayNoAndCmd(gateway.getNo(),
-                                    Integer.toString(ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION) + "+" + Integer.toString(ZwaveCommandKey.NODE_ADD_STATUS));
+                                    Integer.toString(ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION) + "/" + Integer.toString(ZwaveCommandKey.NODE_ADD_STATUS));
                             if (!isNull(zwave)) {
                                 List<Certification> certification = certificationRepository.findBySerialAndMethodAndContext(
-                                        zwaveRequest.getSerialNo(), Integer.toString(zwaveRequest.getClassKey()),
+                                        zwaveRequest.getSerialNo(), ByteUtil.getHexString(zwaveRequest.getClassKey()),
                                         Integer.toString(zwaveRequest.getCommandKey()));
                                 String nodeListPayload = certification.get(0).getPayload();
                                 ZwaveNodeListReport zwaveNodeListReport = objectMapper.readValue(nodeListPayload,

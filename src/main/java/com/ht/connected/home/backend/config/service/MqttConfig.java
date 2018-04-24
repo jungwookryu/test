@@ -176,7 +176,9 @@ public class MqttConfig {
                 String[] topicSplited = topic.split("/");
                 if (topicSplited.length > 2 ) {
                     //gateway service category topicSplited[5].toString()
+                    LOGGER.info(topicSplited[5].toString()+" subStart");
                     if (Category.gateway.name().equals(topicSplited[5].toString())) {
+                        
                         ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
                         try {
                             gateWayService.subscribe(zwaveRequest, payload);
@@ -184,15 +186,12 @@ public class MqttConfig {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
-                        LOGGER.info("messageArrived: Topic=" + topic + ", server=");
-                        
+                        LOGGER.info("gateway subEnd");
                        
                     }
                     //zwave service
                     if (Category.zwave.name().equals(topicSplited[5].toString())) {
                         ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
-                        LOGGER.info("messageArrived: Topic=" + topic + ", host=");
-
                         if ("alive".equals(topicSplited[6])) {
                             LOGGER.info("MQTT alive topic is not implemented");
                         }
@@ -209,11 +208,13 @@ public class MqttConfig {
                                 e.printStackTrace();
                             }
                         }
+                        LOGGER.info("zwave subEnd");
                     }
                     if (Category.ir.name().equals(topicSplited[5].toString())) {
                         ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
                         LOGGER.info("messageArrived: Topic=" + topic + ", host=");
                         zwaveService.subscribe(zwaveRequest, payload);
+                        LOGGER.info("ir subEnd");
                     }
                  
                 }

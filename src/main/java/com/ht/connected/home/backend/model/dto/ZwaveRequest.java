@@ -39,9 +39,9 @@ public class ZwaveRequest {
      */
     public ZwaveRequest(String[] topic) {
         this.serialNo = topic[4];
-        if( 7 < topic.length && topic.length < 10 ) {
-            this.classKey = Integer.parseInt(topic[7]);
-            this.commandKey =Integer.parseInt(topic[8]);
+        if( 7 < topic.length ) {
+            this.classKey = ByteUtil.getStringtoInt(topic[7]);
+            this.commandKey = ByteUtil.getStringtoInt(topic[8]);
         }
     }
 
