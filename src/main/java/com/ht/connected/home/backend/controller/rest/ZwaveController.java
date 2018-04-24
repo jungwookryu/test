@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import static java.util.Objects.isNull;
 
+import org.eclipse.paho.client.mqttv3.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.config.service.ZwaveClassKey;
 import com.ht.connected.home.backend.config.service.ZwaveCommandKey;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
@@ -30,7 +32,7 @@ import com.ht.connected.home.backend.service.impl.ZwaveServiceImpl;
  */
 @RestController
 @RequestMapping("/zwave")
-public class ZwaveController {
+public class ZwaveController extends CommonController {
 
     @Autowired
     private ZwaveServiceImpl zwaveService;
@@ -47,19 +49,23 @@ public class ZwaveController {
      * @param version
      * @param req
      * @return
+     * @throws JsonProcessingException 
      */
     @PostMapping(value = "/{classKey}/{commandKey}/{version}")
     public ResponseEntity getRequestVersion(@PathVariable("classKey") String classKey,
             @PathVariable("commandKey") String commandKey, @PathVariable("version") String version,
-            @RequestBody HashMap<String, Object> req) {
+            @RequestBody HashMap<String, Object> req) throws JsonProcessingException {
+        logger.info("commandKey:"+commandKey+" :::classKey:"+classKey+"version:::"+version);
+
         ZwaveRequest zwaveRequest = new ZwaveRequest(req, Integer.parseInt(classKey),  Integer.parseInt(commandKey), version);
         return zwaveService.execute(req, zwaveRequest, true);
     }
 
-    @PostMapping
-    public ResponseEntity regist(@RequestBody HashMap<String, Object> req) {
+
+    @PostMapping 
+    public ResponseEntity regist(@RequestBody HashMap<String, Object> req) throws JsonProcessingException {
         int classKey = ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION;
-        int commandKey = ZwaveCommandKey.NODE_ADD;
+        int commandKey = (int) req.getOrDefault("mode", 1);
         req.put("nodeId", 0);
         req.put("endpointId", 0);
         req.put("option", 0);
@@ -81,7 +87,7 @@ public class ZwaveController {
     }
 
     @PutMapping
-    public ResponseEntity control(@RequestBody HashMap<String, Object> req) {
+    public ResponseEntity control(@RequestBody HashMap<String, Object> req) throws JsonProcessingException {
         int classKey = Integer.parseInt((String)req.get("cmdkey"));
         int commandKey = Integer.parseInt((String)req.get("cmdkey"));
         String version = (String) req.get("version");
