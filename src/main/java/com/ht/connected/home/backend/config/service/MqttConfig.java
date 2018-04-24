@@ -88,13 +88,13 @@ public class MqttConfig {
     public MqttPahoClientFactory mqttClientFactory() {
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
         String sActive = env.getRequiredProperty("spring.profiles.active");
-        if(StringUtils.isEmpty(sActive)) {
-            sActive="dev";
+        if (StringUtils.isEmpty(sActive)) {
+            sActive = "dev";
         }
-        
-        String springMqttBrokerUrlActual = env.getRequiredProperty("spring.mqtt."+sActive+".broker-url");
-        if(StringUtils.isEmpty(sActive)) {
-            springMqttBrokerUrlActual=springMqttBrokerUrl;
+
+        String springMqttBrokerUrlActual = env.getRequiredProperty("spring.mqtt." + sActive + ".broker-url");
+        if (StringUtils.isEmpty(sActive)) {
+            springMqttBrokerUrlActual = springMqttBrokerUrl;
         }
         factory.setServerURIs(springMqttBrokerUrlActual);
         factory.setUserName(springMqttUser);
@@ -158,8 +158,6 @@ public class MqttConfig {
         void sendToMqtt(String data);
     }
 
-    
-    
     /**
      * Subscribe 메시지 핸들링
      * @return
@@ -174,60 +172,45 @@ public class MqttConfig {
                 String payload = String.valueOf(message.getPayload());
                 LOGGER.info("messageArrived: Topic=" + topic + ", Payload=" + payload);
                 String[] topicSplited = topic.split("/");
-                if (topicSplited.length > 2 ) {
-                    //gateway service category topicSplited[5].toString()
-                    LOGGER.info(topicSplited[5].toString()+" subStart");
-                    if (Category.gateway.name().equals(topicSplited[5].toString())) {
-                        
-                        ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
-                        try {
+                try {
+                    if (topicSplited.length > 2) {
+                        // gateway service category topicSplited[5].toString()
+                        LOGGER.info(topicSplited[5].toString() + " subStart");
+                        if (Category.gateway.name().equals(topicSplited[5].toString())) {
+
+                            ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
+
                             gateWayService.subscribe(zwaveRequest, payload);
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
+
+                            LOGGER.info("gateway subEnd");
+
                         }
-                        LOGGER.info("gateway subEnd");
-                       
-                    }
-                    //zwave service
-                    if (Category.zwave.name().equals(topicSplited[5].toString())) {
-                        ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
-                        if ("alive".equals(topicSplited[6])) {
-                            LOGGER.info("MQTT alive topic is not implemented");
-                        }
-                        //host 등록
-                        
-                        if (springMqttCertificationTopicSegment.equals(topicSplited[6])) {
-                            try {
+                        // zwave service
+                        if (Category.zwave.name().equals(topicSplited[5].toString())) {
+                            ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
+                            if ("alive".equals(topicSplited[6])) {
+                                LOGGER.info("MQTT alive topic is not implemented");
+                            }
+                            if (springMqttCertificationTopicSegment.equals(topicSplited[6])) {
                                 zwaveService.subscribe(zwaveRequest, payload);
-                            } catch (IOException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
                             }
-                        }else {
-                            try {
-                                MqttMessageArrived mqttMessageArrived = new MqttMessageArrived(topic, payload);
-                                gateWayService.execute(mqttMessageArrived);
-                            } catch (Exception e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            }
+                        } else {
+                            MqttMessageArrived mqttMessageArrived = new MqttMessageArrived(topic, payload);
+                            gateWayService.execute(mqttMessageArrived);
                         }
                         LOGGER.info("zwave subEnd");
                     }
                     if (Category.ir.name().equals(topicSplited[5].toString())) {
                         ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
                         LOGGER.info("messageArrived: Topic=" + topic + ", host=");
-                        try {
-                            zwaveService.subscribe(zwaveRequest, payload);
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
                         LOGGER.info("ir subEnd");
                     }
-                 
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    LOGGER.error("zwave :::::: " + e);
+                    e.printStackTrace();
                 }
+
             }
             // @SuppressWarnings("unchecked")
             // @Override

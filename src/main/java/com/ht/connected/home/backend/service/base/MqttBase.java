@@ -9,7 +9,7 @@ public interface MqttBase<T, P>{
 
     T execute(T req, T zwaveRequest, P isCert);
 
-    void subscribe(T zwaveRequest, P payload) throws JsonParseException, JsonMappingException, IOException;
+    void subscribe(T zwaveRequest, P payload) throws JsonParseException, JsonMappingException, IOException, Exception;
     
     T publish(T req, T zwaveRequest);
     
