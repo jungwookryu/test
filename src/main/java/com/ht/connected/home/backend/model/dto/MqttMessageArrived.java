@@ -3,12 +3,15 @@ package com.ht.connected.home.backend.model.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * 토픽을 세그먼트로 나눠 멤버변수에 저장하여 사용하기 쉽게
  * 
  * @author 구정화
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MqttMessageArrived {
 
 	/**
