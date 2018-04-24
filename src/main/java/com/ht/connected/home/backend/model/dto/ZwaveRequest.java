@@ -2,6 +2,7 @@ package com.ht.connected.home.backend.model.dto;
 
 import java.util.HashMap;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.model.entity.Gateway;
 
@@ -11,7 +12,7 @@ import com.ht.connected.home.backend.model.entity.Gateway;
  * @author 구정화
  *
  */
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ZwaveRequest {
 
     private String email;
