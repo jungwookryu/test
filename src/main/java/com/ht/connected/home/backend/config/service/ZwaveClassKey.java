@@ -41,4 +41,5 @@ public class ZwaveClassKey {
 	    return Integer.parseInt(ByteUtil.getHexString(byteInt));
 	}
 
+
 }

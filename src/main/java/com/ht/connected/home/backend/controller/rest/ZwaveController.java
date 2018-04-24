@@ -56,9 +56,11 @@ public class ZwaveController extends CommonController {
             @PathVariable("commandKey") String commandKey, @PathVariable("version") String version,
             @RequestBody HashMap<String, Object> req) throws JsonProcessingException {
         logger.info("commandKey:"+commandKey+" :::classKey:"+classKey+"version:::"+version);
+
         ZwaveRequest zwaveRequest = new ZwaveRequest(req, Integer.parseInt(classKey),  Integer.parseInt(commandKey), version);
         return zwaveService.execute(req, zwaveRequest, true);
     }
+
 
     @PostMapping 
     public ResponseEntity regist(@RequestBody HashMap<String, Object> req) throws JsonProcessingException {

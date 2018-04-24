@@ -13,9 +13,10 @@ public class ZwaveCommandKey {
 	public static int NETWORK_UPDATE_REQUEST_STATUS = 0x04;
 	public static int DEFAULT_SET = 0x06;
 	public static int DEFAULT_SET_COMPLETE = 0x07;
+
 	// 호스트 기기등록
 	public static int NODE_ADD = 0x01;
-	// 호스트 기기등록
+
 	public static int NODE_STOP = 0x05;
 	public static int NODE_ADD_STATUS = 0x02; 
 	public static int NODE_REMOVE = 0x03;

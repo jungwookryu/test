@@ -63,8 +63,6 @@ public class MqttConfig {
     String mqttTopicManagerNoti;
     @Value("${mqtt.topic.category}")
     List<String> mqttTopicCategory;
-    
-    
     @Autowired
     private BeanFactory beanFactory;
 
@@ -74,6 +72,7 @@ public class MqttConfig {
     private ZwaveService zwaveService;
     @Autowired
     private GateWayService gateWayService;
+
     /**
      * MQTT 클라언트 생성
      * @return
@@ -254,7 +253,6 @@ public class MqttConfig {
                 MqttPayloadExecutor serviceExecutor = null;
                 HashMap<String, Class> executors = new HashMap<>();
                 executors.put(mqttTopicManagerNoti, MqttNoticeExecutor.class);
-
                 Class executor = executors.get(mqttMessageArrived.getControllerMethodContext());
                 if (executor == null) {
                     executor = executors.get(mqttMessageArrived.getControllerMethod());
