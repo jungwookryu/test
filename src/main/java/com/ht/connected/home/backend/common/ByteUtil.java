@@ -11,6 +11,9 @@ package com.ht.connected.home.backend.common;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
+import java.util.Formatter;
+
+import org.hibernate.hql.internal.ast.util.LiteralProcessor.DecimalLiteralFormat;
 
 /**
  * A utility class for various byte related functions.
@@ -80,7 +83,6 @@ public class ByteUtil {
      * @return
      */
     static public int getStringtoInt(String snumber) {
-        snumber = snumber.replace("0x","");
-        return Integer.parseInt(String.format("%2s", snumber));
+        return Short.decode(snumber);
     }
 }

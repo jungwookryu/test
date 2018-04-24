@@ -271,8 +271,8 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
             certification.setController("zwave");
             certification.setSerial(zwaveRequest.getSerialNo());
             certification.setModel(gateway.getModel());
-            certification.setMethod(Integer.toString(zwaveRequest.getClassKey()));
-            certification.setContext(Integer.toString(zwaveRequest.getCommandKey()));
+            certification.setMethod(ByteUtil.getHexString(zwaveRequest.getClassKey()));
+            certification.setContext(ByteUtil.getHexString(zwaveRequest.getCommandKey()));
             List<Certification> certPayloadExistList = certificationRepository.findBySerialAndMethodAndContext(
                     certification.getSerial(), certification.getMethod(), certification.getContext());
             if (certPayloadExistList.size() > 0) {
