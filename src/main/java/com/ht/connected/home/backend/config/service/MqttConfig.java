@@ -198,7 +198,12 @@ public class MqttConfig {
                         //host 등록
                         
                         if (springMqttCertificationTopicSegment.equals(topicSplited[6])) {
-                            zwaveService.subscribe(zwaveRequest, payload);
+                            try {
+                                zwaveService.subscribe(zwaveRequest, payload);
+                            } catch (IOException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                            }
                         }else {
                             try {
                                 MqttMessageArrived mqttMessageArrived = new MqttMessageArrived(topic, payload);
@@ -213,7 +218,12 @@ public class MqttConfig {
                     if (Category.ir.name().equals(topicSplited[5].toString())) {
                         ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
                         LOGGER.info("messageArrived: Topic=" + topic + ", host=");
-                        zwaveService.subscribe(zwaveRequest, payload);
+                        try {
+                            zwaveService.subscribe(zwaveRequest, payload);
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
                         LOGGER.info("ir subEnd");
                     }
                  
