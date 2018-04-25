@@ -175,9 +175,9 @@ public class MqttConfig {
                 String[] topicSplited = topic.split("/");
                 try {
                     if (topicSplited.length > 2) {
-                        if (Target.server.name().equals(topicSplited[2].toString())) {
-                            return;
-                        }
+//                        if (Target.server.name().equals(topicSplited[2].toString())) {
+//                            return;
+//                        }
                         // gateway service category topicSplited[5].toString()
                         LOGGER.info(topicSplited[5].toString() + " subStart");
                         if (Category.gateway.name().equals(topicSplited[5].toString())) {
