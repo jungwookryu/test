@@ -177,11 +177,9 @@ public class MqttConfig {
                         // gateway service category topicSplited[5].toString()
                         LOGGER.info(topicSplited[5].toString() + " subStart");
                         if (Category.gateway.name().equals(topicSplited[5].toString())) {
-
                             ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
                             gateWayService.subscribe(zwaveRequest, payload);
                             LOGGER.info("gateway subEnd");
-
                         }
                         // zwave service
                         if (Category.zwave.name().equals(topicSplited[5].toString())) {
@@ -204,7 +202,11 @@ public class MqttConfig {
                         }
                         LOGGER.info("zwave subEnd");
                     }
-                   
+                    if (Category.ir.name().equals(topicSplited[5].toString())) {
+                        ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
+                        LOGGER.info("messageArrived: Topic=" + topic + ", host=");
+                        LOGGER.info("ir subEnd");
+                    }
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     LOGGER.error("zwave :::::: " + e);
