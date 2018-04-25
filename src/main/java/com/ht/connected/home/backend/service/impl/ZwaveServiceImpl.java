@@ -242,6 +242,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
     }
 
     public void subscribe(ZwaveRequest zwaveRequest, String payload) throws JsonParseException, JsonMappingException, IOException, Exception {
+        MqttPayload mqttPayload = objectMapper.readValue(payload, MqttPayload.class);
         if (zwaveRequest.getClassKey() == ZwaveClassKey.BASIC) {
             if (zwaveRequest.getCommandKey() == ZwaveCommandKey.BASIC_REPORT) {
                 updateCertification(zwaveRequest, payload);
@@ -249,7 +250,6 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
         }
         // 0X52
         if (zwaveRequest.getClassKey() == ZwaveClassKey.NETWORK_MANAGEMENT_PROXY) {
-            MqttPayload mqttPayload = objectMapper.readValue(payload, MqttPayload.class);
             Object resultData = mqttPayload.getResultData();
             String data = "";
             if (!isNull(resultData)) {
@@ -330,7 +330,6 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
         }
         // 기기등록 모드
         if (zwaveRequest.getClassKey() == ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION) {
-            MqttPayload mqttPayload = objectMapper.readValue(payload, MqttPayload.class);
             // 기기상태값모드 받은 경우
             if (zwaveRequest.getCommandKey() == ZwaveCommandKey.NODE_ADD_STATUS) {
                 // newNodeId 가 있을경우 등록 성공이고 없을경우 등록완료 전으로 상태 메세지를 확인한다.
@@ -362,10 +361,15 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
                 updateCertification(zwaveRequest, payload);
 
             } else {
-                String topic = getMqttPublishTopic(zwaveRequest, "host");
-                if(!topic.contains(Target.host.name()+"/"+Target.server.name())) {
-                    publish(topic, zwaveRequest.getClassKey());
+                if (!isNull(mqttPayload.getResultData())) {
+                    if (isNull(mqttPayload.getResultData().get("result_code"))) {
+                        String topic = getMqttPublishTopic(zwaveRequest, "host");
+                        if (!topic.contains(Target.host.name() + "/" + Target.server.name())) {
+                            publish(topic, zwaveRequest.getClassKey());
+                        }
+                    }
                 }
+
             }
         }
     }
