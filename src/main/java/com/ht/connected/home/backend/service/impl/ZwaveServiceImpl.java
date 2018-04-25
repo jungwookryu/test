@@ -106,7 +106,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
             getPayload(req, zwaveRequest);
             // }
             HashMap map = new HashMap<>();
-            map.put("mode", zwaveRequest.getCommandKey());
+            map.put("mode", 1);
             ObjectMapper mapper = new ObjectMapper();
             String str = mapper.writeValueAsString(map);
             req.put("set_data", map);

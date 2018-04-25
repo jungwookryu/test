@@ -32,6 +32,7 @@ import org.springframework.util.StringUtils;
 
 import com.ht.connected.home.backend.model.dto.Category;
 import com.ht.connected.home.backend.model.dto.MqttMessageArrived;
+import com.ht.connected.home.backend.model.dto.Target;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
 import com.ht.connected.home.backend.repository.GateWayRepository;
 import com.ht.connected.home.backend.service.GateWayService;
@@ -174,6 +175,9 @@ public class MqttConfig {
                 String[] topicSplited = topic.split("/");
                 try {
                     if (topicSplited.length > 2) {
+                        if (Target.server.name().equals(topicSplited[1].toString())) {
+                            return;
+                        }
                         // gateway service category topicSplited[5].toString()
                         LOGGER.info(topicSplited[5].toString() + " subStart");
                         if (Category.gateway.name().equals(topicSplited[5].toString())) {
