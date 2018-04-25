@@ -363,7 +363,9 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
 
             } else {
                 String topic = getMqttPublishTopic(zwaveRequest, "host");
-                publish(topic, zwaveRequest.getClassKey());
+                if(!topic.contains(Target.host.name()+"/"+Target.server.name())) {
+                    publish(topic, zwaveRequest.getClassKey());
+                }
             }
         }
     }
