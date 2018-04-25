@@ -22,10 +22,10 @@ public class Zwave {
     int gatewayNo;
 
     @Column(name = "node_id")
-    int nodeId;
+    String nodeId;
 
     @Column(name = "endpoint_id")
-    int endpointId;
+    String endpointId;
 
     @Column(name = "nickname")
     String nickname;
@@ -61,19 +61,19 @@ public class Zwave {
         this.gatewayNo = gatewayNo;
     }
 
-    public int getNodeId() {
+    public String getNodeId() {
         return nodeId;
     }
 
-    public void setNodeId(int nodeId) {
+    public void setNodeId(String nodeId) {
         this.nodeId = nodeId;
     }
 
-    public int getEndpointId() {
+    public String getEndpointId() {
         return endpointId;
     }
 
-    public void setEndpointId(int endpointId) {
+    public void setEndpointId(String endpointId) {
         this.endpointId = endpointId;
     }
 

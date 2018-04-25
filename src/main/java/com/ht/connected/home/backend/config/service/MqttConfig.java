@@ -179,9 +179,7 @@ public class MqttConfig {
                         if (Category.gateway.name().equals(topicSplited[5].toString())) {
 
                             ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
-
                             gateWayService.subscribe(zwaveRequest, payload);
-
                             LOGGER.info("gateway subEnd");
 
                         }
@@ -194,17 +192,19 @@ public class MqttConfig {
                             if (springMqttCertificationTopicSegment.equals(topicSplited[6])) {
                                 zwaveService.subscribe(zwaveRequest, payload);
                             }
-                        } else {
+                        }
+                        if (Category.ir.name().equals(topicSplited[5].toString())) {
+                            ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
+                            LOGGER.info("messageArrived: Topic=" + topic + ", host=");
+                            LOGGER.info("ir subEnd");
+                        }
+                        else {
                             MqttMessageArrived mqttMessageArrived = new MqttMessageArrived(topic, payload);
                             gateWayService.execute(mqttMessageArrived);
                         }
                         LOGGER.info("zwave subEnd");
                     }
-                    if (Category.ir.name().equals(topicSplited[5].toString())) {
-                        ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
-                        LOGGER.info("messageArrived: Topic=" + topic + ", host=");
-                        LOGGER.info("ir subEnd");
-                    }
+                   
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     LOGGER.error("zwave :::::: " + e);

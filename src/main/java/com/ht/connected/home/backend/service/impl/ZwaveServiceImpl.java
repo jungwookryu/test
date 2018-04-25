@@ -5,6 +5,7 @@ import static java.util.Objects.isNull;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -31,6 +32,7 @@ import com.ht.connected.home.backend.config.service.ZwaveCommandKey;
 import com.ht.connected.home.backend.model.dto.MqttPayload;
 import com.ht.connected.home.backend.model.dto.Target;
 import com.ht.connected.home.backend.model.dto.ZwaveNodeListReport;
+import com.ht.connected.home.backend.model.dto.ZwaveNodeListReport.NodeListItem;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
 import com.ht.connected.home.backend.model.entity.Certification;
 import com.ht.connected.home.backend.model.entity.Gateway;
@@ -93,25 +95,21 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
             }
 
         }
-
         if (ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION == zwaveRequest.getClassKey()) {
-            if ((zwaveRequest.getCommandKey() == ZwaveCommandKey.NODE_ADD_STATUS)
-                    || (zwaveRequest.getCommandKey() == ZwaveCommandKey.NODE_REMOVE_STATUS)
-                    || (zwaveRequest.getCommandKey() == ZwaveCommandKey.FAILED_NODE_REMOVE_STATUS)
-                    || (zwaveRequest.getCommandKey() == ZwaveCommandKey.FAILED_NODE_REPLACE_STATUS)
-                    || (zwaveRequest.getCommandKey() == ZwaveCommandKey.NODE_NEIGHBOR_UPDATE_STATUS)
-                    || (zwaveRequest.getCommandKey() == ZwaveCommandKey.RETURN_ROUTE_ASSIGN_COMPLETE)
-                    || (zwaveRequest.getCommandKey() == ZwaveCommandKey.RETURN_ROUTE_DELETE_COMPLETE)) {
-                getPayload(req, zwaveRequest);
-            }
-            // if (zwaveRequest.getCommandKey() == ZwaveCommandKey.NODE_ADD ||
-            // zwaveRequest.getCommandKey() == ZwaveCommandKey.NODE_STOP) {
+            // if ((zwaveRequest.getCommandKey() == ZwaveCommandKey.NODE_ADD_STATUS)
+            // || (zwaveRequest.getCommandKey() == ZwaveCommandKey.NODE_REMOVE_STATUS)
+            // || (zwaveRequest.getCommandKey() == ZwaveCommandKey.FAILED_NODE_REMOVE_STATUS)
+            // || (zwaveRequest.getCommandKey() == ZwaveCommandKey.FAILED_NODE_REPLACE_STATUS)
+            // || (zwaveRequest.getCommandKey() == ZwaveCommandKey.NODE_NEIGHBOR_UPDATE_STATUS)
+            // || (zwaveRequest.getCommandKey() == ZwaveCommandKey.RETURN_ROUTE_ASSIGN_COMPLETE)
+            // || (zwaveRequest.getCommandKey() == ZwaveCommandKey.RETURN_ROUTE_DELETE_COMPLETE)) {
+            getPayload(req, zwaveRequest);
+            // }
             HashMap map = new HashMap<>();
             map.put("mode", zwaveRequest.getCommandKey());
             ObjectMapper mapper = new ObjectMapper();
             String str = mapper.writeValueAsString(map);
             req.put("set_data", map);
-            // }
 
         }
         if (ZwaveClassKey.BASIC == zwaveRequest.getClassKey()) {
@@ -197,9 +195,17 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
         String topic = "";
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
         if (!isNull(gateway)) {
+            int nodeId = 0;
+            int endPointId = 0;
+            if (!Objects.isNull(zwaveRequest.getNodeId())) {
+                nodeId = zwaveRequest.getNodeId();
+            }
+            if (!Objects.isNull(zwaveRequest.getEndpointId())) {
+                endPointId = zwaveRequest.getEndpointId();
+            }
             String[] segments = new String[] { "/server", target, gateway.getModel(), gateway.getSerial(), "zwave", "certi",
                     ByteUtil.getHexString(zwaveRequest.getClassKey()), ByteUtil.getHexString(zwaveRequest.getCommandKey()), zwaveRequest.getVersion(),
-                    ByteUtil.getHexString(zwaveRequest.getNodeId()), ByteUtil.getHexString(zwaveRequest.getEndpointId()),
+                    ByteUtil.getHexString(nodeId), ByteUtil.getHexString(endPointId),
                     zwaveRequest.getSecurityOption() };
             topic = String.join("/", segments);
             logging.info("====================== ZWAVE PROTO MQTT PUBLISH TOPIC ======================");
@@ -256,50 +262,61 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
                     try {
                         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
                         if (!isNull(gateway)) {
-                            List<Zwave> lstZwave = zwaveRepository.findByGatewayNoAndCmd(gateway.getNo(),
-                                    Integer.toString(ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION) + "/" + Integer.toString(ZwaveCommandKey.NODE_ADD_STATUS));
-                            if (lstZwave.size() > 0) {
-                                List<Certification> certification = certificationRepository.findBySerialAndMethodAndContext(
-                                        zwaveRequest.getSerialNo(), ByteUtil.getHexString((int) ZwaveClassKey.NETWORK_MANAGEMENT_PROXY),
-                                        ByteUtil.getHexString(ZwaveCommandKey.NODE_LIST_REPORT));
-                                if(certification.size()>0) {
-                                    String nodeListPayload = certification.get(0).getPayload();
+                            List<Certification> certification = certificationRepository.findBySerialAndMethodAndContext(
+                                    zwaveRequest.getSerialNo(), ByteUtil.getHexString((int) ZwaveClassKey.NETWORK_MANAGEMENT_PROXY),
+                                    ByteUtil.getHexString(ZwaveCommandKey.NODE_LIST_REPORT));
+                            for (int i = 0; i < certification.size(); i++) {
+                                List<Zwave> lstZwave = zwaveRepository.findByGatewayNoAndCmd(gateway.getNo(),
+                                        Integer.toString(ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION) + "/" + Integer.toString(ZwaveCommandKey.NODE_ADD_STATUS));
+                                for (int j = 0; j < lstZwave.size(); j++) {
+                                    Zwave zwave = lstZwave.get(j);
+                                    String nodeListPayload = certification.get(i).getPayload();
                                     ZwaveNodeListReport zwaveNodeListReport = objectMapper.readValue(nodeListPayload,
                                             ZwaveNodeListReport.class);
-                                    lstZwave.forEach(zwave -> {
-                                        ZwaveNodeListReport.NodeListItem nodeListItem = zwaveNodeListReport.getNodelist().stream()
-                                                .filter(node -> node.getNodeid().equals(String.valueOf(zwave.getNodeId())))
-                                                .collect(Collectors.toList()).get(0);
-                                        String nodeListPayload2 = nodeListPayload;
-                                        try {
-                                            nodeListPayload2 = objectMapper.writeValueAsString(nodeListItem);
-                                        } catch (JsonProcessingException e1) {
-                                            // TODO Auto-generated catch block
-                                            e1.printStackTrace();
+                                    List<NodeListItem> nodeListItem = zwaveNodeListReport.getNodelist();
+                                    for (int k = 0; k < nodeListItem.size(); k++) {
+                                        String node = nodeListItem.get(k).getNodeid();
+                                        if (node.equals(zwave.getNodeId())) {
+                                            String nodeListPayload2 = nodeListPayload;
+                                            if (!isNull(zwave.getStatus())) {
+                                                if (nodeListItem.size() > 0) {
+                                                    ZwaveNodeListReport.NodeListItem nodeItem = (NodeListItem) nodeListItem.get(0);
+                                                    try {
+                                                        nodeListPayload2 = objectMapper.writeValueAsString(nodeItem);
+                                                    } catch (JsonProcessingException e1) {
+                                                        // TODO Auto-generated catch block
+                                                        e1.printStackTrace();
+                                                    }
+                                                    // MqttPayload mqttMessage = new MqttPayload();
+                                                    HashMap<String, Object> nodeListMap = new HashMap<>();
+                                                    try {
+                                                        nodeListMap = objectMapper.readValue(nodeListPayload2, HashMap.class);
+                                                    } catch (IOException e1) {
+                                                        // TODO Auto-generated catch block
+                                                        e1.printStackTrace();
+                                                    }
+                                                    // mqttMessage.setResultData(nodeListMap);
+                                                    String topic = String.format("/server/app/%s/%s/zwave/certi/%s/%s/v1", gateway.getModel(),
+                                                            gateway.getSerial(), ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION, ZwaveCommandKey.NODE_ADD);
+
+                                                    try {
+                                                        publish(topic, nodeListMap);
+                                                    } catch (JsonProcessingException e) {
+                                                        // TODO Auto-generated catch block
+                                                        e.printStackTrace();
+                                                    }
+
+                                                    zwave.setStatus("0x01");
+                                                    zwaveRepository.save(zwave);
+                                                }
+                                            }
                                         }
-                                        // MqttPayload mqttMessage = new MqttPayload();
-                                        HashMap<String, Object> nodeListMap = new HashMap<>();
-                                        try {
-                                            nodeListMap = objectMapper.readValue(nodeListPayload2, HashMap.class);
-                                        } catch (IOException e1) {
-                                            // TODO Auto-generated catch block
-                                            e1.printStackTrace();
-                                        }
-                                        // mqttMessage.setResultData(nodeListMap);
-                                        String topic = String.format("/server/app/%s/%s/zwave/certi/%s/%s/v1", gateway.getModel(),
-                                                gateway.getSerial(), ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION, ZwaveCommandKey.NODE_ADD);
-    
-                                        try {
-                                            publish(topic, nodeListMap);
-                                        } catch (JsonProcessingException e) {
-                                            // TODO Auto-generated catch block
-                                            e.printStackTrace();
-                                        }
-    
-//                                        zwaveRepository.delete(zwave);
-                                    });
+
+                                    }
+
                                 }
                             }
+
                         } else {
                             logging.info(String.format("Gateway Serial Number(%s) is not registered", zwaveRequest.getSerialNo()));;
                         }
@@ -317,30 +334,36 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
             // 기기상태값모드 받은 경우
             if (zwaveRequest.getCommandKey() == ZwaveCommandKey.NODE_ADD_STATUS) {
                 // newNodeId 가 있을경우 등록 성공이고 없을경우 등록완료 전으로 상태 메세지를 확인한다.
-                if (Objects.isNull(mqttPayload.getResultData()) || isNull(mqttPayload.getResultData().getOrDefault("newNodeId", ""))) {
-                    String status = "status null ";
-                    if (!Objects.isNull(mqttPayload.getResultData())) {
-                        mqttPayload.getResultData().getOrDefault("status", "").toString();
+                if (!Objects.isNull(mqttPayload.getResultData())) {
+                    if (!isNull(mqttPayload.getResultData().getOrDefault("newNodeId", ""))) {
+                        // 0x52
+                        zwaveRequest.setClassKey(zwaveRequest.getClassKey());
+                        // 0x02
+                        zwaveRequest.setCommandKey(zwaveRequest.getCommandKey());
+                        zwaveRequest.setNodeId(0);
+                        zwaveRequest.setEndpointId(0);
+                        zwaveRequest.setVersion("v1");
+                        zwaveRequest.setSecurityOption("none");
+                        saveZwaveRegist(zwaveRequest, mqttPayload);
                     }
-                    logging.info(String.format("<< SERIAL NO : %s, NODE_ADD_STATUS : %s >>", zwaveRequest.getSerialNo(), status));
-                } else {
-                    // 0x52
-                    zwaveRequest.setClassKey(zwaveRequest.getClassKey());
-                    // 0x02
-                    zwaveRequest.setCommandKey(zwaveRequest.getCommandKey());
-                    zwaveRequest.setNodeId(0);
-                    zwaveRequest.setEndpointId(0);
-                    zwaveRequest.setVersion("v1");
-                    zwaveRequest.setSecurityOption("none");
-                    saveZwaveRegist(zwaveRequest, mqttPayload);
-
-                    // 서버에 기기리스트를 요청함.
-                    zwaveRequest.setClassKey(ZwaveClassKey.NETWORK_MANAGEMENT_PROXY);
-                    zwaveRequest.setCommandKey(ZwaveCommandKey.NODE_ADD);
-                    String topic = getMqttPublishTopic(zwaveRequest, "host");
-                    publish(topic, zwaveRequest.getClassKey());
+                    if ("0".equals(mqttPayload.getResultData().getOrDefault("status", "9").toString())) {
+                        // 서버에 기기리스트를 요청함.
+                        zwaveRequest.setClassKey(ZwaveClassKey.NETWORK_MANAGEMENT_PROXY);
+                        zwaveRequest.setCommandKey(ZwaveCommandKey.NODE_ADD);
+                        String topic = getMqttPublishTopic(zwaveRequest, "host");
+                        publish(topic, zwaveRequest.getClassKey());
+                    }
                 }
+                String status = "status null ";
+                if (!Objects.isNull(mqttPayload.getResultData())) {
+                    mqttPayload.getResultData().getOrDefault("status", 0).toString();
+                }
+                logging.info(String.format("<< SERIAL NO : %s, NODE_ADD_STATUS : %s >>", zwaveRequest.getSerialNo(), status));
                 updateCertification(zwaveRequest, payload);
+
+            } else {
+                String topic = getMqttPublishTopic(zwaveRequest, "host");
+                publish(topic, zwaveRequest.getClassKey());
             }
         }
     }
@@ -355,8 +378,12 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
         zwave.setCmd(Integer.toString(ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION) + "/" + Integer.toString(ZwaveCommandKey.NODE_ADD_STATUS));
         zwave.setGatewayNo(gateway.getNo());
-        zwave.setNodeId(Integer.valueOf(mqttPayload.getResultData().get("newNodeId").toString()));
-        zwave.setEndpointId(0);
+        if (!Objects.isNull(mqttPayload.getResultData())) {
+
+            // TODO DB에는 String이므로 String또는 int로 통일 할것.
+            zwave.setNodeId((String) mqttPayload.getResultData().getOrDefault("newNodeId", ""));
+        }
+        zwave.setEndpointId("00");
         zwave.setEvent("new");
         zwave.setStatus("");
         zwave.setNickname("");
