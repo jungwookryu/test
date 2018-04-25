@@ -32,6 +32,7 @@ import org.springframework.util.StringUtils;
 
 import com.ht.connected.home.backend.model.dto.Category;
 import com.ht.connected.home.backend.model.dto.MqttMessageArrived;
+import com.ht.connected.home.backend.model.dto.Target;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
 import com.ht.connected.home.backend.repository.GateWayRepository;
 import com.ht.connected.home.backend.service.GateWayService;
@@ -174,16 +175,15 @@ public class MqttConfig {
                 String[] topicSplited = topic.split("/");
                 try {
                     if (topicSplited.length > 2) {
+                        if (Target.server.name().equals(topicSplited[1].toString())) {
+                            return;
+                        }
                         // gateway service category topicSplited[5].toString()
                         LOGGER.info(topicSplited[5].toString() + " subStart");
                         if (Category.gateway.name().equals(topicSplited[5].toString())) {
-
                             ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
-
                             gateWayService.subscribe(zwaveRequest, payload);
-
                             LOGGER.info("gateway subEnd");
-
                         }
                         // zwave service
                         if (Category.zwave.name().equals(topicSplited[5].toString())) {
@@ -194,7 +194,13 @@ public class MqttConfig {
                             if (springMqttCertificationTopicSegment.equals(topicSplited[6])) {
                                 zwaveService.subscribe(zwaveRequest, payload);
                             }
-                        } else {
+                        }
+                        if (Category.ir.name().equals(topicSplited[5].toString())) {
+                            ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
+                            LOGGER.info("messageArrived: Topic=" + topic + ", host=");
+                            LOGGER.info("ir subEnd");
+                        }
+                        else {
                             MqttMessageArrived mqttMessageArrived = new MqttMessageArrived(topic, payload);
                             gateWayService.execute(mqttMessageArrived);
                         }

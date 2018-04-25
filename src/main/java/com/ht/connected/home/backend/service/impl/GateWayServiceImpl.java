@@ -48,10 +48,12 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     public GateWayServiceImpl(JpaRepository<Gateway, Integer> jpaRepository) {
         super(jpaRepository);
     }
-
+    enum type{
+        register
+        ,boot
+        ,manager
+    }
     Logger logger = LoggerFactory.getLogger(ZwaveServiceImpl.class);
-    private final static String REGISTER = "register";
-    private static String BOOT = "boot";
 
     @Autowired
     BeanFactory beanFactory;
@@ -65,12 +67,13 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     @Autowired
     GateWayRepository gatewayRepository;
 
-//    @Autowired
+    // @Autowired
     private ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     ZwaveRepository zwaveRepository;
     @Autowired
     CertificationRepository certificationRepository;
+
     /**
      * 호스트 등록/부팅 메세지 executor type 이 register 일 경우만 처리 type 이 boot 일 경우에 대한 디비 저정은 추가될수 있음
      * @param mqttTopicHandler
@@ -116,19 +119,19 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
         if (mqttMessageArrived.getStrPayload().length() > 0) {
             Gateway gateway = gatewayRepository.findBySerial(mqttMessageArrived.getSerial());
             HashMap<String, String> map = objectMapper.readValue(mqttMessageArrived.getStrPayload(), HashMap.class);
-            List<Users> users = userRepository.findByUserEmail(map.get("user_email"));
-            Users user = users.get(0);
-            if (map.get("type").equals(REGISTER) && isNull(gateway)) {
-                gateway = updateGateway(mqttMessageArrived, gateway, map);
-                updateUserGateway(gateway, user.getNo());
-                String topic = String.format("/server/app/%s/%s/manager/noti", gateway.getModel(),
-                        gateway.getSerial());
-                MqttPahoMessageHandler messageHandler = (MqttPahoMessageHandler) beanFactory.getBean("MqttOutbound");
-                messageHandler.setDefaultTopic(topic);
-                MqttGateway mqttGateway = beanFactory.getBean(MqttGateway.class);
-                mqttGateway.sendToMqtt("");
-            } else if (map.get("type").equals(BOOT) && !isNull(gateway)) {
-
+            if (map.getOrDefault("type","").equals(type.register.name()) && isNull(gateway)) {
+                List <Users> users = userRepository.findByUserEmail(map.get("user_email"));
+                if (users.size() > 0) {
+                    Users user = users.get(0);
+                    gateway = updateGateway(mqttMessageArrived, gateway, map);
+                    updateUserGateway(gateway, user.getNo());
+                    String topic = String.format("/server/app/%s/%s/manager/noti", gateway.getModel(),
+                            gateway.getSerial());
+                    MqttPahoMessageHandler messageHandler = (MqttPahoMessageHandler) beanFactory.getBean("MqttOutbound");
+                    messageHandler.setDefaultTopic(topic);
+                    MqttGateway mqttGateway = beanFactory.getBean(MqttGateway.class);
+                    mqttGateway.sendToMqtt("");
+                } 
             }
         }
         return null;
@@ -181,7 +184,6 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
         // TODO Auto-generated method stub
         return null;
     }
-
 
     @Override
     public Gateway publish(Gateway req, Gateway zwaveRequest) {
@@ -238,8 +240,8 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
         zwave.setCmd(Integer.toString(ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION) + "/" + Integer.toString(ZwaveCommandKey.NODE_ADD_STATUS));
         zwave.setGatewayNo(gateway.getNo());
-        zwave.setNodeId(Integer.valueOf(mqttPayload.getResultData().get("newNodeId").toString()));
-        zwave.setEndpointId(0);
+        zwave.setNodeId((String)mqttPayload.getResultData().get("newNodeId").toString());
+        zwave.setEndpointId("00");
         zwave.setEvent("new");
         zwave.setStatus("");
         zwave.setNickname("");
@@ -311,7 +313,7 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     @Override
     public void subscribe(Gateway zwaveRequest, Integer payload) {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

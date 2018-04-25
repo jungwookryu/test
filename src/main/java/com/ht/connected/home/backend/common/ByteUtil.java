@@ -12,6 +12,7 @@ package com.ht.connected.home.backend.common;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.Formatter;
+import java.util.Objects;
 
 import org.hibernate.hql.internal.ast.util.LiteralProcessor.DecimalLiteralFormat;
 
