@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.logging.Log;
@@ -280,13 +281,19 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
                                             if (Common.empty(zwave.getStatus())) {
                                                 HashMap nodeItem = (HashMap) nodeListItem.get(k);
                                                 try {
+                                                    nodeItem.toString();
                                                     nodeListPayload2 = objectMapper.writeValueAsString(nodeItem);
                                                 } catch (JsonProcessingException e1) {
                                                     // TODO Auto-generated catch block
                                                     e1.printStackTrace();
                                                 }
-                                                String topic = String.format("/server/app/%s/%s/zwave/certi/%s/%s/v1", gateway.getModel(),
-                                                        gateway.getSerial(), ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION, ZwaveCommandKey.NODE_ADD);
+                                                Map req = new HashMap();
+                                                req.put("serial",gateway.getSerial());
+                                                req.put("nodeId",node);
+                                                req.put("endpointId", 0);
+                                                req.put("option", nodeItem.getOrDefault("security", ""));
+                                                ZwaveRequest appZwaveRequest = new ZwaveRequest((HashMap<String, Object>) req, ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION, ZwaveCommandKey.NODE_ADD,"v1");
+                                                String topic = getMqttPublishTopic(appZwaveRequest,Target.app.name());
 
                                                 try {
                                                     // publish(topic, nodeListMap);
