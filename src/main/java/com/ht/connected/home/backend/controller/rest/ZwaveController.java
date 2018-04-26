@@ -95,12 +95,9 @@ public class ZwaveController extends CommonController {
     }
 
     @PutMapping
-    public ResponseEntity control(@RequestBody HashMap<String, Object> req) throws JsonProcessingException {
-        int classKey = Integer.parseInt((String)req.get("cmdkey"));
-        int commandKey = Integer.parseInt((String)req.get("cmdkey"));
-        String version = (String) req.get("version");
-        ZwaveRequest zwaveRequest = new ZwaveRequest(req, classKey, commandKey, version);
-        return zwaveService.execute(req, zwaveRequest, false);
+    public ResponseEntity control(@RequestBody ZwaveRequest zwaveRequest) throws JsonProcessingException {
+        zwaveService.execute(zwaveRequest, false);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
 }

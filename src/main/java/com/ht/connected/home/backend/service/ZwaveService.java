@@ -25,5 +25,7 @@ public interface ZwaveService extends ZwaveBase{
     void subscribe(ZwaveRequest zwaveRequest, String payload) throws JsonParseException, JsonMappingException, IOException, Exception;
     
     ResponseEntity publish(HashMap<String, Object> req, ZwaveRequest zwaveRequest) throws JsonProcessingException;
+
+    void execute(ZwaveRequest zwaveRequest, boolean isCert);
     
 }
