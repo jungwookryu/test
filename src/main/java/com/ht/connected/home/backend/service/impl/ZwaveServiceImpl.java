@@ -414,11 +414,39 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
         // TODO Auto-generated method stub
         return null;
     }
+    //제어
+    @Override
+    public void execute(Map map, boolean isCert) throws JsonProcessingException {
+        String topic = getZwaveTopic(map);
+        HashMap map1 = getPublishPayload((HashMap)map);
+        publish(topic, map1);
+    }
+    /**
+     * mqtt publish 토픽 생성
+     * @param topicLeadingPath //0 none, 1 crc
+     * @return
+     */
+    public String getZwaveTopic(Map map) {
+        String topic = "";
+        String nodeId = ByteUtil.getHexString((Integer) map.getOrDefault("nodeId",0));;
+        String endPointId =  ByteUtil.getHexString((Integer) map.getOrDefault("endpointId",0));
+        String serial = (String)map.getOrDefault("serial","01234567");
+        String commandKey = (String)map.getOrDefault("cmdkey","0x00");
+        String classkey = (String)map.getOrDefault("classkey","0x00");
+        String version = (String)map.getOrDefault("version","v1");
+        String option = Integer.toString((int) map.getOrDefault("option", 0));
+        String model = (String) map.getOrDefault("model", 0);
+        String[] segments = new String[] { "/server", Target.host.name(), model, serial, "zwave", "certi",
+                classkey, commandKey, version,nodeId, endPointId, option};
+        topic = String.join("/", segments);
+        logging.info("====================== ZWAVE PROTO MQTT PUBLISH TOPIC ======================");
+        logging.info(topic);
+        return topic;
+    }
 
     @Override
     public void execute(ZwaveRequest zwaveRequest, boolean isCert) {
-        String topic = getMqttPublishTopic(zwaveRequest);
-        publish(topic);
+        // TODO Auto-generated method stub
+        
     }
-
 }
