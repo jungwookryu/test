@@ -435,7 +435,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
         String classkey = (String)map.getOrDefault("classkey","0x00");
         String version = (String)map.getOrDefault("version","v1");
         String option = Integer.toString((int) map.getOrDefault("option", 0));
-        String model = (String) map.getOrDefault("model", 0);
+        String model = (String) map.getOrDefault("model", "");
         String[] segments = new String[] { "/server", Target.host.name(), model, serial, "zwave", "certi",
                 classkey, commandKey, version,nodeId, endPointId, option};
         topic = String.join("/", segments);
