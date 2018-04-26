@@ -3,6 +3,7 @@ package com.ht.connected.home.backend.model.dto;
 import java.util.HashMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.model.entity.Gateway;
@@ -14,6 +15,7 @@ import com.ht.connected.home.backend.model.entity.Gateway;
  *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ZwaveRequest {
 
     @JsonProperty("email")
@@ -23,10 +25,10 @@ public class ZwaveRequest {
     private String serialNo;
 
     @JsonProperty("nodeId")
-    private Integer nodeId;
+    private int nodeId;
 
     @JsonProperty("endpointId")
-    private Integer endpointId;
+    private int endpointId;
 
     @JsonProperty("option")
     private String securityOption;
@@ -34,7 +36,7 @@ public class ZwaveRequest {
     private int classKey;
 
     @JsonProperty("classKey")
-    private int sClassKey;
+    private String sClassKey;
     
     private int commandKey;
     
@@ -48,7 +50,8 @@ public class ZwaveRequest {
     private Gateway gateway;
     
     @JsonProperty("set_data")
-    private HashMap setData;
+    private HashMap<String, Object> setData;
+    
     /**
      * 경로를 배열로 받을경우 생성자
      * 
@@ -112,7 +115,7 @@ public class ZwaveRequest {
         return nodeId;
     }
 
-    public void setNodeId(Integer nodeId) {
+    public void setNodeId(int nodeId) {
         this.nodeId = nodeId;
     }
 
@@ -120,7 +123,7 @@ public class ZwaveRequest {
         return endpointId;
     }
 
-    public void setEndpointId(Integer endpointId) {
+    public void setEndpointId(int endpointId) {
         this.endpointId = endpointId;
     }
 
@@ -155,14 +158,14 @@ public class ZwaveRequest {
     /**
      * @return the sClassKey
      */
-    public int getsClassKey() {
+    public String getsClassKey() {
         return sClassKey;
     }
 
     /**
      * @param sClassKey the sClassKey to set
      */
-    public void setsClassKey(int sClassKey) {
+    public void setsClassKey(String sClassKey) {
         this.sClassKey = sClassKey;
     }
 
