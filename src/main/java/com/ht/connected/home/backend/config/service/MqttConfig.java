@@ -213,8 +213,8 @@ public class MqttConfig {
                     }
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
-                    LOGGER.error("zwave :::::: " + e);
                     e.printStackTrace();
+                    LOGGER.error("zwave :::::: " + e);
                 }
 
             }

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.logging.Log;
@@ -24,6 +25,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.common.ByteUtil;
+import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.config.service.MqttConfig.MqttGateway;
 import com.ht.connected.home.backend.config.service.ZwaveClassKey;
 import com.ht.connected.home.backend.config.service.ZwaveCommandKey;
@@ -238,7 +240,10 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
     }
 
     public void subscribe(ZwaveRequest zwaveRequest, String payload) throws JsonParseException, JsonMappingException, IOException, Exception {
-        MqttPayload mqttPayload = objectMapper.readValue(payload, MqttPayload.class);
+        MqttPayload mqttPayload= new MqttPayload(); 
+        if(!Common.empty(payload)){
+            mqttPayload = objectMapper.readValue(payload, MqttPayload.class);
+        }
         if (zwaveRequest.getClassKey() == ZwaveClassKey.BASIC) {
             if (zwaveRequest.getCommandKey() == ZwaveCommandKey.BASIC_REPORT) {
                 updateCertification(zwaveRequest, payload);
@@ -267,35 +272,31 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
                                 for (int j = 0; j < lstZwave.size(); j++) {
                                     Zwave zwave = lstZwave.get(j);
                                     String nodeListPayload = certification.get(i).getPayload();
-//                                    ZwaveNodeListReport zwaveNodeListReport = objectMapper.readValue(nodeListPayload,ZwaveNodeListReport.class);
-                                    HashMap zwaveNodeListReport = objectMapper.readValue(nodeListPayload,HashMap.class);
+                                    HashMap zwaveNodeListReport = objectMapper.readValue(nodeListPayload, HashMap.class);
                                     List<HashMap> nodeListItem = (List<HashMap>) zwaveNodeListReport.get("nodelist");
                                     for (int k = 0; k < nodeListItem.size(); k++) {
-                                        int node = (int) nodeListItem.get(k).getOrDefault("nodeid",99);
-                                        if (node==Integer.parseInt(zwave.getNodeId())) {
+                                        int node = (int) nodeListItem.get(k).getOrDefault("nodeid", 99);
+                                        if (node == Integer.parseInt(zwave.getNodeId())) {
                                             String nodeListPayload2 = nodeListPayload;
-                                            if (isNull(zwave.getStatus())) {
+                                            if (Common.empty(zwave.getStatus())) {
                                                 HashMap nodeItem = (HashMap) nodeListItem.get(k);
                                                 try {
+                                                    nodeItem.toString();
                                                     nodeListPayload2 = objectMapper.writeValueAsString(nodeItem);
                                                 } catch (JsonProcessingException e1) {
                                                     // TODO Auto-generated catch block
                                                     e1.printStackTrace();
                                                 }
-                                                // MqttPayload mqttMessage = new MqttPayload();
-//                                                HashMap<String, Object> nodeListMap = new HashMap<>();
-//                                                try {
-//                                                    nodeListMap = objectMapper.readValue(nodeListPayload2, HashMap.class);
-//                                                } catch (IOException e1) {
-//                                                    // TODO Auto-generated catch block
-//                                                    e1.printStackTrace();
-//                                                }
-                                                // mqttMessage.setResultData(nodeListMap);
-                                                String topic = String.format("/server/app/%s/%s/zwave/certi/%s/%s/v1", gateway.getModel(),
-                                                        gateway.getSerial(), ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION, ZwaveCommandKey.NODE_ADD);
+                                                Map req = new HashMap();
+                                                req.put("serial",gateway.getSerial());
+                                                req.put("nodeId",node);
+                                                req.put("endpointId", 0);
+                                                req.put("option", nodeItem.getOrDefault("security", ""));
+                                                ZwaveRequest appZwaveRequest = new ZwaveRequest((HashMap<String, Object>) req, ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION, ZwaveCommandKey.NODE_ADD,"v1");
+                                                String topic = getMqttPublishTopic(appZwaveRequest,Target.app.name());
 
                                                 try {
-//                                                    publish(topic, nodeListMap);
+                                                    // publish(topic, nodeListMap);
                                                     publish(topic, nodeItem);
                                                 } catch (JsonProcessingException e) {
                                                     // TODO Auto-generated catch block
@@ -350,7 +351,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
                 }
                 String status = "status null ";
                 if (!Objects.isNull(mqttPayload.getResultData())) {
-                    mqttPayload.getResultData().getOrDefault("status", 0).toString();
+                    status = mqttPayload.getResultData().getOrDefault("status", 0).toString();
                 }
                 logging.info(String.format("<< SERIAL NO : %s, NODE_ADD_STATUS : %s >>", zwaveRequest.getSerialNo(), status));
                 updateCertification(zwaveRequest, payload);
@@ -382,12 +383,12 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
         if (!Objects.isNull(mqttPayload.getResultData())) {
 
             // TODO DB에는 String이므로 String또는 int로 통일 할것.
-            if(!isNull(mqttPayload.getResultData().get("newNodeId"))){
-                Object obj =mqttPayload.getResultData().get("newNodeId");
-                if(obj instanceof Integer) {
+            if (!isNull(mqttPayload.getResultData().get("newNodeId"))) {
+                Object obj = mqttPayload.getResultData().get("newNodeId");
+                if (obj instanceof Integer) {
                     zwave.setNodeId(obj.toString());
                 }
-                if(obj instanceof String) {
+                if (obj instanceof String) {
                     zwave.setNodeId(obj.toString());
                 }
                 zwave.setNodeId(String.format("%2s", obj.toString()));
