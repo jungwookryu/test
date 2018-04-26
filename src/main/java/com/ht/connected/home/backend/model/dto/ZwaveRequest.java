@@ -3,6 +3,7 @@ package com.ht.connected.home.backend.model.dto;
 import java.util.HashMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.model.entity.Gateway;
 
@@ -15,24 +16,39 @@ import com.ht.connected.home.backend.model.entity.Gateway;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ZwaveRequest {
 
+    @JsonProperty("email")
     private String email;
-
+    
+    @JsonProperty("serial")
     private String serialNo;
 
+    @JsonProperty("nodeId")
     private Integer nodeId;
 
+    @JsonProperty("endpointId")
     private Integer endpointId;
 
+    @JsonProperty("option")
     private String securityOption;
 
     private int classKey;
 
+    @JsonProperty("classKey")
+    private int sClassKey;
+    
     private int commandKey;
+    
+    @JsonProperty("cmdkey")
+    private String sCommandKey;
 
+    @JsonProperty("version")
     private String version;
 
+    @JsonProperty("nodeId")
     private Gateway gateway;
-
+    
+    @JsonProperty("set_data")
+    private HashMap setData;
     /**
      * 경로를 배열로 받을경우 생성자
      * 
@@ -136,4 +152,59 @@ public class ZwaveRequest {
         this.commandKey = commandKey;
     }
 
+    /**
+     * @return the sClassKey
+     */
+    public int getsClassKey() {
+        return sClassKey;
+    }
+
+    /**
+     * @param sClassKey the sClassKey to set
+     */
+    public void setsClassKey(int sClassKey) {
+        this.sClassKey = sClassKey;
+    }
+
+    /**
+     * @return the sCommandKey
+     */
+    public String getsCommandKey() {
+        return sCommandKey;
+    }
+
+    /**
+     * @param sCommandKey the sCommandKey to set
+     */
+    public void setsCommandKey(String sCommandKey) {
+        this.sCommandKey = sCommandKey;
+    }
+
+    /**
+     * @return the setData
+     */
+    public HashMap getSetData() {
+        return setData;
+    }
+
+    /**
+     * @param setData the setData to set
+     */
+    public void setSetData(HashMap setData) {
+        this.setData = setData;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "ZwaveRequest [email=" + email + ", serialNo=" + serialNo 
+                + ", nodeId=" + nodeId + ", endpointId=" + endpointId 
+                + ", securityOption=" + securityOption + ", classKey=" + classKey
+                + ", sClassKey=" + sClassKey + ", commandKey=" + commandKey 
+                + ", sCommandKey=" + sCommandKey + ", version=" + version 
+                + ", gateway=" + gateway + ", setData=" + setData + "]";
+    }
+    
 }

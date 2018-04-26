@@ -415,4 +415,10 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
         return null;
     }
 
+    @Override
+    public void execute(ZwaveRequest zwaveRequest, boolean isCert) {
+        String topic = getMqttPublishTopic(zwaveRequest);
+        publish(topic);
+    }
+
 }
