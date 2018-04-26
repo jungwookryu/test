@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import static java.util.Objects.isNull;
 
+import java.util.ArrayList;
+
 import org.eclipse.paho.client.mqttv3.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.config.service.ZwaveClassKey;
 import com.ht.connected.home.backend.config.service.ZwaveCommandKey;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
@@ -62,6 +65,12 @@ public class ZwaveController extends CommonController {
     }
 
 
+    /**
+     * 기기등록
+     * @param req
+     * @return
+     * @throws JsonProcessingException
+     */
     @PostMapping 
     public ResponseEntity regist(@RequestBody HashMap<String, Object> req) throws JsonProcessingException {
         int classKey = ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION;
@@ -75,15 +84,14 @@ public class ZwaveController extends CommonController {
     }
 
     @GetMapping(value = "/{serial}")
-    public ResponseEntity getList(@PathVariable("serial") String serial) {
-        ResponseEntity response = new ResponseEntity(HttpStatus.NOT_FOUND);
+    public ResponseEntity getList(@PathVariable("serial") String serial) throws JsonProcessingException {
+        String sRtnList = objectMapper.writeValueAsString(new ArrayList());
         List<Certification> certification = certificationRepository.findBySerialAndMethodAndContext(serial,
-                Integer.toString(ZwaveClassKey.NETWORK_MANAGEMENT_PROXY), Integer.toString(ZwaveCommandKey.NODE_LIST_REPORT));
-        if(!isNull(certification)) {
-            certification.get(0).getPayload();    
-            response = new ResponseEntity<>(certification.get(0).getPayload(), HttpStatus.ACCEPTED);
+                ByteUtil.getHexString((int) ZwaveClassKey.NETWORK_MANAGEMENT_PROXY), ByteUtil.getHexString((int)ZwaveCommandKey.NODE_LIST_REPORT));
+        if(certification.size()>0) {
+            sRtnList = certification.get(0).getPayload();    
         }
-        return response;
+        return new ResponseEntity<>(sRtnList, HttpStatus.ACCEPTED);
     }
 
     @PutMapping
