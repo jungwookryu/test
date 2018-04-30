@@ -36,6 +36,7 @@ import com.ht.connected.home.backend.model.dto.Target;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
 import com.ht.connected.home.backend.repository.GateWayRepository;
 import com.ht.connected.home.backend.service.GateWayService;
+import com.ht.connected.home.backend.service.IRService;
 import com.ht.connected.home.backend.service.ZwaveService;
 import com.ht.connected.home.backend.service.mqtt.MqttNoticeExecutor;
 import com.ht.connected.home.backend.service.mqtt.MqttPayloadExecutor;
@@ -80,6 +81,9 @@ public class MqttConfig {
     private ZwaveService zwaveService;
     @Autowired
     private GateWayService gateWayService;
+    
+    @Autowired
+    private IRService irService;
 
     /**
      * MQTT 클라언트 생성
@@ -207,77 +211,32 @@ public class MqttConfig {
                         LOGGER.info("zwave subEnd");
                     }
                     if (Category.ir.name().equals(topicSplited[5].toString())) {
-                        ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
+                        irService.subscribe(topicSplited, payload);
                         LOGGER.info("messageArrived: Topic=" + topic + ", host=");
                         LOGGER.info("ir subEnd");
                     }
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
-                    LOGGER.error("zwave :::::: " + e);
+                    LOGGER.error("Mqtt :::::: " + e);
                 }
 
             }
-            // @SuppressWarnings("unchecked")
-            // @Override
-            /*  public void handleMessage(Message<?> message) throws MessagingException {
-                String topic = String.valueOf(message.getHeaders().get("mqtt_topic"));
-                String payload = String.valueOf(message.getPayload());
-                LOGGER.info("messageArrived: Topic=" + topic + ", Payload=" + payload);
-                String[] topicSplited = topic.split("/");
-               
-                if (topicSplited.length > 5) {
-                   
-                   if ( topicSplited[6].equals(springMqttCertificationTopicSegment)) {
-                        ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
-                        ZwaveBase<Object> handler = new ZwaveBase<>(
-                                beanFactory.getBean(ZwaveDefinedHandler.handlers.get(zwaveRequest.getClassKey())));
-            
-                        handler.subscribe(zwaveRequest, payload);
-                    } else {
-                        if ("alive".equals(topicSplited[6])) {
-                            LOGGER.info("MQTT alive topic is not implemented");
-                            
-                        } else {
-                            MqttMessageArrived mqttMessageArrived = new MqttMessageArrived(topic, payload);
-                            Gateway gateway = gatewayRepository.findBySerial(mqttMessageArrived.getSerial());
-                            MqttPayloadExecutor executor = getExecutor(mqttMessageArrived);
-                            Object returnData = null;
-                            if (!isNull(executor)) {
-                                LOGGER.info("MQTT message executor found");
-                                try {
-                                    returnData = executor.execute(mqttMessageArrived, gateway);
-                                } catch (Exception e) {
-                                    // TODO Auto-generated catch block
-                                    e.printStackTrace();
-                                }
-                            } else {
-                                LOGGER.info("MQTT main controller message executor not found");
-                            }
-                            if (!isNull(returnData)) {
-                                LOGGER.info("MQTT topic returnData is not null::"+returnData.toString());
-                            }
-                        }
-                    }
-                } else {
-                    LOGGER.info("MQTT topic is not implemented");
-                }
-            }*/
-
-            @SuppressWarnings({ "unchecked", "rawtypes" })
-            public MqttPayloadExecutor getExecutor(MqttMessageArrived mqttMessageArrived) {
-                MqttPayloadExecutor serviceExecutor = null;
-                HashMap<String, Class> executors = new HashMap<>();
-                executors.put(mqttTopicManagerNoti, MqttNoticeExecutor.class);
-                Class executor = executors.get(mqttMessageArrived.getControllerMethodContext());
-                if (executor == null) {
-                    executor = executors.get(mqttMessageArrived.getControllerMethod());
-                }
-                if (executor != null) {
-                    serviceExecutor = (MqttPayloadExecutor) beanFactory.getBean(executor);
-                }
-                return serviceExecutor;
-            }
+//
+//            @SuppressWarnings({ "unchecked", "rawtypes" })
+//            public MqttPayloadExecutor getExecutor(MqttMessageArrived mqttMessageArrived) {
+//                MqttPayloadExecutor serviceExecutor = null;
+//                HashMap<String, Class> executors = new HashMap<>();
+//                executors.put(mqttTopicManagerNoti, MqttNoticeExecutor.class);
+//                Class executor = executors.get(mqttMessageArrived.getControllerMethodContext());
+//                if (executor == null) {
+//                    executor = executors.get(mqttMessageArrived.getControllerMethod());
+//                }
+//                if (executor != null) {
+//                    serviceExecutor = (MqttPayloadExecutor) beanFactory.getBean(executor);
+//                }
+//                return serviceExecutor;
+//            }
 
         };
     }

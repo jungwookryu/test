@@ -9,10 +9,12 @@
  */
 package com.ht.connected.home.backend.repository;
 
-import com.ht.connected.home.backend.model.entity.IR;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.ht.connected.home.backend.model.entity.IR;
 
 /**
  * @author ijlee
@@ -20,5 +22,13 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface IRRepository extends JpaRepository<IR, Integer> {
-	
+    List<IR> findByUserEmail(String useremail);
+
+    List<IR> findBySerialAndStatusAndModelOrUserEmail(String serial, String status, String model, String userEmail);
+    
+    List<IR> findByIrTypeAndSerialAndActionAndModelOrUserEmail(String irType, String serial, String action, String model, String userEmail);
+    
+    List<IR> findBySerialAndActionAndModelAndIrTypeAndUserEmail(String serial, String action, String model, String irType, String userEmail);
+
+    List<IR> findByIrTypeAndUserEmail(String irType, String userEmail);
 }
