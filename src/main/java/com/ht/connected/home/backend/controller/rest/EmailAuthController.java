@@ -35,7 +35,7 @@ public class EmailAuthController extends CommonController {
                 usersService.modify(rtnUsers.getNo(), rtnUsers);
             }
             InputStream file =getClass().getClassLoader().getResourceAsStream("templates/email/userRegisterConfirm.html");
-            return new ResponseEntity(IOUtils.toString(file, "UTF-8"), HttpStatus.ACCEPTED);
+            return new ResponseEntity(IOUtils.toString(file, "UTF-8").replace("{{user.email}}", userEmail), HttpStatus.ACCEPTED);
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }

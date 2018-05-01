@@ -326,6 +326,7 @@ public class Common {
             String activeUrl = (String) body.getOrDefault("activeUrl", properties.get("mail.smtp.active.authUrl"));
             String authUrl = (String) body.getOrDefault("authUrl", properties.get("mail.smtp.authUrl"));
             String subject = (String) body.getOrDefault("subject", properties.get("mail.smtp.subject"));
+            subject = new String(subject.getBytes("ISO-8859-1"), "UTF-8");
             String contextUrl = (String) body.getOrDefault("contextUrl", properties.get("mail.smtp.contextUrl"));
             Session session = Session.getInstance(properties, emailConfig.auth());
 
@@ -349,7 +350,7 @@ public class Common {
             msg.setDataHandler(new DataHandler(new ByteArrayDataSource(doc.outerHtml(), "text/html")));
             msg.setSentDate(new Date());
             msg.setSubject(subject);
-            msg.setContent(doc.outerHtml(), "text/html;charset=" + "EUC-KR");
+            msg.setContent(doc.outerHtml().replace("{{user.email}}", receiveUserEmail), "text/html;charset=" + "EUC-KR");
             msg.setFrom(new InternetAddress(userEmail, username));
             msg.setReplyTo(InternetAddress.parse(userEmail, false));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(receiveUserEmail, false));
