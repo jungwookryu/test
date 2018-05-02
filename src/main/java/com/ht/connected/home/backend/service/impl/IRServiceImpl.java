@@ -56,7 +56,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
 
     @Override
     public List<IR> getIRByUser(String userEmail) {
-        return irRepository.findByUserEmailAndStatus(userEmail, Type.add.name() );
+        return irRepository.findByUserEmailAndStatus(userEmail, Type.add.name());
     }
 
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -79,14 +79,14 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
             publishPayload.put("request", Category.ir.name());
             publishPayload.put("action", ir.getStatus());
             publish(topic, publishPayload);
-            if(AppController.Command.stop.equals(ir.getStatus())) {
-                //등록모드 기본기기정보삭제
-                //List<IR> irs = irRepository.findBySerialAndStatusAndModelOrUserEmail(ir.getSerial(), Type.add.name(), ir.getModel(), ir.getUserEmail());
-                //irRepository.delete(irs);
+            if (AppController.Command.stop.equals(ir.getStatus())) {
+                // 등록모드 기본기기정보삭제
+                // List<IR> irs = irRepository.findBySerialAndStatusAndModelOrUserEmail(ir.getSerial(), Type.add.name(), ir.getModel(), ir.getUserEmail());
+                // irRepository.delete(irs);
             }
         }
-        
-        if(ir.getStatus().isEmpty()) {
+
+        if (ir.getStatus().isEmpty()) {
             irRepository.save(ir);
         }
 
@@ -102,14 +102,14 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                 HashMap rtnMap = (HashMap) map.getOrDefault("response", new HashMap());
                 List<IR> irs = irRepository.findBySerialAndStatusAndModel(serial, "", model);
                 IR ir = irs.get(0);
-                List lst = (List)rtnMap.getOrDefault("value", new ArrayList<>());
-                int gap = (int) rtnMap.getOrDefault("gap",0);
-                String format = (String) rtnMap.getOrDefault("format","");
-                int rptcnt = (int) rtnMap.getOrDefault("rptcnt",0);
-                for (int i = 0; i < 1; i++) {//0번째만 저장해보자.
+                List lst = (List) rtnMap.getOrDefault("value", new ArrayList<>());
+                int gap = (int) rtnMap.getOrDefault("gap", 0);
+                String format = (String) rtnMap.getOrDefault("format", "");
+                int rptcnt = (int) rtnMap.getOrDefault("rptcnt", 0);
+                for (int i = 0; i < 1; i++) {// 0번째만 저장해보자.
                     HashMap rtnMap2 = (HashMap) lst.get(i);
-                    int length = (int) rtnMap2.getOrDefault("length",0);
-                    String data = (String) rtnMap2.getOrDefault("data","");
+                    int length = (int) rtnMap2.getOrDefault("length", 0);
+                    String data = (String) rtnMap2.getOrDefault("data", "");
                     ir.setNo(ir.getNo());
                     ir.setStatus("active");
                     ir.setFormat(format);
@@ -123,26 +123,29 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
         }
 
     }
-    
-    
+
     @Override
     public void controlIR(IR reqIr) throws JsonProcessingException {
         String topic = getMqttPublishTopic(reqIr, Target.host.name(), Target.server.name());
         HashMap<String, Object> publishPayload = new HashMap<String, Object>();
         List value = new ArrayList<>();
-        IR ir = irRepository.findOne(reqIr.getNo());
-        HashMap map = new HashMap();
-        map.put("length", ir.getLength());
-        map.put("data", ir.getData());
-        value.add(map);
-        HashMap requestMap = new HashMap<>();
-        requestMap.put("format", ir.getFormat());
-        requestMap.put("rptcnt", ir.getRptcnt());
-        requestMap.put("gap", ir.getGap());
-        requestMap.put("value", value);
-        publishPayload.put("type", Type.control.name());
-        publishPayload.put("request", requestMap);
-        publish(topic, publishPayload);
+        // IR ir = irRepository.findOne(reqIr.getNo());
+        List<IR> irs = irRepository.findByUserEmailAndSubNumberAndAction(reqIr.getUserEmail(), reqIr.getSubNumber(), reqIr.getAction());
+        if (irs.size() > 0) {
+            IR ir = irs.get(0);
+            HashMap map = new HashMap();
+            map.put("length", ir.getLength());
+            map.put("data", ir.getData());
+            value.add(map);
+            HashMap requestMap = new HashMap<>();
+            requestMap.put("format", ir.getFormat());
+            requestMap.put("rptcnt", ir.getRptcnt());
+            requestMap.put("gap", ir.getGap());
+            requestMap.put("value", value);
+            publishPayload.put("type", Type.control.name());
+            publishPayload.put("request", requestMap);
+            publish(topic, publishPayload);
+        }
     }
 
     /**
@@ -174,13 +177,13 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     @Override
     public void subscribe(Object request, Object payload) throws JsonParseException, JsonMappingException, IOException, Exception {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void publish(Object req, Object zwaveRequest) {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

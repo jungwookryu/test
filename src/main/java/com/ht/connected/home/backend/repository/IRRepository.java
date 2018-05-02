@@ -23,7 +23,10 @@ import com.ht.connected.home.backend.model.entity.IR;
 @Repository
 public interface IRRepository extends JpaRepository<IR, Integer> {
     List<IR> findByUserEmail(String useremail);
+    
     List<IR> findByUserEmailAndStatus(String useremail, String status);
+    
+    List<IR> findByUserEmailAndSubNumberAndAction(String useremail, int subNumber, String action);
     
     List<IR> findBySerialAndStatusAndModel(String serial, String status, String model);
     
