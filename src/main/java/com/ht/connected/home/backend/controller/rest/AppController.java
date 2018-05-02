@@ -191,8 +191,8 @@ public class AppController extends CommonController {
     @PostMapping(value = { "/irMode" })
     public ResponseEntity startOrEndLearnRemoteControl(@RequestBody HashMap hashMap) throws JsonProcessingException {
         HashMap<String, Object> rtnMap = new HashMap();
-        rtnMap.put("result_code", "444");
-        rtnMap.put("result_msg", "Not Acceptable");
+        rtnMap.put("result_code", "200");
+        rtnMap.put("result_msg", "Success");
         String command = (String) hashMap.getOrDefault("command", "");
         String serial = (String) hashMap.getOrDefault("serial", "");
         String model = (String) hashMap.getOrDefault("model", "");
