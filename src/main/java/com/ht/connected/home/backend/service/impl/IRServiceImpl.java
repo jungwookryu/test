@@ -101,23 +101,25 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
             if (Type.add.name().equals((String) map.getOrDefault("type", ""))) {
                 HashMap rtnMap = (HashMap) map.getOrDefault("response", new HashMap());
                 List<IR> irs = irRepository.findBySerialAndStatusAndModel(serial, "", model);
-                IR ir = irs.get(0);
-                List lst = (List) rtnMap.getOrDefault("value", new ArrayList<>());
-                int gap = (int) rtnMap.getOrDefault("gap", 0);
-                String format = (String) rtnMap.getOrDefault("format", "");
-                int rptcnt = (int) rtnMap.getOrDefault("rptcnt", 0);
-                for (int i = 0; i < 1; i++) {// 0번째만 저장해보자.
-                    HashMap rtnMap2 = (HashMap) lst.get(i);
-                    int length = (int) rtnMap2.getOrDefault("length", 0);
-                    String data = (String) rtnMap2.getOrDefault("data", "");
-                    ir.setNo(ir.getNo());
-                    ir.setStatus("active");
-                    ir.setFormat(format);
-                    ir.setLength(length);
-                    ir.setData(data);
-                    ir.setGap(gap);
-                    ir.setRptcnt(rptcnt);;
-                    irRepository.save(ir);
+                if(irs.size()>0) {
+                    IR ir = irs.get(0);
+                    List lst = (List) rtnMap.getOrDefault("value", new ArrayList<>());
+                    int gap = (int) rtnMap.getOrDefault("gap", 0);
+                    String format = (String) rtnMap.getOrDefault("format", "");
+                    int rptcnt = (int) rtnMap.getOrDefault("rptcnt", 0);
+                    for (int i = 0; i < 1; i++) {// 0번째만 저장해보자.
+                        HashMap rtnMap2 = (HashMap) lst.get(i);
+                        int length = (int) rtnMap2.getOrDefault("length", 0);
+                        String data = (String) rtnMap2.getOrDefault("data", "");
+                        ir.setNo(ir.getNo());
+                        ir.setStatus("active");
+                        ir.setFormat(format);
+                        ir.setLength(length);
+                        ir.setData(data);
+                        ir.setGap(gap);
+                        ir.setRptcnt(rptcnt);;
+                        irRepository.save(ir);
+                    }
                 }
             }
         }
