@@ -53,7 +53,7 @@ public class AppController extends CommonController {
             int irindex = (int) hashMap.get("irindex");
             if ("del".equals(command)) {
                 iRController.deleteIR(irindex);
-                
+
             }
             if ("add".equals(command)) {
                 String serial = (String) hashMap.getOrDefault("serial", "");
@@ -71,10 +71,10 @@ public class AppController extends CommonController {
                 rss = iRController.createIR(ir);
             }
         }
-        if (rss!=null && rss.getStatusCodeValue() != 200) {
+        if (rss != null && rss.getStatusCodeValue() != 200) {
             rtnMap.replace("result_code", rss.getStatusCodeValue());
             rtnMap.replace("result_msg", rss.getHeaders().get("message"));
-        } 
+        }
         return new ResponseEntity<>(rtnMap, HttpStatus.OK);
     }
 
@@ -91,7 +91,7 @@ public class AppController extends CommonController {
         rtnMap.put("result_code", "200");
         rtnMap.put("result_msg", "Success");
         List rtnList = new ArrayList();
-        if (rss.getStatusCodeValue() ==200) {
+        if (rss.getStatusCodeValue() == 200) {
             HashMap<String, List<?>> map = (HashMap<String, List<?>>) iRController.getIR().getBody();
             List<IR> lstIR = (List<IR>) map.getOrDefault("list", new ArrayList());
             HashMap ircategoryMap = new HashMap();
@@ -100,38 +100,38 @@ public class AppController extends CommonController {
             List lstCategory3 = new ArrayList();
             for (int i = 0; i < lstIR.size(); i++) {
                 IR iR = lstIR.get(i);
-                if(iR.getIrType()==1) {
+                if (iR.getIrType() == 1) {
                     HashMap mapCategory1 = new HashMap();
                     mapCategory1.put("irname", iR.getIrName());
                     mapCategory1.put("irindex", Integer.toString(iR.getNo()));
                     lstCategory1.add(mapCategory1);
                 }
-                if(iR.getIrType()==2) {
+                if (iR.getIrType() == 2) {
                     HashMap mapCategory2 = new HashMap();
                     mapCategory2.put("irname", iR.getIrName());
                     mapCategory2.put("irindex", Integer.toString(iR.getNo()));
                     lstCategory2.add(mapCategory2);
                 }
-                if(iR.getIrType()==3) {
+                if (iR.getIrType() == 3) {
                     HashMap mapCategory3 = new HashMap();
                     mapCategory3.put("irname", iR.getIrName());
                     mapCategory3.put("irindex", Integer.toString(iR.getNo()));
                     lstCategory3.add(mapCategory3);
                 }
             }
-            if(lstCategory1.size()>0) {
+            if (lstCategory1.size() > 0) {
                 HashMap rtnListMap = new HashMap();
                 rtnListMap.put("categoryname", Devicetype.aircon.name());
                 rtnListMap.put("list", lstCategory1);
                 rtnList.add(rtnListMap);
             }
-            if(lstCategory2.size()>0) {
+            if (lstCategory2.size() > 0) {
                 HashMap rtnListMap = new HashMap();
                 rtnListMap.put("categoryname", Devicetype.tv.name());
                 rtnListMap.put("list", lstCategory2);
                 rtnList.add(rtnListMap);
             }
-            if(lstCategory2.size()>0) {
+            if (lstCategory2.size() > 0) {
                 HashMap rtnListMap = new HashMap();
                 rtnListMap.put("categoryname", Devicetype.fan.name());
                 rtnListMap.put("list", lstCategory3);
@@ -160,16 +160,20 @@ public class AppController extends CommonController {
         if (hashMap.get("ir_type") == null) {
             rtnMap.replace("result_msg", "No Contents");
         } else {
-            String irType = (String) hashMap.get("ir_type");
-            ResponseEntity<List<IR>> rss = iRController.getIRType(irType, rtnMap);
-            if (rss.getStatusCodeValue() == 200) {
-                List<IR> irs = rss.getBody();
-                for (int i = 0; i < irs.size(); i++) {
-                    IR ir = irs.get(i);
-                    rtnIrbuttonList.add(ir.getAction());
+            if (hashMap.get("ir_type") != null) {
+                int irType = (int) hashMap.get("ir_type");
+                ResponseEntity<List<IR>> rss = iRController.getIRType(irType, hashMap);
+                if (rss.getStatusCodeValue() == 200) {
+                    List<IR> irs = rss.getBody();
+                    for (int i = 0; i < irs.size(); i++) {
+                        IR ir = irs.get(i);
+                        if(!"add".equals(ir.getAction())) {
+                            rtnIrbuttonList.add(ir.getAction());
+                        }
+                    }
+                } else {
+                    rtnMap.put("result_msg", rss.getHeaders().get("message"));
                 }
-            } else {
-                rtnMap.put("result_msg", rss.getHeaders().get("message"));
             }
         }
         rtnDataMap.put("ir_button", rtnIrbuttonList);

@@ -99,11 +99,11 @@ public class IRController extends CommonController {
 
     //기기정보 가져오기
     @GetMapping("/{irType}")
-    public ResponseEntity<List<IR>> getIRType(@PathVariable("irType") String irType,
-            @RequestParam HashMap<String, Object> rtnMap){
+    public ResponseEntity<List<IR>> getIRType(@PathVariable("irType") int irType,
+            @RequestParam HashMap<String, Object> hashMap){
         String useEmail = getAuthUserEmail();
-        String serial = (String) rtnMap.getOrDefault("serial", "");
-        String model = (String) rtnMap.getOrDefault("model", "");
+        String serial = (String) hashMap.getOrDefault("serial", "");
+        String model = (String) hashMap.getOrDefault("model", "");
 //        List<IR> ir = iRRepository.findByIrTypeAndUserEmail(irType, useEmail);
         List<IR> ir = iRRepository.findByIrTypeAndUserEmailAndSerialAndModel(irType, useEmail, serial, model);
         return new ResponseEntity<List<IR>>(ir, HttpStatus.OK);
