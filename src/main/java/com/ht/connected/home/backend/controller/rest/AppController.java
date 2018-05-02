@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.sound.sampled.LineEvent.Type;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -196,6 +197,9 @@ public class AppController extends CommonController {
         String command = (String) hashMap.getOrDefault("command", "");
         String serial = (String) hashMap.getOrDefault("serial", "");
         String model = (String) hashMap.getOrDefault("model", "");
+        if("end".equals(command)) {
+            command=Command.stop.name();
+        }
         IR ir = new IR();
         ir.setSerial(serial);
         ir.setModel(model);
@@ -226,6 +230,7 @@ public class AppController extends CommonController {
         ir.setAction(actionname);
         ir.setStatus("");
         ir.setIrType((int) hashMap.getOrDefault("irtype", 99));
+        ir.setSubNumber((int) hashMap.getOrDefault("irtype", 99));
         ir.setAction((String) hashMap.getOrDefault("actionname", ""));
         iRController.createStudyIR(ir);
         return new ResponseEntity<>(rtnMap, HttpStatus.OK);
@@ -245,17 +250,20 @@ public class AppController extends CommonController {
         List rtnIrbuttonList = new ArrayList();
         rtnMap.put("result_code", "200");
         rtnMap.put("result_msg", "Success");
-        String serial = (String) hashMap.getOrDefault("serial", "");
-        String model = (String) hashMap.getOrDefault("model", "");
-        IR ir = new IR();
-        ir.setSerial(serial);
-        ir.setModel(model);
-        ir.setIrType((int) hashMap.getOrDefault("irindex", 99));
-        ir.setAction((String) hashMap.getOrDefault("actionname", ""));
-        ResponseEntity<IR> rss = iRController.controlIR(ir.getNo(), ir);
-        if (rss.getStatusCodeValue() == 200) {
-        } else {
-            rtnMap.put("result_msg", rss.getHeaders().get("message"));
+        if(hashMap.get("irindex")!=null){
+            String serial = (String) hashMap.getOrDefault("serial", "");
+            String model = (String) hashMap.getOrDefault("model", "");
+            IR ir = new IR();
+            ir.setSerial(serial);
+            ir.setModel(model);
+            ir.setNo((int) hashMap.get("irindex"));
+            ir.setAction((String) hashMap.getOrDefault("actionname", ""));
+            ir.setStatus("control");
+            ResponseEntity<IR> rss = iRController.controlIR(ir.getNo(), ir);
+            if (rss.getStatusCodeValue() == 200) {
+            } else {
+                rtnMap.put("result_msg", rss.getHeaders().get("message"));
+            }
         }
         return new ResponseEntity<>(rtnMap, HttpStatus.OK);
     }
