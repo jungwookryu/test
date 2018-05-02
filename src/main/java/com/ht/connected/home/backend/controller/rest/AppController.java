@@ -268,7 +268,7 @@ public class AppController extends CommonController {
      * @throws Exception
      */
     @PostMapping("/uiIrInfo")
-    public ResponseEntity uiIrInfo(@RequestBody HashMap hashMap) throws JsonProcessingException {
+    public ResponseEntity uiIrInfo() throws JsonProcessingException {
         HashMap<String, Object> rtnMap = new HashMap();
         HashMap<String, Object> rtnDataMap = new HashMap();
         List rtnIrbuttonList = new ArrayList();
