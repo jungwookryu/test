@@ -56,7 +56,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
 
     @Override
     public List<IR> getIRByUser(String userEmail) {
-        return irRepository.findByUserEmail(userEmail);
+        return irRepository.findByUserEmailAndStatus(userEmail, Type.add.name() );
     }
 
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -100,22 +100,22 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
             HashMap<String, Object> map = objectMapper.readValue(payload, HashMap.class);
             if (Type.add.name().equals((String) map.getOrDefault("type", ""))) {
                 HashMap rtnMap = (HashMap) map.getOrDefault("response", new HashMap());
-                List<IR> irs = irRepository.findBySerialAndStatusAndModelOrUserEmail(serial, Type.add.name(), model,"");
+                List<IR> irs = irRepository.findBySerialAndStatusAndModel(serial, "", model);
                 IR ir = irs.get(0);
-                IR saveIr = new IR(ir.getDevType(), ir.getAction(), ir.getIrType());
                 List lst = (List)rtnMap.getOrDefault("value", new ArrayList<>());
                 int gap = (int) rtnMap.getOrDefault("gap",0);
                 int rptcnt = (int) rtnMap.getOrDefault("rptcnt",0);
-                for (int i = 0; i < lst.size(); i++) {
-                    JSONObject json = (JSONObject) lst.get(i);
-                    int length = json.getInt("length");
-                    String data = json.getString("data");
-                    saveIr.setStatus("active");
-                    saveIr.setLength(length);
-                    saveIr.setData(data);
-                    saveIr.setGap(gap);
-                    saveIr.setRptcnt(rptcnt);;
-                    irRepository.saveAndFlush(ir);
+                for (int i = 0; i < 1; i++) {//0번째만 저장해보자.
+                    HashMap rtnMap2 = (HashMap) lst.get(i);
+                    int length = (int) rtnMap2.getOrDefault("length",0);
+                    String data = (String) rtnMap2.getOrDefault("data","");
+                    ir.setNo(ir.getNo());
+                    ir.setStatus("active");
+                    ir.setLength(length);
+                    ir.setData(data);
+                    ir.setGap(gap);
+                    ir.setRptcnt(rptcnt);;
+                    irRepository.save(ir);
                 }
             }
         }
