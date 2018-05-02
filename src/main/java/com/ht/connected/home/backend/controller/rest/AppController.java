@@ -87,7 +87,7 @@ public class AppController extends CommonController {
         rtnMap.put("result_code", "200");
         rtnMap.put("result_msg", "Success");
         List rtnList = new ArrayList();
-        if (rss.getStatusCodeValue() == HttpStatus.OK.hashCode()) {
+        if (rss.getStatusCodeValue() ==200) {
             HashMap<String, List<?>> map = (HashMap<String, List<?>>) iRController.getIR().getBody();
             List<IR> lstIR = (List<IR>) map.getOrDefault("list", new ArrayList());
             for (int i = 0; i < lstIR.size(); i++) {
