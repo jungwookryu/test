@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -58,10 +59,10 @@ public class IRController extends CommonController {
 	 */
 	//신규 학습
 	@PostMapping
-	public ResponseEntity<IR> createIR(@RequestBody IR ir, HttpServletRequest request) {
+	public ResponseEntity<IR> createIR(@RequestBody IR ir) {
 	    ir.setUserEmail(getAuthUserEmail());
 	    IR rtnIr = iRRepository.save(ir);
-	    return new ResponseEntity<IR>(ir, HttpStatus.OK);
+	    return new ResponseEntity<IR>(rtnIr, HttpStatus.OK);
 	}
 	
 	   /**
@@ -102,9 +103,13 @@ public class IRController extends CommonController {
 
     //기기정보 가져오기
     @GetMapping("/{irType}")
-    public ResponseEntity<List<IR>> getIRType(@PathVariable("irType") String irType){
+    public ResponseEntity<List<IR>> getIRType(@PathVariable("irType") String irType,
+            @RequestParam HashMap<String, Object> rtnMap){
         String useEmail = getAuthUserEmail();
-        List<IR> ir = iRRepository.findByIrTypeAndUserEmail(irType, useEmail);
+        String serial = (String) rtnMap.getOrDefault("serial", "");
+        String model = (String) rtnMap.getOrDefault("model", "");
+//        List<IR> ir = iRRepository.findByIrTypeAndUserEmail(irType, useEmail);
+        List<IR> ir = iRRepository.findByIrTypeAndUserEmailAndSerialAndModel(irType, useEmail, serial, model);
         return new ResponseEntity<List<IR>>(ir, HttpStatus.OK);
     }
     

@@ -26,9 +26,9 @@ public interface IRRepository extends JpaRepository<IR, Integer> {
 
     List<IR> findBySerialAndStatusAndModelOrUserEmail(String serial, String status, String model, String userEmail);
     
-    List<IR> findByIrTypeAndSerialAndActionAndModelOrUserEmail(String irType, String serial, String action, String model, String userEmail);
+    List<IR> findByIrTypeAndSerialAndActionAndModelOrUserEmail(int irType, String serial, String action, String model, String userEmail);
     
     List<IR> findBySerialAndActionAndModelAndIrTypeAndUserEmail(String serial, String action, String model, String irType, String userEmail);
 
-    List<IR> findByIrTypeAndUserEmail(String irType, String userEmail);
+    List<IR> findByIrTypeAndUserEmailAndSerialAndModel(String irType, String useEmail, String serial, String model);
 }
