@@ -104,7 +104,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                 IR ir = irs.get(0);
                 List lst = (List)rtnMap.getOrDefault("value", new ArrayList<>());
                 int gap = (int) rtnMap.getOrDefault("gap",0);
-                String format = (String) rtnMap.getOrDefault("format",0);
+                String format = (String) rtnMap.getOrDefault("format","");
                 int rptcnt = (int) rtnMap.getOrDefault("rptcnt",0);
                 for (int i = 0; i < 1; i++) {//0번째만 저장해보자.
                     HashMap rtnMap2 = (HashMap) lst.get(i);

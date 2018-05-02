@@ -81,7 +81,7 @@ public class MqttConfig {
     private ZwaveService zwaveService;
     @Autowired
     private GateWayService gateWayService;
-    
+
     @Autowired
     private IRService irService;
 
@@ -179,9 +179,9 @@ public class MqttConfig {
                 String[] topicSplited = topic.split("/");
                 try {
                     if (topicSplited.length > 2) {
-//                        if (Target.server.name().equals(topicSplited[2].toString())) {
-//                            return;
-//                        }
+                        // if (Target.server.name().equals(topicSplited[2].toString())) {
+                        // return;
+                        // }
                         // gateway service category topicSplited[5].toString()
                         LOGGER.info(topicSplited[5].toString() + " subStart");
                         if (Category.gateway.name().equals(topicSplited[5].toString())) {
@@ -203,17 +203,18 @@ public class MqttConfig {
                             ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
                             LOGGER.info("messageArrived: Topic=" + topic + ", host=");
                             LOGGER.info("ir subEnd");
-                        }
-                        else {
+                        } else {
                             MqttMessageArrived mqttMessageArrived = new MqttMessageArrived(topic, payload);
                             gateWayService.execute(mqttMessageArrived);
                         }
                         LOGGER.info("zwave subEnd");
                     }
                     if (Category.ir.name().equals(topicSplited[5].toString())) {
-                        irService.subscribe(topicSplited, payload);
-                        LOGGER.info("messageArrived: Topic=" + topic + ", host=");
-                        LOGGER.info("ir subEnd");
+                        if (Target.server.name().equals(topicSplited[2].toString())) {
+                            irService.subscribe(topicSplited, payload);
+                            LOGGER.info("messageArrived: Topic=" + topic + ", host=");
+                            LOGGER.info("ir subEnd");
+                        }
                     }
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
@@ -222,21 +223,21 @@ public class MqttConfig {
                 }
 
             }
-//
-//            @SuppressWarnings({ "unchecked", "rawtypes" })
-//            public MqttPayloadExecutor getExecutor(MqttMessageArrived mqttMessageArrived) {
-//                MqttPayloadExecutor serviceExecutor = null;
-//                HashMap<String, Class> executors = new HashMap<>();
-//                executors.put(mqttTopicManagerNoti, MqttNoticeExecutor.class);
-//                Class executor = executors.get(mqttMessageArrived.getControllerMethodContext());
-//                if (executor == null) {
-//                    executor = executors.get(mqttMessageArrived.getControllerMethod());
-//                }
-//                if (executor != null) {
-//                    serviceExecutor = (MqttPayloadExecutor) beanFactory.getBean(executor);
-//                }
-//                return serviceExecutor;
-//            }
+            //
+            // @SuppressWarnings({ "unchecked", "rawtypes" })
+            // public MqttPayloadExecutor getExecutor(MqttMessageArrived mqttMessageArrived) {
+            // MqttPayloadExecutor serviceExecutor = null;
+            // HashMap<String, Class> executors = new HashMap<>();
+            // executors.put(mqttTopicManagerNoti, MqttNoticeExecutor.class);
+            // Class executor = executors.get(mqttMessageArrived.getControllerMethodContext());
+            // if (executor == null) {
+            // executor = executors.get(mqttMessageArrived.getControllerMethod());
+            // }
+            // if (executor != null) {
+            // serviceExecutor = (MqttPayloadExecutor) beanFactory.getBean(executor);
+            // }
+            // return serviceExecutor;
+            // }
 
         };
     }
