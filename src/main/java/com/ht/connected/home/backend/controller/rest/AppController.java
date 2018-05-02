@@ -256,10 +256,10 @@ public class AppController extends CommonController {
             IR ir = new IR();
             ir.setSerial(serial);
             ir.setModel(model);
-            ir.setNo((int) hashMap.get("irindex"));
+            ir.setSubNumber((int) hashMap.get("irindex"));
             ir.setAction((String) hashMap.getOrDefault("actionname", ""));
             ir.setStatus("control");
-            ResponseEntity<IR> rss = iRController.controlIR(ir.getNo(), ir);
+            ResponseEntity<IR> rss = iRController.controlIR(ir.getSubNumber(), ir);
             if (rss.getStatusCodeValue() == 200) {
             } else {
                 rtnMap.put("result_msg", rss.getHeaders().get("message"));
