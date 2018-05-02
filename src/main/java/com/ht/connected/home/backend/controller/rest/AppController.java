@@ -167,7 +167,9 @@ public class AppController extends CommonController {
                     List<IR> irs = rss.getBody();
                     for (int i = 0; i < irs.size(); i++) {
                         IR ir = irs.get(i);
-                        rtnIrbuttonList.add(ir.getAction());
+                        if(!"add".equals(ir.getAction())) {
+                            rtnIrbuttonList.add(ir.getAction());
+                        }
                     }
                 } else {
                     rtnMap.put("result_msg", rss.getHeaders().get("message"));
