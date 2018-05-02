@@ -71,7 +71,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     @Override
     public void studyIR(IR ir) throws JsonProcessingException {
 
-        if (AppController.Command.start.name().equals(ir.getStatus()) || AppController.Command.start.name().equals(ir.getStatus())) {
+        if (AppController.Command.start.name().equals(ir.getStatus()) || AppController.Command.stop.name().equals(ir.getStatus())) {
             // publish
             String topic = getMqttPublishTopic(ir, Target.host.name(), Target.server.name());
             HashMap<String, Object> publishPayload = new HashMap<String, Object>();
@@ -81,8 +81,8 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
             publish(topic, publishPayload);
             if(AppController.Command.stop.equals(ir.getStatus())) {
                 //등록모드 기본기기정보삭제
-                List<IR> irs = irRepository.findBySerialAndStatusAndModelOrUserEmail(ir.getSerial(), Type.add.name(), ir.getModel(), ir.getUserEmail());
-                irRepository.delete(irs);
+                //List<IR> irs = irRepository.findBySerialAndStatusAndModelOrUserEmail(ir.getSerial(), Type.add.name(), ir.getModel(), ir.getUserEmail());
+                //irRepository.delete(irs);
             }
         }
         
@@ -104,6 +104,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                 IR ir = irs.get(0);
                 List lst = (List)rtnMap.getOrDefault("value", new ArrayList<>());
                 int gap = (int) rtnMap.getOrDefault("gap",0);
+                String format = (String) rtnMap.getOrDefault("format",0);
                 int rptcnt = (int) rtnMap.getOrDefault("rptcnt",0);
                 for (int i = 0; i < 1; i++) {//0번째만 저장해보자.
                     HashMap rtnMap2 = (HashMap) lst.get(i);
@@ -111,6 +112,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                     String data = (String) rtnMap2.getOrDefault("data","");
                     ir.setNo(ir.getNo());
                     ir.setStatus("active");
+                    ir.setFormat(format);
                     ir.setLength(length);
                     ir.setData(data);
                     ir.setGap(gap);
@@ -124,22 +126,20 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     
     
     @Override
-    public void controlIR(IR ir) throws JsonProcessingException {
-        String topic = getMqttPublishTopic(ir, Target.host.name(), Target.server.name());
+    public void controlIR(IR reqIr) throws JsonProcessingException {
+        String topic = getMqttPublishTopic(reqIr, Target.host.name(), Target.server.name());
         HashMap<String, Object> publishPayload = new HashMap<String, Object>();
         List value = new ArrayList<>();
-        List<IR> list = irRepository.findByIrTypeAndSerialAndActionAndModelOrUserEmail(ir.getIrType(), ir.getSerial(), ir.getAction(), ir.getModel(), ir.getUserEmail());
-        for (int i = 0; i < list.size(); i++) {
-            HashMap map = new HashMap();
-            map.put("length", list.get(i).getLength());
-            map.put("data", list.get(i).getData());
-            value.add(map);
-        }
+        IR ir = irRepository.findOne(reqIr.getNo());
+        HashMap map = new HashMap();
+        map.put("length", ir.getLength());
+        map.put("data", ir.getData());
+        value.add(map);
         HashMap requestMap = new HashMap<>();
         requestMap.put("format", ir.getFormat());
-        requestMap.put("rptcnt", ir.getFormat());
-        requestMap.put("gap", ir.getFormat());
-        requestMap.put("value", ir.getFormat());
+        requestMap.put("rptcnt", ir.getRptcnt());
+        requestMap.put("gap", ir.getGap());
+        requestMap.put("value", value);
         publishPayload.put("type", Type.control.name());
         publishPayload.put("request", requestMap);
         publish(topic, publishPayload);
