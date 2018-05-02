@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ht.connected.home.backend.controller.rest.IRController.Devicetype;
+import com.ht.connected.home.backend.model.dto.Category;
 import com.ht.connected.home.backend.model.entity.IR;
 import com.ht.connected.home.backend.service.impl.IRServiceImpl;
 import com.rabbitmq.client.Command;
@@ -56,10 +58,12 @@ public class AppController extends CommonController {
             if ("add".equals(command)) {
                 String serial = (String) hashMap.getOrDefault("serial", "");
                 String model = (String) hashMap.getOrDefault("model", "");
+                String irnickname = (String) hashMap.getOrDefault("irnickname", "");
                 int irchannel = (int) hashMap.getOrDefault("irchannel", 99);
                 IR ir = new IR();
                 ir.setSerial(serial);
                 ir.setModel(model);
+                ir.setIrName(irnickname);
                 ir.setAction("add");
                 ir.setStatus("add");
                 ir.setDevType("irchannel::" + Integer.toString(irchannel));
@@ -90,12 +94,48 @@ public class AppController extends CommonController {
         if (rss.getStatusCodeValue() ==200) {
             HashMap<String, List<?>> map = (HashMap<String, List<?>>) iRController.getIR().getBody();
             List<IR> lstIR = (List<IR>) map.getOrDefault("list", new ArrayList());
+            HashMap ircategoryMap = new HashMap();
+            List lstCategory1 = new ArrayList();
+            List lstCategory2 = new ArrayList();
+            List lstCategory3 = new ArrayList();
             for (int i = 0; i < lstIR.size(); i++) {
                 IR iR = lstIR.get(i);
-                HashMap irMap = new HashMap();
-                irMap.put("irname", iR.getIrName());
-                irMap.put("irindex", Integer.toString(iR.getNo()));
-                rtnList.add(irMap);
+                if(iR.getIrType()==1) {
+                    HashMap mapCategory1 = new HashMap();
+                    mapCategory1.put("irname", iR.getIrName());
+                    mapCategory1.put("irindex", Integer.toString(iR.getNo()));
+                    lstCategory1.add(mapCategory1);
+                }
+                if(iR.getIrType()==2) {
+                    HashMap mapCategory2 = new HashMap();
+                    mapCategory2.put("irname", iR.getIrName());
+                    mapCategory2.put("irindex", Integer.toString(iR.getNo()));
+                    lstCategory2.add(mapCategory2);
+                }
+                if(iR.getIrType()==3) {
+                    HashMap mapCategory3 = new HashMap();
+                    mapCategory3.put("irname", iR.getIrName());
+                    mapCategory3.put("irindex", Integer.toString(iR.getNo()));
+                    lstCategory3.add(mapCategory3);
+                }
+            }
+            if(lstCategory1.size()>0) {
+                HashMap rtnListMap = new HashMap();
+                rtnListMap.put("categoryname", Devicetype.aircon.name());
+                rtnListMap.put("list", lstCategory1);
+                rtnList.add(rtnListMap);
+            }
+            if(lstCategory2.size()>0) {
+                HashMap rtnListMap = new HashMap();
+                rtnListMap.put("categoryname", Devicetype.tv.name());
+                rtnListMap.put("list", lstCategory2);
+                rtnList.add(rtnListMap);
+            }
+            if(lstCategory2.size()>0) {
+                HashMap rtnListMap = new HashMap();
+                rtnListMap.put("categoryname", Devicetype.fan.name());
+                rtnListMap.put("list", lstCategory3);
+                rtnList.add(rtnListMap);
             }
         }
         rtnIrcategoryMap.put("ircategory", rtnList);
