@@ -39,7 +39,7 @@ public class IR {
 
     @JsonProperty("ir_type")
     @Column(name = "ir_type")
-    private String irType;
+    private int irType;
 
     @JsonProperty("dev_type")
     @Column(name = "dev_type")
@@ -99,7 +99,7 @@ public class IR {
         this.createdTime = new Date();
     }
     
-    public IR(String devType, String action, String irType) {
+    public IR(String devType, String action, int irType) {
         this.devType = devType;
         this.action = action;
         this.irType = irType;
@@ -164,14 +164,14 @@ public class IR {
     /**
      * @return the irType
      */
-    public String getIrType() {
+    public int getIrType() {
         return irType;
     }
 
     /**
      * @param irType the irType to set
      */
-    public void setIrType(String irType) {
+    public void setIrType(int irType) {
         this.irType = irType;
     }
 
