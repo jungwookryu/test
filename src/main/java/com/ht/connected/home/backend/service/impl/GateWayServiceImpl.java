@@ -9,12 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.BeanFactory;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.config.service.MqttConfig.MqttGateway;
 import com.ht.connected.home.backend.config.service.ZwaveClassKey;
@@ -180,24 +181,6 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     }
 
     @Override
-    public Gateway execute(Gateway req, Gateway zwaveRequest, Integer isCert) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Gateway publish(Gateway req, Gateway zwaveRequest) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public ResponseEntity execute(HashMap<String, Object> req, ZwaveRequest zwaveRequest, boolean isCert) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public void subscribe(ZwaveRequest zwaveRequest, String payload) throws JsonParseException, JsonMappingException, IOException {
 
         MqttPayload mqttPayload = objectMapper.readValue(payload, MqttPayload.class);
@@ -223,11 +206,6 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
         }
         updateCertification(zwaveRequest, payload);
 
-    }
-
-    @Override
-    public ResponseEntity publish(HashMap<String, Object> req, ZwaveRequest zwaveRequest) {
-        return null;
     }
 
     /**
@@ -311,9 +289,21 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     }
 
     @Override
-    public void subscribe(Gateway zwaveRequest, Integer payload) {
+    public void subscribe(Object zwaveRequest, Object payload) throws com.fasterxml.jackson.core.JsonParseException, com.fasterxml.jackson.databind.JsonMappingException, IOException, Exception {
         // TODO Auto-generated method stub
+        
+    }
 
+    @Override
+    public void publish(Object req, Object zwaveRequest) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public ResponseEntity publish(HashMap<String, Object> req, ZwaveRequest zwaveRequest) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

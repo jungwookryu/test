@@ -105,8 +105,8 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
             // }
             HashMap map = new HashMap<>();
             map.put("mode", 1);
-            ObjectMapper mapper = new ObjectMapper();
-            String str = mapper.writeValueAsString(map);
+//            ObjectMapper mapper = new ObjectMapper();
+//            String str = objectMapper.writeValueAsString(map);
             req.put("set_data", map);
 
         }
@@ -403,17 +403,6 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
         zwaveRepository.save(zwave);
     }
 
-    @Override
-    public Object execute(Object req, Object zwaveRequest, Object isCert) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Object publish(Object req, Object zwaveRequest) {
-        // TODO Auto-generated method stub
-        return null;
-    }
     //제어
     @Override
     public void execute(Map map, boolean isCert) throws JsonProcessingException {
@@ -445,8 +434,14 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
     }
 
     @Override
-    public void execute(ZwaveRequest zwaveRequest, boolean isCert) {
+    public void publish(Object req, Object zwaveRequest) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void execute(Object zwaveRequest, Object isCert) {
         // TODO Auto-generated method stub
         
     }
+
 }
