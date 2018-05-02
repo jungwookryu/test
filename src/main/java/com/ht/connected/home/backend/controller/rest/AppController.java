@@ -93,7 +93,7 @@ public class AppController extends CommonController {
         rtnMap.put("result_msg", "Success");
         List rtnList = new ArrayList();
         if (rss.getStatusCodeValue() == 200) {
-            HashMap<String, List<?>> map = (HashMap<String, List<?>>) iRController.getIR().getBody();
+            HashMap<String, List<?>> map = (HashMap<String, List<?>>) rss.getBody();
             List<IR> lstIR = (List<IR>) map.getOrDefault("list", new ArrayList());
             HashMap ircategoryMap = new HashMap();
             List lstCategory1 = new ArrayList();
@@ -132,7 +132,7 @@ public class AppController extends CommonController {
                 rtnListMap.put("list", lstCategory2);
                 rtnList.add(rtnListMap);
             }
-            if (lstCategory2.size() > 0) {
+            if (lstCategory3.size() > 0) {
                 HashMap rtnListMap = new HashMap();
                 rtnListMap.put("categoryname", Devicetype.fan.name());
                 rtnListMap.put("list", lstCategory3);
