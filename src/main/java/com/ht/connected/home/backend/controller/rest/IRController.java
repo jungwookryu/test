@@ -2,6 +2,9 @@ package com.ht.connected.home.backend.controller.rest;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ht.connected.home.backend.model.dto.IRTypeInfo;
 import com.ht.connected.home.backend.model.entity.IR;
 import com.ht.connected.home.backend.repository.IRRepository;
 import com.ht.connected.home.backend.service.IRService;
@@ -38,6 +42,10 @@ public class IRController extends CommonController {
 	public IRController(IRService iRService) {
 		this.iRService = iRService;
 	}
+	
+	enum Devicetype{
+	    aircon, tv, fan 
+	}
 
 	/**
 	 * 201, 204, 500, 406
@@ -53,7 +61,7 @@ public class IRController extends CommonController {
 	public ResponseEntity<IR> createIR(@RequestBody IR ir, HttpServletRequest request) {
 	    ir.setUserEmail(getAuthUserEmail());
 	    IR rtnIr = iRRepository.save(ir);
-	    return new ResponseEntity<IR>(rtnIr, HttpStatus.OK);
+	    return new ResponseEntity<IR>(ir, HttpStatus.OK);
 	}
 	
 	   /**
@@ -95,10 +103,22 @@ public class IRController extends CommonController {
     //기기정보 가져오기
     @GetMapping("/{irType}")
     public ResponseEntity<List<IR>> getIRType(@PathVariable("irType") String irType){
-        String userEmail = getAuthUserEmail();
-        List<IR> ir = iRRepository.findByIrTypeAndUserEmail(irType, userEmail);
+        String useEmail = getAuthUserEmail();
+        List<IR> ir = iRRepository.findByIrTypeAndUserEmail(irType, useEmail);
         return new ResponseEntity<List<IR>>(ir, HttpStatus.OK);
     }
+    
+    //기기정보 가져오기
+    @GetMapping("/irTypeInfo")
+    public ResponseEntity getIRTypeInfo(){
+        String useEmail = getAuthUserEmail();
+        HashMap map = new HashMap();
+        map.put(IRTypeInfo.devicetype.name(), Arrays.asList("aircon", "tv", "fan"));
+        map.put(IRTypeInfo.devicemodel.name(), Arrays.asList("aircon", "tv", "fan"));
+        map.put(IRTypeInfo.deviceiridx.name(), Arrays.asList(1,2,3));
+        return new ResponseEntity(map, HttpStatus.OK);
+    }
+    
 	//IR 기기 학습 삭제
 	@DeleteMapping("/ir/{no}")
 	public ResponseEntity<HttpStatus> deleteIR(@PathVariable("no") int no) {

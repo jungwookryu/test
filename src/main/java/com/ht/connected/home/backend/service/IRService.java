@@ -10,8 +10,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.ht.connected.home.backend.model.entity.IR;
 import com.ht.connected.home.backend.service.base.CrudService;
+import com.ht.connected.home.backend.service.base.MqttBase;
 
-public interface IRService extends CrudService<IR, Integer> {
+public interface IRService extends MqttBase<Object, Object>, CrudService<IR, Integer>{
 
     List<IR> getIRByUser(String userEmail);
     void delete(int no);

@@ -434,21 +434,14 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
     }
 
     @Override
-    public Object execute(Object req, Object zwaveRequest, Object isCert) {
+    public void publish(Object req, Object zwaveRequest) {
         // TODO Auto-generated method stub
-        return null;
     }
 
     @Override
-    public void execute(ZwaveRequest zwaveRequest, boolean isCert) {
+    public void execute(Object zwaveRequest, Object isCert) {
         // TODO Auto-generated method stub
         
-    }
-
-    @Override
-    public Object publish(Object req, Object zwaveRequest) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

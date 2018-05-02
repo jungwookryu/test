@@ -27,7 +27,7 @@ public class AppController extends CommonController {
     IRController iRController; 
 	@Autowired
 	public AppController(IRController iRController) {
-	    iRController = iRController;
+	    this.iRController = iRController;
 	}
 
 	public enum Command{
@@ -196,18 +196,41 @@ public class AppController extends CommonController {
         rtnMap.put("result_code", "200");
         rtnMap.put("result_msg", "Success");
         IR ir = new IR();
-        String serial = (String) hashMap.getOrDefault("serial", "");
-        String model = (String) hashMap.getOrDefault("model", "");
         ir.setIrType((String)hashMap.getOrDefault("irindex", ""));
         ir.setAction((String)hashMap.getOrDefault("actionname", ""));
         ResponseEntity<IR> rss = iRController.controlIR(ir.getNo(), ir);
-        if(rss.getStatusCodeValue()!=200) {
+        if(rss.getStatusCodeValue()==200) {
         }else {
             rtnMap.put("result_msg", rss.getHeaders().get("message"));
         }
         return new ResponseEntity<>(rtnMap, HttpStatus.OK);
     }
 
+    /**
+    * IR 리모컨 제어 처리
+    * 앱과 월패드 공통 사용
+    * 학습 후 학습된 버튼의 기능을 처리
+    * @param requestDto
+    * @return
+    * @throws JsonProcessingException 
+    * @throws Exception
+    */
+   @PostMapping("/uiIrInfo")
+   public ResponseEntity uiIrInfo(@RequestBody HashMap hashMap) throws JsonProcessingException {
+       HashMap<String, Object> rtnMap = new HashMap();
+       HashMap<String, Object> rtnDataMap = new HashMap();
+       List rtnIrbuttonList = new ArrayList();
+       rtnMap.put("result_code", "200");
+       rtnMap.put("result_msg", "Success");
+       rtnMap.put("result_data", new HashMap());
+       ResponseEntity rss = iRController.getIRTypeInfo();
+       if(rss.getStatusCodeValue()==200) {
+           rtnMap.replace("result_data", rss.getBody());
+       }else {
+           rtnMap.put("result_msg", rss.getHeaders().get("message"));
+       }
+       return new ResponseEntity<>(rtnMap, HttpStatus.OK);
+   }
 
 
 }

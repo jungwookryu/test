@@ -14,6 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +30,18 @@ import com.ht.connected.home.backend.controller.rest.AppController;
 import com.ht.connected.home.backend.model.dto.Category;
 import com.ht.connected.home.backend.model.dto.Target;
 import com.ht.connected.home.backend.model.entity.IR;
+import com.ht.connected.home.backend.model.entity.Zwave;
 import com.ht.connected.home.backend.repository.IRRepository;
 import com.ht.connected.home.backend.service.IRService;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 
 @Service
 public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRService {
-    private IRRepository irRepository;
+    public IRServiceImpl(JpaRepository<IR, Integer> jpaRepository) {
+        super(jpaRepository);
+        // TODO Auto-generated constructor stub
+    }
+
     Logger logger = LoggerFactory.getLogger(IRServiceImpl.class);
 
     public enum Type {
@@ -44,10 +52,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     BeanFactory beanFactory;
 
     @Autowired
-    public IRServiceImpl(IRRepository irRepository) {
-        super(irRepository);
-        this.irRepository = irRepository;
-    }
+    IRRepository irRepository;
 
     @Override
     public List<IR> getIRByUser(String userEmail) {
@@ -166,5 +171,16 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
         gateway.sendToMqtt(payload);
     }
 
+    @Override
+    public void subscribe(Object request, Object payload) throws JsonParseException, JsonMappingException, IOException, Exception {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void publish(Object req, Object zwaveRequest) {
+        // TODO Auto-generated method stub
+        
+    }
 
 }

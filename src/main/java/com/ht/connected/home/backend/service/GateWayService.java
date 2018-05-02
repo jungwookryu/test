@@ -10,12 +10,10 @@ import org.springframework.http.ResponseEntity;
 
 import com.ht.connected.home.backend.model.dto.MqttMessageArrived;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
-import com.ht.connected.home.backend.model.entity.Gateway;
-import com.ht.connected.home.backend.service.base.GatewayBase;
+import com.ht.connected.home.backend.service.base.MqttBase;
 
-public interface GateWayService extends GatewayBase<Gateway, Integer> {
+public interface GateWayService extends MqttBase<Object, Object>{
     List getGatewayList(String authUserEmail);
-    ResponseEntity execute(HashMap<String, Object> req, ZwaveRequest zwaveRequest, boolean isCert);
     void subscribe(ZwaveRequest zwaveRequest, String payload) throws JsonParseException, JsonMappingException, IOException;
     ResponseEntity publish(HashMap<String, Object> req, ZwaveRequest zwaveRequest);
     Object execute(MqttMessageArrived mqttMessageArrived) throws Exception;
