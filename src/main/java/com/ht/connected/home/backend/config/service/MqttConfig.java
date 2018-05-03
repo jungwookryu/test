@@ -1,13 +1,9 @@
 package com.ht.connected.home.backend.config.service;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,8 +34,6 @@ import com.ht.connected.home.backend.repository.GateWayRepository;
 import com.ht.connected.home.backend.service.GateWayService;
 import com.ht.connected.home.backend.service.IRService;
 import com.ht.connected.home.backend.service.ZwaveService;
-import com.ht.connected.home.backend.service.mqtt.MqttNoticeExecutor;
-import com.ht.connected.home.backend.service.mqtt.MqttPayloadExecutor;
 
 /**
  * 스프링 mqtt 설정 클래스
@@ -223,21 +217,6 @@ public class MqttConfig {
                 }
 
             }
-            //
-            // @SuppressWarnings({ "unchecked", "rawtypes" })
-            // public MqttPayloadExecutor getExecutor(MqttMessageArrived mqttMessageArrived) {
-            // MqttPayloadExecutor serviceExecutor = null;
-            // HashMap<String, Class> executors = new HashMap<>();
-            // executors.put(mqttTopicManagerNoti, MqttNoticeExecutor.class);
-            // Class executor = executors.get(mqttMessageArrived.getControllerMethodContext());
-            // if (executor == null) {
-            // executor = executors.get(mqttMessageArrived.getControllerMethod());
-            // }
-            // if (executor != null) {
-            // serviceExecutor = (MqttPayloadExecutor) beanFactory.getBean(executor);
-            // }
-            // return serviceExecutor;
-            // }
 
         };
     }
