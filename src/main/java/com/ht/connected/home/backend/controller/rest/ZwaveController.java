@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.common.ByteUtil;
-import com.ht.connected.home.backend.config.service.ZwaveClassKey;
-import com.ht.connected.home.backend.config.service.ZwaveCommandKey;
+import com.ht.connected.home.backend.constants.zwave.commandclass.NetworkManagementInclusionCommandClass;
+import com.ht.connected.home.backend.constants.zwave.commandclass.NetworkManagementProxyCommandClass;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
 import com.ht.connected.home.backend.model.entity.Certification;
 import com.ht.connected.home.backend.repository.CertificationRepository;
@@ -74,7 +74,7 @@ public class ZwaveController extends CommonController {
      */
     @PostMapping 
     public ResponseEntity regist(@RequestBody HashMap<String, Object> req) throws JsonProcessingException {
-        int classKey = ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION;
+        int classKey = NetworkManagementInclusionCommandClass.INT_ID;
         int commandKey = (int) req.getOrDefault("mode", 1);
         req.put("nodeId", 0);
         req.put("endpointId", 0);
@@ -88,7 +88,7 @@ public class ZwaveController extends CommonController {
     public ResponseEntity getList(@PathVariable("serial") String serial) throws JsonProcessingException {
         String sRtnList = objectMapper.writeValueAsString(new ArrayList());
         List<Certification> certification = certificationRepository.findBySerialAndMethodAndContext(serial,
-                ByteUtil.getHexString((int) ZwaveClassKey.NETWORK_MANAGEMENT_PROXY), ByteUtil.getHexString((int)ZwaveCommandKey.NODE_LIST_REPORT));
+                ByteUtil.getHexString(NetworkManagementProxyCommandClass.INT_ID), ByteUtil.getHexString(NetworkManagementProxyCommandClass.INT_NODE_LIST_REPORT));
         if(certification.size()>0) {
             sRtnList = certification.get(0).getPayload();    
         }
