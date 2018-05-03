@@ -92,6 +92,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
             req.put("set_data", map);
 
         }
+
         return publish(req, zwaveRequest);
     }
 
@@ -108,7 +109,6 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
     }
 
     public void publish(String topic, HashMap<String, Object> publishPayload) throws JsonProcessingException {
-
         MqttPahoMessageHandler messageHandler = (MqttPahoMessageHandler) beanFactory.getBean("MqttOutbound");
         messageHandler.setDefaultTopic(topic);
         MqttGateway gateway = beanFactory.getBean(MqttGateway.class);
@@ -244,7 +244,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
                                     Zwave zwave = lstZwave.get(j);
                                     String nodeListPayload = "";
                                     if(certification.size()==0) {
-                                        nodeListPayload = payload;
+                                        nodeListPayload = data;
                                     }else {
                                         nodeListPayload = certification.get(i).getPayload();
                                     }

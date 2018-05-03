@@ -22,11 +22,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.config.service.MqttConfig.MqttGateway;
-import com.ht.connected.home.backend.config.service.ZwaveClassKey;
-import com.ht.connected.home.backend.config.service.ZwaveCommandKey;
+import com.ht.connected.home.backend.constants.zwave.commandclass.NetworkManagementInclusionCommandClass;
+import com.ht.connected.home.backend.constants.zwave.commandclass.NetworkManagementProxyCommandClass;
 import com.ht.connected.home.backend.model.dto.MqttMessageArrived;
 import com.ht.connected.home.backend.model.dto.MqttPayload;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
@@ -184,13 +183,14 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     public void subscribe(ZwaveRequest zwaveRequest, String payload) throws JsonParseException, JsonMappingException, IOException {
 
         MqttPayload mqttPayload = objectMapper.readValue(payload, MqttPayload.class);
-        if (zwaveRequest.getCommandKey() == ZwaveCommandKey.NODE_ADD_STATUS) {
+        if (zwaveRequest.getClassKey()==NetworkManagementInclusionCommandClass.INT_ID 
+                && zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_ADD_STATUS) {
             /**
              * newNodeId 가 있을경우 등록 성공이고 없을경우 등록완료 전으로 상태 메세지를 확인한다.
              */
             if (!isNull(mqttPayload.getResultData().get("newNodeId"))) {
-                zwaveRequest.setClassKey(0x52);
-                zwaveRequest.setCommandKey(0x02);
+                zwaveRequest.setClassKey(NetworkManagementProxyCommandClass.INT_ID);
+                zwaveRequest.setCommandKey(NetworkManagementProxyCommandClass.INT_NODE_LIST_REPORT);
                 zwaveRequest.setNodeId(0);
                 zwaveRequest.setEndpointId(0);
                 zwaveRequest.setVersion("v1");
@@ -216,7 +216,7 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     private void addZwaveRegistEvent(ZwaveRequest zwaveRequest, MqttPayload mqttPayload) {
         Zwave zwave = new Zwave();
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
-        zwave.setCmd(Integer.toString(ZwaveClassKey.NETWORK_MANAGEMENT_INCLUSION) + "/" + Integer.toString(ZwaveCommandKey.NODE_ADD_STATUS));
+        zwave.setCmd(Integer.toString(NetworkManagementInclusionCommandClass.INT_ID) + "/" + Integer.toString(NetworkManagementInclusionCommandClass.INT_NODE_ADD_STATUS));
         zwave.setGatewayNo(gateway.getNo());
         zwave.setNodeId((String)mqttPayload.getResultData().get("newNodeId").toString());
         zwave.setEndpointId("00");

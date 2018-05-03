@@ -125,4 +125,10 @@ public class Zwave {
         this.lastModifiedDate = lastModifiedDate;
     }
 
+    @Override
+    public String toString() {
+        return "Zwave [no=" + no + ", gatewayNo=" + gatewayNo + ", nodeId=" + nodeId + ", endpointId=" + endpointId + ", nickname=" + nickname + ", cmd=" + cmd + ", event=" + event + ", status="
+                + status + ", creratedTime=" + creratedTime + ", lastModifiedDate=" + lastModifiedDate + "]";
+    }
+
 }
