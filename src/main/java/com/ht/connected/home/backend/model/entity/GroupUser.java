@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "groups_users")
+@Table(name = "group_user")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GroupUser {
 	
