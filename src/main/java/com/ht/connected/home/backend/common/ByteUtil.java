@@ -15,6 +15,8 @@ import java.util.Formatter;
 import java.util.Objects;
 
 import org.hibernate.hql.internal.ast.util.LiteralProcessor.DecimalLiteralFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A utility class for various byte related functions.
@@ -23,7 +25,7 @@ import org.hibernate.hql.internal.ast.util.LiteralProcessor.DecimalLiteralFormat
  */
 public class ByteUtil {
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
-
+    private static Logger logger = LoggerFactory.getLogger(ByteUtil.class);
     static public String createString(byte[] bytes, int length) {
         return createString(bytes, 0, length);
     }
@@ -84,6 +86,12 @@ public class ByteUtil {
      * @return
      */
     static public int getStringtoInt(String snumber) {
-        return Short.decode(snumber);
+        int iRtn = 9999;
+        try {
+            iRtn = Short.decode(snumber);
+        }catch (Exception e) {
+            logger.error("not accept topic : snumber::: "+snumber+"::::"+e.getMessage());
+        }
+        return iRtn;
     }
 }
