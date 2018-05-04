@@ -15,9 +15,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
+import org.springframework.messaging.MessageHandler;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -26,6 +28,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.common.Common;
+import com.ht.connected.home.backend.config.service.MqttConfig;
 import com.ht.connected.home.backend.config.service.MqttConfig.MqttGateway;
 import com.ht.connected.home.backend.constants.zwave.commandclass.BasicCommandClass;
 import com.ht.connected.home.backend.constants.zwave.commandclass.NetworkManagementInclusionCommandClass;
@@ -76,10 +79,14 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
     UserGatewayRepository userGatewayRepository;
     @Autowired
     GateWayService gateWayService;
-
+    
     @Autowired
-    BeanFactory beanFactory;
-
+    MqttConfig.MqttGateway mqttGateway;
+    
+    @Autowired
+    @Qualifier(value="MqttOutbound")
+    MqttPahoMessageHandler  messageHandler;
+    
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -107,14 +114,11 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
         }
         return response;
     }
-
     public void publish(String topic, HashMap<String, Object> publishPayload) throws JsonProcessingException {
-        MqttPahoMessageHandler messageHandler = (MqttPahoMessageHandler) beanFactory.getBean("MqttOutbound");
         messageHandler.setDefaultTopic(topic);
-        MqttGateway gateway = beanFactory.getBean(MqttGateway.class);
         String payload = objectMapper.writeValueAsString(publishPayload);
         logger.info("publish topic:::::::::::" + topic);
-        gateway.sendToMqtt(payload);
+        mqttGateway.sendToMqtt(payload);
     }
 
     public void publish(String topic, int classKey) {
@@ -123,10 +127,8 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
     }
 
     public void publish(String topic) {
-        MqttPahoMessageHandler messageHandler = (MqttPahoMessageHandler) beanFactory.getBean("MqttOutbound");
         messageHandler.setDefaultTopic(topic);
-        MqttGateway gateway = beanFactory.getBean(MqttGateway.class);
-        gateway.sendToMqtt("");
+        mqttGateway.sendToMqtt("");
     }
 
     /**
@@ -141,6 +143,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
             certification.setController("zwave");
             certification.setSerial(zwaveRequest.getSerialNo());
             certification.setModel(gateway.getModel());
+            certification.setVersion(zwaveRequest.getVersion());
             certification.setMethod(ByteUtil.getHexString(zwaveRequest.getClassKey()));
             certification.setContext(ByteUtil.getHexString(zwaveRequest.getCommandKey()));
             List<Certification> certPayloadExistList = certificationRepository.findBySerialAndMethodAndContext(
@@ -211,11 +214,12 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
     }
 
     public void subscribe(ZwaveRequest zwaveRequest, String payload) throws JsonParseException, JsonMappingException, IOException, Exception {
+        
         MqttPayload mqttPayload= new MqttPayload(); 
         if(!Common.empty(payload)){
             mqttPayload = objectMapper.readValue(payload, MqttPayload.class);
-        }        if (zwaveRequest.getClassKey() == BasicCommandClass.INT_ID) {
-
+        }
+        if (zwaveRequest.getClassKey() == BasicCommandClass.INT_ID) {
             if (zwaveRequest.getCommandKey() == BasicCommandClass.INT_BASIC_REPORT) {
                 updateCertification(zwaveRequest, payload);
             }

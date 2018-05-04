@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
 
 import com.ht.connected.home.backend.common.ByteUtil;
+import com.ht.connected.home.backend.config.service.MqttConfig;
 import com.ht.connected.home.backend.config.service.MqttConfig.MqttGateway;
 import com.ht.connected.home.backend.constants.zwave.commandclass.NetworkManagementInclusionCommandClass;
 import com.ht.connected.home.backend.constants.zwave.commandclass.NetworkManagementProxyCommandClass;
@@ -56,9 +58,6 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     Logger logger = LoggerFactory.getLogger(ZwaveServiceImpl.class);
 
     @Autowired
-    BeanFactory beanFactory;
-
-    @Autowired
     UserGatewayRepository userGatewayRepository;
 
     @Autowired
@@ -66,7 +65,15 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
 
     @Autowired
     GateWayRepository gatewayRepository;
-
+    @Autowired
+    MqttConfig.MqttGateway mqttGateway;
+    
+    
+    @Autowired
+    @Qualifier(value="MqttOutbound")
+    MqttPahoMessageHandler  messageHandler;
+    
+    
     // @Autowired
     private ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
@@ -77,7 +84,7 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     /**
      * 호스트 등록/부팅 메세지 executor type 이 register 일 경우만 처리 type 이 boot 일 경우에 대한 디비 저정은 추가될수 있음
      * @param mqttTopicHandler
-     * @param gateway
+     * @param mqttGateway
      * @return
      * @throws Exception
      */
@@ -109,7 +116,7 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     /**
      * 호스트 등록/부팅 메세지 executor type 이 register 일 경우만 처리 type 이 boot 일 경우에 대한 디비 저정은 추가될수 있음
      * @param mqttTopicHandler
-     * @param gateway
+     * @param mqttGateway
      * @return
      * @throws Exception
      */
@@ -127,9 +134,7 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
                     updateUserGateway(gateway, user.getNo());
                     String topic = String.format("/server/app/%s/%s/manager/noti", gateway.getModel(),
                             gateway.getSerial());
-                    MqttPahoMessageHandler messageHandler = (MqttPahoMessageHandler) beanFactory.getBean("MqttOutbound");
                     messageHandler.setDefaultTopic(topic);
-                    MqttGateway mqttGateway = beanFactory.getBean(MqttGateway.class);
                     mqttGateway.sendToMqtt("");
                 } 
             }
@@ -233,10 +238,8 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
      * @param topic
      */
     public void publish(String topic) {
-        MqttPahoMessageHandler messageHandler = (MqttPahoMessageHandler) beanFactory.getBean("MqttOutbound");
         messageHandler.setDefaultTopic(topic);
-        MqttGateway gateway = beanFactory.getBean(MqttGateway.class);
-        gateway.sendToMqtt("");
+        mqttGateway.sendToMqtt("");
     }
 
     /**

@@ -33,20 +33,28 @@
 
 	</appender>
 	<appender name="File_mqtt" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<filter class="ch.qos.logback.classic.filter.LevelFilter">
-			<level>INFO</level>
+	   <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+           <fileNamePattern>${LOG_DIR}_mqtt/iot_connected_home_mqtt.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+           <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+		<filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+		    <!-- <level>INFO</level> -->
+		    <evaluator name="loggingTaskMqtt">
+			    <expression>
+	                event.getThreadName().contains("MqttConfig")
+	            </expression>
+	        </evaluator>
+			
 			<onMatch>ACCEPT</onMatch>
-			<onMismatch>DENY</onMismatch>
+			<!-- <onMismatch>DENY</onMismatch> -->
 		</filter>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
              <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-3level %logger{5} %msg%n
              </Pattern>
-       </encoder>
-       <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-	   <fileNamePattern>${LOG_DIR}/iot_connected_home_mqtt.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-       <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP"> <maxFileSize>100MB</maxFileSize>
-       </timeBasedFileNamingAndTriggeringPolicy>
-            </rollingPolicy>
+        </encoder>
+       
     </appender>
 	<!--jdbc.sqlonly : SQL문만을 로그로 남기며, PreparedStatement일 경우 관련된 argument 값으로 
 		대체된 SQL문이 보여진다. -->

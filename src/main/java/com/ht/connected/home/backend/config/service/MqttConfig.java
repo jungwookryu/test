@@ -1,10 +1,7 @@
 package com.ht.connected.home.backend.config.service;
 
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -27,10 +24,10 @@ import org.springframework.messaging.MessagingException;
 import org.springframework.util.StringUtils;
 
 import com.ht.connected.home.backend.model.dto.Category;
+import com.ht.connected.home.backend.model.dto.IRRequest;
 import com.ht.connected.home.backend.model.dto.MqttMessageArrived;
 import com.ht.connected.home.backend.model.dto.Target;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
-import com.ht.connected.home.backend.repository.GateWayRepository;
 import com.ht.connected.home.backend.service.GateWayService;
 import com.ht.connected.home.backend.service.IRService;
 import com.ht.connected.home.backend.service.ZwaveService;
@@ -64,13 +61,7 @@ public class MqttConfig {
     String springMqttCertificationTopicSegment;
     @Value("${mqtt.topic.manager.noti}")
     String mqttTopicManagerNoti;
-    @Value("${mqtt.topic.category}")
-    List<String> mqttTopicCategory;
-    @Autowired
-    private BeanFactory beanFactory;
 
-    @Autowired
-    private GateWayRepository gatewayRepository;
     @Autowired
     private ZwaveService zwaveService;
     @Autowired
@@ -140,10 +131,13 @@ public class MqttConfig {
      */
     @Bean
     @ServiceActivator(inputChannel = "mqttOutboundChannel")
-    public MessageHandler MqttOutbound() {
+    public MqttPahoMessageHandler MqttOutbound() {
         MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(springMqttClientIdPrefix + System.nanoTime(),
                 mqttClientFactory());
         messageHandler.setAsync(true);
+        messageHandler.setDefaultQos(1);
+        messageHandler.setDefaultRetained(false);
+        messageHandler.setAsyncEvents(false);
         messageHandler.setDefaultTopic("/hcs-w1001");
         return messageHandler;
     }
@@ -193,11 +187,7 @@ public class MqttConfig {
                                 zwaveService.subscribe(zwaveRequest, payload);
                             }
                         }
-                        if (Category.ir.name().equals(topicSplited[5].toString())) {
-                            ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
-                            LOGGER.info("messageArrived: Topic=" + topic + ", host=");
-                            LOGGER.info("ir subEnd");
-                        } else {
+                        else {
                             MqttMessageArrived mqttMessageArrived = new MqttMessageArrived(topic, payload);
                             gateWayService.execute(mqttMessageArrived);
                         }
@@ -205,6 +195,7 @@ public class MqttConfig {
                     }
                     if (Category.ir.name().equals(topicSplited[5].toString())) {
                         if (Target.server.name().equals(topicSplited[2].toString())) {
+                            IRRequest iRRequest = new IRRequest(topic, payload);
                             irService.subscribe(topicSplited, payload);
                             LOGGER.info("messageArrived: Topic=" + topic + ", host=");
                             LOGGER.info("ir subEnd");
