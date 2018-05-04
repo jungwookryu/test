@@ -32,7 +32,7 @@ import com.ht.connected.home.backend.model.dto.ZwaveRequest;
 import com.ht.connected.home.backend.model.entity.Certification;
 import com.ht.connected.home.backend.model.entity.Gateway;
 import com.ht.connected.home.backend.model.entity.UserGateway;
-import com.ht.connected.home.backend.model.entity.Users;
+import com.ht.connected.home.backend.model.entity.User;
 import com.ht.connected.home.backend.model.entity.Zwave;
 import com.ht.connected.home.backend.repository.CertificationRepository;
 import com.ht.connected.home.backend.repository.GateWayRepository;
@@ -84,8 +84,8 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
 
     public List getGatewayList(String authUserEmail) {
         List<Gateway> lstGateways = new ArrayList<>();
-        List<Users> users = userRepository.findByUserEmail(authUserEmail);
-        Users user = users.get(0);
+        List<User> users = userRepository.findByUserEmail(authUserEmail);
+        User user = users.get(0);
         List<UserGateway> userGateways = userGatewayRepository.findByUserNo(user.getNo());
 
         List<Integer> gatewayNos = new ArrayList<Integer>();
@@ -98,7 +98,7 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
             aGateway.setSerial(gateway.getSerial());
             aGateway.setModel(gateway.getModel());
             aGateway.setNickname(gateway.getNickname());
-            Users master = getMasterUserNicknameByGatewayNo(userGatewayList, gateway.getNo());
+            User master = getMasterUserNicknameByGatewayNo(userGatewayList, gateway.getNo());
             aGateway.setUserNickname(master.getNickName());
             aGateway.setUserEmail(master.getUserEmail());
             lstGateways.add(aGateway);
@@ -120,9 +120,9 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
             Gateway gateway = gatewayRepository.findBySerial(mqttMessageArrived.getSerial());
             HashMap<String, String> map = objectMapper.readValue(mqttMessageArrived.getStrPayload(), HashMap.class);
             if (map.getOrDefault("type","").equals(type.register.name()) && isNull(gateway)) {
-                List <Users> users = userRepository.findByUserEmail(map.get("user_email"));
+                List <User> users = userRepository.findByUserEmail(map.get("user_email"));
                 if (users.size() > 0) {
-                    Users user = users.get(0);
+                    User user = users.get(0);
                     gateway = updateGateway(mqttMessageArrived, gateway, map);
                     updateUserGateway(gateway, user.getNo());
                     String topic = String.format("/server/app/%s/%s/manager/noti", gateway.getModel(),
@@ -171,11 +171,11 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
         userGatewayRepository.save(userGateway);
     }
 
-    private Users getMasterUserNicknameByGatewayNo(List<UserGateway> userGatewayList, Integer gatewayNo) {
+    private User getMasterUserNicknameByGatewayNo(List<UserGateway> userGatewayList, Integer gatewayNo) {
         UserGateway userGateway = userGatewayList.stream()
                 .filter(ug -> ug.getGroupRole().equals("master") && gatewayNo.equals(ug.getGatewayNo()))
                 .collect(Collectors.toList()).get(0);
-        Users user = userRepository.findOne(userGateway.getUserNo());
+        User user = userRepository.findOne(userGateway.getUserNo());
         return user;
     }
 

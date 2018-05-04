@@ -1,7 +1,7 @@
 package com.ht.connected.home.backend.controller.rest;
 
 import com.ht.connected.home.backend.common.Common;
-import com.ht.connected.home.backend.model.entity.Users;
+import com.ht.connected.home.backend.model.entity.User;
 import com.ht.connected.home.backend.service.UsersService;
 
 import java.security.Principal;
@@ -53,7 +53,7 @@ public class LoginController extends CommonController {
 	 */
 	@PostMapping(value = "/authentication/login")
 	public ResponseEntity<OAuth2AccessToken> postAccessToken(Principal principal,
-			@RequestParam Map<String, String> parameters, @RequestBody Users users)
+			@RequestParam Map<String, String> parameters, @RequestBody User users)
 			throws HttpRequestMethodNotSupportedException {
 		String grant_type = parameters.getOrDefault("grant_type", "");
 		if (Common.empty(grant_type)) {
@@ -75,7 +75,7 @@ public class LoginController extends CommonController {
 	         if (Common.notEmpty(userEmail) && Common.empty(userName)) {
 				parameters.put("username", userEmail);
 			}
-			Users rtnUsers = usersService.getUser(userEmail);
+			User rtnUsers = usersService.getUser(userEmail);
 			if (null == rtnUsers) {
 				throw new BadClientCredentialsException();
 			}
@@ -84,7 +84,7 @@ public class LoginController extends CommonController {
 			rtnUsers.setPushType(users.getPushType());
 			rtnUsers.setConnectedType(users.getConnectedType());
 
-			Users returnUsers = usersService.save(rtnUsers);
+			User returnUsers = usersService.save(rtnUsers);
 			logger.debug("returnUsers:::" + returnUsers.toString());
 		}
 		return tokenEndpoint.postAccessToken(principal, parameters);

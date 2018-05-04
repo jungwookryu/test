@@ -10,7 +10,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "groups_users")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GroupsUsers {
+public class GroupUser {
 	
 	@Id
 	@Column(name = "no")

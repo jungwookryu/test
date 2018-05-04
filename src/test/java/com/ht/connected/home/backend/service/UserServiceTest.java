@@ -2,7 +2,7 @@ package com.ht.connected.home.backend.service;
 
 import static org.junit.Assert.assertEquals;
 
-import com.ht.connected.home.backend.model.entity.Users;
+import com.ht.connected.home.backend.model.entity.User;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -25,7 +25,7 @@ public class UserServiceTest extends CommonServiceTest{
 
 	@Test
 	public void authSendEmail() {
-		Users rtnT = UsersEntityTestData.createUser();
+		User rtnT = UsersEntityTestData.createUser();
 		assertEquals(users, rtnT);
 	}
 

@@ -9,7 +9,7 @@
  */
 package com.ht.connected.home.backend.repository;
 
-import com.ht.connected.home.backend.model.entity.Users;
+import com.ht.connected.home.backend.model.entity.User;
 
 import java.util.List;
 
@@ -21,6 +21,6 @@ import org.springframework.stereotype.Repository;
  *
  */
 @Repository
-public interface UsersRepository extends JpaRepository<Users, Integer> {
-	List<Users> findByUserEmail(String useremail);
+public interface UsersRepository extends JpaRepository<User, Integer> {
+	List<User> findByUserEmail(String useremail);
 }

@@ -24,8 +24,8 @@ import javax.persistence.Table;
  * @since : 2018.02.14
  */
 @Entity
-@Table(name = "users")
-public class Users {
+@Table(name = "user")
+public class User {
 
 	@Id
 	@Column(name = "no")
@@ -85,15 +85,15 @@ public class Users {
 	@JsonProperty("push_type")
 	private int pushType;
 	
-	public Users(String userEmail, String password) {
+	public User(String userEmail, String password) {
 		this.userEmail = userEmail;
 	}
 
-	public Users(String userEmail) {
+	public User(String userEmail) {
 		this.userEmail = userEmail;
 	}
 
-	public Users() {
+	public User() {
 	}
 
 	/**
@@ -266,22 +266,6 @@ public class Users {
 		this.redirectiedCode = redirectiedCode;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Users [no=" + no + ", userEmail=" + userEmail
-				+ ", password=" + password + ", nickName=" + nickName + ", push_token="
-				+ pushToken + ", status=" + status + ", createdTime=" + createdTime + ", lastmodifiedTime="
-				+ lastmodifiedTime + ", active=" + active + ", authority=" + authority
-				+ ", locale=" + locale + ", redirectiedCode=" + redirectiedCode
-				+ ", connected_type=" + connectedType + ", push_type=" + pushType
-				+ "]";
-	}
-
 	/**
 	 * @return the userEmail
 	 */
@@ -351,5 +335,12 @@ public class Users {
 	public void setPushToken(String pushToken) {
 		this.pushToken = pushToken;
 	}
+
+    @Override
+    public String toString() {
+        return "User [no=" + no + ", userEmail=" + userEmail + ", password=" + "dummypassword" + ", nickName=" + nickName + ", pushToken=" + pushToken + ", status=" + status + ", createdTime=" + createdTime
+                + ", lastmodifiedTime=" + lastmodifiedTime + ", active=" + active + ", authority=" + authority + ", locale=" + locale + ", redirectiedCode=" + redirectiedCode + ", connectedType="
+                + connectedType + ", pushType=" + pushType + "]";
+    }
 
 }

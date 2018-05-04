@@ -1,6 +1,6 @@
 package com.ht.connected.home.backend.service;
 
-import com.ht.connected.home.backend.model.entity.Users;
+import com.ht.connected.home.backend.model.entity.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,15 +17,15 @@ public final class UsersEntityTestData extends MockUtil
 
     private UsersEntityTestData() {}
 
-    public static List<Users> getLstUsers()
+    public static List<User> getLstUsers()
     {
-        List<Users> rtnList = new ArrayList();
+        List<User> rtnList = new ArrayList();
         rtnList.add(createUser());
         return rtnList;
     }
 
-	public static Users createUser(){
-		Users rtnUsers = new Users(userEmail, password);
+	public static User createUser(){
+		User rtnUsers = new User(userEmail, password);
 		return rtnUsers;
 	}
 

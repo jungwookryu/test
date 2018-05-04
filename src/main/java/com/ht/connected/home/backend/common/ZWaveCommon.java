@@ -49,7 +49,7 @@ import org.springframework.util.StringUtils;
 import com.ht.connected.home.backend.config.service.EmailConfig;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
 import com.ht.connected.home.backend.model.entity.Gateway;
-import com.ht.connected.home.backend.model.entity.Users;
+import com.ht.connected.home.backend.model.entity.User;
 
 /**
  * @author ijlee

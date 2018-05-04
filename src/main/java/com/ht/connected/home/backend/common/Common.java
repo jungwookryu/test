@@ -44,7 +44,7 @@ import org.springframework.util.StringUtils;
 
 //import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.config.service.EmailConfig;
-import com.ht.connected.home.backend.model.entity.Users;
+import com.ht.connected.home.backend.model.entity.User;
 
 /**
  * @author ijlee
@@ -160,13 +160,13 @@ public class Common {
     /**
      * 사용자 이름, 사용자 list 를 가져와서 사용자 정보를 return해준다. 전체 사용자 조회를 하여 사용자 정보 를 가져와야 할 경우 사용.
      */
-    public static Users getUserByUserEmail(String userEmail, List<Users> lstUser) {
-        for (Users aLstUser : lstUser) {
+    public static User getUserByUserEmail(String userEmail, List<User> lstUser) {
+        for (User aLstUser : lstUser) {
             if (userEmail.equals(aLstUser.getUserEmail())) {
                 return aLstUser;
             }
         }
-        Users emptyUser = new Users();
+        User emptyUser = new User();
         return emptyUser;
     }
 
@@ -174,7 +174,7 @@ public class Common {
      * 사용자 아이디 또는 이름 검색을 위한 List 필터
      */
     @SuppressWarnings("unchecked")
-    public static List<Users> fillterUser(String userEmail, List<Users> list) {
+    public static List<User> fillterUser(String userEmail, List<User> list) {
         List rtnList = new ArrayList();
         list.forEach(user -> {
             if (Common.empty(userEmail)) {
@@ -316,7 +316,7 @@ public class Common {
             Properties properties = emailConfig.properties();
 
             /** 사용자 이메일 **/
-            Users users = (Users) body.getOrDefault("rtnUsers", new Users());
+            User users = (User) body.getOrDefault("rtnUsers", new User());
             String receiveUserEmail = users.getUserEmail();
             String redirectied_code = users.getRedirectiedCode();
 

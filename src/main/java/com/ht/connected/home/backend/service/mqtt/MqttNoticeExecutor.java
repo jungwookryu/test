@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.model.dto.MqttMessageArrived;
 import com.ht.connected.home.backend.model.entity.Gateway;
 import com.ht.connected.home.backend.model.entity.UserGateway;
-import com.ht.connected.home.backend.model.entity.Users;
+import com.ht.connected.home.backend.model.entity.User;
 import com.ht.connected.home.backend.repository.GateWayRepository;
 import com.ht.connected.home.backend.repository.UserGatewayRepository;
 import com.ht.connected.home.backend.repository.UsersRepository;
@@ -62,8 +62,8 @@ public class MqttNoticeExecutor implements MqttPayloadExecutor {
 	public Object execute(MqttMessageArrived mqttMessageArrived, Gateway gateway) throws Exception {
 		if (mqttMessageArrived.getStrPayload().length() > 0) {
 			HashMap<String, String> map = objectMapper.readValue(mqttMessageArrived.getStrPayload(), HashMap.class);
-			List<Users> users = userRepository.findByUserEmail(map.get("user_email"));
-			Users user = users.get(0);
+			List<User> users = userRepository.findByUserEmail(map.get("user_email"));
+			User user = users.get(0);
 			if (map.get("type").equals(REGISTER) && isNull(gateway)) {
 				gateway = updateGateway(mqttMessageArrived, gateway, map);
 				updateUserGateway(gateway, user.getNo());

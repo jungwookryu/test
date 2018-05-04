@@ -45,7 +45,7 @@ public class UserDetail implements UserDetails {
 		this.enabled = true;
 	}
 
-	public UserDetail(Users users) {
+	public UserDetail(User users) {
 		logger.debug("DashboardAuthenticationDetails start");
 		this.password = users.getRePassword();
 		this.nickName = users.getNickName();
@@ -319,5 +319,15 @@ public class UserDetail implements UserDetails {
 	public String getUsername() {
 		return this.userEmail;
 	}
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "UserDetail [password=" + password + ", nickName=" + nickName + ", userEmail=" + userEmail + ", active=" + active + ", admin=" + admin + ", isPasswordSet=" + isPasswordSet + ", locale="
+                + locale + ", roles=" + roles + ", passwordSet=" + passwordSet + ", status=" + status + ", userDesc=" + userDesc + ", accountNonExpired=" + accountNonExpired + ", accountNonLocked="
+                + accountNonLocked + ", credentialsNonExpired=" + credentialsNonExpired + ", enabled=" + enabled + ", logger=" + logger + ", authorities=" + authorities + "]";
+    }
 
 }
