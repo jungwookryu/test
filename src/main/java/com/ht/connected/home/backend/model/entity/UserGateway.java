@@ -73,6 +73,14 @@ public class UserGateway {
 		this.groupRole = groupRole;
 	}
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "UserGateway [no=" + no + ", userNo=" + userNo + ", groupNo=" + groupNo + ", gatewayNo=" + gatewayNo + ", groupRole=" + groupRole + "]";
+    }
+
 
 
 }

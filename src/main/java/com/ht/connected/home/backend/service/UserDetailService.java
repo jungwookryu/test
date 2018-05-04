@@ -2,7 +2,7 @@ package com.ht.connected.home.backend.service;
 
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.model.entity.UserDetail;
-import com.ht.connected.home.backend.model.entity.Users;
+import com.ht.connected.home.backend.model.entity.User;
 import com.ht.connected.home.backend.repository.UsersRepository;
 
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ public class UserDetailService implements UserDetailsService {
 		if (StringUtils.isEmpty(String.valueOf(userEmail))) {
 			logger.error("username is empty {} ", userEmail);
 		}
-		Users user = usersService.getUser(userEmail);
+		User user = usersService.getUser(userEmail);
 		if (usersService.getExistUser(userEmail)) {
 			UserDetail userDetails = new UserDetail(user);
 			return userDetails;
@@ -40,8 +40,8 @@ public class UserDetailService implements UserDetailsService {
 		}
 	}
 
-	public Users findUserDetailByUsername(String userEmail) throws UsernameNotFoundException {
-		Users userDetail = usersService.getUser(userEmail);
+	public User findUserDetailByUsername(String userEmail) throws UsernameNotFoundException {
+		User userDetail = usersService.getUser(userEmail);
 		if (null!=userDetail) {
 			return userDetail;
 		} else {
@@ -50,8 +50,8 @@ public class UserDetailService implements UserDetailsService {
 
 	}
 
-	public Users register(UserDetail uerDetail) {
-		Users users = new Users(uerDetail.getUserEmail(), uerDetail.getPassword());
+	public User register(UserDetail uerDetail) {
+		User users = new User(uerDetail.getUserEmail(), uerDetail.getPassword());
 		users.setPassword(Common.encryptHash("SHA-256", users.getPassword()));
 		return usersRepository.saveAndFlush(users);
 
@@ -60,7 +60,7 @@ public class UserDetailService implements UserDetailsService {
 	@Transactional // To successfully remove the date @Transactional annotation must be added
 	public void removeAuthenticatedUserDetail() throws UsernameNotFoundException {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		Users acct = findUserDetailByUsername(username);
+		User acct = findUserDetailByUsername(username);
 		usersRepository.delete(acct.getNo());
 
 	}

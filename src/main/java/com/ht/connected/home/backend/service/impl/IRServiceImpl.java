@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,6 +26,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gargoylesoftware.htmlunit.javascript.host.Map;
+import com.ht.connected.home.backend.config.service.MqttConfig;
 import com.ht.connected.home.backend.config.service.MqttConfig.MqttGateway;
 import com.ht.connected.home.backend.controller.rest.AppController;
 import com.ht.connected.home.backend.model.dto.Category;
@@ -49,11 +51,15 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     }
 
     @Autowired
-    BeanFactory beanFactory;
-
-    @Autowired
     IRRepository irRepository;
-
+    
+    @Autowired
+    MqttConfig.MqttGateway mqttGateway;
+    
+    
+    @Autowired
+    @Qualifier(value="MqttOutbound")
+    MqttPahoMessageHandler  messageHandler;
     @Override
     public List<IR> getIRByUser(String userEmail) {
         return irRepository.findByUserEmailAndStatus(userEmail, Type.add.name());
@@ -168,12 +174,10 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
 
     public void publish(String topic, HashMap<String, Object> publishPayload) throws JsonProcessingException {
 
-        MqttPahoMessageHandler messageHandler = (MqttPahoMessageHandler) beanFactory.getBean("MqttOutbound");
         messageHandler.setDefaultTopic(topic);
-        MqttGateway gateway = beanFactory.getBean(MqttGateway.class);
         String payload = objectMapper.writeValueAsString(publishPayload);
         logger.info("publish topic:::::::::::" + topic);
-        gateway.sendToMqtt(payload);
+        mqttGateway.sendToMqtt(payload);
     }
 
     @Override

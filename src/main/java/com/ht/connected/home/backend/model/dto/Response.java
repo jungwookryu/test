@@ -1,29 +1,13 @@
 package com.ht.connected.home.backend.model.dto;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.jetty.util.StringUtil;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-/**
- * ir 요청시 토픽 URI 경로 구분자(/)로 분할하여 getter통해 쉽게 사용하기 위한 클래스
- * 
- * @author injeongLee
- *
- */
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class IRRequest extends RequestBase{
-    
-    @JsonProperty(value = "type")
-    private String type;
-    
-    
+public class Response {
     @JsonProperty(value = "format")
     private String format;
     
@@ -35,30 +19,32 @@ public class IRRequest extends RequestBase{
     
     @JsonProperty(value = "value")
     private List<IRValue> value;
-    
-    /**
-     * @return the type
-     */
-    public String getType() {
-        return type;
+
+    public Response() {
     }
 
-
-    /**
-     * @param type the type to set
-     */
-    public void setType(String type) {
-        this.type = type;
+    public Response(String response){
+        ObjectMapper objectMapper = new ObjectMapper();
+        HashMap map = objectMapper.convertValue(response, HashMap.class);
+        if(map.get("format")!=null) {
+            this.format = (String)map.getOrDefault("format", "");
+        }
+        if(map.get("rptcnt")!=null) {
+            this.rptcnt = (int)map.getOrDefault("rptcnt",0);
+        }
+        if(map.get("gap")!=null) {
+            this.gap = (int)map.getOrDefault("gap",0);
+        }
+        if(map.get("value")!=null) {
+            this.value = (List<IRValue>)map.getOrDefault("value",new ArrayList<>());
+        }
     }
-
-
     /**
      * @return the format
      */
     public String getFormat() {
         return format;
     }
-
 
     /**
      * @param format the format to set
@@ -67,14 +53,12 @@ public class IRRequest extends RequestBase{
         this.format = format;
     }
 
-
     /**
      * @return the rptcnt
      */
     public int getRptcnt() {
         return rptcnt;
     }
-
 
     /**
      * @param rptcnt the rptcnt to set
@@ -83,14 +67,12 @@ public class IRRequest extends RequestBase{
         this.rptcnt = rptcnt;
     }
 
-
     /**
      * @return the gap
      */
     public int getGap() {
         return gap;
     }
-
 
     /**
      * @param gap the gap to set
@@ -99,7 +81,6 @@ public class IRRequest extends RequestBase{
         this.gap = gap;
     }
 
-
     /**
      * @return the value
      */
@@ -107,27 +88,20 @@ public class IRRequest extends RequestBase{
         return value;
     }
 
-
     /**
      * @param value the value to set
      */
     public void setValue(List<IRValue> value) {
         this.value = value;
     }
-    
-    public IRRequest(String topic) {
-        super(topic);
-    }
 
-    public IRRequest(String topic, String payload) throws JSONException {
-        super(topic);
-        JSONObject jsonObj =new JSONObject();
-        if(StringUtil.isNotBlank(payload)) {
-            jsonObj = new JSONObject(payload);
-        }
-        this.type = jsonObj.getString("type");
-        this.gap = jsonObj.getInt("gap");
-        this.rptcnt = jsonObj.getInt("rptcnt");
-        this.value = (List<IRValue>) jsonObj.getJSONArray("value");
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Response [format=" + format + ", rptcnt=" + rptcnt + ", gap=" + gap + ", value=" + value + "]";
     }
+    
+    
 }

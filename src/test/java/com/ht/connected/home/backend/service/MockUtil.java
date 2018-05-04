@@ -1,6 +1,6 @@
 package com.ht.connected.home.backend.service;
 
-import com.ht.connected.home.backend.model.entity.Users;
+import com.ht.connected.home.backend.model.entity.User;
 
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class MockUtil
 	public static final  String contextUrl =  "test/authPassword";
 	
 //	public static Class anyClass = mock(Class.class);
-	public static Users users = UsersEntityTestData.createUser();
-    public static List<Users> lstUsers = UsersEntityTestData.getLstUsers();
+	public static User users = UsersEntityTestData.createUser();
+    public static List<User> lstUsers = UsersEntityTestData.getLstUsers();
 
 }

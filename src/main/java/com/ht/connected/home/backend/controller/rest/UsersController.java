@@ -1,6 +1,6 @@
 package com.ht.connected.home.backend.controller.rest;
 
-import com.ht.connected.home.backend.model.entity.Users;
+import com.ht.connected.home.backend.model.entity.User;
 import com.ht.connected.home.backend.service.UsersService;
 
 import java.io.UnsupportedEncodingException;
@@ -45,7 +45,7 @@ public class UsersController extends CommonController {
 	 * @throws NoSuchAlgorithmException
 	 */
 	@PostMapping
-	public ResponseEntity createUser(@RequestBody Users users, HttpServletRequest request) throws IllegalArgumentException, UnsupportedEncodingException {
+	public ResponseEntity createUser(@RequestBody User users, HttpServletRequest request) throws IllegalArgumentException, UnsupportedEncodingException {
 
 		boolean rtnUser = usersService.getExistUser(users.getUserEmail());
 		if (rtnUser) {
@@ -53,7 +53,7 @@ public class UsersController extends CommonController {
 			responseHeaders.set("message", "exist useremail");
 			return new ResponseEntity("exist userEmail", responseHeaders, HttpStatus.NOT_ACCEPTABLE);
 		}else {
-			Users rtnUsers = usersService.register(users);
+			User rtnUsers = usersService.register(users);
 	
 			logger.debug(rtnUsers.toString());
 			return new ResponseEntity(HttpStatus.CREATED);
@@ -70,11 +70,11 @@ public class UsersController extends CommonController {
 	}
 
 	@GetMapping("/user/{userEmail}")
-	public ResponseEntity<HashMap<String, Users>> getUser(@PathVariable("userEmail") String userEmail) throws IllegalArgumentException, UnsupportedEncodingException {
+	public ResponseEntity<HashMap<String, User>> getUser(@PathVariable("userEmail") String userEmail) throws IllegalArgumentException, UnsupportedEncodingException {
 		HashMap map = new HashMap<>();
 		String authUserEmail = getAuthUserEmail();
 		 SecurityContextHolder.getContext().getAuthentication().getName();
-		Users rtnUsers = usersService.getUser(userEmail);
+		User rtnUsers = usersService.getUser(userEmail);
 		if (null!=rtnUsers) {
 			map.put("users", rtnUsers);
 			return new ResponseEntity(map, HttpStatus.OK);
@@ -84,16 +84,16 @@ public class UsersController extends CommonController {
 
 	@DeleteMapping("/user/{no}")
 	public ResponseEntity<HttpStatus> deleteUser(@PathVariable("no") int no) {
-		Users user = usersService.getOne(no);
+		User user = usersService.getOne(no);
 		usersService.delete(no);
 		return new ResponseEntity<HttpStatus>(HttpStatus.OK);
 	}
 
 	@PutMapping("/user/{no}")
-	public ResponseEntity<HashMap<String, Users>> modifyUser(@PathVariable("no") int no, @RequestBody Users users) {
-		HashMap<String, Users> map = new HashMap<>();
-		Users rtnUsers = usersService.modify(no, users);
+	public ResponseEntity<HashMap<String, User>> modifyUser(@PathVariable("no") int no, @RequestBody User users) {
+		HashMap<String, User> map = new HashMap<>();
+		User rtnUsers = usersService.modify(no, users);
 		map.put("users", rtnUsers);
-		return new ResponseEntity<HashMap<String, Users>>(map, HttpStatus.OK);
+		return new ResponseEntity<HashMap<String, User>>(map, HttpStatus.OK);
 	}
 }

@@ -1,6 +1,6 @@
 package com.ht.connected.home.backend.config.security;
 
-import com.ht.connected.home.backend.model.entity.Users;
+import com.ht.connected.home.backend.model.entity.User;
 import com.ht.connected.home.backend.service.UserDetailService;
 
 import java.io.IOException;
@@ -118,7 +118,7 @@ public class AuthorizationSeverConfig extends AuthorizationServerConfigurerAdapt
 				if (authentication.isAuthenticated()) {
 					if (null != authentication.getUserAuthentication()) {
 						String userEmail = authentication.getUserAuthentication().getName();
-						Users users = userDetailsService.findUserDetailByUsername(userEmail);
+						User users = userDetailsService.findUserDetailByUsername(userEmail);
 						final Map<String, Object> additionalInformation = new HashMap<>();
 						additionalInformation.put("nickname", users.getNickName());
 						((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInformation);

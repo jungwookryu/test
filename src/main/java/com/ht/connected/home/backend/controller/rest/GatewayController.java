@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.connected.home.backend.model.entity.Gateway;
 import com.ht.connected.home.backend.model.entity.UserGateway;
-import com.ht.connected.home.backend.model.entity.Users;
+import com.ht.connected.home.backend.model.entity.User;
 import com.ht.connected.home.backend.repository.GateWayRepository;
 import com.ht.connected.home.backend.repository.UserGatewayRepository;
 import com.ht.connected.home.backend.repository.UsersRepository;
@@ -60,11 +60,11 @@ public class GatewayController extends CommonController{
 			throws Exception {
 		ResponseEntity responseEntity;
 		String authUserEmail = getAuthUserEmail();
-		List<Users> users = userRepository.findByUserEmail(authUserEmail);
+		List<User> users = userRepository.findByUserEmail(authUserEmail);
 		if (users.size() == 0) {
 			responseEntity = new ResponseEntity(HttpStatus.NOT_FOUND);
 		} else {
-			Users user = users.get(0);
+			User user = users.get(0);
 			Gateway gateway = gatewayRepository.findBySerial(req.get("serialNo"));
 			if (isNull(gateway)) {
 				responseEntity = new ResponseEntity(HttpStatus.NOT_FOUND);

@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
 
 import com.ht.connected.home.backend.common.ByteUtil;
+import com.ht.connected.home.backend.config.service.MqttConfig;
 import com.ht.connected.home.backend.config.service.MqttConfig.MqttGateway;
 import com.ht.connected.home.backend.constants.zwave.commandclass.NetworkManagementInclusionCommandClass;
 import com.ht.connected.home.backend.constants.zwave.commandclass.NetworkManagementProxyCommandClass;
@@ -32,7 +34,7 @@ import com.ht.connected.home.backend.model.dto.ZwaveRequest;
 import com.ht.connected.home.backend.model.entity.Certification;
 import com.ht.connected.home.backend.model.entity.Gateway;
 import com.ht.connected.home.backend.model.entity.UserGateway;
-import com.ht.connected.home.backend.model.entity.Users;
+import com.ht.connected.home.backend.model.entity.User;
 import com.ht.connected.home.backend.model.entity.Zwave;
 import com.ht.connected.home.backend.repository.CertificationRepository;
 import com.ht.connected.home.backend.repository.GateWayRepository;
@@ -56,9 +58,6 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     Logger logger = LoggerFactory.getLogger(ZwaveServiceImpl.class);
 
     @Autowired
-    BeanFactory beanFactory;
-
-    @Autowired
     UserGatewayRepository userGatewayRepository;
 
     @Autowired
@@ -66,7 +65,15 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
 
     @Autowired
     GateWayRepository gatewayRepository;
-
+    @Autowired
+    MqttConfig.MqttGateway mqttGateway;
+    
+    
+    @Autowired
+    @Qualifier(value="MqttOutbound")
+    MqttPahoMessageHandler  messageHandler;
+    
+    
     // @Autowired
     private ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
@@ -77,15 +84,15 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     /**
      * 호스트 등록/부팅 메세지 executor type 이 register 일 경우만 처리 type 이 boot 일 경우에 대한 디비 저정은 추가될수 있음
      * @param mqttTopicHandler
-     * @param gateway
+     * @param mqttGateway
      * @return
      * @throws Exception
      */
 
     public List getGatewayList(String authUserEmail) {
         List<Gateway> lstGateways = new ArrayList<>();
-        List<Users> users = userRepository.findByUserEmail(authUserEmail);
-        Users user = users.get(0);
+        List<User> users = userRepository.findByUserEmail(authUserEmail);
+        User user = users.get(0);
         List<UserGateway> userGateways = userGatewayRepository.findByUserNo(user.getNo());
 
         List<Integer> gatewayNos = new ArrayList<Integer>();
@@ -98,7 +105,7 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
             aGateway.setSerial(gateway.getSerial());
             aGateway.setModel(gateway.getModel());
             aGateway.setNickname(gateway.getNickname());
-            Users master = getMasterUserNicknameByGatewayNo(userGatewayList, gateway.getNo());
+            User master = getMasterUserNicknameByGatewayNo(userGatewayList, gateway.getNo());
             aGateway.setUserNickname(master.getNickName());
             aGateway.setUserEmail(master.getUserEmail());
             lstGateways.add(aGateway);
@@ -109,7 +116,7 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     /**
      * 호스트 등록/부팅 메세지 executor type 이 register 일 경우만 처리 type 이 boot 일 경우에 대한 디비 저정은 추가될수 있음
      * @param mqttTopicHandler
-     * @param gateway
+     * @param mqttGateway
      * @return
      * @throws Exception
      */
@@ -120,16 +127,14 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
             Gateway gateway = gatewayRepository.findBySerial(mqttMessageArrived.getSerial());
             HashMap<String, String> map = objectMapper.readValue(mqttMessageArrived.getStrPayload(), HashMap.class);
             if (map.getOrDefault("type","").equals(type.register.name()) && isNull(gateway)) {
-                List <Users> users = userRepository.findByUserEmail(map.get("user_email"));
+                List <User> users = userRepository.findByUserEmail(map.get("user_email"));
                 if (users.size() > 0) {
-                    Users user = users.get(0);
+                    User user = users.get(0);
                     gateway = updateGateway(mqttMessageArrived, gateway, map);
                     updateUserGateway(gateway, user.getNo());
                     String topic = String.format("/server/app/%s/%s/manager/noti", gateway.getModel(),
                             gateway.getSerial());
-                    MqttPahoMessageHandler messageHandler = (MqttPahoMessageHandler) beanFactory.getBean("MqttOutbound");
                     messageHandler.setDefaultTopic(topic);
-                    MqttGateway mqttGateway = beanFactory.getBean(MqttGateway.class);
                     mqttGateway.sendToMqtt("");
                 } 
             }
@@ -171,11 +176,11 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
         userGatewayRepository.save(userGateway);
     }
 
-    private Users getMasterUserNicknameByGatewayNo(List<UserGateway> userGatewayList, Integer gatewayNo) {
+    private User getMasterUserNicknameByGatewayNo(List<UserGateway> userGatewayList, Integer gatewayNo) {
         UserGateway userGateway = userGatewayList.stream()
                 .filter(ug -> ug.getGroupRole().equals("master") && gatewayNo.equals(ug.getGatewayNo()))
                 .collect(Collectors.toList()).get(0);
-        Users user = userRepository.findOne(userGateway.getUserNo());
+        User user = userRepository.findOne(userGateway.getUserNo());
         return user;
     }
 
@@ -233,10 +238,8 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
      * @param topic
      */
     public void publish(String topic) {
-        MqttPahoMessageHandler messageHandler = (MqttPahoMessageHandler) beanFactory.getBean("MqttOutbound");
         messageHandler.setDefaultTopic(topic);
-        MqttGateway gateway = beanFactory.getBean(MqttGateway.class);
-        gateway.sendToMqtt("");
+        mqttGateway.sendToMqtt("");
     }
 
     /**
