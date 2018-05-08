@@ -51,9 +51,10 @@ public class AppController extends CommonController {
         String command = (String) hashMap.getOrDefault("command", "");
         ResponseEntity rss = null;
         if (null != hashMap.get("irindex")) {
+            //subnumber
             int irindex = (int) hashMap.get("irindex");
             if ("del".equals(command)) {
-                iRController.deleteIR(irindex);
+//                iRController.deleteIR(irindex);
 
             }
             if ("add".equals(command)) {
@@ -68,6 +69,7 @@ public class AppController extends CommonController {
                 ir.setAction("add");
                 ir.setStatus("add");
                 ir.setDevType("irchannel::" + Integer.toString(irchannel));
+                ir.setIrType(irindex);
                 ir.setIrType(irindex);
                 rss = iRController.createIR(ir);
             }
