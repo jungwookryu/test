@@ -1,12 +1,9 @@
 package com.ht.connected.home.backend.controller.rest;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import static java.util.Objects.isNull;
 
-import java.util.ArrayList;
-
-import org.eclipse.paho.client.mqttv3.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,7 +62,6 @@ public class ZwaveController extends CommonController {
         return zwaveService.execute(req, zwaveRequest, true);
     }
 
-
     /**
      * 기기등록
      * @param req
@@ -86,7 +82,9 @@ public class ZwaveController extends CommonController {
 
     @GetMapping(value = "/{serial}")
     public ResponseEntity getList(@PathVariable("serial") String serial) throws JsonProcessingException {
-        String sRtnList = objectMapper.writeValueAsString(new ArrayList());
+        HashMap map = new HashMap();
+        map.put("nodeList", new ArrayList());
+        String sRtnList = objectMapper.writeValueAsString(map);
         List<Certification> certification = certificationRepository.findBySerialAndMethodAndContext(serial,
                 ByteUtil.getHexString(NetworkManagementProxyCommandClass.INT_ID), ByteUtil.getHexString(NetworkManagementProxyCommandClass.INT_NODE_LIST_REPORT));
         if(certification.size()>0) {
