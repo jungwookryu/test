@@ -37,4 +37,7 @@ public interface IRRepository extends JpaRepository<IR, Integer> {
     List<IR> findBySerialAndActionAndModelAndIrTypeAndUserEmail(String serial, String action, String model, String irType, String userEmail);
 
     List<IR> findByIrTypeAndUserEmailAndSerialAndModel(int irType, String useEmail, String serial, String model);
+    void deleteBySubNumber(int subNumber);
+
+    boolean getBySubNumber(int no);
 }
