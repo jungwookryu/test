@@ -187,20 +187,26 @@ public class MqttConfig {
                                 zwaveService.subscribe(zwaveRequest, payload);
                             }
                         }
-                        else {
-                            MqttMessageArrived mqttMessageArrived = new MqttMessageArrived(topic, payload);
-                            gateWayService.execute(mqttMessageArrived);
+                        if (Category.ir.name().equals(topicSplited[5].toString())) {
+                            ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
+                            irService.subscribe(topicSplited, payload);
+                            LOGGER.info("messageArrived: Topic=" + topic + ", host=");
+                            LOGGER.info("ir subEnd");
                         }
+//                        else {
+//                            MqttMessageArrived mqttMessageArrived = new MqttMessageArrived(topic, payload);
+//                            gateWayService.execute(mqttMessageArrived);
+//                        }
                         LOGGER.info("zwave subEnd");
                     }
-                    if (Category.ir.name().equals(topicSplited[5].toString())) {
+                   /* if (Category.ir.name().equals(topicSplited[5].toString())) {
                         if (Target.server.name().equals(topicSplited[2].toString())) {
                             IRRequest iRRequest = new IRRequest(topic, payload);
                             irService.subscribe(topicSplited, payload);
                             LOGGER.info("messageArrived: Topic=" + topic + ", host=");
                             LOGGER.info("ir subEnd");
                         }
-                    }
+                    }*/
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
