@@ -71,8 +71,13 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     @Transactional
     public void delete(int no) {
         // 삭제모드 없음.
+        //기기 종류 등록모드 삭제
         irRepository.delete(no);
-    }
+        //기기 종류 등록모드에 파생되어있는 기기 삭제
+        if(irRepository.getBySubNumber(no)) {
+        irRepository.deleteBySubNumber(no);
+        }
+   }
 
     @Override
     public void studyIR(IR ir) throws JsonProcessingException {

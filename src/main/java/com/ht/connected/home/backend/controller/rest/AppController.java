@@ -54,7 +54,7 @@ public class AppController extends CommonController {
             //subnumber
             int irindex = (int) hashMap.get("irindex");
             if ("del".equals(command)) {
-//                iRController.deleteIR(irindex);
+                iRController.deleteIR(irindex);
 
             }
             if ("add".equals(command)) {

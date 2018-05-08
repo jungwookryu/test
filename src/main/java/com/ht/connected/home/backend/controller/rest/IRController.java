@@ -123,7 +123,10 @@ public class IRController extends CommonController {
 	//IR 기기 학습 삭제
 	@DeleteMapping("/ir/{no}")
 	public ResponseEntity<HttpStatus> deleteIR(@PathVariable("no") int no) {
-	    iRService.delete(no);
+	    String useEmail = getAuthUserEmail();
+	    if(iRRepository.exists(no)) {
+	        iRService.delete(no);
+	    }
 		return new ResponseEntity<HttpStatus>(HttpStatus.OK);
 	}
 
