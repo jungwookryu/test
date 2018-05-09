@@ -147,6 +147,7 @@ public class AuthorizationSeverConfig extends AuthorizationServerConfigurerAdapt
 			DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
 			defaultTokenServices.setTokenStore(tokenStore());
 			defaultTokenServices.setSupportRefreshToken(true);
+			//expire time  없앰. 추후 수정 예정
 			defaultTokenServices.setAccessTokenValiditySeconds(0);
 			defaultTokenServices.setTokenEnhancer(accessTokenConverter());
 			return defaultTokenServices;

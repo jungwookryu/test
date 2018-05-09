@@ -167,39 +167,40 @@ public class MqttConfig {
                 String[] topicSplited = topic.split("/");
                 try {
                     if (topicSplited.length > 2) {
-                        // if (Target.server.name().equals(topicSplited[2].toString())) {
-                        // return;
+                        // 서버에서 보낸것이 아닐경우만 subscribe함.
+                        if (!Target.server.name().equals(topicSplited[1].toString())) {
+
+                            // gateway service category topicSplited[5].toString()
+                            LOGGER.info(topicSplited[5].toString() + " subStart");
+                            if (Category.manager.name().equals(topicSplited[5].toString())) {
+                                gateWayService.subscribe(topic, payload);
+                                LOGGER.info("gateway subEnd");
+                            }
+                            // zwave service
+                            if (Category.zwave.name().equals(topicSplited[5].toString())) {
+                                ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
+                                if ("alive".equals(topicSplited[6])) {
+                                    LOGGER.info("MQTT alive topic is not implemented");
+                                }
+                                if (springMqttCertificationTopicSegment.equals(topicSplited[6])) {
+                                    zwaveService.subscribe(zwaveRequest, payload);
+                                }
+                            }
+                            if (Category.ir.name().equals(topicSplited[5].toString())) {
+
+                                irService.subscribe(topicSplited, payload);
+                                LOGGER.info("messageArrived: Topic=" + topic + ", host=");
+                                LOGGER.info("ir subEnd");
+
+                            }
+                        }
+                        // else {
+                        // MqttMessageArrived mqttMessageArrived = new MqttMessageArrived(topic, payload);
+                        // gateWayService.execute(mqttMessageArrived);
                         // }
-                        // gateway service category topicSplited[5].toString()
-                        LOGGER.info(topicSplited[5].toString() + " subStart");
-                        if (Category.gateway.name().equals(topicSplited[5].toString())) {
-                            ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
-                            gateWayService.subscribe(zwaveRequest, payload);
-                            LOGGER.info("gateway subEnd");
-                        }
-                        // zwave service
-                        if (Category.zwave.name().equals(topicSplited[5].toString())) {
-                            ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
-                            if ("alive".equals(topicSplited[6])) {
-                                LOGGER.info("MQTT alive topic is not implemented");
-                            }
-                            if (springMqttCertificationTopicSegment.equals(topicSplited[6])) {
-                                zwaveService.subscribe(zwaveRequest, payload);
-                            }
-                        }
-                        if (Category.ir.name().equals(topicSplited[5].toString())) {
-                            ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
-                            irService.subscribe(topicSplited, payload);
-                            LOGGER.info("messageArrived: Topic=" + topic + ", host=");
-                            LOGGER.info("ir subEnd");
-                        }
-//                        else {
-//                            MqttMessageArrived mqttMessageArrived = new MqttMessageArrived(topic, payload);
-//                            gateWayService.execute(mqttMessageArrived);
-//                        }
                         LOGGER.info("zwave subEnd");
                     }
-                   /* if (Category.ir.name().equals(topicSplited[5].toString())) {
+                    /* if (Category.ir.name().equals(topicSplited[5].toString())) {
                         if (Target.server.name().equals(topicSplited[2].toString())) {
                             IRRequest iRRequest = new IRRequest(topic, payload);
                             irService.subscribe(topicSplited, payload);

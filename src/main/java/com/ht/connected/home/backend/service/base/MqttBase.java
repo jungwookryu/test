@@ -8,9 +8,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 public interface MqttBase<T, P>{
 
-    void subscribe(T zwaveRequest, P payload) throws JsonParseException, JsonMappingException, IOException, Exception;
+    void subscribe(T t, P p) throws JsonParseException, JsonMappingException, IOException, Exception;
     
-    void publish(T req, T zwaveRequest);
-
-
+    void publish(T t, T t2);
+    
 }

@@ -9,184 +9,225 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "gateway")
-@JsonIgnoreProperties({ "no", "id", "ip", "ssid", "bssid", "version", "status", "createdUserId",
-		"createdTime", "lastModifiedTime" })
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Gateway {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "no")
-	private int no;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "no")
+    @JsonProperty("no")
+    private int no;
 
-	@Column(name = "nickname")
-	private String nickname;
+    @Column(name = "nickname")
+    @JsonProperty("nickname")
+    private String nickname;
 
-	@Column(name = "id")
-	private String id;
+    @Column(name = "id")
+    @JsonProperty("id")
+    private String id;
 
-	@Column(name = "ip")
-	private String ip;
+    @Column(name = "ip")
+    @JsonProperty("ip")
+    private String ip;
 
-	@Column(name = "ssid")
-	private String ssid;
+    @Column(name = "ssid")
+    @JsonProperty("ssid")
+    private String ssid;
 
-	@Column(name = "bssid")
-	private String bssid;
+    @Column(name = "bssid")
+    @JsonProperty("macaddress")
+    private String bssid;
 
-	@Column(name = "serial")
-	private String serial;
+    @Column(name = "serial")
+    @JsonProperty("serial")
+    private String serial;
 
-	@Column(name = "version")
-	private String version;
+    @Column(name = "version")
+    @JsonProperty("version")
+    private String version;
 
-	@Column(name = "model")
-	private String model;
+    @Column(name = "model")
+    @JsonProperty("model")
+    private String model;
 
-	@Column(name = "status")
-	private String status;
+    @Column(name = "status")
+    @JsonProperty("status")
+    private String status;
 
-	@Column(name = "created_user_id")
-	private String createdUserId;
+    @Column(name = "created_user_id")
+    @JsonProperty("created_user_id")
+    private String createdUserId;
 
-	@Column(name = "created_time")
-	private String createdTime;
+    @Column(name = "created_time")
+    @JsonProperty("created_time")
+    private String createdTime;
 
-	@Column(name = "lastmodified_time")
-	private String lastModifiedTime;
+    @Column(name = "lastmodified_time")
+    @JsonProperty("lastmodified_time")
+    private String lastModifiedTime;
 
-	@Transient
-	private String userNickname;
+    @Transient
+    @JsonProperty("user_nick_name")
+    private String userNickname;
 
-	@Transient
-	private String userEmail;
+    @Transient
+    @JsonProperty("user_email")
+    private String userEmail;
 
-	public Gateway() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    @Transient
+    @JsonProperty("type")
+    private String type;
+    
+    public Gateway() {
+    }
 
-	public int getNo() {
-		return no;
-	}
+    public int getNo() {
+        return no;
+    }
 
-	public void setNo(int no) {
-		this.no = no;
-	}
+    public void setNo(int no) {
+        this.no = no;
+    }
 
-	public String getNickname() {
-		return nickname;
-	}
+    public String getNickname() {
+        return nickname;
+    }
 
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
-	}
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getIp() {
-		return ip;
-	}
+    public String getIp() {
+        return ip;
+    }
 
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
 
-	public String getSsid() {
-		return ssid;
-	}
+    public String getSsid() {
+        return ssid;
+    }
 
-	public void setSsid(String ssid) {
-		this.ssid = ssid;
-	}
+    public void setSsid(String ssid) {
+        this.ssid = ssid;
+    }
 
-	public String getBssid() {
-		return bssid;
-	}
+    public String getBssid() {
+        return bssid;
+    }
 
-	public void setBssid(String bssid) {
-		this.bssid = bssid;
-	}
+    public void setBssid(String bssid) {
+        this.bssid = bssid;
+    }
 
-	public String getSerial() {
-		return serial;
-	}
+    public String getSerial() {
+        return serial;
+    }
 
-	public void setSerial(String serial) {
-		this.serial = serial;
-	}
+    public void setSerial(String serial) {
+        this.serial = serial;
+    }
 
-	public String getVersion() {
-		return version;
-	}
+    public String getVersion() {
+        return version;
+    }
 
-	public void setVersion(String version) {
-		this.version = version;
-	}
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public String getCreatedUserId() {
-		return createdUserId;
-	}
+    public String getCreatedUserId() {
+        return createdUserId;
+    }
 
-	public void setCreatedUserId(String createdUserId) {
-		this.createdUserId = createdUserId;
-	}
+    public void setCreatedUserId(String createdUserId) {
+        this.createdUserId = createdUserId;
+    }
 
-	public String getCreatedTime() {
-		return createdTime;
-	}
+    public String getCreatedTime() {
+        return createdTime;
+    }
 
-	public void setCreatedTime(String createdTime) {
-		this.createdTime = createdTime;
-	}
+    public void setCreatedTime(String createdTime) {
+        this.createdTime = createdTime;
+    }
 
-	public String getLastModifiedTime() {
-		return lastModifiedTime;
-	}
+    public String getLastModifiedTime() {
+        return lastModifiedTime;
+    }
 
-	public void setLastModifiedTime(String lastModifiedTime) {
-		this.lastModifiedTime = lastModifiedTime;
-	}
+    public void setLastModifiedTime(String lastModifiedTime) {
+        this.lastModifiedTime = lastModifiedTime;
+    }
 
-	public String getModel() {
-		return model;
-	}
+    public String getModel() {
+        return model;
+    }
 
-	public void setModel(String model) {
-		this.model = model;
-	}
+    public void setModel(String model) {
+        this.model = model;
+    }
 
-	public String getUserNickname() {
-		return userNickname;
-	}
+    public String getUserNickname() {
+        return userNickname;
+    }
 
-	public void setUserNickname(String userNickname) {
-		this.userNickname = userNickname;
-	}
+    public void setUserNickname(String userNickname) {
+        this.userNickname = userNickname;
+    }
 
-	public String getUserEmail() {
-		return userEmail;
-	}
+    public String getUserEmail() {
+        return userEmail;
+    }
 
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
-	}
-	
-	
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    /**
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Gateway [no=" + no + ", nickname=" + nickname + ", id=" + id + ", ip=" + ip + ", ssid=" + ssid + ", bssid=" + bssid + ", serial=" + serial + ", version=" + version + ", model=" + model
+                + ", status=" + status + ", createdUserId=" + createdUserId + ", createdTime=" + createdTime + ", lastModifiedTime=" + lastModifiedTime + ", userNickname=" + userNickname
+                + ", userEmail=" + userEmail + ", type=" + type + "]";
+    }
 
 }
