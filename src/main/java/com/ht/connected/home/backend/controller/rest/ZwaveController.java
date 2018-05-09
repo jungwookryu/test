@@ -83,7 +83,7 @@ public class ZwaveController extends CommonController {
     @GetMapping(value = "/{serial}")
     public ResponseEntity getList(@PathVariable("serial") String serial) throws JsonProcessingException {
         HashMap map = new HashMap();
-        map.put("nodeList", new ArrayList());
+        map.put("nodelist", new ArrayList());
         String sRtnList = objectMapper.writeValueAsString(map);
         List<Certification> certification = certificationRepository.findBySerialAndMethodAndContext(serial,
                 ByteUtil.getHexString(NetworkManagementProxyCommandClass.INT_ID), ByteUtil.getHexString(NetworkManagementProxyCommandClass.INT_NODE_LIST_REPORT));
