@@ -62,6 +62,7 @@ public class AuthorizationSeverConfig extends AuthorizationServerConfigurerAdapt
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
 		try {
+		    
 			endpoints.pathMapping("/oauth/token", "/authentication/login");
 			endpoints.authenticationManager(this.authenticationManager).tokenServices(tokenServices())
 					.tokenStore(tokenStore()).accessTokenConverter(accessTokenConverter());
@@ -146,6 +147,7 @@ public class AuthorizationSeverConfig extends AuthorizationServerConfigurerAdapt
 			DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
 			defaultTokenServices.setTokenStore(tokenStore());
 			defaultTokenServices.setSupportRefreshToken(true);
+			defaultTokenServices.setAccessTokenValiditySeconds(30);
 			defaultTokenServices.setTokenEnhancer(accessTokenConverter());
 			return defaultTokenServices;
 		} catch (Exception e) {
