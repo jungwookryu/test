@@ -93,7 +93,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
         }
 
         if (ir.getStatus().isEmpty()) {
-            //irRepository.save(ir);
+            irRepository.save(ir);
         }
 
     }
