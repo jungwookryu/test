@@ -9,14 +9,10 @@ import java.util.Objects;
 import javax.transaction.Transactional;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
@@ -25,14 +21,11 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gargoylesoftware.htmlunit.javascript.host.Map;
 import com.ht.connected.home.backend.config.service.MqttConfig;
-import com.ht.connected.home.backend.config.service.MqttConfig.MqttGateway;
 import com.ht.connected.home.backend.controller.rest.AppController;
 import com.ht.connected.home.backend.model.dto.Category;
 import com.ht.connected.home.backend.model.dto.Target;
 import com.ht.connected.home.backend.model.entity.IR;
-import com.ht.connected.home.backend.model.entity.Zwave;
 import com.ht.connected.home.backend.repository.IRRepository;
 import com.ht.connected.home.backend.service.IRService;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
@@ -74,7 +67,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
         //기기 종류 등록모드 삭제
         irRepository.delete(no);
         //기기 종류 등록모드에 파생되어있는 기기 삭제
-        if(irRepository.getBySubNumber(no)) {
+        if(irRepository.getBySubNumber(no).size()>0) {
         irRepository.deleteBySubNumber(no);
         }
    }
