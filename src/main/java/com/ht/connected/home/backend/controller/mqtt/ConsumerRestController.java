@@ -5,8 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-import com.ht.connected.home.backend.model.rabbit.producer.Message;
-
 @Component
 public class ConsumerRestController {
 

@@ -81,11 +81,7 @@ public class MqttConfig {
         if (StringUtils.isEmpty(sActive)) {
             sActive = "dev";
         }
-
         String springMqttBrokerUrlActual = env.getRequiredProperty("spring.mqtt." + sActive + ".broker-url");
-        if (StringUtils.isEmpty(sActive)) {
-            springMqttBrokerUrlActual = springMqttBrokerUrl;
-        }
         factory.setServerURIs(springMqttBrokerUrlActual);
         factory.setUserName(springMqttUser);
         factory.setPassword(springMqttPassword);

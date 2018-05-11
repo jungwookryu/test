@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.model.rabbit.producer;
+package com.ht.connected.home.backend.controller.mqtt;
 
 public class Message {
 	private String messageType;

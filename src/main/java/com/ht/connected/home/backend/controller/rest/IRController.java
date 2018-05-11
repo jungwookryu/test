@@ -91,11 +91,11 @@ public class IRController extends CommonController {
 	}
 
 	//기기정보 가져오기
-	@GetMapping("/ir/{no}")
-	public ResponseEntity getIR(@PathVariable("no") int no){
-	    IR ir = iRService.getOne(no);
-		return new ResponseEntity(ir, HttpStatus.OK);
-	}
+//	@GetMapping("/ir/{no}")
+//	public ResponseEntity getIR(@PathVariable("no") int no){
+//	    IR ir = iRService.getOne(no);
+//		return new ResponseEntity(ir, HttpStatus.OK);
+//	}
 
     //기기정보 가져오기
     @GetMapping("/{irType}")
@@ -133,10 +133,9 @@ public class IRController extends CommonController {
 	//기기 제어
 	@PutMapping("/ir/{no}")
 	public ResponseEntity controlIR(@PathVariable("no") int no, @RequestBody IR ir) throws JsonProcessingException {
-	    Map map = new HashMap();
 	    ir.setUserEmail(getAuthUserEmail());
 	    iRService.controlIR(ir);
-		return new ResponseEntity(map, HttpStatus.OK);
+		return new ResponseEntity(HttpStatus.OK);
 	}
 	
 }

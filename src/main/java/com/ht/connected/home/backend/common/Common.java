@@ -121,7 +121,7 @@ public class Common {
      * @param rtn 비어있으면 보내줄값 Create by injeong
      */
 
-    public static Object notNullrtnByobj(Object obj, Object rtn) {
+    public static Object isNullrtnByobj(Object obj, Object rtn) {
         if (Common.empty(obj)) {
             return rtn;
         } else {

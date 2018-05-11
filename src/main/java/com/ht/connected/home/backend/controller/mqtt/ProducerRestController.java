@@ -1,28 +1,33 @@
 package com.ht.connected.home.backend.controller.mqtt;
 
+import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.ht.connected.home.backend.model.rabbit.producer.Message;
-
 @Component
-public class ProducerRestController {
+public class ProducerRestController{
 
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
-
+    
     @Value("${spring.activemq.queueName}")
     String activemqQueueName;
-    private static final Logger logger = LoggerFactory.getLogger(ProducerRestController.class);
+    private final RabbitTemplate rabbitTemplate;
+    private final Receiver receiver;
 
-//    public void onSend(String val) {
-//        logger.info("Sending message... Start");
-//        rabbitTemplate.convertAndSend(activemqQueueName, new Message("routingKey", val));
-//        logger.info("Sending message... End");
-//    }
+    public ProducerRestController(Receiver receiver, RabbitTemplate rabbitTemplate) {
+        this.receiver = receiver;
+        this.rabbitTemplate = rabbitTemplate;
+    }
+    private static final Logger logger = LoggerFactory.getLogger(ProducerRestController.class);
+   
+    public void run(Message message) throws InterruptedException {
+        logger.info("Sending message... Start");
+        rabbitTemplate.convertAndSend(activemqQueueName, message.getMessageType(), message.getMessageBody());
+        receiver.getLatch().await(10000, TimeUnit.MILLISECONDS);
+        logger.info("Sending message... End");
+    }
 
 }
