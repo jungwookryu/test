@@ -61,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
             .csrf().disable()
             .authorizeRequests()
             .antMatchers("/adduser*").permitAll()
-            .antMatchers("/gov/").permitAll()
+            .antMatchers("/gov/**").permitAll()
             .antMatchers("/zwave*").permitAll()
             .antMatchers("/zwave/**").permitAll()
             .antMatchers("/app*").permitAll()
