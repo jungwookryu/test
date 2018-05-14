@@ -65,7 +65,7 @@ public class GatewayController extends CommonController{
 			responseEntity = new ResponseEntity(HttpStatus.NOT_FOUND);
 		} else {
 			User user = users.get(0);
-			Gateway gateway = gatewayRepository.findBySerial(req.get("serialNo"));
+			Gateway gateway = gatewayRepository.findBySerial(req.get("serial"));
 			if (isNull(gateway)) {
 				responseEntity = new ResponseEntity(HttpStatus.NOT_FOUND);
 			} else {
