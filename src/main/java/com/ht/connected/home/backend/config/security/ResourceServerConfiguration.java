@@ -47,7 +47,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     	.requestMatcher(new OAuthRequestedMatcher())
         .authorizeRequests()
         .antMatchers("/adduser").permitAll()
-        .antMatchers("/gov/").permitAll()
+        .antMatchers("/gov/**").permitAll()
         .antMatchers("/authentication/login").permitAll()
         .antMatchers(HttpMethod.POST,"/users").permitAll()
         .antMatchers("/passwordReset/**").permitAll()
