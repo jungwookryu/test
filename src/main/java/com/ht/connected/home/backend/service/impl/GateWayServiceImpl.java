@@ -11,13 +11,16 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.config.service.MqttConfig;
 import com.ht.connected.home.backend.model.dto.Target;
 import com.ht.connected.home.backend.model.entity.Gateway;
@@ -65,6 +68,8 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     @Autowired
     CertificationRepository certificationRepository;
 
+    @Autowired
+    AmqpTemplate rabbitTemplate;
     /**
      * 호스트 등록/부팅 메세지 executor type 이 register 일 경우만 처리 type 이 boot 일 경우에 대한 디비 저정은 추가될수 있음
      * @param mqttTopicHandler
@@ -153,6 +158,7 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
                     gateway.setModel(topicSplited[3]);
                     exangeGateway.setBssid(gateway.getBssid());
                     exangeGateway.setUserEmail(gateway.getUserEmail());
+                    exangeGateway.setNickname((String)Common.isNullrtnByobj(gateway.getNickname(), ""));
                     updateGateway(exangeGateway);
                     updateUserGateway(exangeGateway, user.getNo());
                     String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/manager/noti", gateway.getModel(),
