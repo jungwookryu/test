@@ -1,5 +1,7 @@
 package com.ht.connected.home.backend.model.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -65,11 +67,11 @@ public class Gateway {
 
     @Column(name = "created_time")
     @JsonProperty("created_time")
-    private String createdTime;
+    private Date createdTime;
 
     @Column(name = "lastmodified_time")
     @JsonProperty("lastmodified_time")
-    private String lastModifiedTime;
+    private Date lastModifiedTime;
 
     @Transient
     @JsonProperty("user_nick_name")
@@ -166,19 +168,19 @@ public class Gateway {
         this.createdUserId = createdUserId;
     }
 
-    public String getCreatedTime() {
+    public Date getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(String createdTime) {
+    public void setCreatedTime(Date createdTime) {
         this.createdTime = createdTime;
     }
 
-    public String getLastModifiedTime() {
+    public Date getLastModifiedTime() {
         return lastModifiedTime;
     }
 
-    public void setLastModifiedTime(String lastModifiedTime) {
+    public void setLastModifiedTime(Date lastModifiedTime) {
         this.lastModifiedTime = lastModifiedTime;
     }
 
