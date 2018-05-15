@@ -42,7 +42,7 @@ public class GovService {
      */
     private String getMqttPublishTopic(GovDeviceRequest govDeviceRequest, String target) {
         String topic = "";
-        String[] segments = new String[] { "/server", target, "hcs-w1001", "17AFFFF", Category.ir.name()};
+        String[] segments = new String[] { "/server", target, "hcs-w1001", govDeviceRequest.getSerial(), Category.ir.name()};
         topic = String.join("/", segments);
         logger.info("====================== GOV PROTO MQTT PUBLISH TOPIC START ======================");
         logger.info(topic);

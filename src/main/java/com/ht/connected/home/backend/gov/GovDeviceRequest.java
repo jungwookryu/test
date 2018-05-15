@@ -1,11 +1,8 @@
 package com.ht.connected.home.backend.gov;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ht.connected.home.backend.model.entity.IR;
 
 /**
  * ir 요청시 토픽 URI 경로 구분자(/)로 분할하여 getter통해 쉽게 사용하기 위한 클래스
@@ -25,7 +22,8 @@ public class GovDeviceRequest {
     private String action;
     @JsonProperty("value")
     private String value;
-
+    @JsonProperty("serial")
+    private String serial;
     public String getDevice() {
         return device;
     }
@@ -66,9 +64,23 @@ public class GovDeviceRequest {
         this.value = value;
     }
 
+    /**
+     * @return the model
+     */
+    public String getSerial() {
+        return serial;
+    }
+
+    /**
+     * @param model the model to set
+     */
+    public void setSerial(String serial) {
+        this.serial = serial;
+    }
+
     @Override
     public String toString() {
-        return "GovDeviceRequest [device=" + device + ", type=" + type + ", id=" + id + ", action=" + action + ", value=" + value + "]";
+        return "GovDeviceRequest [device=" + device + ", type=" + type + ", id=" + id + ", action=" + action + ", value=" + value + ", serial=" + serial + "]";
     }
 
 }
