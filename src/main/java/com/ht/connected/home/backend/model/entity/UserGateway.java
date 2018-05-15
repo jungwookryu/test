@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 
 /**
  * user_gateway 테이블 엔터티
@@ -33,6 +35,10 @@ public class UserGateway {
 	@Column(name = "group_role")
 	private String groupRole;
 
+	
+    @Column(name = "status")
+    private String status;
+    
 	public int getNo() {
 		return no;
 	}
@@ -73,12 +79,21 @@ public class UserGateway {
 		this.groupRole = groupRole;
 	}
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "UserGateway [no=" + no + ", userNo=" + userNo + ", groupNo=" + groupNo + ", gatewayNo=" + gatewayNo + ", groupRole=" + groupRole + "]";
+        return "UserGateway [no=" + no + ", userNo=" + userNo + ", groupNo=" + groupNo 
+                + ", gatewayNo=" + gatewayNo + ", groupRole=" + groupRole + ", status=" + status +"]";
     }
 
 

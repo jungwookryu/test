@@ -21,6 +21,8 @@ public interface UserGatewayRepository extends JpaRepository<UserGateway, Intege
 	UserGateway findByUserNoAndGatewayNo(int no, int no2);
 
 	List<UserGateway> findByGatewayNoIn(List<Integer> gatewayNos);
+	
+	void deleteByGatewayNo(int gatewayNo);
 
 	
 }
