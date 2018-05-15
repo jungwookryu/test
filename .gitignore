@@ -9,6 +9,7 @@ target/
 .settings
 .springBeans
 logs/
+logs_mqtt/
 log/
 ### IntelliJ IDEA ###
 .idea

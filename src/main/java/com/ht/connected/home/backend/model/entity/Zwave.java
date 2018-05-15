@@ -1,6 +1,7 @@
 package com.ht.connected.home.backend.model.entity;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,24 +9,35 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ht.connected.home.backend.model.dto.Endpoint;
 
 @Entity
 @Table(name = "zwave")
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Zwave {
 
     @Id
     @Column(name = "no")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty("no")
     int no;
 
     @Column(name = "gateway_no")
+    @JsonProperty("gateway_no")
     int gatewayNo;
 
     @Column(name = "node_id")
-    String nodeId;
+    @JsonProperty("nodeid")
+    int nodeId;
 
     @Column(name = "endpoint_id")
-    String endpointId;
+    int endpointId;
 
     @Column(name = "nickname")
     String nickname;
@@ -44,7 +56,15 @@ public class Zwave {
 
     @Column(name = "lastmodified_date")
     Date lastModifiedDate;
-
+    
+    @Column(name = "endpoint")
+    @JsonProperty("endpoint")
+    String sEndpoint;
+    
+    @Transient
+    List<Endpoint> endpoint;
+    
+    
     public int getNo() {
         return no;
     }
@@ -61,19 +81,19 @@ public class Zwave {
         this.gatewayNo = gatewayNo;
     }
 
-    public String getNodeId() {
+    public int getNodeId() {
         return nodeId;
     }
 
-    public void setNodeId(String nodeId) {
+    public void setNodeId(int nodeId) {
         this.nodeId = nodeId;
     }
 
-    public String getEndpointId() {
+    public int getEndpointId() {
         return endpointId;
     }
 
-    public void setEndpointId(String endpointId) {
+    public void setEndpointId(int endpointId) {
         this.endpointId = endpointId;
     }
 
@@ -125,10 +145,35 @@ public class Zwave {
         this.lastModifiedDate = lastModifiedDate;
     }
 
+    public List<Endpoint> getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(List<Endpoint> endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    /**
+     * @return the sndpoint
+     */
+    public String getSndpoint() {
+        return sEndpoint;
+    }
+
+    /**
+     * @param sndpoint the sndpoint to set
+     */
+    public void setSndpoint(String sndpoint) {
+        this.sEndpoint = sndpoint;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return "Zwave [no=" + no + ", gatewayNo=" + gatewayNo + ", nodeId=" + nodeId + ", endpointId=" + endpointId + ", nickname=" + nickname + ", cmd=" + cmd + ", event=" + event + ", status="
-                + status + ", creratedTime=" + creratedTime + ", lastModifiedDate=" + lastModifiedDate + "]";
+                + status + ", creratedTime=" + creratedTime + ", lastModifiedDate=" + lastModifiedDate + ", endpoint=" + sEndpoint + "]";
     }
 
 }

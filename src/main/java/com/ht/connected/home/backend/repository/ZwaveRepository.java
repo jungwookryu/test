@@ -8,6 +8,6 @@ import com.ht.connected.home.backend.model.entity.Zwave;
 
 public interface ZwaveRepository extends JpaRepository<Zwave, Integer>{
 
-    List<Zwave> findByGatewayNoAndCmd(int no, String cmd);
+    List<Zwave> findByGatewayNoAndCmdAndStatus(int no, String cmd, String status);
 
 }
