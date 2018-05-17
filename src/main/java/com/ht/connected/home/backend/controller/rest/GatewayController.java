@@ -14,17 +14,20 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ht.connected.home.backend.model.dto.Category;
 import com.ht.connected.home.backend.model.entity.Gateway;
+import com.ht.connected.home.backend.model.entity.GatewayCategory;
 import com.ht.connected.home.backend.model.entity.UserGateway;
 import com.ht.connected.home.backend.model.entity.User;
 import com.ht.connected.home.backend.repository.GatewayRepository;
 import com.ht.connected.home.backend.repository.UserGatewayRepository;
-import com.ht.connected.home.backend.repository.UsersRepository;
+import com.ht.connected.home.backend.repository.UserRepository;
 import com.ht.connected.home.backend.service.GateWayService;
 
 /**
@@ -37,7 +40,7 @@ public class GatewayController extends CommonController {
 
     GateWayService gateWayService;
     @Autowired
-    UsersRepository userRepository;
+    UserRepository userRepository;
 
     @Autowired
     GatewayRepository gatewayRepository;
@@ -45,6 +48,9 @@ public class GatewayController extends CommonController {
     @Autowired
     UserGatewayRepository userGatewayRepository;
 
+    @Autowired
+    ZwaveController zwaveController;
+    
     @Autowired
     public GatewayController(GateWayService gateWayService) {
         this.gateWayService = gateWayService;
@@ -102,7 +108,16 @@ public class GatewayController extends CommonController {
     @DeleteMapping(value = "/{no}")
     public ResponseEntity deleteGateway(@PathVariable("no") int no) {
         gateWayService.delete(no);
-
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+    
+    @PutMapping(value = "/{no}")
+    public ResponseEntity deleteIoTDevice(@RequestBody GatewayCategory gatewayCategory) throws JsonProcessingException {
+        
+        if(Category.zwave.name().equals(gatewayCategory.getCategory())){
+            zwaveController.delete(gatewayCategory.getCategoryNo());
+        }
+        
+        return new ResponseEntity<>(HttpStatus.OK); 
     }
 }

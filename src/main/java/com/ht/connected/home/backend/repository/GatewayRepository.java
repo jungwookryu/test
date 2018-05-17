@@ -12,6 +12,8 @@ package com.ht.connected.home.backend.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.ht.connected.home.backend.model.entity.Gateway;
@@ -23,5 +25,10 @@ import com.ht.connected.home.backend.model.entity.Gateway;
 @Repository
 public interface GatewayRepository extends JpaRepository<Gateway, Integer> {
 	Gateway findBySerial(String serial);
+	
 	List<Gateway> findByNoIn(List<Integer> nos);
+	
+	@Modifying
+	@Query("update Gateway set status = ?1 where no = ?2")
+	int setModifyStatusForNo(String status, int no);
 }

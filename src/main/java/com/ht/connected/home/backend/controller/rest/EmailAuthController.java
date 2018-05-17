@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ht.connected.home.backend.model.dto.UserActive;
 import com.ht.connected.home.backend.model.entity.User;
-import com.ht.connected.home.backend.service.UsersService;
+import com.ht.connected.home.backend.service.impl.UsersService;
 
 @Controller
 public class EmailAuthController extends CommonController {

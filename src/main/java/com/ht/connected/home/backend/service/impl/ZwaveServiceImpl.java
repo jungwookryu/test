@@ -3,11 +3,14 @@ package com.ht.connected.home.backend.service.impl;
 import static java.util.Objects.isNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import javax.transaction.Transactional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,20 +29,27 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.common.Common;
+import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.config.service.MqttConfig;
 import com.ht.connected.home.backend.constants.zwave.commandclass.BasicCommandClass;
 import com.ht.connected.home.backend.constants.zwave.commandclass.NetworkManagementInclusionCommandClass;
 import com.ht.connected.home.backend.constants.zwave.commandclass.NetworkManagementProxyCommandClass;
+import com.ht.connected.home.backend.model.dto.Category;
 import com.ht.connected.home.backend.model.dto.MqttPayload;
+import com.ht.connected.home.backend.model.dto.MqttRequest;
 import com.ht.connected.home.backend.model.dto.Target;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
 import com.ht.connected.home.backend.model.entity.Certification;
 import com.ht.connected.home.backend.model.entity.Gateway;
+import com.ht.connected.home.backend.model.entity.GatewayCategory;
+import com.ht.connected.home.backend.model.entity.User;
+import com.ht.connected.home.backend.model.entity.UserGateway;
 import com.ht.connected.home.backend.model.entity.Zwave;
 import com.ht.connected.home.backend.repository.CertificationRepository;
+import com.ht.connected.home.backend.repository.GatewayCategoryRepository;
 import com.ht.connected.home.backend.repository.GatewayRepository;
 import com.ht.connected.home.backend.repository.UserGatewayRepository;
-import com.ht.connected.home.backend.repository.UsersRepository;
+import com.ht.connected.home.backend.repository.UserRepository;
 import com.ht.connected.home.backend.repository.ZwaveRepository;
 import com.ht.connected.home.backend.service.GateWayService;
 import com.ht.connected.home.backend.service.ZwaveService;
@@ -54,6 +64,12 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
 
     private ZwaveRepository zwaveRepository;
 
+    enum event {
+        delete, active, failed 
+    }
+    enum status {
+        add, delete, active, failed 
+    }
     @Autowired
     public ZwaveServiceImpl(ZwaveRepository zwaveRepository) {
         super(zwaveRepository);
@@ -64,7 +80,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
 
     Logger logger = LoggerFactory.getLogger(ZwaveServiceImpl.class);
     @Autowired
-    UsersRepository userRepository;
+    UserRepository userRepository;
 
     @Autowired
     GatewayRepository gatewayRepository;
@@ -74,6 +90,10 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
 
     @Autowired
     UserGatewayRepository userGatewayRepository;
+    
+    @Autowired
+    GatewayCategoryRepository gatewayCategoryRepository;
+    
     @Autowired
     GateWayService gateWayService;
 
@@ -110,22 +130,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
         return response;
     }
 
-    public void publish(String topic, HashMap<String, Object> publishPayload) throws JsonProcessingException {
-        messageHandler.setDefaultTopic(topic);
-        String payload = objectMapper.writeValueAsString(publishPayload);
-        logger.info("publish topic:::::::::::" + topic);
-        mqttGateway.sendToMqtt(payload);
-    }
 
-    public void publish(String topic, int classKey) {
-        // 불필요한 publish를 제거함.
-        publish(topic);
-    }
-
-    public void publish(String topic) {
-        messageHandler.setDefaultTopic(topic);
-        mqttGateway.sendToMqtt("");
-    }
 
     /**
      * 인증프로토콜의 경우 디비에 JSON을 저장하는 기능
@@ -254,12 +259,15 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
                         zwaveRequest.setSecurityOption("none");
                         saveZwaveRegist(zwaveRequest, mqttPayload);
                     }
+                    //등록완료일경우 NodeGet.명령어 호출
+                    //호스트의 노드 리스트 호출을 한다.
                     if ("0".equals(mqttPayload.getResultData().getOrDefault("status", "9").toString())) {
                         // 서버에 기기리스트를 요청함.
                         zwaveRequest.setClassKey(NetworkManagementProxyCommandClass.INT_ID);
                         zwaveRequest.setCommandKey(NetworkManagementProxyCommandClass.INT_NODE_LIST_GET);
                         String topic = getMqttPublishTopic(zwaveRequest, "host");
-                        publish(topic, zwaveRequest.getClassKey());
+                        publish(topic);
+                        
                     }
                 }
                 String status = "status null ";
@@ -274,7 +282,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
                     if (isNull(mqttPayload.getResultData().get("result_code"))) {
                         String topic = getMqttPublishTopic(zwaveRequest, "host");
                         if (!topic.contains(Target.host.name() + "/" + Target.server.name())) {
-                            publish(topic, zwaveRequest.getClassKey());
+                            publish(topic);
                         }
                     }
                 }
@@ -285,27 +293,27 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
 
     /**
      * 신규 등록 ZWAVE 기기 디비 저장
+     * 신규 기기일 경우  {"result_data": {"newNodeId": xx}}
      * @param zwaveRequest
      * @param mqttPayload
      */
     private void saveZwaveRegist(ZwaveRequest zwaveRequest, MqttPayload mqttPayload) {
         Zwave zwave = new Zwave();
+        GatewayCategory gatewayCategory = new GatewayCategory();
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
         zwave.setCmd(Integer.toString(NetworkManagementInclusionCommandClass.INT_ID) + "/" + Integer.toString(NetworkManagementInclusionCommandClass.INT_NODE_ADD_STATUS));
         zwave.setGatewayNo(gateway.getNo());
         if (!Objects.isNull(mqttPayload.getResultData())) {
             if (!isNull(mqttPayload.getResultData().get("newNodeId"))) {
                 int newNodeId = (int) mqttPayload.getResultData().get("newNodeId");
-                zwave.setNodeId(newNodeId);
+                gatewayCategory.setCategory(Category.zwave.name());
+                gatewayCategory.setCategoryNo(newNodeId);
+                gatewayCategory.setStatus(status.add.name());
+                gatewayCategory.setCreatedTime(new Date());
+                gatewayCategory.setLastmodifiedTime(new Date());
+                gatewayCategoryRepository.save(gatewayCategory);
             }
         }
-        zwave.setEndpointId(0);
-        zwave.setEvent("new");
-        zwave.setStatus("");
-        zwave.setNickname("");
-        zwave.setCreratedTime(new Date());
-        zwave.setLastModifiedDate(new Date());
-        zwaveRepository.save(zwave);
     }
 
     // 제어
@@ -352,12 +360,13 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
                     if (zwaveNodeListReport.get("nodelist") != null) {
                         List<HashMap> nodeListItem = (List<HashMap>) zwaveNodeListReport.get("nodelist");
                         for (int k = 0; k < nodeListItem.size(); k++) {
-                            Zwave requestZwave = objectMapper.readValue(nodeListItem.get(k).toString(), Zwave.class);
-                            if (requestZwave.getNodeId() == zwave.getNodeId()) {
-                                HashMap nodeItem = (HashMap) nodeListItem.get(k);
+                            HashMap nodeItem = (HashMap) nodeListItem.get(k);
+                            int nodeid = (int) nodeItem.getOrDefault("nodeid", 0);
+                            //node status "" 경우에는 node 가 신규로 들어왔으나 host 에서 신규노드로 확인이 안된경 node status 0x01일 경우 신규 등록 기기
+                            if (nodeid== zwave.getNodeId() && Common.empty(zwave.getStatus())) {
                                 Map req = new HashMap();
                                 req.put("serial", gateway.getSerial());
-                                req.put("nodeId", requestZwave.getNodeId());
+                                req.put("nodeId",nodeid);
                                 req.put("endpointId", 0);
                                 req.put("option", nodeItem.getOrDefault("security", ""));
                                 ZwaveRequest appZwaveRequest = new ZwaveRequest((HashMap<String, Object>) req, NetworkManagementInclusionCommandClass.INT_ID,
@@ -382,10 +391,60 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
         // TODO Auto-generated method stub
     }
 
+    
+    //삭제 토픽
     @Override
-    public void execute(Object zwaveRequest, Object isCert) {
-        // TODO Auto-generated method stub
+    @Transactional
+    public int deleteByNo(int no) throws JsonProcessingException {
+        //TODO DB 에서 기기삭제 status 로 update
+        Zwave zwave = zwaveRepository.getOne(no);
+        Gateway gateway = gatewayRepository.getOne(zwave.getGatewayNo());
+        int iRtn = zwaveRepository.setFixedEventAndStatusForNo(event.delete.name(), status.delete.name(), no);
+        MqttRequest mqttRequest = new MqttRequest();
+        mqttRequest.setSerialNo(gateway.getSerial());
+        mqttRequest.setModel(gateway.getModel());
+        mqttRequest.setClassKey(NetworkManagementInclusionCommandClass.INT_ID);
+        mqttRequest.setCommandKey(NetworkManagementInclusionCommandClass.INT_NODE_REMOVE);
+        mqttRequest.setTarget(Target.host.name());
+        //TODO Gateway host version
+        //mqttRequest.setVersion(gateway.getVersion());
+        HashMap map = new HashMap<>();
+        map.put("mode", 1);
+        mqttRequest.setSetData((HashMap<String, Object>) new HashMap().put("set_data", map));
+        publish(mqttRequest);
+        return iRtn;
+        
+    }
+    public void publish(MqttRequest mqttRequest) throws JsonProcessingException {
+        
+        publish(MqttCommon.getMqttPublishTopic(mqttRequest), mqttRequest.getSetData());
+    }
+    
+    public void publish(String topic) throws JsonProcessingException {
+        publish(topic, new HashMap());
+    }
 
+    public void publish(String topic, HashMap<String, Object> publishPayload) throws JsonProcessingException {
+        String payload = objectMapper.writeValueAsString(publishPayload);
+        publish(topic, payload);
+    }
+    public void publish(String topic, String payload) {
+        messageHandler.setDefaultTopic(topic);
+        logger.info("publish topic:::::::::::" + topic);
+        mqttGateway.sendToMqtt(payload);
+    }
+
+    @Override
+    public int getByUserEmailAndNo(String userEmail, int no) {
+        // TODO Auto-generated method stub
+        List<Integer> lstGatewayNos = new ArrayList<>();
+        List<User> user = userRepository.findByUserEmail(userEmail);
+        List<UserGateway> lstUserGateway = userGatewayRepository.findByUserNo(user.get(0).getNo());
+        lstUserGateway.forEach(userGateway->{
+            lstGatewayNos.add(userGateway.getGatewayNo());
+        });
+        List<Zwave> lstZwave = zwaveRepository.findByNoAndGatewayNoIn(no, lstGatewayNos);
+        return lstZwave.size();
     }
 
 }

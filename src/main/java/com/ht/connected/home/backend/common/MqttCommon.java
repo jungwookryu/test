@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ht.connected.home.backend.model.dto.MqttRequest;
+import com.ht.connected.home.backend.model.dto.Target;
 
 /**
  * @author ijlee
@@ -31,14 +32,80 @@ public class MqttCommon {
         if (!Objects.isNull(mqttRequest.getEndpointId())) {
             endPointId = mqttRequest.getEndpointId();
         }
-        String[] segments = new String[] { "/server", target, mqttRequest.getModel(),mqttRequest.getSerialNo(), "zwave", "certi",
-                ByteUtil.getHexString(mqttRequest.getClassKey()), ByteUtil.getHexString(mqttRequest.getCommandKey()), mqttRequest.getVersion(),
-                ByteUtil.getHexString(nodeId), ByteUtil.getHexString(endPointId),
-                mqttRequest.getSecurityOption() };
-        topic = String.join("/", segments);
+        
+        topic = "/server"
+                +"/"+ target 
+                +"/"+ mqttRequest.getModel()
+                +"/"+ mqttRequest.getSerialNo()
+                +"/"+ "zwave"
+                +"/"+ "certi"
+                +"/"+ ByteUtil.getHexString(mqttRequest.getClassKey())
+                +"/"+ ByteUtil.getHexString(mqttRequest.getCommandKey());
+                if(!Common.empty(mqttRequest.getVersion())){
+                    topic += "/"+ mqttRequest.getVersion();
+                    if(!Common.empty(mqttRequest.getNodeId())){
+                        topic += "/"+ ByteUtil.getHexString(nodeId);
+                        if(!Common.empty(mqttRequest.getEndpointId())){
+                            topic += "/"+ ByteUtil.getHexString(endPointId);
+                            if(!Common.empty(mqttRequest.getSecurityOption())){
+                                topic += "/"+ mqttRequest.getSecurityOption();
+                            } else {
+                                topic += "/none";
+                            }
+                        } else {
+                            topic += "/none";
+                        }
+                    } else {
+                        topic += "/none";
+                    }
+                }else {
+                    topic += "/none";
+                }
         logger.info("====================== ZWAVE PROTO MQTT PUBLISH TOPIC ======================");
         logger.info(topic);
         return topic;
     }
-
+    public static String getMqttPublishTopic(MqttRequest mqttRequest) {
+        String topic = "";
+        int nodeId = 0;
+        int endPointId = 0;
+        if (!Objects.isNull(mqttRequest.getNodeId())) {
+            nodeId = mqttRequest.getNodeId();
+        }
+        if (!Objects.isNull(mqttRequest.getEndpointId())) {
+            endPointId = mqttRequest.getEndpointId();
+        }
+        
+        topic = "/server"
+                +"/"+ Target.host.name() 
+                +"/"+ mqttRequest.getModel()
+                +"/"+ mqttRequest.getSerialNo()
+                +"/"+ "zwave"
+                +"/"+ "certi"
+                +"/"+ ByteUtil.getHexString(mqttRequest.getClassKey())
+                +"/"+ ByteUtil.getHexString(mqttRequest.getCommandKey());
+                if(!Common.empty(mqttRequest.getVersion())){
+                    topic += "/"+ mqttRequest.getVersion();
+                    if(!Common.empty(mqttRequest.getNodeId())){
+                        topic += "/"+ ByteUtil.getHexString(nodeId);
+                        if(!Common.empty(mqttRequest.getEndpointId())){
+                            topic += "/"+ ByteUtil.getHexString(endPointId);
+                            if(!Common.empty(mqttRequest.getSecurityOption())){
+                                topic += "/"+ mqttRequest.getSecurityOption();
+                            } else {
+                                topic += "/none";
+                            }
+                        } else {
+                            topic += "/none";
+                        }
+                    } else {
+                        topic += "/none";
+                    }
+                }else {
+                    topic += "/none";
+                }
+        logger.info("====================== ZWAVE PROTO MQTT PUBLISH TOPIC ======================");
+        logger.info(topic);
+        return topic;
+    }
 }

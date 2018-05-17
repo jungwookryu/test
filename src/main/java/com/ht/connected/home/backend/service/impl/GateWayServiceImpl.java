@@ -35,7 +35,7 @@ import com.ht.connected.home.backend.model.entity.UserGateway;
 import com.ht.connected.home.backend.repository.CertificationRepository;
 import com.ht.connected.home.backend.repository.GatewayRepository;
 import com.ht.connected.home.backend.repository.UserGatewayRepository;
-import com.ht.connected.home.backend.repository.UsersRepository;
+import com.ht.connected.home.backend.repository.UserRepository;
 import com.ht.connected.home.backend.repository.ZwaveRepository;
 import com.ht.connected.home.backend.service.GateWayService;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
@@ -50,6 +50,10 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     enum type {
         register, boot, manager
     }
+    
+    enum status {
+        add, delete
+    }
 
     Logger logger = LoggerFactory.getLogger(ZwaveServiceImpl.class);
 
@@ -57,7 +61,7 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     UserGatewayRepository userGatewayRepository;
 
     @Autowired
-    UsersRepository userRepository;
+    UserRepository userRepository;
 
     @Autowired
     GatewayRepository gatewayRepository;
@@ -184,10 +188,10 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
                 }
             }
             if (type.boot.name().equals(gateway.getType())) {
-                //TODO 기기리스트 가져오기 topic 
+                //TODO 기기리스트 가져오기 topic
                 MqttRequest mqttRequest = new MqttRequest(gateway);
-                mqttRequest.setCommandKey(NetworkManagementProxyCommandClass.INT_ID);
-                mqttRequest.setClassKey(NetworkManagementProxyCommandClass.INT_NODE_LIST_GET);
+                mqttRequest.setClassKey(NetworkManagementProxyCommandClass.INT_ID);
+                mqttRequest.setCommandKey(NetworkManagementProxyCommandClass.INT_NODE_LIST_GET);
                 mqttRequest.setNodeId(00);
                 mqttRequest.setEndpointId(00);
                 mqttRequest.setEndpointId(00);
@@ -230,12 +234,15 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     @Override
     @Transactional
     public void delete(int no) {
+        //db 삭제
         updateDeleteDB(no);
+        //host 삭제 모드 요청 publish
+        
     }
     
     private void updateDeleteDB(int gatewayNo) {
-        gatewayRepository.delete(gatewayNo);
-        userGatewayRepository.deleteByGatewayNo(gatewayNo);
+        gatewayRepository.setModifyStatusForNo(status.delete.name(), gatewayNo);
+        userGatewayRepository.setModifyStatusForGatewayNo(status.delete.name(), gatewayNo);
     }
     
     private void deleteDB(int gatewayNo) {

@@ -29,8 +29,9 @@ public interface ZwaveService extends CrudService<Zwave, Integer>, MqttBase<Obje
     
     ResponseEntity publish(HashMap<String, Object> req, ZwaveRequest zwaveRequest) throws JsonProcessingException;
 
-    void execute(Object zwaveRequest, Object isCert);
-
     void execute(Map map, boolean isCert) throws JsonProcessingException;
     
+    public int deleteByNo(int no) throws JsonProcessingException ;
+    
+    public int getByUserEmailAndNo(String userEmail, int no);
 }

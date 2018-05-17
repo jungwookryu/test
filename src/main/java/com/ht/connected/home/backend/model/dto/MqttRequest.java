@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.model.entity.Gateway;
+import com.ht.connected.home.backend.model.entity.Zwave;
 
 /**
  * zwave 요청시 토픽 URI 경로 구분자(/)로 분할하여 getter통해 쉽게 사용하기 위한 클래스
@@ -18,6 +19,9 @@ import com.ht.connected.home.backend.model.entity.Gateway;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MqttRequest {
 
+    @JsonProperty("target")
+    private String target;
+    
     @JsonProperty("email")
     private String email;
     
@@ -55,11 +59,13 @@ public class MqttRequest {
     @JsonProperty("set_data")
     private HashMap<String, Object> setData;
     
+    public MqttRequest() {
+    }
     public MqttRequest(Gateway gateway) {
         this.serialNo = gateway.getSerial();
         this.model= gateway.getModel();
     }
-
+    
     /**
      * @return the model
      */
@@ -174,6 +180,12 @@ public class MqttRequest {
         this.sCommandKey = sCommandKey;
     }
 
+    public String getTarget() {
+        return target;
+    }
+    public void setTarget(String target) {
+        this.target = target;
+    }
     /**
      * @return the setData
      */
@@ -198,7 +210,7 @@ public class MqttRequest {
                 + ", securityOption=" + securityOption + ", classKey=" + classKey
                 + ", sClassKey=" + sClassKey + ", commandKey=" + commandKey 
                 + ", sCommandKey=" + sCommandKey + ", version=" + version  + ", model=" + model
-                + ", gateway=" + gateway + ", setData=" + setData + "]";
+                + ", gateway=" + gateway + ", setData=" + setData + ", target=" + target+  "]";
     }
     
 }

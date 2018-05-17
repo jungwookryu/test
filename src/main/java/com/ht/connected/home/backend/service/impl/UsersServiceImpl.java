@@ -5,8 +5,7 @@ import com.ht.connected.home.backend.config.service.EmailConfig;
 import com.ht.connected.home.backend.model.dto.UserRole;
 import com.ht.connected.home.backend.model.dto.UserActive;
 import com.ht.connected.home.backend.model.entity.User;
-import com.ht.connected.home.backend.repository.UsersRepository;
-import com.ht.connected.home.backend.service.UsersService;
+import com.ht.connected.home.backend.repository.UserRepository;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 
 import java.io.InputStream;
@@ -37,7 +36,7 @@ public class UsersServiceImpl extends CrudServiceImpl<User, Integer> implements 
 
 	Logger logger = LoggerFactory.getLogger(UsersServiceImpl.class);
 	@Autowired
-	private UsersRepository userRepository;
+	private UserRepository userRepository;
 	
 	
 	@Override

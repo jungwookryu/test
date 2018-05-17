@@ -2,7 +2,7 @@ package com.ht.connected.home.backend.controller.rest;
 
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.model.entity.User;
-import com.ht.connected.home.backend.service.UsersService;
+import com.ht.connected.home.backend.service.impl.UsersService;
 
 import java.security.Principal;
 import java.util.Map;
