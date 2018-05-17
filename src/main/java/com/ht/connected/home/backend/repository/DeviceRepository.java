@@ -9,7 +9,7 @@
  */
 package com.ht.connected.home.backend.repository;
 
-import com.ht.connected.home.backend.model.entity.Device;
+import com.ht.connected.home.backend.model.entity.GatewayCategory;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -19,6 +19,6 @@ import org.springframework.stereotype.Repository;
  *
  */
 @Repository
-public interface DeviceRepository extends JpaRepository<Device, Integer> {
+public interface DeviceRepository extends JpaRepository<GatewayCategory, Integer> {
 
 }

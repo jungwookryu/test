@@ -3,7 +3,8 @@ package com.ht.connected.home.backend.service;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.model.entity.UserDetail;
 import com.ht.connected.home.backend.model.entity.User;
-import com.ht.connected.home.backend.repository.UsersRepository;
+import com.ht.connected.home.backend.repository.UserRepository;
+import com.ht.connected.home.backend.service.impl.UsersService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ import org.springframework.util.StringUtils;
 @Service
 public class UserDetailService implements UserDetailsService {
 	@Autowired
-	private UsersRepository usersRepository;
+	private UserRepository usersRepository;
 
 	@Autowired
 	private UsersService usersService;

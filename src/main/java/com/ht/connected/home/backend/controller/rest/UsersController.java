@@ -1,7 +1,7 @@
 package com.ht.connected.home.backend.controller.rest;
 
 import com.ht.connected.home.backend.model.entity.User;
-import com.ht.connected.home.backend.service.UsersService;
+import com.ht.connected.home.backend.service.impl.UsersService;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;

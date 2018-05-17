@@ -42,7 +42,7 @@ public class Gateway {
     private String ssid;
 
     @Column(name = "bssid")
-    @JsonProperty("macaddress")
+    @JsonProperty("bssid")
     private String bssid;
 
     @Column(name = "serial")
@@ -60,6 +60,10 @@ public class Gateway {
     @Column(name = "status")
     @JsonProperty("status")
     private String status;
+    
+    @Column(name = "homeid")
+    @JsonProperty("homeid")
+    private String homeid;
 
     @Column(name = "created_user_id")
     @JsonProperty("created_user_id")

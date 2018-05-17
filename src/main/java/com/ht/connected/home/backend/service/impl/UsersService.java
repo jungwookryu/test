@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.service;
+package com.ht.connected.home.backend.service.impl;
 
 import com.ht.connected.home.backend.model.entity.User;
 import com.ht.connected.home.backend.service.base.CrudService;

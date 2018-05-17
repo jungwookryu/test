@@ -1,7 +1,8 @@
 package com.ht.connected.home.backend.service;
 
 import com.ht.connected.home.backend.common.Common;
-import com.ht.connected.home.backend.repository.UsersRepository;
+import com.ht.connected.home.backend.repository.UserRepository;
+import com.ht.connected.home.backend.service.impl.UsersService;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class CommonServiceTest extends MockUtil {
 
     @Mock
-    public UsersRepository usersRepository;
+    public UserRepository usersRepository;
     @Mock
     public CrudServiceImpl<Class, Integer> crudImplService;
     @InjectMocks
