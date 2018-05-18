@@ -191,6 +191,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
         }
     }
 
+    @Transactional
     public void subscribe(ZwaveRequest zwaveRequest, String payload) throws JsonParseException, JsonMappingException, IOException, Exception {
 
         MqttPayload mqttPayload = new MqttPayload();
@@ -234,7 +235,8 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
                         zwaveRequest.setEndpointId(0);
                         zwaveRequest.setVersion("v1");
                         zwaveRequest.setSecurityOption("none");
-                        saveZwaveRegist(zwaveRequest, mqttPayload);
+                        int newNodeId = (int) mqttPayload.getResultData().get("newNodeId");
+                        saveGatewayCategory(zwaveRequest, newNodeId);
                     }
                     // 등록완료일경우 NodeGet.명령어 호출
                     // 호스트의 노드 리스트 호출을 한다.
@@ -263,23 +265,16 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
      * @param zwaveRequest
      * @param mqttPayload
      */
-    private void saveZwaveRegist(ZwaveRequest zwaveRequest, MqttPayload mqttPayload) {
-        Zwave zwave = new Zwave();
+    private void saveGatewayCategory(ZwaveRequest zwaveRequest, int nodeid) {
         GatewayCategory gatewayCategory = new GatewayCategory();
-        Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
-        zwave.setCmd(Integer.toString(NetworkManagementInclusionCommandClass.INT_ID) + "/" + Integer.toString(NetworkManagementInclusionCommandClass.INT_NODE_ADD_STATUS));
-        zwave.setGatewayNo(gateway.getNo());
-        if (!Objects.isNull(mqttPayload.getResultData())) {
-            if (!isNull(mqttPayload.getResultData().get("newNodeId"))) {
-                int newNodeId = (int) mqttPayload.getResultData().get("newNodeId");
-                gatewayCategory.setCategory(CategoryActive.gateway.zwave.name());
-                gatewayCategory.setCategoryNo(newNodeId);
-                gatewayCategory.setStatus(status.add.name());
-                gatewayCategory.setCreatedTime(new Date());
-                gatewayCategory.setLastmodifiedTime(new Date());
-                gatewayCategoryRepository.save(gatewayCategory);
-            }
-        }
+        gatewayCategory.setGatewayNo(zwaveRequest.getNodeid());
+        gatewayCategory.setCategory(CategoryActive.gateway.zwave.name());
+        gatewayCategory.setCategoryNo(CategoryActive.gateway.zwave.ordinal());
+        gatewayCategory.setNodeid(nodeid);
+        gatewayCategory.setStatus(status.add.name());
+        gatewayCategory.setCreatedTime(new Date());
+        gatewayCategory.setLastmodifiedTime(new Date());
+        gatewayCategoryRepository.save(gatewayCategory);
     }
 
     // 제어

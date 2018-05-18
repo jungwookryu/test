@@ -31,7 +31,7 @@ public class GatewayCategory {
     private String nickname;
 
     @Column(name = "nodeid")
-    private String nodeid;
+    private int nodeid;
     
     @Column(name = "status")
     private String status;
@@ -148,6 +148,13 @@ public class GatewayCategory {
         this.lastmodifiedTime = lastmodifiedTime;
     }
 
+    public int getNodeid() {
+        return nodeid;
+    }
+
+    public void setNodeid(int nodeid) {
+        this.nodeid = nodeid;
+    }
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -155,8 +162,10 @@ public class GatewayCategory {
     public String toString() {
         return "gatewayCategory [no=" + no + ", gatewayNo=" + gatewayNo + ", categoryNo=" + category + ", categoryNo="
                 + categoryNo + ", nickname=" + nickname + ", Status=" + status + ", createdTime=" + createdTime
+                + ", nodeid=" + nodeid
                 + ", lastmodifiedTime=" + lastmodifiedTime + "]";
     }
+
 
 
 }
