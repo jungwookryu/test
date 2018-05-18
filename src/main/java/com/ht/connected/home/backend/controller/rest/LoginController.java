@@ -7,6 +7,7 @@ import com.ht.connected.home.backend.service.impl.UsersService;
 import java.security.Principal;
 import java.util.Map;
 
+import org.apache.shiro.authc.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -64,6 +65,7 @@ public class LoginController extends CommonController {
 			}
 
 			String userEmail = parameters.getOrDefault("user_email", "");
+			String password = parameters.getOrDefault("password", "");
 			String userName = parameters.getOrDefault("username", "");
 			if (Common.empty(userEmail) && Common.empty(userName)) {
 				throw new BadClientCredentialsException();
@@ -77,8 +79,11 @@ public class LoginController extends CommonController {
 			}
 			User rtnUsers = usersService.getUser(userEmail);
 			if (null == rtnUsers) {
-				throw new BadClientCredentialsException();
+				throw new AuthenticationException(new BadClientCredentialsException().getMessage());
 			}
+			if(!rtnUsers.getPassword().equals(Common.encryptHash("SHA-256", password))) {
+			    throw new AuthenticationException(new BadClientCredentialsException().getMessage());
+			};
 
 			rtnUsers.setPushToken(users.getPushToken());
 			rtnUsers.setPushType(users.getPushType());
