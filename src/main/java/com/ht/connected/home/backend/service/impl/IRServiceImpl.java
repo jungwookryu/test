@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.config.service.MqttConfig;
 import com.ht.connected.home.backend.controller.rest.AppController;
-import com.ht.connected.home.backend.model.dto.Category;
+import com.ht.connected.home.backend.model.dto.CategoryActive;
 import com.ht.connected.home.backend.model.dto.Target;
 import com.ht.connected.home.backend.model.entity.IR;
 import com.ht.connected.home.backend.repository.IRRepository;
@@ -80,7 +80,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
             String topic = getMqttPublishTopic(ir, Target.host.name(), Target.server.name());
             HashMap<String, Object> publishPayload = new HashMap<String, Object>();
             publishPayload.put("type", Type.add.name());
-            publishPayload.put("request", Category.ir.name());
+            publishPayload.put("request", CategoryActive.gateway.ir.name());
             publishPayload.put("action", ir.getStatus());
             publish(topic, publishPayload);
             if (AppController.Command.stop.equals(ir.getStatus())) {
@@ -165,7 +165,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     public String getMqttPublishTopic(IR ir, String target, String source) {
         String topic = "";
         if (!Objects.isNull(ir.getStatus())) {
-            String[] segments = new String[] { "/" + source, target, ir.getModel(), ir.getSerial(), Category.ir.name() };
+            String[] segments = new String[] { "/" + source, target, ir.getModel(), ir.getSerial(), CategoryActive.gateway.ir.name() };
             topic = String.join("/", segments);
             logger.info("====================== IR PROTO MQTT PUBLISH TOPIC ======================");
             logger.info(topic);

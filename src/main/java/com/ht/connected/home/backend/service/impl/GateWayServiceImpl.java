@@ -187,18 +187,7 @@ public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
                     publish(exeTopic, null);
                 }
             }
-            if (type.boot.name().equals(gateway.getType())) {
-                //TODO 기기리스트 가져오기 topic
-                MqttRequest mqttRequest = new MqttRequest(gateway);
-                mqttRequest.setClassKey(NetworkManagementProxyCommandClass.INT_ID);
-                mqttRequest.setCommandKey(NetworkManagementProxyCommandClass.INT_NODE_LIST_GET);
-                mqttRequest.setNodeId(00);
-                mqttRequest.setEndpointId(00);
-                mqttRequest.setEndpointId(00);
-                String requestTopic = MqttCommon.getMqttPublishTopic(mqttRequest, Target.host.name());
-                publish(requestTopic);
-                //TODO 기기 상태정보 가져오기
-            }
+
         }
         if (topic.contains("alive")) {
             //TODO Host 마지막 상태 시간 저장 하기
