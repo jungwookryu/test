@@ -114,7 +114,7 @@ public class ZwaveController extends CommonController {
      * @return
      * @throws JsonProcessingException
      */
-    @DeleteMapping(value = "no")
+    @DeleteMapping(value = "/{no}")
     public ResponseEntity delete(@PathVariable int no) throws JsonProcessingException{
         String userEmail = getAuthUserEmail();
         List<User> lstUser = userRepository.findByUserEmail(userEmail);
