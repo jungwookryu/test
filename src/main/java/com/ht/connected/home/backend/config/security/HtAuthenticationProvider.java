@@ -1,10 +1,4 @@
 package com.ht.connected.home.backend.config.security;
-import com.ht.connected.home.backend.common.Common;
-import com.ht.connected.home.backend.model.dto.UserActive;
-import com.ht.connected.home.backend.service.UserDetailService;
-
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -16,9 +10,11 @@ import org.springframework.security.authentication.dao.AbstractUserDetailsAuthen
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
+import com.ht.connected.home.backend.common.Common;
+import com.ht.connected.home.backend.service.UserDetailService;
 @Component
 public class HtAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider{
 

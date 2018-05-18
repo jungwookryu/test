@@ -2,8 +2,12 @@ package com.ht.connected.home.backend.config;
 
 import javax.servlet.Filter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FilterWrapper {
+    
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 	/**
      * Returns a wrapper around the specified filter.
      */
@@ -13,7 +17,8 @@ public class FilterWrapper {
 
     private final Filter filter;
 
-    FilterWrapper(Filter filter) {
+    FilterWrapper(Filter filter){ 
+    logger.debug(filter.toString());
         this.filter = filter;
     }
 
