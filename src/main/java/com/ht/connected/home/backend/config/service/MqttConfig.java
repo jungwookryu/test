@@ -173,7 +173,7 @@ public class MqttConfig {
                             // zwave service
                             if (CategoryActive.gateway.zwave.name().equals(topicSplited[5].toString())) {
                                 ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
-                                if (CategoryActive.zwave.certi.equals(topicSplited[6].toString())) {
+                                if (CategoryActive.zwave.certi.name().equals(topicSplited[6].toString())) {
                                     zwaveService.subscribe(zwaveRequest, payload);
                                 }
                                 if (CategoryActive.zwave.init.name().equals(topicSplited[6].toString())) {
@@ -184,7 +184,7 @@ public class MqttConfig {
                                 irService.subscribe(topicSplited, payload);
                             }
                         }
-                        LOGGER.info("host :: category ::" + topicSplited[6].toString() + "active ::" + topicSplited[6].toString() + " subEnd");
+                        LOGGER.info("host :: category ::" + topicSplited[5].toString() + "active ::" + topicSplited[6].toString() + " subEnd");
                     }
                 } catch (Exception e) {
                     // TODO Auto-generated catch block

@@ -39,7 +39,6 @@ import com.ht.connected.home.backend.model.dto.MqttPayload;
 import com.ht.connected.home.backend.model.dto.MqttRequest;
 import com.ht.connected.home.backend.model.dto.Target;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
-import com.ht.connected.home.backend.model.entity.Certification;
 import com.ht.connected.home.backend.model.entity.Gateway;
 import com.ht.connected.home.backend.model.entity.GatewayCategory;
 import com.ht.connected.home.backend.model.entity.User;
@@ -51,6 +50,7 @@ import com.ht.connected.home.backend.repository.GatewayRepository;
 import com.ht.connected.home.backend.repository.UserGatewayRepository;
 import com.ht.connected.home.backend.repository.UserRepository;
 import com.ht.connected.home.backend.repository.ZwaveRepository;
+import com.ht.connected.home.backend.service.CertificationService;
 import com.ht.connected.home.backend.service.GateWayService;
 import com.ht.connected.home.backend.service.ZwaveService;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
@@ -98,7 +98,8 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
 
     @Autowired
     GateWayService gateWayService;
-
+    @Autowired
+    CertificationService certificationService;
     @Autowired
     MqttConfig.MqttGateway mqttGateway;
 
@@ -130,30 +131,6 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
             response = new ResponseEntity(HttpStatus.OK);
         }
         return response;
-    }
-
-    /**
-     * 인증프로토콜의 경우 디비에 JSON을 저장하는 기능
-     * @param certPayload
-     */
-    public void updateCertification(ZwaveRequest zwaveRequest, String payload) {
-        Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
-        if (!isNull(gateway)) {
-            Certification certification = new Certification();
-            certification.setPayload(payload);
-            certification.setController("zwave");
-            certification.setSerial(zwaveRequest.getSerialNo());
-            certification.setModel(gateway.getModel());
-            certification.setVersion(zwaveRequest.getVersion());
-            certification.setMethod(ByteUtil.getHexString(zwaveRequest.getClassKey()));
-            certification.setContext(ByteUtil.getHexString(zwaveRequest.getCommandKey()));
-            List<Certification> certPayloadExistList = certificationRepository.findBySerialAndMethodAndContext(
-                    certification.getSerial(), certification.getMethod(), certification.getContext());
-            if (certPayloadExistList.size() > 0) {
-                certificationRepository.delete(certPayloadExistList);
-            }
-            certificationRepository.save(certification);
-        }
     }
 
     /**
@@ -222,7 +199,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
         }
         if (zwaveRequest.getClassKey() == BasicCommandClass.INT_ID) {
             if (zwaveRequest.getCommandKey() == BasicCommandClass.INT_BASIC_REPORT) {
-                updateCertification(zwaveRequest, payload);
+                certificationService.updateCertification(zwaveRequest, payload);
             }
         }
         // 0X52
@@ -238,9 +215,9 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
                 if (zwaveRequest.getCommandKey() == NetworkManagementProxyCommandClass.INT_NODE_LIST_REPORT) {
                     reportZWaveList(zwaveRequest, data);
                 }
-
+                certificationService.updateCertification(zwaveRequest, data);
             }
-            updateCertification(zwaveRequest, data);
+
         }
         // 기기등록 모드
         if (zwaveRequest.getClassKey() == NetworkManagementInclusionCommandClass.INT_ID) {
@@ -275,25 +252,9 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
                     status = mqttPayload.getResultData().getOrDefault("status", 0).toString();
                 }
                 logging.info(String.format("<< SERIAL NO : %s, NODE_ADD_STATUS : %s >>", zwaveRequest.getSerialNo(), status));
-                updateCertification(zwaveRequest, payload);
+                certificationService.updateCertification(zwaveRequest, payload);
 
             }
-            /**
-             * 불필요함
-             */
-            // else {
-            // if (!isNull(mqttPayload.getResultData())) {
-            // if (isNull(mqttPayload.getResultData().get("result_code"))) {
-            // String topic = getMqttPublishTopic(zwaveRequest, "host");
-            // if (!topic.contains(Target.host.name() + "/" + Target.server.name())) {
-            // publish(topic);
-            // }
-            // }
-            // }
-            //
-            // }
-
-           
         }
     }
 

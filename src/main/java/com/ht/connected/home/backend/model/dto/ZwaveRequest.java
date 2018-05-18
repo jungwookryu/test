@@ -10,9 +10,7 @@ import com.ht.connected.home.backend.model.entity.Gateway;
 
 /**
  * zwave 요청시 토픽 URI 경로 구분자(/)로 분할하여 getter통해 쉽게 사용하기 위한 클래스
- * 
  * @author 구정화
- *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -20,7 +18,10 @@ public class ZwaveRequest {
 
     @JsonProperty("email")
     private String email;
-    
+
+    @JsonProperty("model")
+    private String model;
+
     @JsonProperty("serial")
     private String serialNo;
 
@@ -37,9 +38,9 @@ public class ZwaveRequest {
 
     @JsonProperty("classKey")
     private String sClassKey;
-    
+
     private int commandKey;
-    
+
     @JsonProperty("cmdkey")
     private String sCommandKey;
 
@@ -48,39 +49,45 @@ public class ZwaveRequest {
 
     @JsonProperty("nodeId")
     private Gateway gateway;
-    
+
     @JsonProperty("set_data")
     private HashMap<String, Object> setData;
-    
+
     /**
      * 경로를 배열로 받을경우 생성자
-     * 
      * @param topic
      */
     public ZwaveRequest(String[] topic) {
-        this.serialNo = topic[4];
-        if( 7 < topic.length ) {
-            this.classKey = ByteUtil.getStringtoInt(topic[7]);
-            this.commandKey = ByteUtil.getStringtoInt(topic[8]);
+        if (topic.length > 2) {
+            this.model = topic[3];
+            this.serialNo = topic[4];
+            if (CategoryActive.zwave.certi.name().equals(topic[6].toString())) {
+                if (7 < topic.length && topic.length > 9) {
+                    this.version = topic[7].toString();
+                    this.sClassKey = topic[8].toString();
+                    this.classKey = ByteUtil.getStringtoInt(topic[7]);
+                    this.commandKey = ByteUtil.getStringtoInt(topic[8]);
+                    this.sCommandKey = topic[9].toString();
+                }
+            }
         }
     }
 
     /**
      * ZwaveController에서 생성할 경우 생성자
-     * 
      * @param req
      * @param classKey
      * @param commandKey
      * @param version
      */
-    public ZwaveRequest(HashMap<String, Object> req, int classKey, int commandKey, String version) {      
+    public ZwaveRequest(HashMap<String, Object> req, int classKey, int commandKey, String version) {
         this.serialNo = req.get("serial").toString();
         this.nodeId = Integer.valueOf(req.get("nodeId").toString());
         this.endpointId = Integer.valueOf(req.get("endpointId").toString());
         this.securityOption = req.get("option").toString();
         this.classKey = classKey;
         this.commandKey = commandKey;
-        this.version = version;     
+        this.version = version;
     }
 
     public String getEmail() {
@@ -190,17 +197,26 @@ public class ZwaveRequest {
         return setData;
     }
 
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
     /**
      * @param setData the setData to set
      */
-    public void setSetData(HashMap setData) {
+    public void setSetData(HashMap<String, Object> setData) {
         this.setData = setData;
     }
 
     @Override
     public String toString() {
-        return "ZwaveRequest [email=" + email + ", serialNo=" + serialNo + ", nodeId=" + nodeId + ", endpointId=" + endpointId + ", securityOption=" + securityOption + ", classKey=" + classKey
-                + ", sClassKey=" + sClassKey + ", commandKey=" + commandKey + ", sCommandKey=" + sCommandKey + ", version=" + version + ", gateway=" + gateway + ", setData=" + setData + "]";
+        return "ZwaveRequest [email=" + email + ", model=" + model + ", serialNo=" + serialNo + ", nodeId=" + nodeId + ", endpointId=" + endpointId + ", securityOption=" + securityOption
+                + ", classKey=" + classKey + ", sClassKey=" + sClassKey + ", commandKey=" + commandKey + ", sCommandKey=" + sCommandKey + ", version=" + version + ", gateway=" + gateway + ", setData="
+                + setData + "]";
     }
 
 }

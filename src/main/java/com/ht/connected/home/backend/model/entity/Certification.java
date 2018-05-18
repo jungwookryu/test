@@ -1,7 +1,6 @@
 package com.ht.connected.home.backend.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +8,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Entity
 @Table(name = "certification")
@@ -52,7 +54,7 @@ public class Certification {
 	private String payload;
 
 	@Column(name = "uptime")
-	private String uptime;
+	private Date uptime;
 
 	/*
 	 * (non-Javadoc)
@@ -235,7 +237,7 @@ public class Certification {
 	/**
 	 * @return the uptime
 	 */
-	public String getUptime() {
+	public Date getUptime() {
 		return uptime;
 	}
 
@@ -243,7 +245,7 @@ public class Certification {
 	 * @param uptime
 	 *            the uptime to set
 	 */
-	public void setUptime(String uptime) {
+	public void setUptime(Date uptime) {
 		this.uptime = uptime;
 	}
 
