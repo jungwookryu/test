@@ -12,7 +12,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.common.exceptions.BadClientCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -110,5 +112,14 @@ public class GlobalControllerException {
         return ResponseEntity.badRequest()
                 .body("Invalid request: " + exception.getMessage());
     }
+    
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<String> noBadClientCredentialsException(
+            BadClientCredentialsException exception) {
+        exception.printStackTrace();
+        return ResponseEntity.notFound().build();
+    }
+
 
 }

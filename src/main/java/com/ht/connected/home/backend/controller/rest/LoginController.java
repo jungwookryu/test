@@ -1,9 +1,5 @@
 package com.ht.connected.home.backend.controller.rest;
 
-import com.ht.connected.home.backend.common.Common;
-import com.ht.connected.home.backend.model.entity.User;
-import com.ht.connected.home.backend.service.impl.UsersService;
-
 import java.security.Principal;
 import java.util.Map;
 
@@ -11,7 +7,9 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.BadClientCredentialsException;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
@@ -21,6 +19,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.ht.connected.home.backend.common.Common;
+import com.ht.connected.home.backend.model.entity.User;
+import com.ht.connected.home.backend.service.impl.UsersService;
 
 @RestController
 public class LoginController extends CommonController {
@@ -79,10 +81,10 @@ public class LoginController extends CommonController {
 			}
 			User rtnUsers = usersService.getUser(userEmail);
 			if (null == rtnUsers) {
-				throw new AuthenticationException(new BadClientCredentialsException().getMessage());
+			    throw new BadClientCredentialsException();
 			}
 			if(!rtnUsers.getPassword().equals(Common.encryptHash("SHA-256", password))) {
-			    throw new AuthenticationException(new BadClientCredentialsException().getMessage());
+			    throw new BadClientCredentialsException();
 			};
 
 			rtnUsers.setPushToken(users.getPushToken());
