@@ -83,7 +83,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
             publishPayload.put("request", CategoryActive.gateway.ir.name());
             publishPayload.put("action", ir.getStatus());
             publish(topic, publishPayload);
-            if (AppController.Command.stop.equals(ir.getStatus())) {
+            if (AppController.Command.stop.name().equals(ir.getStatus())) {
                 // 등록모드로 추가된 ir 학습 기기정보삭제
                 List<IR> irs = irRepository.findBySerialAndStatusAndModelOrUserEmail(ir.getSerial(), "", ir.getModel(), ir.getUserEmail());
                 for (IR ir2 : irs) {
