@@ -47,8 +47,8 @@ public class ZwaveRequest {
     @JsonProperty("version")
     private String version;
 
-    @JsonProperty("nodeId")
-    private Gateway gateway;
+    @JsonProperty("nodeid")
+    private int nodeid;
 
     @JsonProperty("set_data")
     private HashMap<String, Object> setData;
@@ -142,12 +142,12 @@ public class ZwaveRequest {
         this.securityOption = securityOption;
     }
 
-    public Gateway getGateway() {
-        return gateway;
+    public int getNodeid() {
+        return nodeid;
     }
 
-    public void setGateway(Gateway gateway) {
-        this.gateway = gateway;
+    public void setGateway(int nodeId) {
+        this.nodeid = nodeid;
     }
 
     public void setSerialNo(String serialNo) {
@@ -215,7 +215,7 @@ public class ZwaveRequest {
     @Override
     public String toString() {
         return "ZwaveRequest [email=" + email + ", model=" + model + ", serialNo=" + serialNo + ", nodeId=" + nodeId + ", endpointId=" + endpointId + ", securityOption=" + securityOption
-                + ", classKey=" + classKey + ", sClassKey=" + sClassKey + ", commandKey=" + commandKey + ", sCommandKey=" + sCommandKey + ", version=" + version + ", gateway=" + gateway + ", setData="
+                + ", classKey=" + classKey + ", sClassKey=" + sClassKey + ", commandKey=" + commandKey + ", sCommandKey=" + sCommandKey + ", version=" + version + ", nodeid=" + nodeid + ", setData="
                 + setData + "]";
     }
 
