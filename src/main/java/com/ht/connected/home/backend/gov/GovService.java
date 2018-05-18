@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.config.service.MqttConfig;
-import com.ht.connected.home.backend.model.dto.Category;
+import com.ht.connected.home.backend.model.dto.CategoryActive;
 import com.ht.connected.home.backend.model.dto.Target;
 
 @Service
@@ -42,7 +42,7 @@ public class GovService {
      */
     private String getMqttPublishTopic(GovDeviceRequest govDeviceRequest, String target) {
         String topic = "";
-        String[] segments = new String[] { "/server", target, "hcs-w1001", govDeviceRequest.getSerial(), Category.ir.name()};
+        String[] segments = new String[] { "/server", target, "hcs-w1001", govDeviceRequest.getSerial(), CategoryActive.gateway.ir.name()};
         topic = String.join("/", segments);
         logger.info("====================== GOV PROTO MQTT PUBLISH TOPIC START ======================");
         logger.info(topic);

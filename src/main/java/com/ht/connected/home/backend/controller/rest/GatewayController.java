@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ht.connected.home.backend.model.dto.Category;
+import com.ht.connected.home.backend.model.dto.CategoryActive;
 import com.ht.connected.home.backend.model.entity.Gateway;
 import com.ht.connected.home.backend.model.entity.GatewayCategory;
 import com.ht.connected.home.backend.model.entity.UserGateway;
@@ -114,7 +114,7 @@ public class GatewayController extends CommonController {
     @PutMapping(value = "/{no}")
     public ResponseEntity deleteIoTDevice(@RequestBody GatewayCategory gatewayCategory) throws JsonProcessingException {
         
-        if(Category.zwave.name().equals(gatewayCategory.getCategory())){
+        if(CategoryActive.gateway.zwave.name().equals(gatewayCategory.getCategory())){
             zwaveController.delete(gatewayCategory.getCategoryNo());
         }
         

@@ -23,11 +23,10 @@ import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
 import org.springframework.util.StringUtils;
 
-import com.ht.connected.home.backend.model.dto.Category;
-import com.ht.connected.home.backend.model.dto.IRRequest;
-import com.ht.connected.home.backend.model.dto.MqttMessageArrived;
+import com.ht.connected.home.backend.model.dto.CategoryActive;
 import com.ht.connected.home.backend.model.dto.Target;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
+import com.ht.connected.home.backend.model.entity.Gateway;
 import com.ht.connected.home.backend.service.GateWayService;
 import com.ht.connected.home.backend.service.IRService;
 import com.ht.connected.home.backend.service.ZwaveService;
@@ -57,8 +56,6 @@ public class MqttConfig {
     String springMqttClientIdPrefix;
     @Value("${spring.mqtt.channel.server}")
     String springMqttChannelServer;
-    @Value("${spring.mqtt.certification.topic-segment}")
-    String springMqttCertificationTopicSegment;
     @Value("${mqtt.topic.manager.noti}")
     String mqttTopicManagerNoti;
 
@@ -163,47 +160,32 @@ public class MqttConfig {
                 String[] topicSplited = topic.split("/");
                 try {
                     if (topicSplited.length > 2) {
+                        Gateway gateway = new Gateway();
+                        if (3 < topicSplited.length && 4 < topicSplited.length) {
+                            gateway = new Gateway(topicSplited[3].toString(), topicSplited[4].toString());
+                        }
                         // 서버에서 보낸것이 아닐경우만 subscribe함.
                         if (!Target.server.name().equals(topicSplited[1].toString())) {
-
-                            // gateway service category topicSplited[5].toString()
                             LOGGER.info(topicSplited[5].toString() + " subStart");
-                            if (Category.manager.name().equals(topicSplited[5].toString())) {
+                            if (CategoryActive.gateway.manager.name().equals(topicSplited[5].toString())) {
                                 gateWayService.subscribe(topic, payload);
-                                LOGGER.info("gateway subEnd");
                             }
                             // zwave service
-                            if (Category.zwave.name().equals(topicSplited[5].toString())) {
+                            if (CategoryActive.gateway.zwave.name().equals(topicSplited[5].toString())) {
                                 ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
-                                if ("alive".equals(topicSplited[6])) {
-                                    LOGGER.info("MQTT alive topic is not implemented");
-                                }
-                                if (springMqttCertificationTopicSegment.equals(topicSplited[6])) {
+                                if (CategoryActive.zwave.certi.equals(topicSplited[6].toString())) {
                                     zwaveService.subscribe(zwaveRequest, payload);
                                 }
+                                if (CategoryActive.zwave.init.name().equals(topicSplited[6].toString())) {
+                                    zwaveService.subscribeInit(gateway);
+                                }
                             }
-                            if (Category.ir.name().equals(topicSplited[5].toString())) {
-
+                            if (CategoryActive.gateway.ir.name().equals(topicSplited[5].toString())) {
                                 irService.subscribe(topicSplited, payload);
-                                LOGGER.info("messageArrived: Topic=" + topic + ", host=");
-                                LOGGER.info("ir subEnd");
-
                             }
                         }
-                        // else {
-                        // MqttMessageArrived mqttMessageArrived = new MqttMessageArrived(topic, payload);
-                        // gateWayService.execute(mqttMessageArrived);
-                        // }
-                        LOGGER.info("zwave subEnd");
+                        LOGGER.info("host :: category ::" + topicSplited[6].toString() + "active ::" + topicSplited[6].toString() + " subEnd");
                     }
-                    /* if (Category.ir.name().equals(topicSplited[5].toString())) {
-                        if (Target.server.name().equals(topicSplited[2].toString())) {
-                            IRRequest iRRequest = new IRRequest(topic, payload);
-                            irService.subscribe(topicSplited, payload);
-                            LOGGER.info("messageArrived: Topic=" + topic + ", host=");
-                            LOGGER.info("ir subEnd");
-                        }
-                    }*/
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

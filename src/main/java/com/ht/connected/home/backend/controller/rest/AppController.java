@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.controller.rest.IRController.Devicetype;
-import com.ht.connected.home.backend.model.dto.Category;
+import com.ht.connected.home.backend.model.dto.CategoryActive;
 import com.ht.connected.home.backend.model.entity.IR;
 import com.ht.connected.home.backend.service.impl.IRServiceImpl;
 import com.rabbitmq.client.Command;

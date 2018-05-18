@@ -91,6 +91,11 @@ public class Gateway {
     
     public Gateway() {
     }
+    public Gateway(String model, String serial) {
+        this.model = model;
+        this.serial = serial;
+                
+    }
 
     public int getNo() {
         return no;

@@ -197,17 +197,10 @@ public class ZwaveRequest {
         this.setData = setData;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "ZwaveRequest [email=" + email + ", serialNo=" + serialNo 
-                + ", nodeId=" + nodeId + ", endpointId=" + endpointId 
-                + ", securityOption=" + securityOption + ", classKey=" + classKey
-                + ", sClassKey=" + sClassKey + ", commandKey=" + commandKey 
-                + ", sCommandKey=" + sCommandKey + ", version=" + version 
-                + ", gateway=" + gateway + ", setData=" + setData + "]";
+        return "ZwaveRequest [email=" + email + ", serialNo=" + serialNo + ", nodeId=" + nodeId + ", endpointId=" + endpointId + ", securityOption=" + securityOption + ", classKey=" + classKey
+                + ", sClassKey=" + sClassKey + ", commandKey=" + commandKey + ", sCommandKey=" + sCommandKey + ", version=" + version + ", gateway=" + gateway + ", setData=" + setData + "]";
     }
-    
+
 }

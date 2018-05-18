@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
+import com.ht.connected.home.backend.model.entity.Gateway;
 import com.ht.connected.home.backend.model.entity.User;
 import com.ht.connected.home.backend.model.entity.Zwave;
 import com.ht.connected.home.backend.service.base.CrudService;
@@ -34,4 +35,6 @@ public interface ZwaveService extends CrudService<Zwave, Integer>, MqttBase<Obje
     public int deleteByNo(int no) throws JsonProcessingException ;
     
     public int getByUserEmailAndNo(String userEmail, int no);
+
+    void subscribeInit(Gateway gateway) throws JsonProcessingException;
 }
