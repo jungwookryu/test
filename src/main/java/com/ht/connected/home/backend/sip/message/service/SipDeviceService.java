@@ -33,5 +33,12 @@ public class SipDeviceService {
         }
     }
     
+    public void deleteDevice(SipMqttRequestMessageDto request) {
+        SipDevice device = deviceRepository.findBySerialNumber(request.getBody().get("deviceNo").toString());
+        if (!isNull(device)) {
+            deviceRepository.delete(device);
+        }
+    }
+    
 
 }

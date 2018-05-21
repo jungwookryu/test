@@ -26,6 +26,9 @@ public class SipMqttSubscribeService {
     @Autowired
     private SipMqttPublishService mqttPublishService;
     
+    @Autowired
+    private SipDeviceService deviceService;
+    
     
     public void user(SipMqttRequestMessageDto request) {
         if (request.getCrudType().equals("add")) {
@@ -33,6 +36,16 @@ public class SipMqttSubscribeService {
             String userPassword = request.getBody().get("userPassword").toString();
             String userNickname = request.getBody().get("userAlias").toString();
             userService.addUser(userId, userPassword, userNickname);
+            mqttPublishService.publish(request, null);
+        }
+    }
+    
+    public void device(SipMqttRequestMessageDto request) {
+        if (request.getCrudType().equals("add")) {
+            deviceService.addDevice(request);
+            mqttPublishService.publish(request, null);
+        }else if(request.getCrudType().equals("delete")) {
+            deviceService.deleteDevice(request);
             mqttPublishService.publish(request, null);
         }
     }
