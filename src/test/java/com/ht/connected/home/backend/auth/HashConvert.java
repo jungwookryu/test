@@ -3,6 +3,7 @@ package com.ht.connected.home.backend.auth;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,11 +25,11 @@ public class HashConvert {
 		 * <ul>
 		 * <li>{@code MD5}</li>
 		 * <li>{@code SHA-1}</li>
-		 * <li>{@code SHA-256}</li>
+		 * <li>{@code MessageDigestAlgorithms.SHA_256}</li>
 		 * </ul>
 		 * **/
 		String SHA = ""; 
-		String algorithm ="SHA-256";
+		String algorithm =MessageDigestAlgorithms.SHA_256;
 		try{
 
 			MessageDigest sh = MessageDigest.getInstance(algorithm); 

@@ -6,6 +6,7 @@ import com.ht.connected.home.backend.model.entity.User;
 import com.ht.connected.home.backend.repository.UserRepository;
 import com.ht.connected.home.backend.service.impl.UsersService;
 
+import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ public class UserDetailService implements UserDetailsService {
 
 	public User register(UserDetail uerDetail) {
 		User users = new User(uerDetail.getUserEmail(), uerDetail.getPassword());
-		users.setPassword(Common.encryptHash("SHA-256", users.getPassword()));
+		users.setPassword(Common.encryptHash(MessageDigestAlgorithms.SHA_256, users.getPassword()));
 		return usersRepository.saveAndFlush(users);
 
 	}

@@ -274,7 +274,7 @@ public class Common {
 
     /**
      * 암호화
-     * @param str SHA-256 ,MD5, SH1
+     * @param str MessageDigestAlgorithms.SHA_256 ,MD5, SH1
      * @param password password
      * @return 암호화 문자열
      * @throws NoSuchAlgorithmException

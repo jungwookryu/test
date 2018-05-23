@@ -1,6 +1,7 @@
 package com.ht.connected.home.backend.config.security;
 import java.util.List;
 
+import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class HtAuthenticationProvider extends AbstractUserDetailsAuthenticationP
             throw new BadCredentialsException("Credentials may not be null.");
         }
         
-        String encoderPass = Common.encryptHash("SHA-256", (String) token.getCredentials());
+        String encoderPass = Common.encryptHash(MessageDigestAlgorithms.SHA_256, (String) token.getCredentials());
         logger.info("credential is {}"+ token.getCredentials());
         if(!encoderPass.equals(userDetails.getPassword())){
         	throw new BadCredentialsException("Invalid credentials....>>>>");
@@ -62,7 +63,7 @@ public class HtAuthenticationProvider extends AbstractUserDetailsAuthenticationP
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		String name = authentication.getName();
 		String encoderPass = authentication.getCredentials().toString();
-		encoderPass = Common.encryptHash("SHA-256", encoderPass);
+		encoderPass = Common.encryptHash(MessageDigestAlgorithms.SHA_256, encoderPass);
 		UserDetails userDetails = userDetailsService.loadUserByUsername(name);
 		if (!encoderPass.equals(userDetails.getPassword())) {
 			logger.error("Authentication failed for user = " + name);

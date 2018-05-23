@@ -3,6 +3,7 @@ package com.ht.connected.home.backend.controller.rest;
 import java.security.Principal;
 import java.util.Map;
 
+import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apache.shiro.authc.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -83,7 +84,7 @@ public class LoginController extends CommonController {
 			if (null == rtnUsers) {
 			    throw new BadClientCredentialsException();
 			}
-			if(!rtnUsers.getPassword().equals(Common.encryptHash("SHA-256", password))) {
+			if(!rtnUsers.getPassword().equals(Common.encryptHash(MessageDigestAlgorithms.SHA_256, password))) {
 			    throw new BadClientCredentialsException();
 			};
 

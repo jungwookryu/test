@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +71,7 @@ public class UsersServiceImpl extends CrudServiceImpl<User, Integer> implements 
 	
 	@Override
 	public User register(User users) {
-		users.setPassword(Common.encryptHash("SHA-256", users.getPassword()));
+		users.setPassword(Common.encryptHash(MessageDigestAlgorithms.SHA_256, users.getPassword()));
 		users.setRedirectiedCode(randomCode());
 		users.setActive(UserActive.NOT_EMAIL_AUTH.ordinal());
 		users.setAuthority(UserRole.ROLE_USER.name());
