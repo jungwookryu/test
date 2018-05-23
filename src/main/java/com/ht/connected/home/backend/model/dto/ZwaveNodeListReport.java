@@ -104,7 +104,7 @@ public class ZwaveNodeListReport {
     }
 
     public static class NodeListItem {
-        public String nodeid = "";
+        public String nodeId = "";
         public String homeid = "";
         public String security = "";
         public String basic = "";
@@ -118,12 +118,12 @@ public class ZwaveNodeListReport {
         public String s2_grnt_keys = "";
         public List<EndPointListitem> endpoint = new ArrayList<EndPointListitem>();
 
-        public String getNodeid() {
-            return nodeid;
+        public String getNodeId() {
+            return nodeId;
         }
 
-        public void setNodeid(String nodeid) {
-            this.nodeid = nodeid;
+        public void setNodeId(String nodeId) {
+            this.nodeId = nodeId;
         }
 
         public String getHomeid() {
