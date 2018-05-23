@@ -27,7 +27,7 @@ import com.ht.connected.home.backend.model.dto.CategoryActive;
 import com.ht.connected.home.backend.model.dto.Target;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
 import com.ht.connected.home.backend.model.entity.Gateway;
-import com.ht.connected.home.backend.service.GateWayService;
+import com.ht.connected.home.backend.service.GatewayService;
 import com.ht.connected.home.backend.service.IRService;
 import com.ht.connected.home.backend.service.ZwaveService;
 
@@ -62,7 +62,7 @@ public class MqttConfig {
     @Autowired
     private ZwaveService zwaveService;
     @Autowired
-    private GateWayService gateWayService;
+    private GatewayService gateWayService;
 
     @Autowired
     private IRService irService;
@@ -184,7 +184,15 @@ public class MqttConfig {
                                 irService.subscribe(topicSplited, payload);
                             }
                         }
-                        LOGGER.info("host :: category ::" + topicSplited[5].toString() + "active ::" + topicSplited[6].toString() + " subEnd");
+                        String mqttLog ="host :: category ::";
+                        if (topicSplited.length>5) {
+                            mqttLog += topicSplited[5].toString();
+                        }
+                        if (topicSplited.length>6) {
+                            mqttLog += "active ::" + topicSplited[6].toString() + " subEnd";
+                             
+                        }
+                        LOGGER.info(mqttLog);
                     }
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
