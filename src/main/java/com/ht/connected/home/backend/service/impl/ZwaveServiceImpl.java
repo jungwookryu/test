@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.service.impl;
+                package com.ht.connected.home.backend.service.impl;
 
 import static java.util.Objects.isNull;
 
@@ -228,14 +228,14 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
                 if (!Objects.isNull(mqttPayload.getResultData())) {
                     if (!isNull(mqttPayload.getResultData().get("newNodeId"))) {
                         // 0x52
+                        int newNodeId = (int) mqttPayload.getResultData().get("newNodeId");
                         zwaveRequest.setClassKey(zwaveRequest.getClassKey());
                         // 0x02
                         zwaveRequest.setCommandKey(zwaveRequest.getCommandKey());
-                        zwaveRequest.setNodeId(0);
+                        zwaveRequest.setNodeId(newNodeId);
                         zwaveRequest.setEndpointId(0);
                         zwaveRequest.setVersion("v1");
                         zwaveRequest.setSecurityOption("none");
-                        int newNodeId = (int) mqttPayload.getResultData().get("newNodeId");
                         saveGatewayCategory(zwaveRequest, newNodeId);
                     }
                     // 등록완료일경우 NodeGet.명령어 호출
@@ -265,12 +265,13 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
      * @param zwaveRequest
      * @param mqttPayload
      */
-    private void saveGatewayCategory(ZwaveRequest zwaveRequest, int nodeid) {
+    private void saveGatewayCategory(ZwaveRequest zwaveRequest, int nodeId) {
+        Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
         GatewayCategory gatewayCategory = new GatewayCategory();
-        gatewayCategory.setGatewayNo(zwaveRequest.getNodeid());
+        gatewayCategory.setGatewayNo(gateway.getNo());
         gatewayCategory.setCategory(CategoryActive.gateway.zwave.name());
         gatewayCategory.setCategoryNo(CategoryActive.gateway.zwave.ordinal());
-        gatewayCategory.setNodeid(nodeid);
+        gatewayCategory.setNodeId(nodeId);
         gatewayCategory.setStatus(status.add.name());
         gatewayCategory.setCreatedTime(new Date());
         gatewayCategory.setLastmodifiedTime(new Date());
@@ -323,13 +324,13 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
                     List<HashMap> nodeListItem = (List<HashMap>) zwaveNodeListReport.get("nodelist");
                     for (int k = 0; k < nodeListItem.size(); k++) {
                         HashMap nodeItem = (HashMap) nodeListItem.get(k);
-                        int nodeid = (int) nodeItem.getOrDefault("nodeid", 0);
+                        int nodeId = (int) nodeItem.getOrDefault("nodeId", 0);
                         // node status "" 경우에는 node 가 신규로 들어왔으나 host 에서 신규노드로 확인이 안된경 node status 0x01일 경우 신규 등록 기기
-                        if (nodeid == zwave.getNodeId() && Common.empty(zwave.getStatus())) {
+                        if (nodeId == zwave.getNodeId() && Common.empty(zwave.getStatus())) {
                             Map req = new HashMap();
                             req.put("serial", gateway.getSerial());
-                            req.put("nodeId", nodeid);
-                            req.put("endpointId", 0);
+                            req.put("nodeId", nodeId);
+                            req.put("endpointid", 0);
                             req.put("option", nodeItem.getOrDefault("security", ""));
                             ZwaveRequest appZwaveRequest = new ZwaveRequest((HashMap<String, Object>) req, NetworkManagementInclusionCommandClass.INT_ID,
                                     NetworkManagementInclusionCommandClass.INT_NODE_ADD, "v1");

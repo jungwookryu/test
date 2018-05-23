@@ -30,8 +30,8 @@ public class GatewayCategory {
     @Column(name = "nickname")
     private String nickname;
 
-    @Column(name = "nodeid")
-    private int nodeid;
+    @Column(name = "nodeId")
+    private int nodeId;
     
     @Column(name = "status")
     private String status;
@@ -148,12 +148,12 @@ public class GatewayCategory {
         this.lastmodifiedTime = lastmodifiedTime;
     }
 
-    public int getNodeid() {
-        return nodeid;
+    public int getNodeId() {
+        return nodeId;
     }
 
-    public void setNodeid(int nodeid) {
-        this.nodeid = nodeid;
+    public void setNodeId(int nodeId) {
+        this.nodeId = nodeId;
     }
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
@@ -162,7 +162,7 @@ public class GatewayCategory {
     public String toString() {
         return "gatewayCategory [no=" + no + ", gatewayNo=" + gatewayNo + ", categoryNo=" + category + ", categoryNo="
                 + categoryNo + ", nickname=" + nickname + ", Status=" + status + ", createdTime=" + createdTime
-                + ", nodeid=" + nodeid
+                + ", nodeId=" + nodeId
                 + ", lastmodifiedTime=" + lastmodifiedTime + "]";
     }
 

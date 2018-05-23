@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ht.connected.home.backend.common.ByteUtil;
-import com.ht.connected.home.backend.model.entity.Gateway;
+import com.ht.connected.home.backend.model.entity.Zwave;
 
 /**
  * zwave 요청시 토픽 URI 경로 구분자(/)로 분할하여 getter통해 쉽게 사용하기 위한 클래스
@@ -14,22 +14,13 @@ import com.ht.connected.home.backend.model.entity.Gateway;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ZwaveRequest {
-
-    @JsonProperty("email")
-    private String email;
+public class ZwaveRequest extends Zwave{
 
     @JsonProperty("model")
     private String model;
 
     @JsonProperty("serial")
     private String serialNo;
-
-    @JsonProperty("nodeId")
-    private int nodeId;
-
-    @JsonProperty("endpointId")
-    private int endpointId;
 
     @JsonProperty("option")
     private String securityOption;
@@ -46,9 +37,6 @@ public class ZwaveRequest {
 
     @JsonProperty("version")
     private String version;
-
-    @JsonProperty("nodeid")
-    private int nodeid;
 
     @JsonProperty("set_data")
     private HashMap<String, Object> setData;
@@ -82,20 +70,12 @@ public class ZwaveRequest {
      */
     public ZwaveRequest(HashMap<String, Object> req, int classKey, int commandKey, String version) {
         this.serialNo = req.get("serial").toString();
-        this.nodeId = Integer.valueOf(req.get("nodeId").toString());
-        this.endpointId = Integer.valueOf(req.get("endpointId").toString());
+        super.setNodeId(Integer.valueOf(req.get("nodeId").toString()));
+        super.setEndpointId(Integer.valueOf(req.get("endpointid").toString()));
         this.securityOption = req.get("option").toString();
         this.classKey = classKey;
         this.commandKey = commandKey;
         this.version = version;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getSerialNo() {
@@ -118,22 +98,6 @@ public class ZwaveRequest {
         this.version = version;
     }
 
-    public Integer getNodeId() {
-        return nodeId;
-    }
-
-    public void setNodeId(int nodeId) {
-        this.nodeId = nodeId;
-    }
-
-    public Integer getEndpointId() {
-        return endpointId;
-    }
-
-    public void setEndpointId(int endpointId) {
-        this.endpointId = endpointId;
-    }
-
     public String getSecurityOption() {
         return securityOption;
     }
@@ -142,13 +106,7 @@ public class ZwaveRequest {
         this.securityOption = securityOption;
     }
 
-    public int getNodeid() {
-        return nodeid;
-    }
-
-    public void setGateway(int nodeId) {
-        this.nodeid = nodeid;
-    }
+ 
 
     public void setSerialNo(String serialNo) {
         this.serialNo = serialNo;
@@ -214,9 +172,9 @@ public class ZwaveRequest {
 
     @Override
     public String toString() {
-        return "ZwaveRequest [email=" + email + ", model=" + model + ", serialNo=" + serialNo + ", nodeId=" + nodeId + ", endpointId=" + endpointId + ", securityOption=" + securityOption
-                + ", classKey=" + classKey + ", sClassKey=" + sClassKey + ", commandKey=" + commandKey + ", sCommandKey=" + sCommandKey + ", version=" + version + ", nodeid=" + nodeid + ", setData="
-                + setData + "]";
+        return "ZwaveRequest ["+", model=" + model + ", serialNo=" + serialNo + ", endpointId=" + getEndpointId() + ", securityOption=" + securityOption
+                + ", classKey=" + classKey + ", sClassKey=" + sClassKey + ", commandKey=" + commandKey + ", sCommandKey=" + sCommandKey + ", version=" + version + ", nodeId=" + getNodeId() + ", setData="
+                + setData + "]"+super.toString();
     }
 
 }

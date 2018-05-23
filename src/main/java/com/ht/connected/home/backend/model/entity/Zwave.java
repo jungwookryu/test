@@ -33,11 +33,12 @@ public class Zwave {
     int gatewayNo;
 
     @Column(name = "node_id")
-    @JsonProperty("nodeid")
+    @JsonProperty("nodeId")
     int nodeId;
-
+    
+    @JsonProperty("endpointId")
     @Column(name = "endpoint_id")
-    int endpointId;
+    int endpointid;
 
     @Column(name = "nickname")
     String nickname;
@@ -90,11 +91,11 @@ public class Zwave {
     }
 
     public int getEndpointId() {
-        return endpointId;
+        return endpointid;
     }
 
     public void setEndpointId(int endpointId) {
-        this.endpointId = endpointId;
+        this.endpointid = endpointId;
     }
 
     public String getNickname() {
@@ -172,7 +173,7 @@ public class Zwave {
      */
     @Override
     public String toString() {
-        return "Zwave [no=" + no + ", gatewayNo=" + gatewayNo + ", nodeId=" + nodeId + ", endpointId=" + endpointId + ", nickname=" + nickname + ", cmd=" + cmd + ", event=" + event + ", status="
+        return "Zwave [no=" + no + ", gatewayNo=" + gatewayNo + ", nodeId=" + nodeId + ", endpointId=" + endpointid + ", nickname=" + nickname + ", cmd=" + cmd + ", event=" + event + ", status="
                 + status + ", creratedTime=" + creratedTime + ", lastModifiedDate=" + lastModifiedDate + ", endpoint=" + sEndpoint + "]";
     }
 
