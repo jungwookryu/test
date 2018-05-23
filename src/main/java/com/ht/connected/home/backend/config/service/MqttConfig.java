@@ -161,7 +161,7 @@ public class MqttConfig {
                 try {
                     if (topicSplited.length > 2) {
                         Gateway gateway = new Gateway();
-                        if (3 < topicSplited.length && 4 < topicSplited.length) {
+                        if (4 <= topicSplited.length) {
                             gateway = new Gateway(topicSplited[3].toString(), topicSplited[4].toString());
                         }
                         // 서버에서 보낸것이 아닐경우만 subscribe함.
@@ -190,8 +190,8 @@ public class MqttConfig {
                         }
                         if (topicSplited.length>6) {
                             mqttLog += "active ::" + topicSplited[6].toString() + " subEnd";
-                             
                         }
+                        // TODO category가 정해지지 않은 mqtt에대한 로직이 생길경우 .else에 대한 로직을 넣을 예정
                         LOGGER.info(mqttLog);
                     }
                 } catch (Exception e) {
