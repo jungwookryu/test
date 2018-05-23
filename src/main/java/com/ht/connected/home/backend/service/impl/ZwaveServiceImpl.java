@@ -51,7 +51,7 @@ import com.ht.connected.home.backend.repository.UserGatewayRepository;
 import com.ht.connected.home.backend.repository.UserRepository;
 import com.ht.connected.home.backend.repository.ZwaveRepository;
 import com.ht.connected.home.backend.service.CertificationService;
-import com.ht.connected.home.backend.service.GateWayService;
+import com.ht.connected.home.backend.service.GatewayService;
 import com.ht.connected.home.backend.service.ZwaveService;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 
@@ -96,8 +96,6 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
     @Autowired
     GatewayCategoryRepository gatewayCategoryRepository;
 
-    @Autowired
-    GateWayService gateWayService;
     @Autowired
     CertificationService certificationService;
     @Autowired
