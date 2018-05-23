@@ -37,13 +37,13 @@ import com.ht.connected.home.backend.repository.GatewayRepository;
 import com.ht.connected.home.backend.repository.UserGatewayRepository;
 import com.ht.connected.home.backend.repository.UserRepository;
 import com.ht.connected.home.backend.repository.ZwaveRepository;
-import com.ht.connected.home.backend.service.GateWayService;
+import com.ht.connected.home.backend.service.GatewayService;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 
 @Service
-public class GateWayServiceImpl extends CrudServiceImpl<Gateway, Integer> implements GateWayService {
+public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implements GatewayService {
 
-    public GateWayServiceImpl(JpaRepository<Gateway, Integer> jpaRepository) {
+    public GatewayServiceImpl(JpaRepository<Gateway, Integer> jpaRepository) {
         super(jpaRepository);
     }
 

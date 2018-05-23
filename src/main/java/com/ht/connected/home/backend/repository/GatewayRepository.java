@@ -25,7 +25,6 @@ import com.ht.connected.home.backend.model.entity.Gateway;
 @Repository
 public interface GatewayRepository extends JpaRepository<Gateway, Integer> {
 	Gateway findBySerial(String serial);
-	
 	List<Gateway> findByNoIn(List<Integer> nos);
 	
 	@Modifying

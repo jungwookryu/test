@@ -28,7 +28,7 @@ import com.ht.connected.home.backend.model.entity.User;
 import com.ht.connected.home.backend.repository.GatewayRepository;
 import com.ht.connected.home.backend.repository.UserGatewayRepository;
 import com.ht.connected.home.backend.repository.UserRepository;
-import com.ht.connected.home.backend.service.GateWayService;
+import com.ht.connected.home.backend.service.GatewayService;
 
 /**
  * gateway(호스트)관련 요청 처리
@@ -38,7 +38,7 @@ import com.ht.connected.home.backend.service.GateWayService;
 @RequestMapping("/gateway")
 public class GatewayController extends CommonController {
 
-    GateWayService gateWayService;
+    GatewayService gateWayService;
     @Autowired
     UserRepository userRepository;
 
@@ -52,7 +52,7 @@ public class GatewayController extends CommonController {
     ZwaveController zwaveController;
     
     @Autowired
-    public GatewayController(GateWayService gateWayService) {
+    public GatewayController(GatewayService gateWayService) {
         this.gateWayService = gateWayService;
     }
 
