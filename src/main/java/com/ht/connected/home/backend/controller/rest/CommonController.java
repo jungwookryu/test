@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 public class CommonController extends Common {
 	@Autowired
 	private SecretKeyProvider keyProvider;
-	final Logger logger = LoggerFactory.getLogger(this.getClass());
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	protected ObjectMapper objectMapper = new ObjectMapper();
 	/**
 	 * 사용자 접속을 위한 SSO로 들어오는 사용자만 허용되는 session 확인
