@@ -7,7 +7,7 @@
  * @version : 1.0
  * @since : 2018. 2. 19.
  */
-package com.ht.connected.home.backend.repository;
+package com.ht.connected.home.backend.gateway;
 
 import java.util.List;
 
@@ -15,8 +15,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
-import com.ht.connected.home.backend.model.entity.Gateway;
 
 /**
  * @author ijlee

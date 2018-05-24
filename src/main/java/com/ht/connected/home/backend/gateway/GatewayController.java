@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.controller.rest;
+package com.ht.connected.home.backend.gateway;
 
 import static java.util.Objects.isNull;
 
@@ -20,15 +20,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ht.connected.home.backend.controller.rest.CommonController;
+import com.ht.connected.home.backend.controller.rest.ZwaveController;
 import com.ht.connected.home.backend.model.dto.CategoryActive;
-import com.ht.connected.home.backend.model.entity.Gateway;
 import com.ht.connected.home.backend.model.entity.GatewayCategory;
 import com.ht.connected.home.backend.model.entity.UserGateway;
 import com.ht.connected.home.backend.model.entity.User;
-import com.ht.connected.home.backend.repository.GatewayRepository;
 import com.ht.connected.home.backend.repository.UserGatewayRepository;
 import com.ht.connected.home.backend.repository.UserRepository;
-import com.ht.connected.home.backend.service.GatewayService;
 
 /**
  * gateway(호스트)관련 요청 처리
