@@ -47,7 +47,6 @@ public class UserEmergencyServiceImpl extends CrudServiceImpl<UserEmergency, Int
     
     @Override
     public int delete(String authUserEmail, int gatewayNo) {
-        
         int userEmergency = userEmergencyRepository.deleteByUserEmailAndGatewayNo(authUserEmail, gatewayNo);
         return userEmergency;
     }
