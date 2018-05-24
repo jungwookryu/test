@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.service.impl;
+package com.ht.connected.home.backend.gateway;
 
 import static java.util.Objects.isNull;
 
@@ -29,15 +29,13 @@ import com.ht.connected.home.backend.config.service.MqttConfig;
 import com.ht.connected.home.backend.constants.zwave.commandclass.NetworkManagementProxyCommandClass;
 import com.ht.connected.home.backend.model.dto.MqttRequest;
 import com.ht.connected.home.backend.model.dto.Target;
-import com.ht.connected.home.backend.model.entity.Gateway;
 import com.ht.connected.home.backend.model.entity.User;
 import com.ht.connected.home.backend.model.entity.UserGateway;
 import com.ht.connected.home.backend.repository.CertificationRepository;
-import com.ht.connected.home.backend.repository.GatewayRepository;
 import com.ht.connected.home.backend.repository.UserGatewayRepository;
 import com.ht.connected.home.backend.repository.UserRepository;
 import com.ht.connected.home.backend.repository.ZwaveRepository;
-import com.ht.connected.home.backend.service.GatewayService;
+import com.ht.connected.home.backend.service.impl.ZwaveServiceImpl;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 
 @Service

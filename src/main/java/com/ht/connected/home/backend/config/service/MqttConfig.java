@@ -23,11 +23,11 @@ import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
 import org.springframework.util.StringUtils;
 
+import com.ht.connected.home.backend.gateway.Gateway;
+import com.ht.connected.home.backend.gateway.GatewayService;
 import com.ht.connected.home.backend.model.dto.CategoryActive;
 import com.ht.connected.home.backend.model.dto.Target;
 import com.ht.connected.home.backend.model.dto.ZwaveRequest;
-import com.ht.connected.home.backend.model.entity.Gateway;
-import com.ht.connected.home.backend.service.GatewayService;
 import com.ht.connected.home.backend.service.IRService;
 import com.ht.connected.home.backend.service.ZwaveService;
 

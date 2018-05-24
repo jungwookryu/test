@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.service;
+package com.ht.connected.home.backend.gateway;
 
 import java.util.List;
 

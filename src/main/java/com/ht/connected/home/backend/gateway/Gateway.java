@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.model.entity;
+package com.ht.connected.home.backend.gateway;
 
 import java.util.Date;
 
