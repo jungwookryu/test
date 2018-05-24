@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -20,14 +19,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.common.Common;
-import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.config.service.MqttConfig;
-import com.ht.connected.home.backend.constants.zwave.commandclass.NetworkManagementProxyCommandClass;
-import com.ht.connected.home.backend.model.dto.MqttRequest;
 import com.ht.connected.home.backend.model.dto.Target;
 import com.ht.connected.home.backend.model.entity.User;
 import com.ht.connected.home.backend.model.entity.UserGateway;

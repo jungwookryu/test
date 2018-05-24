@@ -8,6 +8,7 @@ import com.ht.connected.home.backend.service.base.MqttBase;
 public interface UserEmergencyService {
     List getUserEmergency(String authUserEmail, int GatewayNo);
     List getUserEmergency(String authUserEmail);
+    int delete(String authUserEmail, int GatewayNo);
     void delete(int no);
     UserEmergency register(UserEmergency userEmergency);
     UserEmergency modify(int no, UserEmergency userEmergency);

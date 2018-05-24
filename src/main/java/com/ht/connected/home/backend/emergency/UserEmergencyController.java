@@ -77,9 +77,9 @@ public class UserEmergencyController extends CommonController {
         return new ResponseEntity(map, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{no}")
-    public ResponseEntity<HttpStatus> deleteUserEmergency(@PathVariable("no") int no) {
-        userEmergencyService.delete(no);
+    @DeleteMapping("/{gatewayNo}")
+    public ResponseEntity<HttpStatus> deleteUserEmergency(@PathVariable("gatewayNo") int gatewayNo) {
+        userEmergencyService.delete(getAuthUserEmail(), gatewayNo);
         return new ResponseEntity<HttpStatus>(HttpStatus.OK);
     }
 
