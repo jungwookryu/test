@@ -322,7 +322,9 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
                     List<HashMap> nodeListItem = (List<HashMap>) zwaveNodeListReport.get("nodelist");
                     for (int k = 0; k < nodeListItem.size(); k++) {
                         HashMap nodeItem = (HashMap) nodeListItem.get(k);
-                        int nodeId = (int) nodeItem.getOrDefault("nodeId", 0);
+                        int nodeId = (int) ((HashMap<String, Object>) nodeItem).getOrDefault("nodeid", 0);
+                        //TODO nodeId로 변경하기로함
+                        //int nodeId = (int) nodeItem.getOrDefault("nodeId", 0);
                         // node status "" 경우에는 node 가 신규로 들어왔으나 host 에서 신규노드로 확인이 안된경 node status 0x01일 경우 신규 등록 기기
                         if (nodeId == zwave.getNodeId() && Common.empty(zwave.getStatus())) {
                             Map req = new HashMap();

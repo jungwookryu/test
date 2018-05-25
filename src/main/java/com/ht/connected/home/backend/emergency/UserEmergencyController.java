@@ -22,16 +22,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.connected.home.backend.controller.rest.CommonController;
+import com.ht.connected.home.backend.model.entity.User;
+import com.ht.connected.home.backend.repository.UserRepository;
 
 @RestController
 @RequestMapping("/emergency")
 public class UserEmergencyController extends CommonController {
 
     UserEmergencyService userEmergencyService;
+    UserRepository userRepository;
 
     @Autowired
-    public UserEmergencyController(UserEmergencyService userEmergencyService) {
+    public UserEmergencyController(UserEmergencyService userEmergencyService, UserRepository userRepository) {
         this.userEmergencyService = userEmergencyService;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -44,12 +48,19 @@ public class UserEmergencyController extends CommonController {
      */
     @PostMapping
     public ResponseEntity createUserEmergency(@RequestBody UserEmergency userEmergency, HttpServletRequest request) throws IllegalArgumentException, UnsupportedEncodingException {
-        userEmergency.setUserEmail(getAuthUserEmail());
-        userEmergency.setCreatedTime(new Date());
-        userEmergency.setLastModifiedTime(new Date());
-        UserEmergency rtnUserEmergencys = userEmergencyService.register(userEmergency);
-        logger.debug("rtnUserEmergencys:" + rtnUserEmergencys.toString());
-        return new ResponseEntity(HttpStatus.CREATED);
+        String useremail = getAuthUserEmail();
+        List<User> list = userRepository.findByUserEmail(useremail);
+        if (list.size() > 0) {
+            userEmergency.setUserNo(list.get(0).getNo());
+            userEmergency.setUserEmail(useremail);
+            userEmergency.setCreatedTime(new Date());
+            userEmergency.setLastModifiedTime(new Date());
+            UserEmergency rtnUserEmergencys = userEmergencyService.register(userEmergency);
+            logger.debug("rtnUserEmergencys:" + rtnUserEmergencys.toString());
+            return new ResponseEntity(HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
     @GetMapping("/")
