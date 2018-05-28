@@ -15,7 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import com.ht.connected.home.backend.common.Common;
-import com.ht.connected.home.backend.service.UserDetailService;
+import com.ht.connected.home.backend.user.UserDetailService;
 @Component
 public class HtAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider{
 

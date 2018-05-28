@@ -44,7 +44,7 @@ import org.springframework.util.StringUtils;
 
 //import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.config.service.EmailConfig;
-import com.ht.connected.home.backend.model.entity.User;
+import com.ht.connected.home.backend.user.User;
 
 /**
  * @author ijlee

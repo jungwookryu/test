@@ -5,8 +5,8 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ht.connected.home.backend.model.dto.MqttRequest;
-import com.ht.connected.home.backend.model.dto.Target;
+import com.ht.connected.home.backend.service.mqtt.MqttRequest;
+import com.ht.connected.home.backend.service.mqtt.Target;
 
 /**
  * @author ijlee

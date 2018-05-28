@@ -21,17 +21,17 @@ import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ht.connected.home.backend.MqttConfig;
+import com.ht.connected.home.backend.category.zwave.CertificationRepository;
+import com.ht.connected.home.backend.category.zwave.ZwaveRepository;
+import com.ht.connected.home.backend.category.zwave.ZwaveServiceImpl;
 import com.ht.connected.home.backend.common.Common;
-import com.ht.connected.home.backend.config.service.MqttConfig;
-import com.ht.connected.home.backend.model.dto.Target;
-import com.ht.connected.home.backend.model.entity.User;
-import com.ht.connected.home.backend.model.entity.UserGateway;
-import com.ht.connected.home.backend.repository.CertificationRepository;
-import com.ht.connected.home.backend.repository.UserGatewayRepository;
-import com.ht.connected.home.backend.repository.UserRepository;
-import com.ht.connected.home.backend.repository.ZwaveRepository;
-import com.ht.connected.home.backend.service.impl.ZwaveServiceImpl;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
+import com.ht.connected.home.backend.service.mqtt.Target;
+import com.ht.connected.home.backend.user.User;
+import com.ht.connected.home.backend.user.UserGatewayRepository;
+import com.ht.connected.home.backend.user.UserRepository;
+import com.ht.connected.home.backend.userGateway.UserGateway;
 
 @Service
 public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implements GatewayService {
