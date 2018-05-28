@@ -15,6 +15,12 @@ import com.ht.connected.home.backend.sip.message.model.dto.SipMqttRequestMessage
 import com.ht.connected.home.backend.sip.message.model.dto.SipSharedDeviceDto;
 
 
+/**
+ * SIP MQTT 메시지 Subscirber 
+ * 메세지의 Method 필드를 참고하여 수신된 메세지를 처리할 메소드를 동적으로 호출한다
+ * @author 구정화
+ *
+ */
 @Service
 public class SipMqttSubscribeService {
 
@@ -35,7 +41,10 @@ public class SipMqttSubscribeService {
     @Autowired
     private SipShareService shareService;
     
-    
+    /**
+     * 회원가입
+     * @param request
+     */
     public void user(SipMqttRequestMessageDto request) {
         if (request.getCrudType().equals("add")) {
             String userId = request.getBody().get("userID").toString();
@@ -46,9 +55,14 @@ public class SipMqttSubscribeService {
         }
     }
     
+    /**
+     * 기기 추가 삭제
+     * @param request
+     */
     public void device(SipMqttRequestMessageDto request) {
         if (request.getCrudType().equals("add")) {
-            deviceService.addDevice(request);
+            boolean isSuccess = deviceService.addDevice(request);
+            request.setResult(isSuccess);
             mqttPublishService.publish(request, null);
         }else if(request.getCrudType().equals("delete")) {
             deviceService.deleteDevice(request);
