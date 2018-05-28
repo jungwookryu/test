@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
@@ -23,13 +22,11 @@ public class UserEmergency {
         nomal,
         homeOut,
         homeIn,
-        homeSleep,
-        homeInTempo,
-        customEmergency
     }
     public UserEmergency(){
         
     }
+    
     public UserEmergency(int userNo, String userEmail, int gatewayNo,String emergencyType){
         this.userNo = userNo;
         this.userEmail = userEmail;
@@ -63,45 +60,13 @@ public class UserEmergency {
     @Column(name = "description")
     String description;
 
-    @Column(name = "fire")
-    @JsonProperty("fire")
-    String fire;
+    @Column(name = "magnetic_detector")
+    @JsonProperty("magnetic_detector")
+    String magneticDetector;
     
-    @Column(name = "fire_no")
-    @JsonProperty("fire_no")
-    String fireNo;
-
-    @Column(name = "custom_sensor_list")
-    @JsonProperty("custom_sensor_list")
-    String customSensorList;
-    
-    @Column(name = "custom_sensor_no_list")
-    @JsonProperty("custom_sensor_no_list")
-    String customSensorNoList;
-
-    @Column(name = "doorlock")
-    @JsonProperty("doorlock")
-    String doorlock;
-    
-    @Column(name = "doorlock_no")
-    @JsonProperty("doorlock_no")
-    String doorlockNo;
-
-    @Column(name = "living_movement")
-    @JsonProperty("living_movement")
-    String livingMovement;
-    
-    @Column(name = "living_movement_no")
-    @JsonProperty("living_movement_no")
-    String livingMovementNo;
-
-    @Column(name = "balcony_movenent")
-    @JsonProperty("balcony_movenent")
-    String balconyMovenent;
-
-    @Column(name = "balcony_movenent_no")
-    @JsonProperty("balcony_movenent_no")
-    String balconyMovenentNo;
+    @Column(name = "movement_sensor")
+    @JsonProperty("movement_sensor")
+    String movementSensor;
     
     @Column(name = "created_time")
     @JsonProperty("created_time")
@@ -143,44 +108,36 @@ public class UserEmergency {
         this.description = description;
     }
 
-    public String getFire() {
-        return fire;
+    public String getUserEmail() {
+        return userEmail;
     }
 
-    public void setFire(String fire) {
-        this.fire = fire;
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
-    public String getCustomSensorList() {
-        return customSensorList;
+    public int getGatewayNo() {
+        return gatewayNo;
     }
 
-    public void setCustomSensorList(String customSensorList) {
-        this.customSensorList = customSensorList;
+    public void setGatewayNo(int gatewayNo) {
+        this.gatewayNo = gatewayNo;
     }
 
-    public String getDoorlock() {
-        return doorlock;
+    public String getMagneticDetector() {
+        return magneticDetector;
     }
 
-    public void setDoorlock(String doorlock) {
-        this.doorlock = doorlock;
+    public void setMagneticDetector(String magneticDetector) {
+        this.magneticDetector = magneticDetector;
     }
 
-    public String getLivingMovement() {
-        return livingMovement;
+    public String getMovementSensor() {
+        return movementSensor;
     }
 
-    public void setLivingMovement(String livingMovement) {
-        this.livingMovement = livingMovement;
-    }
-
-    public String getBalconyMovenent() {
-        return balconyMovenent;
-    }
-
-    public void setBalconyMovenent(String balconyMovenent) {
-        this.balconyMovenent = balconyMovenent;
+    public void setMovementSensor(String movementSensor) {
+        this.movementSensor = movementSensor;
     }
 
     public Date getCreatedTime() {
@@ -199,76 +156,14 @@ public class UserEmergency {
         this.lastModifiedTime = lastModifiedTime;
     }
 
+    public String getEmergencyType() {
+        return emergencyType;
+    }
+
     @Override
     public String toString() {
-        return "UserEmergency [no=" + no + ", userNo=" + userNo + ", userEmail=" + userEmail + ", userState=" + emergencyType + ", description=" + description + ", fire=" + fire + ", customSensorList="
-                + customSensorList + ", doorlock=" + doorlock + ", livingMovement=" + livingMovement + ", balconyMovenent=" + balconyMovenent + ", createdTime=" + createdTime + ", lastModifiedTime="
-                + lastModifiedTime + "]";
+        return "UserEmergency [no=" + no + ", userNo=" + userNo + ", userEmail=" + userEmail + ", gatewayNo=" + gatewayNo + ", emergencyType=" + emergencyType + ", description=" + description
+                + ", magneticDetector=" + magneticDetector + ", movementSensor=" + movementSensor + ", createdTime=" + createdTime + ", lastModifiedTime=" + lastModifiedTime + "]";
     }
 
-    /**
-     * @return the gatewayNo
-     */
-    public int getGatewayNo() {
-        return gatewayNo;
-    }
-
-    /**
-     * @param gatewayNo the gatewayNo to set
-     */
-    public void setGatewayNo(int gatewayNo) {
-        this.gatewayNo = gatewayNo;
-    }
-
-    /**
-     * @param userEmail the userEmail to set
-     */
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
-    }
-
-    public String getFireNo() {
-        return fireNo;
-    }
-
-    public void setFireNo(String fireNo) {
-        this.fireNo = fireNo;
-    }
-
-    public String getCustomSensorNoList() {
-        return customSensorNoList;
-    }
-
-    public void setCustomSensorNoList(String customSensorNoList) {
-        this.customSensorNoList = customSensorNoList;
-    }
-
-    public String getDoorlockNo() {
-        return doorlockNo;
-    }
-
-    public void setDoorlockNo(String doorlockNo) {
-        this.doorlockNo = doorlockNo;
-    }
-
-    public String getLivingMovementNo() {
-        return livingMovementNo;
-    }
-
-    public void setLivingMovementNo(String livingMovementNo) {
-        this.livingMovementNo = livingMovementNo;
-    }
-
-    public String getBalconyMovenentNo() {
-        return balconyMovenentNo;
-    }
-
-    public void setBalconyMovenentNo(String balconyMovenentNo) {
-        this.balconyMovenentNo = balconyMovenentNo;
-    }
-
-    public String getUserEmail() {
-        return userEmail;
-    }
-    
 }

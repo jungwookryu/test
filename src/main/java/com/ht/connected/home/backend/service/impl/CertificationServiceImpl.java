@@ -45,6 +45,9 @@ public class CertificationServiceImpl extends CrudServiceImpl<Certification, Int
                 certification.setUptime(new Date());
                 certificationRepository.save(certification);    
             }
+        }else {
+            certification.setUptime(new Date());
+            certificationRepository.save(certification);
         }
     }
 }

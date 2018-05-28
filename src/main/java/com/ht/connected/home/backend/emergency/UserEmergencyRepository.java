@@ -20,7 +20,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserEmergencyRepository extends JpaRepository<UserEmergency, Integer> {
-    List<UserEmergency> findByUserEmailAndGatewayNo(String authUserEmail, int gatewayNo);
-    List<UserEmergency> findByUserEmail(String authUserEmail);
-    int deleteByUserEmailAndGatewayNo(String authUserEmail, int gatewayNo);
+    List<UserEmergency> findByUserEmailAndGatewayNo(String userEmail, int gatewayNo);
+    List<UserEmergency> findByUserEmail(String userEmail);
+    int deleteByUserEmailAndGatewayNo(String userEmail, int gatewayNo);
 }
