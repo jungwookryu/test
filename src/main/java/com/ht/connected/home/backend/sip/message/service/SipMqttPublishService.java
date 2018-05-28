@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.ht.connected.home.backend.config.service.MqttConfig;
+import com.ht.connected.home.backend.MqttConfig;
 import com.ht.connected.home.backend.sip.message.model.dto.SipMqttRequestMessageDto;
 import com.ht.connected.home.backend.sip.message.model.dto.SipMqttResponseMessageDto;
 
