@@ -1,7 +1,5 @@
 package com.ht.connected.home.backend.user;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -11,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Project : HT-CONNECTED-HOME-SERVER Package :

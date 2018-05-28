@@ -9,14 +9,14 @@
 */
 package com.ht.connected.home.backend.category.zwave.constants.node;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.CommandClass;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * An abstract base class for Z-Wave nodes. This allows common handling of "top-level" nodes as well as

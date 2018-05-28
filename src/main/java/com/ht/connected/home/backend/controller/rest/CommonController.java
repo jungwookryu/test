@@ -1,9 +1,5 @@
 package com.ht.connected.home.backend.controller.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ht.connected.home.backend.common.Common;
-import com.ht.connected.home.backend.config.security.SecretKeyProvider;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -15,6 +11,10 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ht.connected.home.backend.common.Common;
+import com.ht.connected.home.backend.config.security.SecretKeyProvider;
 
 public class CommonController extends Common {
 	@Autowired

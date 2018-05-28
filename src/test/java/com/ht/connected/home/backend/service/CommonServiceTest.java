@@ -1,10 +1,5 @@
 package com.ht.connected.home.backend.service;
 
-import com.ht.connected.home.backend.common.Common;
-import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
-import com.ht.connected.home.backend.user.UserRepository;
-import com.ht.connected.home.backend.user.UsersService;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -18,6 +13,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import com.ht.connected.home.backend.common.Common;
+import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
+import com.ht.connected.home.backend.user.UserRepository;
+import com.ht.connected.home.backend.user.UsersService;
 
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)

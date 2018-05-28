@@ -9,12 +9,13 @@
 */
 package com.ht.connected.home.backend.category.zwave.constants.commandclass;
 
-import com.ht.connected.home.backend.common.ByteUtil;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.ht.connected.home.backend.common.ByteUtil;
 
 /**
  * Meter command class
