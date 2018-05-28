@@ -2,18 +2,28 @@ package com.ht.connected.home.backend.sip.message.service;
 
 import static java.util.Objects.isNull;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ht.connected.home.backend.sip.message.model.dto.SipMqttRequestMessageDto;
 import com.ht.connected.home.backend.sip.message.model.entity.SipDevice;
+import com.ht.connected.home.backend.sip.message.model.entity.SipShare;
 import com.ht.connected.home.backend.sip.message.repository.SipDeviceRepository;
+import com.ht.connected.home.backend.sip.message.repository.SipShareRepository;
 
 @Service
 public class SipDeviceService {
 
     @Autowired
     private SipDeviceRepository deviceRepository;
+    
+    @Autowired
+    private SipShareRepository shareRepository;
 
     public void addDevice(SipMqttRequestMessageDto request) {
         SipDevice device = deviceRepository.findBySerialNumber(request.getBody().get("deviceNo").toString());
@@ -38,6 +48,33 @@ public class SipDeviceService {
         if (!isNull(device)) {
             deviceRepository.delete(device);
         }
+    }
+    
+    public void shareDevice(String serialNumber, String ownerAccount, String sharedAccount, String strRequestType,
+            String sipAor) {
+        List<SipDevice> devices = deviceRepository.findBySerialNumberAndOwnerAccount(serialNumber, ownerAccount);
+        String acceptDate = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+
+        ArrayList<SipShare> shares = new ArrayList<>();
+        devices.stream().forEach(device -> {
+            SipShare share = new SipShare();
+            share.setSerialNumber(device.getSerialNumber());
+            share.setDeviceType(device.getDeviceType());
+            share.setDeviceNickname(device.getDeviceNickname());
+            share.setOwnership("shared");
+            share.setOwnerAccount(ownerAccount);
+            share.setOwnerNickname(device.getOwnerNickname());
+            share.setSharedAccount(sharedAccount);
+            share.setDeviceStatus(device.getDeviceStatus());
+            share.setSharedStatus("request");
+            share.setLocLatitude(device.getLocLatitude());
+            share.setLocLongitude(device.getLocLongitude());
+            share.setSharedNickname("sharedRequestUserAlias");
+            share.setSipAor(sipAor);
+            share.setAcceptDate(acceptDate);
+            shares.add(share);
+        });
+        shareRepository.save(shares);
     }
     
 

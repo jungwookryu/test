@@ -1,6 +1,8 @@
 package com.ht.connected.home.backend.sip.message.service;
 
 import java.beans.Introspector;
+import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.sip.message.model.dto.SipMqttRequestMessageDto;
+import com.ht.connected.home.backend.sip.message.model.dto.SipSharedDeviceDto;
 
 
 @Service
@@ -29,6 +32,9 @@ public class SipMqttSubscribeService {
     @Autowired
     private SipDeviceService deviceService;
     
+    @Autowired
+    private SipShareService shareService;
+    
     
     public void user(SipMqttRequestMessageDto request) {
         if (request.getCrudType().equals("add")) {
@@ -46,6 +52,32 @@ public class SipMqttSubscribeService {
             mqttPublishService.publish(request, null);
         }else if(request.getCrudType().equals("delete")) {
             deviceService.deleteDevice(request);
+            mqttPublishService.publish(request, null);
+        }
+    }
+    
+    /**
+     * 공유신청 상태 조회
+     * 
+     * @param request
+     */
+    public void sharedRequest(SipMqttRequestMessageDto request) {
+        if (request.getCrudType().equals("get")) {
+            /**
+             * requestSharedProgresss
+             */
+            String sharedRequestUserId = request.getBody().get("sharedRequestUserID").toString();
+            List<SipSharedDeviceDto> sharedDevicesInfo = shareService.getSharedDevices(request, sharedRequestUserId);
+            HashMap<String, List<SipSharedDeviceDto>> body = new HashMap<>();
+            body.put("devices", sharedDevicesInfo);
+            mqttPublishService.publish(request, body);
+        } else if (request.getCrudType().equals("set")) {
+            String strSerial = request.getBody().get("deviceSN").toString();
+            String strOwnerAccount = request.getBody().get("deviceOwnerUserID").toString();
+            String strSharedAccount = request.getBody().get("sharedRequestUserID").toString();
+            String strRequestType = "shared";
+            String strSIPAOR = request.getBody().get("sipAOR").toString();
+            deviceService.shareDevice(strSerial, strOwnerAccount, strSharedAccount, strRequestType, strSIPAOR);
             mqttPublishService.publish(request, null);
         }
     }
