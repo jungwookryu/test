@@ -9,14 +9,14 @@
 */
 package com.ht.connected.home.backend.category.zwave.constants.commandclass;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ht.connected.home.backend.category.zwave.constants.node.ZWaveMultiChannelEndpoint;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Multi Instance Command Class

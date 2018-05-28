@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.ht.connected.home.backend.gateway.Gateway;
 import com.ht.connected.home.backend.service.base.CrudService;
 import com.ht.connected.home.backend.service.base.MqttBase;
-import com.ht.connected.home.backend.user.User;
 
 /**
  * zwave 서비스 인터페이스

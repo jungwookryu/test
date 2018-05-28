@@ -1,7 +1,5 @@
 package com.ht.connected.home.backend.user;
 
-import com.ht.connected.home.backend.common.Common;
-
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import com.ht.connected.home.backend.common.Common;
 
 @Service
 public class UserDetailService implements UserDetailsService {

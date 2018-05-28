@@ -9,8 +9,6 @@
 */
 package com.ht.connected.home.backend.category.zwave.constants.commandclass;
 
-import java.util.Map;
-
 /**
  * Abstract base class for all Command classes
  *

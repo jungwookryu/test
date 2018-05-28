@@ -1,7 +1,5 @@
 package com.ht.connected.home.backend.user;
 
-import com.ht.connected.home.backend.controller.rest.CommonController;
-
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -22,6 +20,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.ht.connected.home.backend.controller.rest.CommonController;
 
 @RestController
 @RequestMapping("/users")

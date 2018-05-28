@@ -1,12 +1,4 @@
 package com.ht.connected.home.backend.config.security;
-/**
- * Copyright (c) 2018, HT Telecom
- * All rights reserved.
- *
- *
- */
-import com.google.common.base.MoreObjects;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -17,6 +9,14 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+/**
+ * Copyright (c) 2018, HT Telecom
+ * All rights reserved.
+ *
+ *
+ */
+import com.google.common.base.MoreObjects;
 public class HtAuthenticationTokenImpl implements HtAuthenticationToken{
 
 	private static final Logger logger =  LoggerFactory.getLogger(AuthenticationToken.class);

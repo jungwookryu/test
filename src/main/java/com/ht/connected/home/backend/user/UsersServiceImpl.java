@@ -1,9 +1,5 @@
 package com.ht.connected.home.backend.user;
 
-import com.ht.connected.home.backend.common.Common;
-import com.ht.connected.home.backend.config.service.EmailConfig;
-import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
-
 import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,7 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.handler.UserRoleAuthorizationInterceptor;
+
+import com.ht.connected.home.backend.common.Common;
+import com.ht.connected.home.backend.config.service.EmailConfig;
+import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 
 @Service
 public class UsersServiceImpl extends CrudServiceImpl<User, Integer> implements UsersService{

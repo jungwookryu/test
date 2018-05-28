@@ -36,7 +36,6 @@ import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.gateway.Gateway;
 import com.ht.connected.home.backend.gateway.GatewayRepository;
-import com.ht.connected.home.backend.gateway.GatewayService;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategory;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategoryRepository;

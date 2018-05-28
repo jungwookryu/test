@@ -5,8 +5,6 @@ import java.util.HashMap;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ht.connected.home.backend.category.zwave.Zwave;
-import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.gateway.Gateway;
 
 /**
