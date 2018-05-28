@@ -1,7 +1,7 @@
 package com.ht.connected.home.backend.config.security;
 
-import com.ht.connected.home.backend.model.entity.User;
-import com.ht.connected.home.backend.service.UserDetailService;
+import com.ht.connected.home.backend.user.User;
+import com.ht.connected.home.backend.user.UserDetailService;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

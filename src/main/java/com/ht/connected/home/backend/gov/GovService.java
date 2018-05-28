@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ht.connected.home.backend.config.service.MqttConfig;
-import com.ht.connected.home.backend.model.dto.CategoryActive;
-import com.ht.connected.home.backend.model.dto.Target;
+import com.ht.connected.home.backend.MqttConfig;
+import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
+import com.ht.connected.home.backend.service.mqtt.Target;
 
 @Service
 public class GovService {

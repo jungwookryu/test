@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.connected.home.backend.controller.rest.CommonController;
-import com.ht.connected.home.backend.model.entity.User;
-import com.ht.connected.home.backend.repository.UserRepository;
+import com.ht.connected.home.backend.user.User;
+import com.ht.connected.home.backend.user.UserRepository;
 
 @RestController
 @RequestMapping("/emergency")

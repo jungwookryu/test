@@ -1,7 +1,5 @@
 package com.ht.connected.home.backend.service;
 
-import com.ht.connected.home.backend.model.entity.User;
-
 import java.util.List;
 
 import org.junit.runner.RunWith;
@@ -9,6 +7,8 @@ import org.springframework.boot.test.context.ConfigFileApplicationContextInitial
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import com.ht.connected.home.backend.user.User;
 
 
 @RunWith(SpringRunner.class)

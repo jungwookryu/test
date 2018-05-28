@@ -1,9 +1,9 @@
 package com.ht.connected.home.backend.service;
 
 import com.ht.connected.home.backend.common.Common;
-import com.ht.connected.home.backend.repository.UserRepository;
-import com.ht.connected.home.backend.service.impl.UsersService;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
+import com.ht.connected.home.backend.user.UserRepository;
+import com.ht.connected.home.backend.user.UsersService;
 
 import java.util.ArrayList;
 import java.util.HashMap;

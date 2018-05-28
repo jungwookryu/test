@@ -18,8 +18,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
-import com.ht.connected.home.backend.model.dto.UserActive;
-import com.ht.connected.home.backend.model.dto.UserRole;
+import com.ht.connected.home.backend.user.UserActive;
+import com.ht.connected.home.backend.user.UserRole;
 
 @Configuration
 @EnableWebSecurity(debug = true)
