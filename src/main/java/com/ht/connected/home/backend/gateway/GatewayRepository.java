@@ -16,12 +16,19 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.ht.connected.home.backend.user.User;
+
 /**
  * @author ijlee
  *
  */
 @Repository
 public interface GatewayRepository extends JpaRepository<Gateway, Integer> {
+    
+    List<Gateway> findByStatusAndUsers(String status, User user);
+    
+    List<Gateway> findByUsers(User user);
+    
 	Gateway findBySerial(String serial);
 	List<Gateway> findByNoIn(List<Integer> nos);
 	

@@ -1,22 +1,30 @@
 package com.ht.connected.home.backend.gateway;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ht.connected.home.backend.user.User;
 
 @Entity
 @Table(name = "gateway")
-@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Gateway {
     @Id
@@ -89,12 +97,26 @@ public class Gateway {
     @JsonProperty("type")
     private String type;
     
+    @ManyToMany(fetch = FetchType.LAZY,cascade=CascadeType.ALL )
+    @JoinTable(name = "user_gateway", 
+               joinColumns = @JoinColumn(name="gateway_no"),
+               inverseJoinColumns = @JoinColumn(name="user_no"))
+    private List<User> users;
+    
+    // getter and setter
+    public boolean addUser(User user) {
+        if(users == null)
+            users = new ArrayList();
+        return users.add(user);
+    }
+    
+    
     public Gateway() {
     }
+    
     public Gateway(String model, String serial) {
         this.model = model;
         this.serial = serial;
-                
     }
 
     public int getNo() {

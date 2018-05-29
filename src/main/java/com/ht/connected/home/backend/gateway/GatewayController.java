@@ -15,17 +15,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.category.zwave.ZwaveController;
 import com.ht.connected.home.backend.controller.rest.CommonController;
-import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategory;
 import com.ht.connected.home.backend.user.User;
-import com.ht.connected.home.backend.user.UserGatewayRepository;
 import com.ht.connected.home.backend.user.UserRepository;
 import com.ht.connected.home.backend.userGateway.UserGateway;
+import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
 
 /**
  * gateway(호스트)관련 요청 처리
@@ -47,7 +47,7 @@ public class GatewayController extends CommonController {
 
     @Autowired
     ZwaveController zwaveController;
-    
+
     @Autowired
     public GatewayController(GatewayService gateWayService) {
         this.gateWayService = gateWayService;
@@ -86,35 +86,33 @@ public class GatewayController extends CommonController {
     }
 
     /**
-     * 멀티 호스트 리스트.
+     * 로그인한 사용자가 등록한 모든 gateway를 조회한다.
      * @param req
      * @return
      * @throws Exception
      */
 
     @GetMapping
-    public ResponseEntity<HashMap<String, Object>> getGatewayList() throws Exception {
+    public ResponseEntity<HashMap<String, Object>> getGatewayList(
+            @RequestParam(value = "status", required=false) String status)
+            throws Exception {
         String authUserEmail = getAuthUserEmail();
-
-        List lstGateways = gateWayService.getGatewayList(authUserEmail);
+        List lstGateways = gateWayService.getGatewayList(status, authUserEmail);
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("list", lstGateways);
         return new ResponseEntity<HashMap<String, Object>>(map, HttpStatus.OK);
     }
-
+    
     @DeleteMapping(value = "/{no}")
     public ResponseEntity deleteGateway(@PathVariable("no") int no) {
         gateWayService.delete(no);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    
+
     @PutMapping(value = "/{no}")
     public ResponseEntity deleteIoTDevice(@RequestBody GatewayCategory gatewayCategory) throws JsonProcessingException {
-        
-        if(CategoryActive.gateway.zwave.name().equals(gatewayCategory.getCategory())){
-            zwaveController.delete(gatewayCategory.getCategoryNo());
-        }
-        
-        return new ResponseEntity<>(HttpStatus.OK); 
+
+        gateWayService.deleteCategory(gatewayCategory);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -34,4 +34,6 @@ public interface ZwaveService extends CrudService<Zwave, Integer>, MqttBase<Obje
     public int getByUserEmailAndNo(String userEmail, int no);
 
     void subscribeInit(Gateway gateway) throws JsonProcessingException;
+
+    int deleteByGatewayNo(int gatewayNo);
 }

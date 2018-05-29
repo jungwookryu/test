@@ -33,8 +33,7 @@ public class UserGateway {
 	@Column(name = "group_role")
 	private String groupRole;
 
-	
-    @Column(name = "status")
+	@Column(name = "status")
     private String status;
     
 	public int getNo() {

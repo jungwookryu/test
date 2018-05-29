@@ -1,15 +1,26 @@
-package com.ht.connected.home.backend.category.zwave;
+package com.ht.connected.home.backend.category.zwave.endpoint;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.springframework.context.annotation.DependsOn;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ht.connected.home.backend.category.zwave.Zwave;
+import com.ht.connected.home.backend.category.zwave.cmdcls.CmdCls;
 
 @Entity
 @Table(name = "endpoint")
@@ -43,6 +54,29 @@ public class Endpoint {
     @JsonProperty("cmd_cls")
     String cmd_cls;
 
+    @Column(name = "zwave_no")
+    @JsonProperty("zwave_no")
+    String zwaveNo;
+  
+    @ManyToOne(optional = false)
+    @JoinTable(name = "zwave_endpoint",
+      joinColumns = @JoinColumn(name = "endpoint_no"),
+      inverseJoinColumns = @JoinColumn(name = "zwave_no"))
+    private Zwave zwave;
+    
+    @OneToMany
+    @JoinTable(name = "endpoint_cmdcls",
+            joinColumns = @JoinColumn(name="endpoint_no"),
+            inverseJoinColumns = @JoinColumn(name="cmdcls_no"))
+    List<CmdCls> cmdclss;
+    
+    public boolean addEndpoints(CmdCls cmdCls) {
+        
+        if(cmdclss == null)
+            cmdclss = new ArrayList();
+        return cmdclss.add(cmdCls);
+        
+    }
     public int getNo() {
         return no;
     }
@@ -91,10 +125,22 @@ public class Endpoint {
         this.cmd_cls = cmd_cls;
     }
 
-    @Override
-    public String toString() {
-        return "Endpoint [no=" + no + ", epid=" + epid + ", generic=" + generic + ", specific=" + specific + ", nickname=" + nickname + ", cmd_cls=" + cmd_cls + "]";
+    public String getZwaveNo() {
+        return zwaveNo;
     }
-    
+
+    public void setZwaveNo(String zwaveNo) {
+        this.zwaveNo = zwaveNo;
+    }
+
+    public Zwave getZwave() {
+        return zwave;
+    }
+    public void setZwave(Zwave zwave) {
+        this.zwave = zwave;
+    }
+    public List<CmdCls> getCmdclss() {
+        return cmdclss;
+    }
 
 }

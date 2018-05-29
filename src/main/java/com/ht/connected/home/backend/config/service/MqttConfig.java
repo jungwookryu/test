@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend;
+package com.ht.connected.home.backend.config.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

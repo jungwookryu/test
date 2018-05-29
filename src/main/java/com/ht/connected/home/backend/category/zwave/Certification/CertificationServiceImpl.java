@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.category.zwave;
+package com.ht.connected.home.backend.category.zwave.Certification;
 
 import java.util.Date;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ht.connected.home.backend.category.zwave.ZwaveRequest;
 import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
