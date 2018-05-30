@@ -322,12 +322,12 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
             List<Zwave> lstZwave = zwaveRepository.findByGatewayNo(gateway.getNo());
 //            List<Zwave> lstZwave = zwaveRepository.findByGatewayNoAndCmdAndStatus(gateway.getNo(),
 //                    Integer.toString(NetworkManagementInclusionCommandClass.INT_ID) + "/" + Integer.toString(NetworkManagementInclusionCommandClass.NODE_ADD_STATUS), "");
-            Map zwaveNodeListReport = objectMapper.readValue(data, Map.class);
+            ZwaveReport zwaveReport = objectMapper.readValue(data, ZwaveReport.class);
             // 기기 리스트에 대한 정보일 경우
-            if (zwaveNodeListReport.get("nodelist") != null) {
-                List<Zwave> nodeListItem = (List<Zwave>) zwaveNodeListReport.get("nodelist");
-                for (int k = 0; k < nodeListItem.size(); k++) {
-                    Zwave nodeItem = nodeListItem.get(k);
+            if (zwaveReport.getNodelist() != null) {
+                List<Zwave> nodeListItem = (List<Zwave>) zwaveReport.getNodelist();
+                for (int i = 0; i < nodeListItem.size(); i++) {
+                    Zwave nodeItem = nodeListItem.get(i);
                     int nodeId = nodeItem.getNodeId();
                     boolean bInsert= false;
                     for (int j = 0; j < lstZwave.size(); j++) {

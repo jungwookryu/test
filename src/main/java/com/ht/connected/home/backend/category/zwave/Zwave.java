@@ -41,8 +41,8 @@ public class Zwave {
     int nodeId;
     
     @JsonProperty("endpointId")
-    @Column(name = "endpoint_id")
-    int endpointid;
+    @Transient
+    int endpointId;
 
     @Column(name = "nickname")
     String nickname;
@@ -148,14 +148,6 @@ public class Zwave {
         this.nodeId = nodeId;
     }
 
-    public int getEndpointId() {
-        return endpointid;
-    }
-
-    public void setEndpointId(int endpointId) {
-        this.endpointid = endpointId;
-    }
-
     public String getNickname() {
         return nickname;
     }
@@ -228,16 +220,16 @@ public class Zwave {
      */
     @Override
     public String toString() {
-        return "Zwave [no=" + no + ", gatewayNo=" + gatewayNo + ", nodeId=" + nodeId + ", endpointId=" + endpointid + ", nickname=" + nickname + ", cmd=" + cmd + ", event=" + event + ", status="
+        return "Zwave [no=" + no + ", gatewayNo=" + gatewayNo + ", nodeId=" + nodeId + ", endpointId=" + endpointId + ", nickname=" + nickname + ", cmd=" + cmd + ", event=" + event + ", status="
                 + status + ", creratedTime=" + creratedTime + ", lastModifiedDate=" + lastModifiedDate + ", endpoint=" + sEndpoint + "]";
     }
 
-    public int getEndpointid() {
-        return endpointid;
+    public int getEndpointId() {
+        return endpointId;
     }
 
-    public void setEndpointid(int endpointid) {
-        this.endpointid = endpointid;
+    public void setEndpointId(int endpointId) {
+        this.endpointId = endpointId;
     }
 
     public String getSecurity() {
