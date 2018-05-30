@@ -2,23 +2,37 @@ package com.ht.connected.home.backend.sip.message.service;
 
 import static java.util.Objects.isNull;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ht.connected.home.backend.sip.message.model.dto.SipMqttRequestMessageDto;
 import com.ht.connected.home.backend.sip.message.model.entity.SipDevice;
+import com.ht.connected.home.backend.sip.message.model.entity.SipShare;
 import com.ht.connected.home.backend.sip.message.repository.SipDeviceRepository;
+import com.ht.connected.home.backend.sip.message.repository.SipShareRepository;
 
 @Service
 public class SipDeviceService {
 
     @Autowired
     private SipDeviceRepository deviceRepository;
+    
+    @Autowired
+    private SipShareRepository shareRepository;
 
-    public void addDevice(SipMqttRequestMessageDto request) {
+    /**
+     * 시리얼 번호와 비밀번호는 디비에 이미 등록되어있어서 신규로 등록하는 기기 정보가 디비저장 정보와 일치해야한다
+     * @param request
+     */
+    public boolean addDevice(SipMqttRequestMessageDto request) {
+        boolean isSuccess = false;
         SipDevice device = deviceRepository.findBySerialNumber(request.getBody().get("deviceNo").toString());
-        if (isNull(device)) {
-            device = new SipDevice();
+        if (!isNull(device)) {
             device.setOwnerAccount(request.getBody().get("userID").toString());
             device.setSerialNumber(request.getBody().get("deviceNo").toString());
             device.setDeviceNickname(request.getBody().get("deviceAlias").toString());
@@ -29,8 +43,12 @@ public class SipDeviceService {
             device.setDeviceStatus(request.getBody().get("registerStatus").toString());
             device.setSipRole(request.getBody().get("userID").toString().replace("@", "^"));
             device.setDeviceType("sdb");
-            deviceRepository.save(device);
+            device = deviceRepository.save(device);
+            if(device.getOwnerAccount().equals(request.getBody().get("userID"))) {
+                isSuccess = true;    
+            }                        
         }
+        return isSuccess; 
     }
     
     public void deleteDevice(SipMqttRequestMessageDto request) {
@@ -38,6 +56,33 @@ public class SipDeviceService {
         if (!isNull(device)) {
             deviceRepository.delete(device);
         }
+    }
+    
+    public void shareDevice(String serialNumber, String ownerAccount, String sharedAccount, String strRequestType,
+            String sipAor) {
+        List<SipDevice> devices = deviceRepository.findBySerialNumberAndOwnerAccount(serialNumber, ownerAccount);
+        String acceptDate = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+
+        ArrayList<SipShare> shares = new ArrayList<>();
+        devices.stream().forEach(device -> {
+            SipShare share = new SipShare();
+            share.setSerialNumber(device.getSerialNumber());
+            share.setDeviceType(device.getDeviceType());
+            share.setDeviceNickname(device.getDeviceNickname());
+            share.setOwnership("shared");
+            share.setOwnerAccount(ownerAccount);
+            share.setOwnerNickname(device.getOwnerNickname());
+            share.setSharedAccount(sharedAccount);
+            share.setDeviceStatus(device.getDeviceStatus());
+            share.setSharedStatus("request");
+            share.setLocLatitude(device.getLocLatitude());
+            share.setLocLongitude(device.getLocLongitude());
+            share.setSharedNickname("sharedRequestUserAlias");
+            share.setSipAor(sipAor);
+            share.setAcceptDate(acceptDate);
+            shares.add(share);
+        });
+        shareRepository.save(shares);
     }
     
 

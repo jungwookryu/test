@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.ht.connected.home.backend.sip.message.config.SipMqttConfig.MqttGateway;
+import com.ht.connected.home.backend.MqttConfig;
 import com.ht.connected.home.backend.sip.message.model.dto.SipMqttRequestMessageDto;
 import com.ht.connected.home.backend.sip.message.model.dto.SipMqttResponseMessageDto;
 
@@ -22,14 +22,13 @@ public class SipMqttPublishService {
     private static final Log LOGGER = LogFactory.getLog(SipMqttPublishService.class);
 
     @Autowired
-    @Qualifier(value = "sipMqttGateway")
-    private MqttGateway mqttGateway;
+    private MqttConfig.MqttGateway mqttGateway;
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @Autowired
-    @Qualifier(value = "SIPMqttOutbound")
+    @Qualifier(value = "MqttOutbound")
     private MqttPahoMessageHandler messageHandler;
 
     public void publish(SipMqttRequestMessageDto request, Object body) {

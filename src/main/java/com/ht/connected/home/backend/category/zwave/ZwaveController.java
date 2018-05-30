@@ -18,16 +18,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ht.connected.home.backend.category.zwave.Certification.Certification;
-import com.ht.connected.home.backend.category.zwave.Certification.CertificationRepository;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementInclusionCommandClass;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementProxyCommandClass;
 import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 import com.ht.connected.home.backend.user.User;
+import com.ht.connected.home.backend.user.UserGatewayRepository;
 import com.ht.connected.home.backend.user.UserRepository;
 import com.ht.connected.home.backend.userGateway.UserGateway;
-import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
 
 /**
  * Rest API Zwave 요청 처리 컨트롤러

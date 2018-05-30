@@ -29,8 +29,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ht.connected.home.backend.category.zwave.Certification.CertificationRepository;
-import com.ht.connected.home.backend.category.zwave.Certification.CertificationService;
+import com.ht.connected.home.backend.category.zwave.certification.CertificationRepository;
+import com.ht.connected.home.backend.category.zwave.certification.CertificationService;
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdCls;
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdClsRepository;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.BasicCommandClass;
@@ -479,7 +479,6 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
         // int zwaveUpdateCnt =zwaveRepository.setFixedStatusForGatewayNo(status.delete.name(), gatewayNo);
         // return zwaveUpdateCnt;
         return 0;
-
     }
 
 }

@@ -21,21 +21,37 @@ import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+<<<<<<< HEAD
 import com.ht.connected.home.backend.category.zwave.ZwaveRepository;
 import com.ht.connected.home.backend.category.zwave.ZwaveService;
 import com.ht.connected.home.backend.category.zwave.ZwaveServiceImpl;
 import com.ht.connected.home.backend.category.zwave.Certification.CertificationRepository;
+=======
+import com.ht.connected.home.backend.MqttConfig;
+import com.ht.connected.home.backend.category.zwave.CertificationRepository;
+import com.ht.connected.home.backend.category.zwave.ZwaveRepository;
+import com.ht.connected.home.backend.category.zwave.ZwaveServiceImpl;
+>>>>>>> branch 'dev' of https://github.com/injeong/ht-iot-connected-home-backend-server.git
 import com.ht.connected.home.backend.common.Common;
+<<<<<<< HEAD
 import com.ht.connected.home.backend.config.service.MqttConfig;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategory;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategoryRepository;
+=======
+>>>>>>> branch 'dev' of https://github.com/injeong/ht-iot-connected-home-backend-server.git
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 import com.ht.connected.home.backend.service.mqtt.Target;
 import com.ht.connected.home.backend.user.User;
+<<<<<<< HEAD
 import com.ht.connected.home.backend.user.UserRepository;
 import com.ht.connected.home.backend.userGateway.UserGateway;
 import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
+=======
+import com.ht.connected.home.backend.user.UserGatewayRepository;
+import com.ht.connected.home.backend.user.UserRepository;
+import com.ht.connected.home.backend.userGateway.UserGateway;
+>>>>>>> branch 'dev' of https://github.com/injeong/ht-iot-connected-home-backend-server.git
 
 @Service
 public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implements GatewayService {

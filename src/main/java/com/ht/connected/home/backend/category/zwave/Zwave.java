@@ -331,5 +331,4 @@ public class Zwave {
     public void setEndpoints(List<Endpoint> endpoints) {
         this.endpoints = endpoints;
     }
-
 }

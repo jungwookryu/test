@@ -107,7 +107,7 @@ public class User {
         return gateways.add(gateway);
     }
     
-	
+
 	public User(String userEmail, String password) {
 		this.userEmail = userEmail;
 	}

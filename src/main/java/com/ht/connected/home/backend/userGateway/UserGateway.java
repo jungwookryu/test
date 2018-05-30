@@ -33,7 +33,12 @@ public class UserGateway {
 	@Column(name = "group_role")
 	private String groupRole;
 
+<<<<<<< HEAD
 	@Column(name = "status")
+=======
+	
+    @Column(name = "status")
+>>>>>>> branch 'dev' of https://github.com/injeong/ht-iot-connected-home-backend-server.git
     private String status;
     
 	public int getNo() {

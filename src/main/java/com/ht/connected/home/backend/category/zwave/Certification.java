@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.category.zwave.Certification;
+package com.ht.connected.home.backend.category.zwave;
 
 import java.util.Date;
 

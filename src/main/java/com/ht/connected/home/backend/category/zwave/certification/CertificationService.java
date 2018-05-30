@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.category.zwave.Certification;
+package com.ht.connected.home.backend.category.zwave.certification;
 
 import com.ht.connected.home.backend.category.zwave.ZwaveRequest;
 import com.ht.connected.home.backend.service.base.CrudService;

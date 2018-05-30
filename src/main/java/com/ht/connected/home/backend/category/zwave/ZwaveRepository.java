@@ -25,4 +25,5 @@ public interface ZwaveRepository extends JpaRepository<Zwave, Integer>{
     @Query("update Zwave z set z.status = ?1  where z.gatewayNo = ?2 and  z.no = 1")
     int updateStatusByGatewayNo(String status, int gatewayNo);
 
+
 }
