@@ -19,7 +19,7 @@ import org.springframework.context.annotation.DependsOn;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ht.connected.home.backend.category.zwave.Zwave;
+import com.ht.connected.home.backend.category.zwave.ZWave;
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdCls;
 
 @Entity
@@ -62,7 +62,7 @@ public class Endpoint {
     @JoinTable(name = "zwave_endpoint",
       joinColumns = @JoinColumn(name = "endpoint_no"),
       inverseJoinColumns = @JoinColumn(name = "zwave_no"))
-    private Zwave zwave;
+    private ZWave zwave;
     
     @OneToMany
     @JoinTable(name = "endpoint_cmdcls",
@@ -133,10 +133,10 @@ public class Endpoint {
         this.zwaveNo = zwaveNo;
     }
 
-    public Zwave getZwave() {
+    public ZWave getZwave() {
         return zwave;
     }
-    public void setZwave(Zwave zwave) {
+    public void setZwave(ZWave zwave) {
         this.zwave = zwave;
     }
     public List<CmdCls> getCmdclss() {

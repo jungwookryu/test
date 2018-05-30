@@ -11,16 +11,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ZwaveReport {
+public class ZWaveReport {
     
     @JsonProperty("nodelist")
-    public List<Zwave> nodelist;
+    public List<ZWave> nodelist;
 
-    public List<Zwave> getNodelist() {
+    public List<ZWave> getNodelist() {
         return nodelist;
     }
 
-    public void setNodelist(List<Zwave> nodelist) {
+    public void setNodelist(List<ZWave> nodelist) {
         this.nodelist = nodelist;
     }
 

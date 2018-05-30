@@ -61,9 +61,9 @@ import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
  * @author 구정화
  */
 @Service
-public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements ZwaveService {
+public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements ZWaveService {
 
-    private ZwaveRepository zwaveRepository;
+    private ZWaveRepository zwaveRepository;
 
     enum event {
         delete, active, failed
@@ -74,14 +74,14 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
     }
 
     @Autowired
-    public ZwaveServiceImpl(ZwaveRepository zwaveRepository) {
+    public ZWaveServiceImpl(ZWaveRepository zwaveRepository) {
         super(zwaveRepository);
         this.zwaveRepository = zwaveRepository;
     }
 
-    private static final Log logging = LogFactory.getLog(ZwaveServiceImpl.class);
+    private static final Log logging = LogFactory.getLog(ZWaveServiceImpl.class);
 
-    Logger logger = LoggerFactory.getLogger(ZwaveServiceImpl.class);
+    Logger logger = LoggerFactory.getLogger(ZWaveServiceImpl.class);
     @Autowired
     UserRepository userRepository;
 
@@ -115,7 +115,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ResponseEntity execute(HashMap<String, Object> req, ZwaveRequest zwaveRequest, boolean isCert) throws JsonProcessingException {
+    public ResponseEntity execute(HashMap<String, Object> req, ZWaveRequest zwaveRequest, boolean isCert) throws JsonProcessingException {
         logging.info("zwaveRequest.getClassKey()::::" + zwaveRequest.getClassKey());
 
         if (NetworkManagementInclusionCommandClass.INT_ID == zwaveRequest.getClassKey()) {
@@ -127,7 +127,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
     }
 
     @Override
-    public ResponseEntity publish(HashMap<String, Object> req, ZwaveRequest zwaveRequest) throws JsonProcessingException {
+    public ResponseEntity publish(HashMap<String, Object> req, ZWaveRequest zwaveRequest) throws JsonProcessingException {
 
         ResponseEntity response = new ResponseEntity(HttpStatus.BAD_REQUEST);;
         String topic = getMqttPublishTopic(zwaveRequest);
@@ -143,7 +143,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
      * @param topicLeadingPath
      * @return
      */
-    public String getMqttPublishTopic(ZwaveRequest zwaveRequest) {
+    public String getMqttPublishTopic(ZWaveRequest zwaveRequest) {
         return getMqttPublishTopic(zwaveRequest, Target.host.name());
     }
 
@@ -152,7 +152,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
      * @param topicLeadingPath
      * @return
      */
-    public String getMqttPublishTopic(ZwaveRequest zwaveRequest, String target) {
+    public String getMqttPublishTopic(ZWaveRequest zwaveRequest, String target) {
         String topic = "";
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
         if (!isNull(gateway)) {
@@ -190,14 +190,14 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
 
     @Override
     public void subscribe(Object zwaveRequest, Object payload) throws Exception {
-        if (zwaveRequest instanceof ZwaveRequest && payload instanceof String) {
-            ZwaveRequest reqZwaveRequest = (ZwaveRequest) zwaveRequest;
+        if (zwaveRequest instanceof ZWaveRequest && payload instanceof String) {
+            ZWaveRequest reqZwaveRequest = (ZWaveRequest) zwaveRequest;
             subscribe(reqZwaveRequest, (String) payload);
         }
     }
 
     @Transactional
-    public void subscribe(ZwaveRequest zwaveRequest, String payload) throws JsonParseException, JsonMappingException, IOException, Exception {
+    public void subscribe(ZWaveRequest zwaveRequest, String payload) throws JsonParseException, JsonMappingException, IOException, Exception {
 
         MqttPayload mqttPayload = new MqttPayload();
         if (!Common.empty(payload)) {
@@ -270,7 +270,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
      * @param zwaveRequest
      * @param mqttPayload
      */
-    private void saveGatewayCategory(ZwaveRequest zwaveRequest, int nodeId) {
+    private void saveGatewayCategory(ZWaveRequest zwaveRequest, int nodeId) {
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
         GatewayCategory gatewayCategory = new GatewayCategory();
         gatewayCategory.setGatewayNo(gateway.getNo());
@@ -315,23 +315,23 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
 
     }
 
-    private void reportZWaveList(ZwaveRequest zwaveRequest, String data) throws JsonParseException, JsonMappingException, IOException, JSONException {
+    private void reportZWaveList(ZWaveRequest zwaveRequest, String data) throws JsonParseException, JsonMappingException, IOException, JSONException {
 
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
         if (!isNull(gateway)) {
-            List<Zwave> lstZwave = zwaveRepository.findByGatewayNo(gateway.getNo());
+            List<ZWave> lstZwave = zwaveRepository.findByGatewayNo(gateway.getNo());
 //            List<Zwave> lstZwave = zwaveRepository.findByGatewayNoAndCmdAndStatus(gateway.getNo(),
 //                    Integer.toString(NetworkManagementInclusionCommandClass.INT_ID) + "/" + Integer.toString(NetworkManagementInclusionCommandClass.NODE_ADD_STATUS), "");
-            ZwaveReport zwaveReport = objectMapper.readValue(data, ZwaveReport.class);
+            ZWaveReport zwaveReport = objectMapper.readValue(data, ZWaveReport.class);
             // 기기 리스트에 대한 정보일 경우
             if (zwaveReport.getNodelist() != null) {
-                List<Zwave> nodeListItem = (List<Zwave>) zwaveReport.getNodelist();
+                List<ZWave> nodeListItem = (List<ZWave>) zwaveReport.getNodelist();
                 for (int i = 0; i < nodeListItem.size(); i++) {
-                    Zwave nodeItem = nodeListItem.get(i);
+                    ZWave nodeItem = nodeListItem.get(i);
                     int nodeId = nodeItem.getNodeId();
                     boolean bInsert= false;
                     for (int j = 0; j < lstZwave.size(); j++) {
-                        Zwave zwave = lstZwave.get(j);
+                        ZWave zwave = lstZwave.get(j);
                         //host 노드리스트와 DB 노드리스트를 비교하여 없으면 insert시킴
                         //TODO nodeId로 변경하기로함
                         //int nodeId = (int) nodeItem.getOrDefault("nodeId", 0);
@@ -343,7 +343,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
                                 req.put("serial", gateway.getSerial());
                                 req.put("nodeId", nodeId);
                                 req.put("option", nodeItem.getSecurity());
-                                ZwaveRequest appZwaveRequest = new ZwaveRequest((HashMap<String, Object>) req, NetworkManagementInclusionCommandClass.INT_ID,
+                                ZWaveRequest appZwaveRequest = new ZWaveRequest((HashMap<String, Object>) req, NetworkManagementInclusionCommandClass.INT_ID,
                                         NetworkManagementInclusionCommandClass.INT_NODE_ADD, "v1");
                                 String topic = getMqttPublishTopic(appZwaveRequest, Target.app.name());
                                 publish(topic, nodeItem);
@@ -409,7 +409,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
     @Transactional
     public int deleteByNo(int no) throws JsonProcessingException {
         // TODO DB 에서 기기삭제 status 로 update
-        Zwave zwave = zwaveRepository.getOne(no);
+        ZWave zwave = zwaveRepository.getOne(no);
         Gateway gateway = gatewayRepository.getOne(zwave.getGatewayNo());
         int iRtn = zwaveRepository.setFixedEventAndStatusForNo(event.delete.name(), status.delete.name(), no);
         MqttRequest mqttRequest = new MqttRequest();
@@ -457,7 +457,7 @@ public class ZwaveServiceImpl extends CrudServiceImpl<Zwave, Integer> implements
         lstUserGateway.forEach(userGateway -> {
             lstGatewayNos.add(userGateway.getGatewayNo());
         });
-        List<Zwave> lstZwave = zwaveRepository.findByNoAndGatewayNoIn(no, lstGatewayNos);
+        List<ZWave> lstZwave = zwaveRepository.findByNoAndGatewayNoIn(no, lstGatewayNos);
         return lstZwave.size();
     }
 

@@ -24,7 +24,7 @@ import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
 @Table(name = "zwave")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Zwave {
+public class ZWave {
 
     @Id
     @Column(name = "no")

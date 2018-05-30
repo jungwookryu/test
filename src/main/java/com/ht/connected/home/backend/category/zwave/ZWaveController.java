@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ht.connected.home.backend.category.zwave.certification.Certification;
+import com.ht.connected.home.backend.category.zwave.certification.CertificationRepository;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementInclusionCommandClass;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementProxyCommandClass;
 import com.ht.connected.home.backend.common.ByteUtil;
@@ -33,10 +35,10 @@ import com.ht.connected.home.backend.userGateway.UserGateway;
  */
 @RestController
 @RequestMapping("/zwave")
-public class ZwaveController extends CommonController {
+public class ZWaveController extends CommonController {
 
     @Autowired
-    ZwaveServiceImpl zwaveService;
+    ZWaveServiceImpl zwaveService;
 
     @Autowired
     UserGatewayRepository userGatewayRepository;
@@ -62,7 +64,7 @@ public class ZwaveController extends CommonController {
             @RequestBody HashMap<String, Object> req) throws JsonProcessingException {
         logger.info("commandKey:" + commandKey + " :::classKey:" + classKey + "version:::" + version);
 
-        ZwaveRequest zwaveRequest = new ZwaveRequest(req, Integer.parseInt(classKey), Integer.parseInt(commandKey), version);
+        ZWaveRequest zwaveRequest = new ZWaveRequest(req, Integer.parseInt(classKey), Integer.parseInt(commandKey), version);
         return zwaveService.execute(req, zwaveRequest, true);
     }
 
@@ -77,7 +79,7 @@ public class ZwaveController extends CommonController {
         String userEmail = getAuthUserEmail();
         int classKey = NetworkManagementInclusionCommandClass.INT_ID;
         int commandKey = (int) req.getOrDefault("mode", 1);
-        ZwaveRequest zwaveRequest = new ZwaveRequest(req, classKey, commandKey, "v1");
+        ZWaveRequest zwaveRequest = new ZWaveRequest(req, classKey, commandKey, "v1");
         zwaveService.execute(req, zwaveRequest, false);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
