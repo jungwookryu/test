@@ -1,16 +1,24 @@
 package com.ht.connected.home.backend.user;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ht.connected.home.backend.gateway.Gateway;
 
 /**
  * Project : HT-CONNECTED-HOME-SERVER Package :
@@ -85,6 +93,21 @@ public class User {
 	@JsonProperty("push_type")
 	private int pushType;
 	
+
+    @ManyToMany(fetch = FetchType.LAZY,cascade=CascadeType.ALL )
+    @JoinTable(name = "user_gateway", 
+               joinColumns = @JoinColumn(name="gateway_no"),
+               inverseJoinColumns = @JoinColumn(name="user_no"))
+    private List<Gateway> gateways;
+    
+    // getter and setter
+    public boolean addGateway(Gateway gateway) {
+        if(gateways == null)
+            gateways = new ArrayList();
+        return gateways.add(gateway);
+    }
+    
+
 	public User(String userEmail, String password) {
 		this.userEmail = userEmail;
 	}

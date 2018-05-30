@@ -9,7 +9,11 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+<<<<<<< HEAD
+import com.ht.connected.home.backend.config.service.MqttConfig;
+=======
 import com.ht.connected.home.backend.MqttConfig;
+>>>>>>> branch 'dev' of https://github.com/injeong/ht-iot-connected-home-backend-server.git
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
 import com.ht.connected.home.backend.service.mqtt.Target;
 

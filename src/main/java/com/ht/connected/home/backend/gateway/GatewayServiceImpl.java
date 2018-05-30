@@ -21,17 +21,37 @@ import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+<<<<<<< HEAD
+import com.ht.connected.home.backend.category.zwave.ZwaveRepository;
+import com.ht.connected.home.backend.category.zwave.ZwaveService;
+import com.ht.connected.home.backend.category.zwave.ZwaveServiceImpl;
+import com.ht.connected.home.backend.category.zwave.Certification.CertificationRepository;
+=======
 import com.ht.connected.home.backend.MqttConfig;
 import com.ht.connected.home.backend.category.zwave.CertificationRepository;
 import com.ht.connected.home.backend.category.zwave.ZwaveRepository;
 import com.ht.connected.home.backend.category.zwave.ZwaveServiceImpl;
+>>>>>>> branch 'dev' of https://github.com/injeong/ht-iot-connected-home-backend-server.git
 import com.ht.connected.home.backend.common.Common;
+<<<<<<< HEAD
+import com.ht.connected.home.backend.config.service.MqttConfig;
+import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
+import com.ht.connected.home.backend.gatewayCategory.GatewayCategory;
+import com.ht.connected.home.backend.gatewayCategory.GatewayCategoryRepository;
+=======
+>>>>>>> branch 'dev' of https://github.com/injeong/ht-iot-connected-home-backend-server.git
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 import com.ht.connected.home.backend.service.mqtt.Target;
 import com.ht.connected.home.backend.user.User;
+<<<<<<< HEAD
+import com.ht.connected.home.backend.user.UserRepository;
+import com.ht.connected.home.backend.userGateway.UserGateway;
+import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
+=======
 import com.ht.connected.home.backend.user.UserGatewayRepository;
 import com.ht.connected.home.backend.user.UserRepository;
 import com.ht.connected.home.backend.userGateway.UserGateway;
+>>>>>>> branch 'dev' of https://github.com/injeong/ht-iot-connected-home-backend-server.git
 
 @Service
 public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implements GatewayService {
@@ -43,7 +63,7 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     enum type {
         register, boot, manager
     }
-    
+
     enum status {
         add, delete
     }
@@ -65,14 +85,24 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     @Qualifier(value = "MqttOutbound")
     MqttPahoMessageHandler messageHandler;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     ZwaveRepository zwaveRepository;
+
     @Autowired
     CertificationRepository certificationRepository;
 
     @Autowired
+    GatewayCategoryRepository gatewayCategoryRepository;
+
+    @Autowired
+    ZwaveService zwaveService;
+
+    
+    @Autowired
     AmqpTemplate rabbitTemplate;
+
+    private ObjectMapper objectMapper = new ObjectMapper();
+
     /**
      * 호스트 등록/부팅 메세지 executor type 이 register 일 경우만 처리 type 이 boot 일 경우에 대한 디비 저정은 추가될수 있음
      * @param mqttTopicHandler
@@ -81,26 +111,17 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
      * @throws Exception
      */
 
-    public List getGatewayList(String authUserEmail) {
-        List<Gateway> lstGateways = new ArrayList<>();
+    public List getGatewayList(String status,String authUserEmail) {
         List<User> users = userRepository.findByUserEmail(authUserEmail);
         User user = users.get(0);
-        List<UserGateway> userGateways = userGatewayRepository.findByUserNo(user.getNo());
-
-        List<Integer> gatewayNos = new ArrayList<Integer>();
-        userGateways.stream().forEach(userGateway -> gatewayNos.add(userGateway.getGatewayNo()));
-        List<Gateway> gateways = gatewayRepository.findByNoIn(gatewayNos);
-
-        gateways.forEach(gateway -> {
-            gateway.setSerial(gateway.getSerial());
-            gateway.setModel(gateway.getModel());
-            gateway.setNickname((String)Common.isNullrtnByobj(gateway.getNickname(),""));
-            User master = getMasterUserNicknameByGatewayNo(gateway.getCreatedUserId());
-            gateway.setUserNickname((String)Common.isNullrtnByobj(master.getNickName(),""));
-            gateway.setUserEmail((String)Common.isNullrtnByobj(master.getUserEmail(),""));
-            lstGateways.add(gateway);
-        });
-        return lstGateways;
+        List<Gateway> gateway = new ArrayList();
+        if(Common.empty(status)) {
+            gateway = gatewayRepository.findByUsers(user);
+        }
+        else {
+            gateway = gatewayRepository.findByStatusAndUsers(status, user);
+        }
+        return gateway;
     }
 
     /**
@@ -135,16 +156,14 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
 
     private User getMasterUserNicknameByGatewayNo(String createdUserId) {
         List<User> users = userRepository.findByUserEmail(createdUserId);
-        if(users.size()>0) {
+        if (users.size() > 0) {
             return users.get(0);
         }
         return new User();
     }
 
     /**
-     * Host reboot category =  "type": "boot"
-     * Host regist category =  "type": "register"
-     * topic alive host 가 마지막으로 부팅되어있는 메세지
+     * Host reboot category = "type": "boot" Host regist category = "type": "register" topic alive host 가 마지막으로 부팅되어있는 메세지
      * @param topic
      * @param payload
      * @throws JsonParseException
@@ -167,12 +186,13 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
                     if (exangeGateway == null) {
                         exangeGateway = gateway;
                         exangeGateway.setCreatedUserId(gateway.getUserEmail());
-                        exangeGateway.setCreatedTime(new Date());
-                    }else {
+                    } else {
                         exangeGateway.setLastModifiedTime(new Date());
                     }
+                    exangeGateway.setCreatedTime(new Date());
                     exangeGateway.setBssid(gateway.getBssid());
-                    exangeGateway.setNickname((String)Common.isNullrtnByobj(gateway.getNickname(), ""));
+                    exangeGateway.setSsid(gateway.getSsid());
+                    exangeGateway.setNickname((String) Common.isNullrtnByobj(gateway.getNickname(), ""));
                     updateGateway(exangeGateway);
                     updateUserGateway(exangeGateway, user.getNo());
                     String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/manager/noti", gateway.getModel(),
@@ -183,7 +203,7 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
 
         }
         if (topic.contains("alive")) {
-            //TODO Host 마지막 상태 시간 저장 하기
+            // TODO Host 마지막 상태 시간 저장 하기
         }
 
     }
@@ -207,8 +227,8 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
 
     @Override
     public void publish(Object t, Object t2) {
-        if(t instanceof String && t2==null) {
-            publish((String)t);
+        if (t instanceof String && t2 == null) {
+            publish((String) t);
         }
 
     }
@@ -216,20 +236,31 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     @Override
     @Transactional
     public void delete(int no) {
-        //db 삭제
+        // db 삭제
         updateDeleteDB(no);
-        //host 삭제 모드 요청 publish
-        
+        // host 삭제 모드 요청 publish
+
     }
-    
+
     private void updateDeleteDB(int gatewayNo) {
         gatewayRepository.setModifyStatusForNo(status.delete.name(), gatewayNo);
         userGatewayRepository.setModifyStatusForGatewayNo(status.delete.name(), gatewayNo);
     }
-    
+
     private void deleteDB(int gatewayNo) {
         gatewayRepository.delete(gatewayNo);
         userGatewayRepository.deleteByGatewayNo(gatewayNo);
     }
 
+    @Override
+    public void deleteCategory(GatewayCategory gatewayCategory) {
+
+        gatewayCategoryRepository.deleteByGatewayNoAndCategoryNo(gatewayCategory.getGatewayNo(), gatewayCategory.getCategoryNo());
+
+        if (CategoryActive.gateway.zwave.name().equals(gatewayCategory.getCategory())) {
+            int gatewayCategoryCnt = gatewayCategoryRepository.deleteByGatewayNoAndCategoryNo(gatewayCategory.getGatewayNo(), CategoryActive.gateway.zwave.ordinal());
+            int zwaveCnt = zwaveRepository.deleteByGatewayNo(gatewayCategory.getGatewayNo());
+        }
+
+    }
 }

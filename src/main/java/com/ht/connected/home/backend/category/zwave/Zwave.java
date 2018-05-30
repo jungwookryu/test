@@ -1,5 +1,6 @@
 package com.ht.connected.home.backend.category.zwave;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,12 +9,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
 
 @Entity
 @Table(name = "zwave")
@@ -36,8 +41,8 @@ public class Zwave {
     int nodeId;
     
     @JsonProperty("endpointId")
-    @Column(name = "endpoint_id")
-    int endpointid;
+    @Transient
+    int endpointId;
 
     @Column(name = "nickname")
     String nickname;
@@ -57,13 +62,67 @@ public class Zwave {
     @Column(name = "lastmodified_date")
     Date lastModifiedDate;
     
+    @Column(name = "security")
+    @JsonProperty("security")
+    String security;
+    
+    @Column(name = "homeid")
+    @JsonProperty("homeid")
+    String homeid;
+    
+    @Column(name = "basic")
+    @JsonProperty("basic")
+    String basic;
+    
+    @Column(name = "generic")
+    @JsonProperty("generic")
+    String generic;
+    
+    @Column(name = "specific")
+    @JsonProperty("specific")
+    String specific;
+    
+    @Column(name = "lib_type")
+    @JsonProperty("lib_type")
+    String libType;
+    
+    @Column(name = "proto_ver")
+    @JsonProperty("proto_ver")
+    String protoVer;
+    
+    @Column(name = "app_ver")
+    @JsonProperty("app_ver")
+    String appVer;
+    
+    @Column(name = "crc_cap")
+    @JsonProperty("crc_cap")
+    String crcCap;
+    
+    @Column(name = "s2_key_valid")
+    @JsonProperty("s2_key_valid")
+    String s2KeyValid;
+    
+    @Column(name = "s2_grnt_keys")
+    @JsonProperty("s2_grnt_keys")
+    String s2GrntKeys;
+    
     @Column(name = "endpoint")
     @JsonProperty("endpoint")
     String sEndpoint;
     
-    @Transient
-    List<Endpoint> endpoint;
+    @OneToMany
+    @JoinTable(name = "zwave_endpoint",
+            joinColumns = @JoinColumn(name="zwave_no"),
+            inverseJoinColumns = @JoinColumn(name="endpoint_no"))
+    List<Endpoint> endpoints;
     
+    public boolean addEndpoints(Endpoint endpoint) {
+        
+        if(endpoints == null)
+            endpoints = new ArrayList();
+        return endpoints.add(endpoint);
+        
+    }
     
     public int getNo() {
         return no;
@@ -87,14 +146,6 @@ public class Zwave {
 
     public void setNodeId(int nodeId) {
         this.nodeId = nodeId;
-    }
-
-    public int getEndpointId() {
-        return endpointid;
-    }
-
-    public void setEndpointId(int endpointId) {
-        this.endpointid = endpointId;
     }
 
     public String getNickname() {
@@ -145,14 +196,11 @@ public class Zwave {
         this.lastModifiedDate = lastModifiedDate;
     }
 
-    public List<Endpoint> getEndpoint() {
-        return endpoint;
-    }
 
-    public void setEndpoint(List<Endpoint> endpoint) {
-        this.endpoint = endpoint;
+    public List<Endpoint> getEndpoints(){
+        return endpoints;
     }
-
+    
     /**
      * @return the sndpoint
      */
@@ -172,8 +220,115 @@ public class Zwave {
      */
     @Override
     public String toString() {
-        return "Zwave [no=" + no + ", gatewayNo=" + gatewayNo + ", nodeId=" + nodeId + ", endpointId=" + endpointid + ", nickname=" + nickname + ", cmd=" + cmd + ", event=" + event + ", status="
+        return "Zwave [no=" + no + ", gatewayNo=" + gatewayNo + ", nodeId=" + nodeId + ", endpointId=" + endpointId + ", nickname=" + nickname + ", cmd=" + cmd + ", event=" + event + ", status="
                 + status + ", creratedTime=" + creratedTime + ", lastModifiedDate=" + lastModifiedDate + ", endpoint=" + sEndpoint + "]";
     }
 
+    public int getEndpointId() {
+        return endpointId;
+    }
+
+    public void setEndpointId(int endpointId) {
+        this.endpointId = endpointId;
+    }
+
+    public String getSecurity() {
+        return security;
+    }
+
+    public void setSecurity(String security) {
+        this.security = security;
+    }
+
+    public String getHomeid() {
+        return homeid;
+    }
+
+    public void setHomeid(String homeid) {
+        this.homeid = homeid;
+    }
+
+    public String getBasic() {
+        return basic;
+    }
+
+    public void setBasic(String basic) {
+        this.basic = basic;
+    }
+
+    public String getGeneric() {
+        return generic;
+    }
+
+    public void setGeneric(String generic) {
+        this.generic = generic;
+    }
+
+    public String getSpecific() {
+        return specific;
+    }
+
+    public void setSpecific(String specific) {
+        this.specific = specific;
+    }
+
+    public String getLibType() {
+        return libType;
+    }
+
+    public void setLibType(String libType) {
+        this.libType = libType;
+    }
+
+    public String getProtoVer() {
+        return protoVer;
+    }
+
+    public void setProtoVer(String protoVer) {
+        this.protoVer = protoVer;
+    }
+
+    public String getAppVer() {
+        return appVer;
+    }
+
+    public void setAppVer(String appVer) {
+        this.appVer = appVer;
+    }
+
+    public String getCrcCap() {
+        return crcCap;
+    }
+
+    public void setCrcCap(String crcCap) {
+        this.crcCap = crcCap;
+    }
+
+    public String getS2KeyValid() {
+        return s2KeyValid;
+    }
+
+    public void setS2KeyValid(String s2KeyValid) {
+        this.s2KeyValid = s2KeyValid;
+    }
+
+    public String getS2GrntKeys() {
+        return s2GrntKeys;
+    }
+
+    public void setS2GrntKeys(String s2GrntKeys) {
+        this.s2GrntKeys = s2GrntKeys;
+    }
+
+    public String getsEndpoint() {
+        return sEndpoint;
+    }
+
+    public void setsEndpoint(String sEndpoint) {
+        this.sEndpoint = sEndpoint;
+    }
+
+    public void setEndpoints(List<Endpoint> endpoints) {
+        this.endpoints = endpoints;
+    }
 }
