@@ -118,5 +118,30 @@ public class SipDeviceService {
         }
         return deviceJsonArray;
     }
+    
+    /**
+     * 기기 등록 여부 검사
+     * 
+     * @param strSN
+     * @return
+     */
+    public String checkRegisteredDevice(String strSN) {
+        String errorCode = "00";
+        SipDevice device = deviceRepository.findBySerialNumber(strSN);
+        if (isNull(device)) {
+            // Not registred device
+            errorCode = "01";
+        } else if (device.getDeviceStatus().equals("registered")) {
+            // Registered device
+            errorCode = "02";
+        } else if (errorCode.equals("00")) {
+            SipShare share = shareRepository.findBySerialNumber(strSN);
+            if (!isNull(share)) {
+                // Shared device
+                errorCode = "03";
+            }
+        }
+        return errorCode;
+    }
 
 }

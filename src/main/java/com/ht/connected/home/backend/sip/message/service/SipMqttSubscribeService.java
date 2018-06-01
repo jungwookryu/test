@@ -96,6 +96,24 @@ public class SipMqttSubscribeService {
     }
     
     /**
+     * 기기 등록 여부 검사
+     * 
+     * @param request
+     */
+    public void getDeviceRegisterValidCheck(SipMqttRequestMessageDto request) {
+        String serialNumber = request.getBody().get("deviceSN").toString();
+        String errCode = deviceService.checkRegisteredDevice(serialNumber);
+        HashMap<String, String> body = new HashMap<>();
+        if (errCode.equals("00") == false) {
+            ERROR_CORD errorCode = ERROR_CORD.getMsg(errCode);
+            String errMsg = errorCode.getMsg();
+            body.put("reason", errMsg);
+            request.setResult(false);
+        }
+        mqttPublishService.publish(request, body);
+    }
+    
+    /**
      * 공유신청 상태 조회
      * 
      * @param request
@@ -156,5 +174,41 @@ public class SipMqttSubscribeService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    /**
+     * 기기 등록 여부 예외 메세지
+     * 
+     * @author 구정화
+     *
+     */
+    private enum ERROR_CORD {
+        UNKNOWN("알 수 없는 에러입니다.", "99"), OK_Device("등록 가능한 기기입니다.", "00"), Invalid_serial("잘못된 시리얼 번호입니다.",
+                "01"), Registered_serial("이미 등록된 시리얼 번호입니다.", "02"), Shared_serial("공유 중인 시리얼 번호입니다.", "03");
+
+        private String msg;
+        private String errorCode;
+
+        private ERROR_CORD(String msg, String errorCode) {
+            this.msg = msg;
+            this.errorCode = errorCode;
+        }
+
+        public static ERROR_CORD getMsg(String errCode) {
+            for (ERROR_CORD errorData : ERROR_CORD.values()) {
+                if (errorData.getErrorCode().equals(errCode))
+                    return errorData;
+            }
+            return UNKNOWN;
+        }
+
+        public String getMsg() {
+            return msg;
+        }
+
+        public String getErrorCode() {
+            return errorCode;
+        }
+
     }
 }
