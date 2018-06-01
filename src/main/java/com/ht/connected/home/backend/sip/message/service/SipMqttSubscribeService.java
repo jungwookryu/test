@@ -72,6 +72,20 @@ public class SipMqttSubscribeService {
     }
     
     /**
+     * 도어벨정보요청
+     * 
+     * @param request
+     */
+    public void devices(SipMqttRequestMessageDto request) {
+        HashMap<String, List> body = new HashMap<>();
+        String userId = request.getBody().get("userID").toString();
+        body.put("owner", deviceService.getAccountInfo(userId, "owner"));
+        body.put("shared", deviceService.getAccountInfo(userId, "shared"));
+        body.put("ownerShared", deviceService.getAccountInfo(userId, "ownerShared"));
+        mqttPublishService.publish(request, body);
+    }
+    
+    /**
      * 공유신청 상태 조회
      * 
      * @param request
