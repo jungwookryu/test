@@ -16,26 +16,27 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ht.connected.home.backend.MqttConfig;
 import com.ht.connected.home.backend.category.zwave.ZWaveRepository;
 import com.ht.connected.home.backend.category.zwave.ZWaveService;
 import com.ht.connected.home.backend.category.zwave.ZWaveServiceImpl;
 import com.ht.connected.home.backend.category.zwave.certification.CertificationRepository;
 import com.ht.connected.home.backend.common.Common;
+import com.ht.connected.home.backend.config.service.MqttConfig;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategory;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategoryRepository;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 import com.ht.connected.home.backend.service.mqtt.Target;
 import com.ht.connected.home.backend.user.User;
-import com.ht.connected.home.backend.user.UserGatewayRepository;
 import com.ht.connected.home.backend.user.UserRepository;
 import com.ht.connected.home.backend.userGateway.UserGateway;
+import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
 
 @Service
 public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implements GatewayService {

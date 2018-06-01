@@ -21,12 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.category.zwave.ZWaveController;
 import com.ht.connected.home.backend.controller.rest.CommonController;
-import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategory;
 import com.ht.connected.home.backend.user.User;
-import com.ht.connected.home.backend.user.UserGatewayRepository;
 import com.ht.connected.home.backend.user.UserRepository;
 import com.ht.connected.home.backend.userGateway.UserGateway;
+import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
 
 /**
  * gateway(호스트)관련 요청 처리
