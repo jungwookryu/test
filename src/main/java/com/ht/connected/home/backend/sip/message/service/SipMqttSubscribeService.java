@@ -86,6 +86,16 @@ public class SipMqttSubscribeService {
     }
     
     /**
+     * 푸시토큰 업데이트
+     * 
+     * @param request
+     */
+    public void pushToken(SipMqttRequestMessageDto request) {        
+        userService.updateUserToken(request);
+        mqttPublishService.publish(request, null);        
+    }
+    
+    /**
      * 공유신청 상태 조회
      * 
      * @param request
