@@ -1,6 +1,7 @@
 package com.ht.connected.home.backend.sip.message.service;
 
 import java.beans.Introspector;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -93,6 +94,26 @@ public class SipMqttSubscribeService {
             String strSIPAOR = request.getBody().get("sipAOR").toString();
             deviceService.shareDevice(strSerial, strOwnerAccount, strSharedAccount, strRequestType, strSIPAOR);
             mqttPublishService.publish(request, null);
+        }
+    }
+    
+    public void ownerDeviceSharedStatus(SipMqttRequestMessageDto request) {
+        if (request.getCrudType().equals("get")) {
+            /**
+             * requestOwnerSharedList
+             */
+            String userId = request.getBody().get("userID").toString();
+            ArrayList arrayList = deviceService.getAccountInfo(userId, "ownerShared");
+            HashMap<String, List> body = new HashMap<>();
+            body.put("devices", arrayList);
+            mqttPublishService.publish(request, body);
+        } else if (request.getCrudType().equals("set")) {
+            String strDevSerial = request.getBody().get("deviceSN").toString();
+            String strSharedAccount = request.getBody().get("sharedUserID").toString();
+            String strSharedState = request.getBody().get("sharedStatus").toString();
+            String strOwnerAccount = request.getTopic()[2];
+            shareService.updateSharedStatus(strOwnerAccount, strSharedState, strDevSerial, strSharedAccount);
+            mqttPublishService.publish(request, objectMapper.valueToTree(request));
         }
     }
     

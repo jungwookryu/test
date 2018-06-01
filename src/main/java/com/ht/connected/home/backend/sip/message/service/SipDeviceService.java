@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ht.connected.home.backend.sip.message.model.dto.SipMqttRequestMessageDto;
+import com.ht.connected.home.backend.sip.message.model.dto.account.info.SipOwnerDeviceDto;
+import com.ht.connected.home.backend.sip.message.model.dto.account.info.SipOwnerSharedDeviceDto;
+import com.ht.connected.home.backend.sip.message.model.dto.account.info.SipSharedDeviceDto;
 import com.ht.connected.home.backend.sip.message.model.entity.SipDevice;
 import com.ht.connected.home.backend.sip.message.model.entity.SipShare;
 import com.ht.connected.home.backend.sip.message.repository.SipDeviceRepository;
@@ -85,5 +88,35 @@ public class SipDeviceService {
         shareRepository.save(shares);
     }
     
+    public ArrayList getAccountInfo(String strUserId, String strUserType) {
+        ArrayList deviceJsonArray = new ArrayList();
+        if (strUserType.equalsIgnoreCase("owner")) {
+            List<SipDevice> devices = deviceRepository.findByOwnerAccountAndOwnership(strUserId, "owner");
+            if (!isNull(devices)) {
+                devices.stream().forEach(device -> {
+                    SipOwnerDeviceDto ownerDevice = new SipOwnerDeviceDto(device);
+                    deviceJsonArray.add(ownerDevice);    
+                });
+            }
+        } else if (strUserType.equalsIgnoreCase("shared")) {
+            List<SipShare> shares = shareRepository.findBySharedAccountAndOwnershipAndSharedStatus(strUserId, "shared",
+                    "accept");
+            if (!isNull(shares)) {               
+                shares.stream().forEach(share -> {
+                    SipSharedDeviceDto sharedDevice = new SipSharedDeviceDto(share);
+                    deviceJsonArray.add(sharedDevice);    
+                });
+            }
+        } else if (strUserType.equalsIgnoreCase("ownerShared")) {
+            List<SipShare> shares = shareRepository.findByOwnerAccountAndOwnership(strUserId, "shared");
+            if (!isNull(shares)) {
+                shares.stream().forEach(share -> {
+                    SipOwnerSharedDeviceDto ownerSharedDevice = new SipOwnerSharedDeviceDto(share);
+                    deviceJsonArray.add(ownerSharedDevice);    
+                });
+            }
+        }
+        return deviceJsonArray;
+    }
 
 }
