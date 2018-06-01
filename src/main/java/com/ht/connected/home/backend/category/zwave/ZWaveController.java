@@ -25,9 +25,9 @@ import com.ht.connected.home.backend.category.zwave.constants.commandclass.Netwo
 import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 import com.ht.connected.home.backend.user.User;
-import com.ht.connected.home.backend.user.UserGatewayRepository;
 import com.ht.connected.home.backend.user.UserRepository;
 import com.ht.connected.home.backend.userGateway.UserGateway;
+import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
 
 /**
  * Rest API Zwave 요청 처리 컨트롤러
