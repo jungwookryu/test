@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ht.connected.home.backend.category.zwave.ZwaveRequest;
+import com.ht.connected.home.backend.category.zwave.ZWaveRequest;
 import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
@@ -26,7 +26,7 @@ public class CertificationServiceImpl extends CrudServiceImpl<Certification, Int
      * 인증프로토콜의 경우 디비에 JSON을 저장하는 기능
      * @param certPayload
      */
-    public void updateCertification(ZwaveRequest zwaveRequest, String payload) {
+    public void updateCertification(ZWaveRequest zwaveRequest, String payload) {
         Certification certification = new Certification();
         certification.setPayload(payload);
         certification.setController(CategoryActive.gateway.zwave.name());

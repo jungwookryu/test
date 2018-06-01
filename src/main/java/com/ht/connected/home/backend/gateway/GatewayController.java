@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ht.connected.home.backend.category.zwave.ZwaveController;
+import com.ht.connected.home.backend.category.zwave.ZWaveController;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategory;
@@ -47,7 +47,7 @@ public class GatewayController extends CommonController {
     UserGatewayRepository userGatewayRepository;
 
     @Autowired
-    ZwaveController zwaveController;
+    ZWaveController zwaveController;
 
     @Autowired
     public GatewayController(GatewayService gateWayService) {

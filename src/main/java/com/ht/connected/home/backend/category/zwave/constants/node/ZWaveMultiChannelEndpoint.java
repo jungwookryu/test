@@ -17,14 +17,7 @@ public class ZWaveMultiChannelEndpoint extends ZWaveEndpoint {
     public static final byte ALARM_SENSOR = (byte)0xA1;
     public static final byte AV_CONTROL_POINT = 0x03;
     public static final byte BINARY_SENSOR = 0x20;
-<<<<<<< HEAD
-    //플러그 추가
-    public static final byte BINARY_SWITCH = 0x25;
-    //doorlock
-    //public static final byte BINARY_SWITCH = 0x10; 
-=======
     public static final byte BINARY_SWITCH = 0x10;
->>>>>>> branch 'dev' of https://github.com/injeong/ht-iot-connected-home-backend-server.git
     public static final byte DISPLAY = 0x04;
     public static final byte ENERGY_CONTROL = 0x40;
     public static final byte METER = 0x31;

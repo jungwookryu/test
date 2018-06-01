@@ -6,13 +6,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-public interface ZwaveRepository extends JpaRepository<Zwave, Integer>{
+public interface ZWaveRepository extends JpaRepository<ZWave, Integer>{
 
-    List<Zwave> findByGatewayNoAndCmdAndStatus(int no, String cmd, String status);
+    List<ZWave> findByGatewayNoAndCmdAndStatus(int no, String cmd, String status);
     
-    List<Zwave> findByNoAndGatewayNoIn(int no, List gatewayNos);
+    List<ZWave> findByNoAndGatewayNoIn(int no, List gatewayNos);
     
-    List<Zwave> findByGatewayNo(int gatewayNos);
+    List<ZWave> findByGatewayNo(int gatewayNos);
     
     @Modifying
     @Query("update Zwave z set z.event = ?1, z.status = ?2  where z.no = ?3")

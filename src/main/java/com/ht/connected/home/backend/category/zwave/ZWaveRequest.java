@@ -14,7 +14,7 @@ import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ZwaveRequest extends Zwave{
+public class ZWaveRequest extends ZWave{
 
     @JsonProperty("model")
     private String model;
@@ -45,7 +45,7 @@ public class ZwaveRequest extends Zwave{
      * 경로를 배열로 받을경우 생성자
      * @param topic
      */
-    public ZwaveRequest(String[] topic) {
+    public ZWaveRequest(String[] topic) {
         if (topic.length > 2) {
             this.model = topic[3];
             this.serialNo = topic[4];
@@ -68,7 +68,7 @@ public class ZwaveRequest extends Zwave{
      * @param commandKey
      * @param version
      */
-    public ZwaveRequest(HashMap<String, Object> req, int classKey, int commandKey, String version) {
+    public ZWaveRequest(HashMap<String, Object> req, int classKey, int commandKey, String version) {
         this.serialNo = req.getOrDefault("serial","").toString();
         super.setNodeId(Integer.valueOf(req.getOrDefault("nodeId",0).toString()));
         super.setEndpointId(Integer.valueOf(req.getOrDefault("endpointId",0).toString()));

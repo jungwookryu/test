@@ -19,13 +19,13 @@ import com.ht.connected.home.backend.service.base.MqttBase;
  * @author 구정화
  *
  */
-public interface ZwaveService extends CrudService<Zwave, Integer>, MqttBase<Object, Object>{
+public interface ZWaveService extends CrudService<ZWave, Integer>, MqttBase<Object, Object>{
     
-    ResponseEntity execute(HashMap<String, Object> req, ZwaveRequest zwaveRequest, boolean isCert) throws JsonProcessingException;
+    ResponseEntity execute(HashMap<String, Object> req, ZWaveRequest zwaveRequest, boolean isCert) throws JsonProcessingException;
 
-    void subscribe(ZwaveRequest zwaveRequest, String payload) throws JsonParseException, JsonMappingException, IOException, Exception;
+    void subscribe(ZWaveRequest zwaveRequest, String payload) throws JsonParseException, JsonMappingException, IOException, Exception;
     
-    ResponseEntity publish(HashMap<String, Object> req, ZwaveRequest zwaveRequest) throws JsonProcessingException;
+    ResponseEntity publish(HashMap<String, Object> req, ZWaveRequest zwaveRequest) throws JsonProcessingException;
 
     void execute(Map map, boolean isCert) throws JsonProcessingException;
     

@@ -24,8 +24,8 @@ import org.springframework.messaging.MessagingException;
 import org.springframework.util.StringUtils;
 
 import com.ht.connected.home.backend.category.ir.IRService;
-import com.ht.connected.home.backend.category.zwave.ZwaveRequest;
-import com.ht.connected.home.backend.category.zwave.ZwaveService;
+import com.ht.connected.home.backend.category.zwave.ZWaveRequest;
+import com.ht.connected.home.backend.category.zwave.ZWaveService;
 import com.ht.connected.home.backend.gateway.Gateway;
 import com.ht.connected.home.backend.gateway.GatewayService;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
@@ -60,7 +60,7 @@ public class MqttConfig {
     String mqttTopicManagerNoti;
 
     @Autowired
-    private ZwaveService zwaveService;
+    private ZWaveService zwaveService;
     @Autowired
     private GatewayService gateWayService;
 
@@ -172,7 +172,7 @@ public class MqttConfig {
                             }
                             // zwave service
                             if (CategoryActive.gateway.zwave.name().equals(topicSplited[5].toString())) {
-                                ZwaveRequest zwaveRequest = new ZwaveRequest(topicSplited);
+                                ZWaveRequest zwaveRequest = new ZWaveRequest(topicSplited);
                                 if (CategoryActive.zwave.certi.name().equals(topicSplited[6].toString())) {
                                     zwaveService.subscribe(zwaveRequest, payload);
                                 }
