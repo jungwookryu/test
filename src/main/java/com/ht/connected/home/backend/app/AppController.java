@@ -8,6 +8,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.category.ir.IR;
 import com.ht.connected.home.backend.category.ir.IRController;
+import com.ht.connected.home.backend.config.service.MqttConfig;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 
 @RestController
 @RequestMapping("/app")
-@DependsOn(value="MqttInbound")
+@DependsOn("MqttInbound")
 public class AppController extends CommonController {
 
     IRController iRController;
@@ -34,7 +36,7 @@ public class AppController extends CommonController {
     }
 
     public enum Command {
-        start, stop
+        start, stop, add, del
     }
 
     /**
@@ -52,11 +54,11 @@ public class AppController extends CommonController {
         if (null != hashMap.get("irindex")) {
             //subnumber
             int irindex = (int) hashMap.get("irindex");
-            if ("del".equals(command)) {
+            if (Command.del.name().equals(command)) {
                 iRController.deleteIR(irindex);
 
             }
-            if ("add".equals(command)) {
+            if (Command.add.name().equals(command)) {
                 String serial = (String) hashMap.getOrDefault("serial", "");
                 String model = (String) hashMap.getOrDefault("model", "");
                 String irnickname = (String) hashMap.getOrDefault("irnickname", "");
@@ -65,8 +67,8 @@ public class AppController extends CommonController {
                 ir.setSerial(serial);
                 ir.setModel(model);
                 ir.setIrName(irnickname);
-                ir.setAction("add");
-                ir.setStatus("add");
+                ir.setAction(command);
+                ir.setStatus(command);
                 ir.setDevType("irchannel::" + Integer.toString(irchannel));
                 ir.setIrType(irindex);
                 ir.setIrType(irindex);
@@ -169,7 +171,7 @@ public class AppController extends CommonController {
                     List<IR> irs = rss.getBody();
                     for (int i = 0; i < irs.size(); i++) {
                         IR ir = irs.get(i);
-                        if(!"add".equals(ir.getAction())) {
+                        if(!Command.add.name().equals(ir.getAction())) {
                             rtnIrbuttonList.add(ir.getAction());
                         }
                     }

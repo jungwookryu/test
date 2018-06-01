@@ -7,15 +7,18 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.stereotype.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.config.security.SecretKeyProvider;
 
+@Controller
 public class CommonController extends Common {
 	@Autowired
 	private SecretKeyProvider keyProvider;

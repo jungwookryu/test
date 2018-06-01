@@ -37,7 +37,7 @@ public class IRController extends CommonController {
 	}
 	
 	public enum Devicetype{
-	    aircon, tv, fan 
+	    aircon, tv, fan;
 	}
 
 	/**
