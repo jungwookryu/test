@@ -18,7 +18,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class IR {
-
+    
+    public enum Command {
+        start, stop, add, del
+    }
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("no")

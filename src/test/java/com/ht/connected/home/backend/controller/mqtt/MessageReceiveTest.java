@@ -61,14 +61,14 @@ public class MessageReceiveTest {
 			randomSubSuberIds = suberIds.subList(0, rdm.nextInt(suberIds.size()) + 1);
 		}
 
-		StringBuilder message = new StringBuilder("您好！");
+		StringBuilder message = new StringBuilder("message");
 
 		if (CollectionUtils.isNotEmpty(randomSubSuberIds)) {
 			message.append(randomSubSuberIds + "!");
 		}
 
 		if (StringUtils.isNotBlank(productName)) {
-			message.append("您有一条来自 " + productName + " 的消息。");
+			message.append("append" + productName + "product");
 		}
 
 		Thread.sleep(2000);
