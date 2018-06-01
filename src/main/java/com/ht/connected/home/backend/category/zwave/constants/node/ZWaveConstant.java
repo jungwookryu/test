@@ -150,6 +150,8 @@ public class ZWaveConstant {
             }
         }
         enum SwitchControl{
+            SWITCH_ALL_ON
+            
             
         }
     }
