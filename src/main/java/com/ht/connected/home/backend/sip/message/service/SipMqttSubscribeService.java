@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.sip.message.model.dto.SipMqttRequestMessageDto;
 import com.ht.connected.home.backend.sip.message.model.dto.SipSharedDeviceDto;
+import com.ht.connected.home.backend.sip.message.model.entity.SipEvent;
 
 
 /**
@@ -41,6 +42,9 @@ public class SipMqttSubscribeService {
     
     @Autowired
     private SipShareService shareService;
+    
+    @Autowired
+    private SipEventService eventService;
     
     /**
      * 회원가입
@@ -157,6 +161,19 @@ public class SipMqttSubscribeService {
             shareService.updateSharedStatus(strOwnerAccount, strSharedState, strDevSerial, strSharedAccount);
             mqttPublishService.publish(request, objectMapper.valueToTree(request));
         }
+    }
+    
+    /**
+     * 이벤트 기록 조회
+     * 
+     * @param request
+     */
+    public void getEventList(SipMqttRequestMessageDto request) {
+        String userId = request.getBody().get("userID").toString();
+        List<SipEvent> events = eventService.getEvents(userId);
+        HashMap<String, List<SipEvent>> body = new HashMap<>();
+        body.put("list", events);
+        mqttPublishService.publish(request, body);
     }
     
     public void subscribe(Message<?> message) {
