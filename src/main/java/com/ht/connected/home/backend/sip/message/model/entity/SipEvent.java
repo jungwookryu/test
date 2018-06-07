@@ -11,6 +11,7 @@ import javax.persistence.NamedNativeQuery;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -75,7 +76,7 @@ public class SipEvent {
     @Column(name = "sdb_device_type")
     private String deviceType;
 
-    @Column(name = "sdb_dateTime")
+    @Column(name = "sdb_datetime")
     private String dateTime;
 
     @Column(name = "sdb_event_type")
@@ -98,6 +99,7 @@ public class SipEvent {
     @Column(name = "sdb_location_id")
     private String locationId;
 
+    @Transient
     private String devNickName;
     
 
