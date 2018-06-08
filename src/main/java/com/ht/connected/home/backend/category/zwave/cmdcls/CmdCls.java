@@ -45,12 +45,12 @@ public class CmdCls {
     String realVer;
     
     @Column(name = "rpt_cmd")
-    @JsonProperty("rpt_cmd")
+//    @JsonProperty("rpt_cmd")
     String rptCmd;
 
     @Column(name = "endpoint_no")
     @JsonProperty("endpoint_no")
-    String endpointNo;
+    int endpointNo;
     
     @ManyToOne(optional = false)
     @JoinTable(name = "endpoint_cmdcls",
@@ -106,11 +106,11 @@ public class CmdCls {
         this.no = no;
     }
 
-    public String getEndpointNo() {
+    public int getEndpointNo() {
         return endpointNo;
     }
 
-    public void setEndpointNo(String endpointNo) {
+    public void setEndpointNo(int endpointNo) {
         this.endpointNo = endpointNo;
     }
 

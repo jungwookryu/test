@@ -42,21 +42,16 @@ public class Endpoint {
     @JsonProperty("generic")
     String generic;
 
-    @Column(name = "specific")
+    @Column(name = "`specific`")
     @JsonProperty("specific")
     String specific;
 
-    @Column(name = "nickname")
-    @JsonProperty("nickname")
-    String nickname;
-
     @Column(name = "cmd_cls")
-    @JsonProperty("cmd_cls")
     String cmd_cls;
 
     @Column(name = "zwave_no")
     @JsonProperty("zwave_no")
-    String zwaveNo;
+    int zwaveNo;
   
     @ManyToOne(optional = false)
     @JoinTable(name = "zwave_endpoint",
@@ -109,14 +104,6 @@ public class Endpoint {
         this.specific = specific;
     }
 
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
     public String getCmd_cls() {
         return cmd_cls;
     }
@@ -125,11 +112,11 @@ public class Endpoint {
         this.cmd_cls = cmd_cls;
     }
 
-    public String getZwaveNo() {
+    public int getZwaveNo() {
         return zwaveNo;
     }
 
-    public void setZwaveNo(String zwaveNo) {
+    public void setZwaveNo(int zwaveNo) {
         this.zwaveNo = zwaveNo;
     }
 

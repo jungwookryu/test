@@ -15,12 +15,10 @@ import javax.transaction.Transactional;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
@@ -321,20 +319,18 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
         if (!isNull(gateway)) {
             List<ZWave> lstZwave = zwaveRepository.findByGatewayNo(gateway.getNo());
-//            List<Zwave> lstZwave = zwaveRepository.findByGatewayNoAndCmdAndStatus(gateway.getNo(),
-//                    Integer.toString(NetworkManagementInclusionCommandClass.INT_ID) + "/" + Integer.toString(NetworkManagementInclusionCommandClass.NODE_ADD_STATUS), "");
             ZWaveReport zwaveReport = objectMapper.readValue(data, ZWaveReport.class);
             // 기기 리스트에 대한 정보일 경우
             if (zwaveReport.getNodelist() != null) {
                 List<ZWave> nodeListItem = (List<ZWave>) zwaveReport.getNodelist();
                 for (int i = 0; i < nodeListItem.size(); i++) {
+                    
                     ZWave nodeItem = nodeListItem.get(i);
                     int nodeId = nodeItem.getNodeId();
                     boolean bInsert= false;
                     for (int j = 0; j < lstZwave.size(); j++) {
                         ZWave zwave = lstZwave.get(j);
                         //host 노드리스트와 DB 노드리스트를 비교하여 없으면 insert시킴
-                        //TODO nodeId로 변경하기로함
                         //int nodeId = (int) nodeItem.getOrDefault("nodeId", 0);
                         // node status "" 경우에는 node 가 신규로 들어왔으나 host 에서 신규노드로 확인이 안된경 node status 0x01일 경우 신규 등록 기기
                         if (nodeId == zwave.getNodeId()) {
@@ -382,12 +378,18 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                     */
                     //등록안된 node 일경우 insert함.
                     if(!bInsert) {
-                        zwaveRepository.save(nodeItem);
-                        List<Endpoint> newEndpoints = nodeItem.getEndpoints();
+                        nodeItem.setGatewayNo(gateway.getNo());
+                        nodeItem.setCreratedTime(new Date());
+                        ZWave saveZwave = zwaveRepository.save(nodeItem);
+                        List<Endpoint> newEndpoints = nodeItem.getEndpoint();
                         for(int iE = 0; iE<newEndpoints.size();iE++) {
-                            endpointRepository.save(newEndpoints.get(iE));
+                            Endpoint endpoint = newEndpoints.get(iE);
+                            endpoint.setZwaveNo(saveZwave.getNo());
+                            Endpoint saveEndpoint = endpointRepository.save(endpoint);
                             List<CmdCls> newCmdCls = newEndpoints.get(iE).getCmdclss();
                             for(int iCmdCls = 0; iE< newCmdCls.size();iCmdCls++) {
+                                CmdCls cmdcls = newCmdCls.get(iCmdCls);
+                                cmdcls.setEndpointNo(saveEndpoint.getNo());
                                 cmdClsRepository.save(newCmdCls.get(iCmdCls));
                             }   
                         }

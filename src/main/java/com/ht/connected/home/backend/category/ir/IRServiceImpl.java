@@ -29,17 +29,13 @@ import com.ht.connected.home.backend.service.mqtt.Target;
 
 @Service
 public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRService {
-    public IRServiceImpl(JpaRepository<IR, Integer> jpaRepository) {
-        super(jpaRepository);
-        // TODO Auto-generated constructor stub
-    }
+    
 
     Logger logger = LoggerFactory.getLogger(IRServiceImpl.class);
 
     public enum Type {
         add, control
     }
-
     @Autowired
     IRRepository irRepository;
     
@@ -51,6 +47,10 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     @Qualifier(value="MqttOutbound")
     MqttPahoMessageHandler  messageHandler;
     
+    public IRServiceImpl(IRRepository irRepository) {
+        super(irRepository);
+        this.irRepository = irRepository;
+    }
     @Override
     public List<IR> getIRByUser(String userEmail) {
         return irRepository.findByUserEmailAndStatus(userEmail, Type.add.name());
