@@ -2,6 +2,12 @@ package com.ht.connected.home.backend.sip.media.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * 미디어 서버에서 MQTT Publish 를 할 경우 사용될 데이터 모델 클래스 
+ * 
+ * @author 구정화
+ *
+ */
 public class SipMediaMqttResponseMessageDto {
 
 	@JsonProperty(value = "Type")

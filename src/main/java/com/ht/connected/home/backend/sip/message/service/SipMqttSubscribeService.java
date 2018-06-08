@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ import com.ht.connected.home.backend.sip.message.model.entity.SipEvent;
 @Service
 public class SipMqttSubscribeService {
 
-    private static final Log LOGGER = LogFactory.getLog(SipMqttSubscribeService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SipMqttSubscribeService.class);
 
     @Autowired
     private ObjectMapper objectMapper;

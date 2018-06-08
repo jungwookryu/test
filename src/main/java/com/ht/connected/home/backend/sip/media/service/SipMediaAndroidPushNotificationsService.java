@@ -3,23 +3,31 @@ package com.ht.connected.home.backend.sip.media.service;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.ht.connected.home.backend.service.push.FirebasePushClient;
 import com.ht.connected.home.backend.sip.media.model.dto.SipMediaMqttRequestMessageDto;
 
+
+/**
+ * FCM 푸시 발송 요청 서비스
+ * 
+ * @author 구정화
+ *
+ */
 @Service
 public class SipMediaAndroidPushNotificationsService {
 
-    private static final Log LOGGER = LogFactory.getLog(SipMediaAndroidPushNotificationsService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SipMediaAndroidPushNotificationsService.class);
 
-    private static String SERVER_KEY_DEBUG = "AIzaSyCM4eZFA1MXIHHQtGrJTkQnMn4lDvtVIgs";
+    /**
+     * 디버그용 키, 서비스용 키
+     */
+    private static String SERVER_KEY_DEBUG = "AIzaSyCM4eZFA1MXIHHQtGrJTkQnMn4lDvtVIgs";    
     private static String SERVER_KEY_RELEASE = "AIzaSyCM4eZFA1MXIHHQtGrJTkQnMn4lDvtVIgs";
 
     @Autowired

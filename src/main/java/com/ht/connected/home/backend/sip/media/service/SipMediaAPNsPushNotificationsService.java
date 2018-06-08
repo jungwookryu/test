@@ -17,11 +17,23 @@ public class SipMediaAPNsPushNotificationsService {
     @Autowired
     private ApnsPushClient apnsPushClient;
     
-    
+    /**
+     * APNs 발송 요청
+     * 
+     * @param tokens
+     * @param payload
+     */
     public void send(List<String> tokens, PushNotificationPayload payload) {
         List<PushedNotification> notifications = apnsPushClient.send(tokens, payload);
     }
  	
+    /**
+     * 푸시 메세지 데이터 생성
+     * 
+     * @param eventType
+     * @param request
+     * @return
+     */
 	public PushNotificationPayload getPushMessage(String eventType, SipMediaMqttRequestMessageDto request) {
 	    String fileVideo;
 	    PushNotificationPayload payload = new PushNotificationPayload();

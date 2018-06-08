@@ -10,6 +10,13 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+
+/**
+ * 미디어 패키지에서 상용되는 이벤트 엔터티 모델 클래스
+ * 
+ * @author 구정화
+ *
+ */
 @Entity
 // @Table(name = "recent_activity_tb")
 @Table(name = "sip_event")

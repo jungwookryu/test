@@ -7,13 +7,25 @@ import com.ht.connected.home.backend.sip.media.model.dto.SipMediaMqttRequestMess
 import com.ht.connected.home.backend.sip.media.model.entity.SipMediaEvent;
 import com.ht.connected.home.backend.sip.media.repository.SipMediaEventRepository;
 
+
+/**
+ * 이벤트 보고 디비 지정 서비스
+ * 
+ * @author 구정화
+ *
+ */
 @Service
 public class SipMediaEventService {
 
     @Autowired
     private SipMediaEventRepository eventRepository;
        
-    
+    /**
+     * 이벤트 보고 정보 디비 저장
+     * 
+     * @param request
+     * @return
+     */
     public boolean addEvent(SipMediaMqttRequestMessageDto request) {
         String fileVideo;
         SipMediaEvent event = new SipMediaEvent();
