@@ -8,8 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ZWaveRepository extends JpaRepository<ZWave, Integer>{
 
-    List<ZWave> findByGatewayNoAndCmdAndStatus(int no, String cmd, String status);
-    
     List<ZWave> findByNoAndGatewayNoIn(int no, List gatewayNos);
     
     List<ZWave> findByGatewayNo(int gatewayNos);

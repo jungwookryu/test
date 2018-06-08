@@ -47,9 +47,6 @@ public class ZWave {
     @Column(name = "nickname")
     String nickname;
 
-    @Column(name = "cmd")
-    String cmd;
-
     @Column(name = "event")
     String event;
 
@@ -78,7 +75,7 @@ public class ZWave {
     @JsonProperty("generic")
     String generic;
     
-    @Column(name = "specific")
+    @Column(name = "`specific`")
     @JsonProperty("specific")
     String specific;
     
@@ -107,8 +104,10 @@ public class ZWave {
     String s2GrntKeys;
     
     @Column(name = "endpoint")
-    @JsonProperty("endpoint")
     String sEndpoint;
+    
+    @JsonProperty("endpoint")
+    List<Endpoint> endpoint;
     
     @OneToMany
     @JoinTable(name = "zwave_endpoint",
@@ -156,13 +155,6 @@ public class ZWave {
         this.nickname = nickname;
     }
 
-    public String getCmd() {
-        return cmd;
-    }
-
-    public void setCmd(String cmd) {
-        this.cmd = cmd;
-    }
 
     public String getEvent() {
         return event;
@@ -204,15 +196,15 @@ public class ZWave {
     /**
      * @return the sndpoint
      */
-    public String getSndpoint() {
+    public String getSEndpoint() {
         return sEndpoint;
     }
 
     /**
      * @param sndpoint the sndpoint to set
      */
-    public void setSndpoint(String sndpoint) {
-        this.sEndpoint = sndpoint;
+    public void setSEndpoint(String sEndpoint) {
+        this.sEndpoint = sEndpoint;
     }
 
     /* (non-Javadoc)
@@ -220,8 +212,8 @@ public class ZWave {
      */
     @Override
     public String toString() {
-        return "Zwave [no=" + no + ", gatewayNo=" + gatewayNo + ", nodeId=" + nodeId + ", endpointId=" + endpointId + ", nickname=" + nickname + ", cmd=" + cmd + ", event=" + event + ", status="
-                + status + ", creratedTime=" + creratedTime + ", lastModifiedDate=" + lastModifiedDate + ", endpoint=" + sEndpoint + "]";
+        return "Zwave [no=" + no + ", gatewayNo=" + gatewayNo + ", nodeId=" + nodeId + ", endpointId=" + endpointId + ", nickname=" + nickname
+                + ", event=" + event + ", status=" + status + ", creratedTime=" + creratedTime + ", lastModifiedDate=" + lastModifiedDate + ", endpoint=" + sEndpoint + "]";
     }
 
     public int getEndpointId() {
@@ -330,5 +322,13 @@ public class ZWave {
 
     public void setEndpoints(List<Endpoint> endpoints) {
         this.endpoints = endpoints;
+    }
+
+    public List<Endpoint> getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(List<Endpoint> endpoint) {
+        this.endpoint = endpoint;
     }
 }

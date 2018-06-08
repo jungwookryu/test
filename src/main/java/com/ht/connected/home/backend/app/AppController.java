@@ -8,7 +8,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.category.ir.IR;
 import com.ht.connected.home.backend.category.ir.IRController;
-import com.ht.connected.home.backend.config.service.MqttConfig;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 
 @RestController
 @RequestMapping("/app")
-@DependsOn("MqttInbound")
+@DependsOn("MqttInbound")   
 public class AppController extends CommonController {
 
     IRController iRController;
@@ -70,7 +68,6 @@ public class AppController extends CommonController {
                 ir.setAction(command);
                 ir.setStatus(command);
                 ir.setDevType("irchannel::" + Integer.toString(irchannel));
-                ir.setIrType(irindex);
                 ir.setIrType(irindex);
                 rss = iRController.createIR(ir);
             }

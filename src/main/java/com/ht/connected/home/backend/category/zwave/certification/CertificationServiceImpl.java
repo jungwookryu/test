@@ -35,7 +35,7 @@ public class CertificationServiceImpl extends CrudServiceImpl<Certification, Int
         certification.setVersion(zwaveRequest.getVersion());
         certification.setMethod(ByteUtil.getHexString(zwaveRequest.getClassKey()));
         certification.setContext(ByteUtil.getHexString(zwaveRequest.getCommandKey()));
-        List<Certification> requestCertification = certificationRepository.findBySerialAndMethodAndContext(certification.getSerial(), certification.getMethod(), certification.getCertificationType());
+        List<Certification> requestCertification = certificationRepository.findBySerialAndMethodAndContext(certification.getSerial(), certification.getMethod(), certification.getContext());
         if(requestCertification.size() > 0) {
             Certification diffCertificaton = requestCertification.get(requestCertification.size()-1);
             if(!diffCertificaton.getPayload().equals(certification.getPayload())){

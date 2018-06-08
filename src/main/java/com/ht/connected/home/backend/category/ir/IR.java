@@ -37,15 +37,15 @@ public class IR {
     @Column(name = "model")
     private String model;
 
-    @JsonProperty("ir_name")
+    @JsonProperty("irnickname")
     @Column(name = "ir_name")
     private String irName;
 
-    @JsonProperty("ir_type")
+    @JsonProperty("irindex")
     @Column(name = "ir_type")
     private int irType;
 
-    @JsonProperty("dev_type")
+    @JsonProperty("command")
     @Column(name = "dev_type")
     private String devType;
 
@@ -61,11 +61,11 @@ public class IR {
     @Column(name = "lastmodified_time")
     private Date lastmodifiedTime;
 
-    @JsonProperty("action")
+    @JsonProperty("command")
     @Column(name = "action")
     private String action;
 
-    @JsonProperty("status")
+    @JsonProperty("command")
     @Column(name = "status")
     private String status;
 

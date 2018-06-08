@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
