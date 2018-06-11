@@ -13,6 +13,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.springframework.context.annotation.DependsOn;
 
@@ -46,30 +47,37 @@ public class Endpoint {
     @JsonProperty("specific")
     String specific;
 
-    @Column(name = "cmd_cls")
-    String cmd_cls;
 
     @Column(name = "zwave_no")
     @JsonProperty("zwave_no")
     int zwaveNo;
   
+    @Column(name = "cmd_cls")
+    String cmdCls;
+    
+    
+    @JsonProperty("cmd_cls")
+    @Transient
+    List<CmdCls> cmdClses;
+    
     @ManyToOne(optional = false)
     @JoinTable(name = "zwave_endpoint",
-      joinColumns = @JoinColumn(name = "endpoint_no"),
-      inverseJoinColumns = @JoinColumn(name = "zwave_no"))
+      joinColumns = @JoinColumn(name = "zwave_no"),
+      inverseJoinColumns = @JoinColumn(name = "no"))
     private ZWave zwave;
     
     @OneToMany
-    @JoinTable(name = "endpoint_cmdcls",
-            joinColumns = @JoinColumn(name="endpoint_no"),
-            inverseJoinColumns = @JoinColumn(name="cmdcls_no"))
-    List<CmdCls> cmdclss;
+    @JoinTable(name = "endpoint_cmd_cls",
+            joinColumns = @JoinColumn(name="no"),
+            inverseJoinColumns = @JoinColumn(name="endpoint_no"))
+    List<CmdCls> cmdClss;
     
     public boolean addEndpoints(CmdCls cmdCls) {
         
-        if(cmdclss == null)
-            cmdclss = new ArrayList();
-        return cmdclss.add(cmdCls);
+        if(cmdClses == null) {
+            cmdClses = new ArrayList();
+        }
+        return cmdClses.add(cmdCls);
         
     }
     public int getNo() {
@@ -104,14 +112,6 @@ public class Endpoint {
         this.specific = specific;
     }
 
-    public String getCmd_cls() {
-        return cmd_cls;
-    }
-
-    public void setCmd_cls(String cmd_cls) {
-        this.cmd_cls = cmd_cls;
-    }
-
     public int getZwaveNo() {
         return zwaveNo;
     }
@@ -120,14 +120,30 @@ public class Endpoint {
         this.zwaveNo = zwaveNo;
     }
 
+    public void setCmdCls(String cmdCls) {
+        this.cmdCls = cmdCls;
+    }
+
     public ZWave getZwave() {
         return zwave;
     }
     public void setZwave(ZWave zwave) {
         this.zwave = zwave;
     }
-    public List<CmdCls> getCmdclss() {
-        return cmdclss;
+    public List<CmdCls> getCmdClses() {
+        return cmdClses;
+    }
+    public void setCmdClses(List<CmdCls> cmdClses) {
+        this.cmdClses = cmdClses;
+    }
+    public List<CmdCls> getCmdClss() {
+        return cmdClss;
+    }
+    public void setCmdClss(List<CmdCls> cmdClss) {
+        this.cmdClss = cmdClss;
+    }
+    public String getCmdCls() {
+        return cmdCls;
     }
 
 }
