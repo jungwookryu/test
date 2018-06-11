@@ -44,7 +44,7 @@ public class CmdCls {
     String realVer;
 
     @Column(name = "rpt_cmd")
-    // @JsonProperty("rpt_cmd")
+//    @JsonProperty("rpt_cmd")
     String rptCmd;
 
     @Column(name = "endpoint_no")
