@@ -4,10 +4,13 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "gateway_category")
@@ -15,7 +18,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class GatewayCategory {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "no")
+    @JsonProperty("no")
     private String no;
 
     @Column(name = "gateway_no")
@@ -30,7 +35,7 @@ public class GatewayCategory {
     @Column(name = "nickname")
     private String nickname;
 
-    @Column(name = "nodeId")
+    @Column(name = "node_id")
     private int nodeId;
     
     @Column(name = "status")
@@ -160,7 +165,7 @@ public class GatewayCategory {
      */
     @Override
     public String toString() {
-        return "gatewayCategory [no=" + no + ", gatewayNo=" + gatewayNo + ", categoryNo=" + category + ", categoryNo="
+        return "gatewayCategory [no=" + no + ", gatewayNo=" + gatewayNo + ", category=" + category + ", categoryNo="
                 + categoryNo + ", nickname=" + nickname + ", Status=" + status + ", createdTime=" + createdTime
                 + ", nodeId=" + nodeId
                 + ", lastmodifiedTime=" + lastmodifiedTime + "]";

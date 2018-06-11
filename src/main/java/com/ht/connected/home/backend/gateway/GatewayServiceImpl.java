@@ -183,8 +183,11 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
                         exangeGateway.setNickname((String) Common.isNullrtnByobj(gateway.getNickname(), ""));
                         updateGateway(exangeGateway);
                         updateUserGateway(exangeGateway, user.getNo());
-                        String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/manager/noti", gateway.getModel(),
+//                        String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/manager/noti", gateway.getModel(),
+//                                gateway.getSerial());
+                        String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/product/registration", gateway.getModel(),
                                 gateway.getSerial());
+//                        /server/app/[Model]/[Serial]/manager/product/registration
                         publish(exeTopic, null);
                     }
                 }
