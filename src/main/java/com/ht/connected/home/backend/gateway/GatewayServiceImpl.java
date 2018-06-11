@@ -163,26 +163,32 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
             gateway.setStatus(gateway.getType());
             if (type.register.name().equals(gateway.getType())) {
                 Gateway exangeGateway = gatewayRepository.findBySerial(gateway.getSerial());
-                List<User> users = userRepository.findByUserEmail(gateway.getUserEmail());
-                gateway.setLastModifiedTime(new Date());
-                if (users.size() > 0) {
-                    User user = users.get(0);
-                    if (exangeGateway == null) {
-                        exangeGateway = gateway;
-                        exangeGateway.setCreatedUserId(gateway.getUserEmail());
-                    } else {
-                        exangeGateway.setLastModifiedTime(new Date());
+                if(exangeGateway.getCreatedUserId().equals(gateway.getCreatedUserId())) {
+                    exangeGateway.setStatus("failAp");
+                }else {
+                    exangeGateway.setStatus("sucessAp");
+                    List<User> users = userRepository.findByUserEmail(gateway.getUserEmail());
+                    gateway.setLastModifiedTime(new Date());
+                    if (users.size() > 0) {
+                        User user = users.get(0);
+                        if (exangeGateway == null) {
+                            exangeGateway = gateway;
+                            exangeGateway.setCreatedUserId(gateway.getUserEmail());
+                        } else {
+                            exangeGateway.setLastModifiedTime(new Date());
+                        }
+                        exangeGateway.setCreatedTime(new Date());
+                        exangeGateway.setBssid(gateway.getBssid());
+                        exangeGateway.setSsid(gateway.getSsid());
+                        exangeGateway.setNickname((String) Common.isNullrtnByobj(gateway.getNickname(), ""));
+                        updateGateway(exangeGateway);
+                        updateUserGateway(exangeGateway, user.getNo());
+                        String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/manager/noti", gateway.getModel(),
+                                gateway.getSerial());
+                        publish(exeTopic, null);
                     }
-                    exangeGateway.setCreatedTime(new Date());
-                    exangeGateway.setBssid(gateway.getBssid());
-                    exangeGateway.setSsid(gateway.getSsid());
-                    exangeGateway.setNickname((String) Common.isNullrtnByobj(gateway.getNickname(), ""));
-                    updateGateway(exangeGateway);
-                    updateUserGateway(exangeGateway, user.getNo());
-                    String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/manager/noti", gateway.getModel(),
-                            gateway.getSerial());
-                    publish(exeTopic, null);
                 }
+                
             }
 
         }

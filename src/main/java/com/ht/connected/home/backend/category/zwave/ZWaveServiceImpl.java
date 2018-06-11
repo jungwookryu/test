@@ -224,23 +224,23 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             }
 
         }
-        // 기기등록 모드
+        // 기기등록 모드 0x34/0x02 결과
         if (zwaveRequest.getClassKey() == NetworkManagementInclusionCommandClass.INT_ID) {
             // 기기상태값모드 받은 경우
             if (zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_ADD_STATUS) {
                 // newNodeId 가 있을경우 등록 성공이고 없을경우 등록완료 전으로 상태 메세지를 확인한다.
                 if (!Objects.isNull(mqttPayload.getResultData())) {
+                    //등록 성공일 경우 해당노드의 기기리스트를 조회한다.
                     if (!isNull(mqttPayload.getResultData().get("newNodeId"))) {
                         // 0x52
                         int newNodeId = (int) mqttPayload.getResultData().get("newNodeId");
-                        zwaveRequest.setClassKey(zwaveRequest.getClassKey());
-                        // 0x02
-                        zwaveRequest.setCommandKey(zwaveRequest.getCommandKey());
+                        zwaveRequest.setClassKey(NetworkManagementProxyCommandClass.INT_ID);
+                        // 0x01
+                        zwaveRequest.setCommandKey(NetworkManagementProxyCommandClass.INT_NODE_LIST_GET);
                         zwaveRequest.setNodeId(newNodeId);
-                        zwaveRequest.setEndpointId(0);
                         zwaveRequest.setVersion("v1");
                         zwaveRequest.setSecurityOption("none");
-                        saveGatewayCategory(zwaveRequest, newNodeId);
+//                        saveGatewayCategory(zwaveRequest, newNodeId);
                     }
                     // 등록완료일경우 NodeGet.명령어 호출
                     // 호스트의 노드 리스트 호출을 한다.
@@ -324,15 +324,14 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             if (zwaveReport.getNodelist() != null) {
                 List<ZWave> nodeListItem = (List<ZWave>) zwaveReport.getNodelist();
                 for (int i = 0; i < nodeListItem.size(); i++) {
-                    
                     ZWave nodeItem = nodeListItem.get(i);
                     int nodeId = nodeItem.getNodeId();
-                    boolean bInsert= false;
+                    boolean bInsert = false;
                     for (int j = 0; j < lstZwave.size(); j++) {
                         ZWave zwave = lstZwave.get(j);
                         //host 노드리스트와 DB 노드리스트를 비교하여 없으면 insert시킴
                         //int nodeId = (int) nodeItem.getOrDefault("nodeId", 0);
-                        // node status "" 경우에는 node 가 신규로 들어왔으나 host 에서 신규노드로 확인이 안된경 node status 0x01일 경우 신규 등록 기기
+                        // node status "" 경우에는 node 가 신규로 들어왔으나 host 에서 신규노드로 확인이 안된경 node status add일 경우 신규 등록 기기
                         if (nodeId == zwave.getNodeId()) {
                             bInsert=true;
                             if(Common.empty(zwave.getStatus())) {
@@ -344,13 +343,14 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                                         NetworkManagementInclusionCommandClass.INT_NODE_ADD, "v1");
                                 String topic = getMqttPublishTopic(appZwaveRequest, Target.app.name());
                                 publish(topic, nodeItem);
-                                zwave.setStatus("0x01");
+                                zwave.setStatus("add");
                                 zwaveRepository.save(zwave);
                             }
                         }
                     }
-                    //등록안된 node 일경우 insert함.
+                    //등록안되어있고 node의 status가 delete가 아닐경우 일경우 insert함.
                     if(!bInsert) {
+                        saveGatewayCategory(zwaveRequest, nodeItem.getNodeId());
                         nodeItem.setGatewayNo(gateway.getNo());
                         nodeItem.setCreratedTime(new Date());
                         ZWave saveZwave = zwaveRepository.save(nodeItem);

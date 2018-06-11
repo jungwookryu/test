@@ -39,8 +39,8 @@ public class CertificationServiceImpl extends CrudServiceImpl<Certification, Int
         if(requestCertification.size() > 0) {
             Certification diffCertificaton = requestCertification.get(requestCertification.size()-1);
             if(!diffCertificaton.getPayload().equals(certification.getPayload())){
-                certification.setUptime(new Date());
-                certificationRepository.save(certification);    
+                diffCertificaton.setUptime(new Date());
+                certificationRepository.save(diffCertificaton);    
             }
         }else {
             certification.setUptime(new Date());

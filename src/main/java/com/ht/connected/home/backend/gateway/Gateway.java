@@ -24,7 +24,7 @@ import com.ht.connected.home.backend.user.User;
 
 @Entity
 @Table(name = "gateway")
-//@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Gateway {
     @Id
