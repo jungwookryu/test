@@ -1,7 +1,7 @@
 package com.ht.connected.home.backend.sip.message.config;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +30,7 @@ import com.ht.connected.home.backend.sip.message.service.SipMqttSubscribeService
 @PropertySource("classpath:mqtt.properties")
 public class SipMqttConfig {
 
-    private static final Log LOGGER = LogFactory.getLog(SipMqttConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SipMqttConfig.class);
 
     @Value("${spring.mqtt.client-id-prefix}")
     String springMqttClientIdPrefix;

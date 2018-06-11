@@ -3,6 +3,13 @@ package com.ht.connected.home.backend.sip.media.model.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+
+/**
+ * MQTT 수신 메세지 데이터 모델 클래스
+ * 
+ * @author 구정화
+ *
+ */
 @JsonIgnoreProperties({ "serialNumber", "topic" })
 public class SipMediaMqttRequestMessageDto {
 

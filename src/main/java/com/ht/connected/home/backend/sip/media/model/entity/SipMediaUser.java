@@ -10,6 +10,7 @@ import javax.persistence.NamedNativeQuery;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 
+
 @SqlResultSetMapping(name = "PushTokenUnionAllMapping", classes = {
         @ConstructorResult(targetClass = SipMediaUser.class, columns = {
                 @ColumnResult(name = "account", type = String.class),
@@ -29,6 +30,12 @@ import javax.persistence.Table;
         + "AND shared_status = 'accept'", 
         resultSetMapping = "PushTokenUnionAllMapping")
 // @Table(name = "member_info_tb")
+/**
+ * 미디어 패키지에서 상용되는 사용자 엔터티 모델 클래스
+ * 
+ * @author 구정화
+ *
+ */
 @Table(name = "sip_member")
 @Entity
 public class SipMediaUser {

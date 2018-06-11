@@ -6,8 +6,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
@@ -20,13 +20,13 @@ import javapns.notification.PushNotificationPayload;
 @Service
 public class SipMediaMqttSubscribeService {
 
-    private static final Log LOGGER = LogFactory.getLog(SipMediaMqttSubscribeService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SipMediaMqttSubscribeService.class);
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @Autowired
-    private MediaUploadService uploadService;
+    private SipMediaUploadService uploadService;
 
     @Autowired
     private SipMediaUserService userService;
@@ -40,10 +40,15 @@ public class SipMediaMqttSubscribeService {
     @Autowired
     private SipMediaEventService eventService;
     
-    
-    
-    
 
+    /**
+     * 이벤트 보고 정보 디비 저정
+     * 이미지, 비디오 파일 업로드
+     * 업로드 성공시 FCM, APNs 푸시 메세지 발송 요청
+     * 
+     * @param request
+     * @throws IOException
+     */
     public void upload(SipMediaMqttRequestMessageDto request) throws IOException {
         Boolean fileSaved = true;
         try {
@@ -69,6 +74,11 @@ public class SipMediaMqttSubscribeService {
         }
     }
 
+    /**
+     * MQTT subscribe 메세지 처리
+     * 
+     * @param message
+     */
     public void subscribe(Message<?> message) {
         String topic = String.valueOf(message.getHeaders().get("mqtt_topic"));
         String payload = String.valueOf(message.getPayload());

@@ -2,8 +2,8 @@ package com.ht.connected.home.backend.sip.message.service;
 
 import static java.util.Objects.isNull;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
@@ -19,7 +19,7 @@ import com.ht.connected.home.backend.sip.message.model.dto.SipMqttResponseMessag
 @Service
 public class SipMqttPublishService {
 
-    private static final Log LOGGER = LogFactory.getLog(SipMqttPublishService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SipMqttPublishService.class);
 
     @Autowired
     private MqttConfig.MqttGateway mqttGateway;
