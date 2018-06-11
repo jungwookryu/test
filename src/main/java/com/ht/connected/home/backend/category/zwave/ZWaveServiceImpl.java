@@ -334,18 +334,18 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                         // node status "" 경우에는 node 가 신규로 들어왔으나 host 에서 신규노드로 확인이 안된경 node status add일 경우 신규 등록 기기
                         if (nodeId == zwave.getNodeId()) {
                             bInsert=true;
-                            if(Common.empty(zwave.getStatus())) {
-                                Map req = new HashMap();
-                                req.put("serial", gateway.getSerial());
-                                req.put("nodeId", nodeId);
-                                req.put("option", nodeItem.getSecurity());
-                                ZWaveRequest appZwaveRequest = new ZWaveRequest((HashMap<String, Object>) req, NetworkManagementInclusionCommandClass.INT_ID,
-                                        NetworkManagementInclusionCommandClass.INT_NODE_ADD, "v1");
-                                String topic = getMqttPublishTopic(appZwaveRequest, Target.app.name());
-                                publish(topic, nodeItem);
-                                zwave.setStatus("add");
-                                zwaveRepository.save(zwave);
-                            }
+//                            if(Common.empty(zwave.getStatus())) {
+//                                Map req = new HashMap();
+//                                req.put("serial", gateway.getSerial());
+//                                req.put("nodeId", nodeId);
+//                                req.put("option", nodeItem.getSecurity());
+//                                ZWaveRequest appZwaveRequest = new ZWaveRequest((HashMap<String, Object>) req, NetworkManagementInclusionCommandClass.INT_ID,
+//                                        NetworkManagementInclusionCommandClass.INT_NODE_ADD, "v1");
+//                                String topic = getMqttPublishTopic(appZwaveRequest, Target.app.name());
+//                                publish(topic, nodeItem);
+//                                zwave.setStatus("add");
+//                                zwaveRepository.save(zwave);
+//                            }
                         }
                     }
                     //등록안되어있고 node의 status가 delete가 아닐경우 일경우 insert함.
@@ -368,6 +368,9 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                                 cmdClsRepository.save(newCmdCls.get(iCmdCls));
                             }   
                         }
+                        String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/device/registration", gateway.getModel(),
+                                gateway.getSerial());
+                        publish(exeTopic);
                     }
                 }
             }
