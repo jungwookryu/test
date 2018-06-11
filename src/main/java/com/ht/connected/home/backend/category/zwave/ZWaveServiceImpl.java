@@ -386,7 +386,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                             Endpoint endpoint = newEndpoints.get(iE);
                             endpoint.setZwaveNo(saveZwave.getNo());
                             Endpoint saveEndpoint = endpointRepository.save(endpoint);
-                            List<CmdCls> newCmdCls = newEndpoints.get(iE).getCmdclss();
+                            List<CmdCls> newCmdCls = newEndpoints.get(iE).getCmdClses();
                             for(int iCmdCls = 0; iE< newCmdCls.size();iCmdCls++) {
                                 CmdCls cmdcls = newCmdCls.get(iCmdCls);
                                 cmdcls.setEndpointNo(saveEndpoint.getNo());
