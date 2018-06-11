@@ -445,6 +445,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         MqttRequest mqttRequest = new MqttRequest(gateway);
         mqttRequest.setClassKey(NetworkManagementProxyCommandClass.INT_ID);
         mqttRequest.setCommandKey(NetworkManagementProxyCommandClass.INT_NODE_LIST_GET);
+        mqttRequest.setVersion("v1");
         mqttRequest.setNodeId(00);
         mqttRequest.setEndpointId(00);
         String requestTopic = MqttCommon.getMqttPublishTopic(mqttRequest, Target.host.name());
