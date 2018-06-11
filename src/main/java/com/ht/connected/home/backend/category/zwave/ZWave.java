@@ -107,12 +107,13 @@ public class ZWave {
     String sEndpoint;
     
     @JsonProperty("endpoint")
+    @Transient
     List<Endpoint> endpoint;
     
     @OneToMany
     @JoinTable(name = "zwave_endpoint",
-            joinColumns = @JoinColumn(name="zwave_no"),
-            inverseJoinColumns = @JoinColumn(name="endpoint_no"))
+            inverseJoinColumns = @JoinColumn(name="zwave_no"),
+            joinColumns = @JoinColumn(name="endpoint_no"))
     List<Endpoint> endpoints;
     
     public boolean addEndpoints(Endpoint endpoint) {

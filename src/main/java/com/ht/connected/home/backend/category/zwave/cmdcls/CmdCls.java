@@ -21,29 +21,28 @@ import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CmdCls {
 
-   @Id
+    @Id
     @Column(name = "no")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("no")
     int no;
 
-  
     @Column(name = "secure")
     @JsonProperty("secure")
     String secure;
-    
+
     @Column(name = "cmd_class")
     @JsonProperty("cmd_class")
     String cmdClass;
-    
+
     @Column(name = "ver")
     @JsonProperty("ver")
     String ver;
-    
+
     @Column(name = "real_ver")
     @JsonProperty("real_ver")
     String realVer;
-    
+
     @Column(name = "rpt_cmd")
 //    @JsonProperty("rpt_cmd")
     String rptCmd;
@@ -51,13 +50,13 @@ public class CmdCls {
     @Column(name = "endpoint_no")
     @JsonProperty("endpoint_no")
     int endpointNo;
-    
+
     @ManyToOne(optional = false)
     @JoinTable(name = "endpoint_cmdcls",
-      joinColumns = @JoinColumn(name = "cmdcls_no"),
-      inverseJoinColumns = @JoinColumn(name = "endpoint_no"))
+        joinColumns = @JoinColumn(name = "cmdcls_no"),
+        inverseJoinColumns = @JoinColumn(name = "endpoint_no"))
     private Endpoint endpoint;
-    
+
     public String getSecure() {
         return secure;
     }
