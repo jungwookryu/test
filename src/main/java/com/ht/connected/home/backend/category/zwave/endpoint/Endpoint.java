@@ -80,6 +80,20 @@ public class Endpoint {
         return cmdClses.add(cmdCls);
         
     }
+    
+    public String getScmdClses(List<CmdCls> cmdClses) {
+        String rtnString="[";
+        if(cmdClses == null) {
+            return "]";
+        }
+        for (int i = 0; i < cmdClses.size(); i++) {
+            rtnString += cmdClses.get(i).getCmdClass() +",";    
+        }
+        
+        return rtnString + "]";
+        
+    }
+    
     public int getNo() {
         return no;
     }

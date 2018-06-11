@@ -1,5 +1,9 @@
 package com.ht.connected.home.backend.category.zwave.cmdcls;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -45,12 +49,12 @@ public class CmdCls {
     String realVer;
 
     @Column(name = "rpt_cmd")
-//    @JsonProperty("rpt_cmd")
     String rptCmd;
     
     @JsonProperty("rpt_cmd")
     @Transient
-    String rptCmds;
+    String[] rptCmds;
+    
     @Column(name = "endpoint_no")
     @JsonProperty("endpoint_no")
     int endpointNo;
@@ -61,6 +65,21 @@ public class CmdCls {
         inverseJoinColumns = @JoinColumn(name = "endpoint_no"))
     private Endpoint endpoint;
 
+    public boolean addRptCmd(String sRptCmd) {
+        if(rptCmds == null) {
+            rptCmds = new String[0];
+        }
+        rptCmds = sRptCmd.split(","); 
+        return true;
+    }
+    
+    public String getSrptCmd(String[] rptCmds) {
+        if(rptCmds == null) {
+            rptCmds = new String[0];
+        }
+        return Arrays.toString(rptCmds);
+    }
+    
     public String getSecure() {
         return secure;
     }
@@ -123,5 +142,13 @@ public class CmdCls {
 
     public void setEndpoint(Endpoint endpoint) {
         this.endpoint = endpoint;
+    }
+
+    public String[] getRptCmds() {
+        return rptCmds;
+    }
+
+    public void setRptCmds(String[] rptCmds) {
+        this.rptCmds = rptCmds;
     }
 }
