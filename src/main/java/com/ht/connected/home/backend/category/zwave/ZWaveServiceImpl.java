@@ -349,33 +349,6 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                             }
                         }
                     }
-                    /**
-                    int nodeId = (int) ((HashMap<String, Object>) nodeItem).getOrDefault("nodeid", 0);
-                    boolean bInsert= false;
-                    //신규노드 아이디에대한 app 노티를 해줌.
-                    for (int j = 0; j < lstZwave.size(); j++) {
-                        Zwave zwave = lstZwave.get(j);
-                        //host 노드리스트와 DB 노드리스트를 비교하여 없으면 insert시킴
-                        //TODO nodeId로 변경하기로함
-                        //int nodeId = (int) nodeItem.getOrDefault("nodeId", 0);
-                        // node status "" 경우에는 node 가 신규로 들어왔으나 host 에서 신규노드로 확인이 안된경 node status 0x01일 경우 신규 등록 기기
-                        if (nodeId == zwave.getNodeId()) {
-                            bInsert=true;
-                            if(Common.empty(zwave.getStatus())) {
-                                Map req = new HashMap();
-                                req.put("serial", gateway.getSerial());
-                                req.put("nodeId", nodeId);
-                                req.put("option", nodeItem.getOrDefault("security", ""));
-                                ZwaveRequest appZwaveRequest = new ZwaveRequest((HashMap<String, Object>) req, NetworkManagementInclusionCommandClass.INT_ID,
-                                        NetworkManagementInclusionCommandClass.INT_NODE_ADD, "v1");
-                                String topic = getMqttPublishTopic(appZwaveRequest, Target.app.name());
-                                publish(topic, nodeItem);
-                                zwave.setStatus("0x01");
-                                zwaveRepository.save(zwave);
-                            }
-                        }
-                    }
-                    */
                     //등록안된 node 일경우 insert함.
                     if(!bInsert) {
                         nodeItem.setGatewayNo(gateway.getNo());
@@ -385,10 +358,12 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                         for(int iE = 0; iE<newEndpoints.size();iE++) {
                             Endpoint endpoint = newEndpoints.get(iE);
                             endpoint.setZwaveNo(saveZwave.getNo());
+                            endpoint.setCmdCls(endpoint.getScmdClses(endpoint.getCmdClses()));
                             Endpoint saveEndpoint = endpointRepository.save(endpoint);
                             List<CmdCls> newCmdCls = newEndpoints.get(iE).getCmdClses();
-                            for(int iCmdCls = 0; iE< newCmdCls.size();iCmdCls++) {
+                            for(int iCmdCls = 0; iCmdCls < newCmdCls.size();iCmdCls++) {
                                 CmdCls cmdcls = newCmdCls.get(iCmdCls);
+                                cmdcls.setRptCmd(cmdcls.getSrptCmd(cmdcls.getRptCmds()));
                                 cmdcls.setEndpointNo(saveEndpoint.getNo());
                                 cmdClsRepository.save(newCmdCls.get(iCmdCls));
                             }   
