@@ -34,7 +34,7 @@ public class SipMediaMqttConfig {
 
     @Value("${spring.mqtt.client-id-prefix}")
     String springMqttClientIdPrefix;
-    @Value("${spring.mqtt.channel.server.sip.media}")
+    @Value("${spring.mqtt.channel.server.sip}")
     String springMqttChannelServer;
 
     @Autowired

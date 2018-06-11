@@ -1,5 +1,7 @@
 package com.ht.connected.home.backend.sip.media.service;
 
+import static java.util.Objects.isNull;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -81,14 +83,16 @@ public class SipMediaMqttSubscribeService {
      */
     public void subscribe(Message<?> message) {
         String topic = String.valueOf(message.getHeaders().get("mqtt_topic"));
-        String payload = String.valueOf(message.getPayload());
-        LOGGER.info("messageArrived: Topic=" + topic + ", Payload=" + payload);
+        String payload = String.valueOf(message.getPayload());        
         SipMediaMqttRequestMessageDto request;
         try {
             request = objectMapper.readValue(payload, SipMediaMqttRequestMessageDto.class);
             request.setTopic(topic);
-            request.setTimestamp(new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime()));
-            upload(request);
+            if((request.getTopic()[2].equals("request") || request.getTopic()[3].equals("request")) && !isNull(request.getEvent())) {
+                LOGGER.info("messageArrived-SIP-Media: Topic=" + topic + ", Payload=" + payload);
+                request.setTimestamp(new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime()));            
+                upload(request);
+            }
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

@@ -179,12 +179,12 @@ public class SipMqttSubscribeService {
     public void subscribe(Message<?> message) {
         SipMqttRequestMessageDto request = null;
         String topic = String.valueOf(message.getHeaders().get("mqtt_topic"));
-        String payload = String.valueOf(message.getPayload());
-        LOGGER.info("messageArrived: Topic=" + topic + ", Payload=" + payload);
+        String payload = String.valueOf(message.getPayload());        
         try {
             request = objectMapper.readValue(payload, SipMqttRequestMessageDto.class);
-            if (!request.getMethod().equals("Z-Wave G/W")) {
-                request.setTopic(topic);
+            request.setTopic(topic);
+            if ((request.getTopic()[2].equals("request") || request.getTopic()[3].equals("request")) && !request.getMethod().equals("Z-Wave G/W")) {
+                LOGGER.info("messageArrived-SIP-Message: Topic=" + topic + ", Payload=" + payload);
                 String method = Introspector.decapitalize(request.getMethod());
                 SipMqttSubscribeService.class.getMethod(method, SipMqttRequestMessageDto.class).invoke(this, request);
             }
