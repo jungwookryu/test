@@ -161,7 +161,8 @@ public class MqttConfig {
                 LOGGER.info("messageArrived: Topic=" + topic + ", Payload=" + payload);
                 String[] topicSplited = topic.split("/");
                 try {
-                    if (topicSplited.length > 2) {
+                    //message topic 4개이상이어야 gateway관련 메세지임.
+                    if (topicSplited.length > 4) {
                         Gateway gateway = new Gateway();
                         if (4 <= topicSplited.length) {
                             gateway = new Gateway(topicSplited[3].toString(), topicSplited[4].toString());
