@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -46,7 +47,10 @@ public class CmdCls {
     @Column(name = "rpt_cmd")
 //    @JsonProperty("rpt_cmd")
     String rptCmd;
-
+    
+    @JsonProperty("rpt_cmd")
+    @Transient
+    String rptCmds;
     @Column(name = "endpoint_no")
     @JsonProperty("endpoint_no")
     int endpointNo;
