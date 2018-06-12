@@ -86,12 +86,6 @@ public class ZWaveController extends CommonController {
         return new ResponseEntity<>(sRtnList, HttpStatus.ACCEPTED);
     }
 
-//    @PutMapping
-//    @ResponseBody
-//    public ResponseEntity control(@RequestBody HashMap map) throws JsonProcessingException {
-//        zwaveService.execute(map, false);
-//        return new ResponseEntity<>(HttpStatus.ACCEPTED);
-//    }
 
     @PutMapping("/{zwave_no}")
     public ResponseEntity control(@PathVariable int zwave_no, @RequestBody ZWaveControl zWaveControl) throws JsonProcessingException {

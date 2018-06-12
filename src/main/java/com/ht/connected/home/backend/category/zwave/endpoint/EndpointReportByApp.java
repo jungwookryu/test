@@ -20,6 +20,9 @@ public class EndpointReportByApp {
     @JsonProperty("ep_status")
     int epStatus;
 
+    public EndpointReportByApp() {
+        
+    }
     public int getEpid() {
         return epid;
     }
@@ -28,7 +31,7 @@ public class EndpointReportByApp {
         return endpointNo;
     }
 
-    public void setEndpointNo(int endpoint_no) {
+    public void setEndpointNo(int endpointNo) {
         this.endpointNo = endpointNo;
     }
 

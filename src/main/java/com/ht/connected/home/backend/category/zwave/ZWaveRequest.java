@@ -50,12 +50,23 @@ public class ZWaveRequest extends ZWave{
             this.model = topic[3];
             this.serialNo = topic[4];
             if (CategoryActive.zwave.certi.name().equals(topic[6].toString())) {
-                if (7 < topic.length && topic.length > 9) {
-                    this.version = topic[7].toString();
-                    this.sClassKey = topic[8].toString();
+                if (7 < topic.length) {
                     this.classKey = ByteUtil.getStringtoInt(topic[7]);
-                    this.commandKey = ByteUtil.getStringtoInt(topic[8]);
-                    this.sCommandKey = topic[9].toString();
+                    this.sCommandKey = topic[7].toString();
+                    if (8 < topic.length) {
+                        this.sClassKey = topic[8].toString();
+                        this.commandKey = ByteUtil.getStringtoInt(topic[8]);
+                        if (9 < topic.length) {
+                            this.version = topic[9].toString();
+                            if (10 < topic.length) {
+                                this.nodeId = ByteUtil.getStringtoInt(topic[10].toString());
+                                if (11 < topic.length) {
+                                    this.endpointId = ByteUtil.getStringtoInt(topic[11].toString());
+                                }
+                            }
+                        }
+                        
+                    }
                 }
             }
         }
