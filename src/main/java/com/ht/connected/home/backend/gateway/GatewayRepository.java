@@ -27,6 +27,8 @@ public interface GatewayRepository extends JpaRepository<Gateway, Integer> {
     
     List<Gateway> findByStatusAndUsers(String status, User user);
     
+    List<Gateway> findByUsersAndStatusContaining(User user, String status);
+    
     List<Gateway> findByUsers(User user);
     
 	Gateway findBySerial(String serial);
