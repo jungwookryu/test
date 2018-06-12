@@ -48,9 +48,6 @@ public class ZWave {
     @Column(name = "nickname")
     String nickname;
 
-/*    @Column(name = "event")
-    String event;*/
-
     @Column(name = "status")
     String status;
 
@@ -155,15 +152,6 @@ public class ZWave {
         this.nickname = nickname;
     }
 
-/*
-    public String getEvent() {
-        return event;
-    }
-
-    public void setEvent(String event) {
-        this.event = event;
-    }
-*/
     public String getStatus() {
         return status;
     }
@@ -213,7 +201,7 @@ public class ZWave {
     @Override
     public String toString() {
         return "Zwave [no=" + no + ", gatewayNo=" + gatewayNo + ", nodeId=" + nodeId + ", endpointId=" + endpointId + ", nickname=" + nickname
-               /* + ", event=" + event*/ + ", status=" + status + ", creratedTime=" + creratedTime + ", lastModifiedDate=" + lastModifiedDate + ", endpoint=" + sEndpoint + "]";
+               + ", status=" + status + ", creratedTime=" + creratedTime + ", lastModifiedDate=" + lastModifiedDate + ", endpoint=" + sEndpoint + "]";
     }
 
     public int getEndpointId() {

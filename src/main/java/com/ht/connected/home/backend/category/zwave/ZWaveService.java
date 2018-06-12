@@ -38,4 +38,8 @@ public interface ZWaveService extends CrudService<ZWave, Integer>, MqttBase<Obje
     int deleteByGatewayNo(int gatewayNo);
     
     ZWaveReport getZWaveList(int gatewayNo);
+
+    void zwaveControl(ZWaveControl zWaveControl);
+
+    Map getZWaveListApp(int gatewayNo);
 }

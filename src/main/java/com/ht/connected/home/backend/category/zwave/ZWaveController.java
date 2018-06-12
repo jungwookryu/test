@@ -1,8 +1,8 @@
 package com.ht.connected.home.backend.category.zwave;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,11 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ht.connected.home.backend.category.zwave.certification.Certification;
 import com.ht.connected.home.backend.category.zwave.certification.CertificationRepository;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementInclusionCommandClass;
-import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementProxyCommandClass;
-import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 import com.ht.connected.home.backend.user.User;
 import com.ht.connected.home.backend.user.UserRepository;
@@ -83,34 +80,29 @@ public class ZWaveController extends CommonController {
         zwaveService.execute(req, zwaveRequest, false);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
-/*
-    @GetMapping(value = "/{serial}")
-    public ResponseEntity getList(@PathVariable("serial") String serial) throws JsonProcessingException {
-        HashMap map = new HashMap();
-        map.put("nodelist", new ArrayList());
-        String sRtnList = objectMapper.writeValueAsString(map);
-        List<Certification> certification = certificationRepository.findBySerialAndMethodAndContext(serial,
-                ByteUtil.getHexString(NetworkManagementProxyCommandClass.INT_ID), ByteUtil.getHexString(NetworkManagementProxyCommandClass.INT_NODE_LIST_REPORT));
-        if (certification.size() > 0) {
-            sRtnList = certification.get(0).getPayload();
-        }
-        return new ResponseEntity<>(sRtnList, HttpStatus.ACCEPTED);
-    }
-*/
+
     @GetMapping(value = "/{gateway_no}")
-    public ResponseEntity getList(@PathVariable("gateway_no") int gateway_no) {
-        ZWaveReport sRtnList = zwaveService.getZWaveList(gateway_no);
+    public ResponseEntity getList(@PathVariable("gateway_no") int gatewayNo) {
+        Map sRtnList = (Map) zwaveService.getZWaveListApp(gatewayNo);
         return new ResponseEntity<>(sRtnList, HttpStatus.ACCEPTED);
     }
 
     @PutMapping
     @ResponseBody
-    // public ResponseEntity control(@RequestBody ZwaveRequest zwaveRequest) throws JsonProcessingException {
     public ResponseEntity control(@RequestBody HashMap map) throws JsonProcessingException {
         zwaveService.execute(map, false);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
+    @PutMapping(value="{/zwave_no}")
+    @ResponseBody
+    public ResponseEntity control(@PathVariable int zwave_no, @RequestBody ZWaveControl zWaveControl) throws JsonProcessingException {
+        zWaveControl.setZwave_no(zwave_no);
+        zwaveService.zwaveControl(zWaveControl);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+    
+    
     /**
      * 
      * @param no
