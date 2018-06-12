@@ -2,11 +2,13 @@ package com.ht.connected.home.backend.sip.media.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import static java.util.Objects.isNull;
 
 import com.ht.connected.home.backend.sip.media.model.dto.SipMediaMqttRequestMessageDto;
 import com.ht.connected.home.backend.sip.media.model.entity.SipMediaEvent;
 import com.ht.connected.home.backend.sip.media.repository.SipMediaEventRepository;
-
+import com.ht.connected.home.backend.sip.message.model.entity.SipDevice;
+import com.ht.connected.home.backend.sip.message.repository.SipDeviceRepository;
 
 /**
  * 이벤트 보고 디비 지정 서비스
@@ -19,7 +21,10 @@ public class SipMediaEventService {
 
     @Autowired
     private SipMediaEventRepository eventRepository;
-       
+
+    @Autowired
+    private SipDeviceRepository sipDeviceRepository;
+
     /**
      * 이벤트 보고 정보 디비 저장
      * 
@@ -33,6 +38,18 @@ public class SipMediaEventService {
         event.setDateTime(request.getTimestamp());
         event.setEventType("SendEvent");
         event.setEventId(request.getEventId());
+
+        SipDevice sipDevice = sipDeviceRepository.findBySerialNumber(request.getSerialNumber());
+        if (!isNull(sipDevice.getOwnerNickname())) {
+            event.setOwnerName(sipDevice.getOwnerNickname());
+        } else {
+            event.setOwnerName(sipDevice.getOwnerAccount());
+        }
+
+        if (!isNull(sipDevice.getLocation())) {
+            event.setLocationId(sipDevice.getLocation());
+        }
+
         if (request.getFileInfo().isVideoExist()) {
             fileVideo = "exist";
         } else {
