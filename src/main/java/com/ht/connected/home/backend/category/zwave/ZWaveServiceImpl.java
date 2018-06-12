@@ -36,6 +36,7 @@ import com.ht.connected.home.backend.category.zwave.constants.commandclass.Basic
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementInclusionCommandClass;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementProxyCommandClass;
 import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
+import com.ht.connected.home.backend.category.zwave.endpoint.EndpointReportByApp;
 import com.ht.connected.home.backend.category.zwave.endpoint.EndpointRepository;
 import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.common.Common;
@@ -291,6 +292,33 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     }
 
     /**
+     * Zwave 기기제어
+     * @author lij
+     */
+    // 제어
+    @Override
+    public void zwaveControl(ZWaveControl zWaveControl) {
+        
+//        Gateway gateway = gatewayRepository.findOne(zWaveControl.getGateway_no()); 
+//        ZWave zwave = zwaveRepository.findOne(zWaveControl.getZwave_no());
+//        Endpoint endpoint = endpointRepository.findOne(zWaveControl.getEndpoint_no());
+//        Map map = new HashMap();
+//        "nodeId"ByteUtil.getHexString((Integer) zwave.getNodeId());;
+//        String endPointId = ByteUtil.getHexString((Integer) endpoint.getEpid());
+//        String serial = gateway.getSerial();
+//        String commandKey = ByteUtil.getHexString(BasicCommandClass.INT_ID);
+//        String classkey = ByteUtil.getHexString(BasicCommandClass.INT_BASIC_SET);
+//        String version = "v1";
+//        String option =  "0" ;
+//        String model = gateway.getModel();
+//        String[] segments = new String[] { "/server", Target.host.name(), model, serial, "zwave", "certi",
+//                classkey, commandKey, version, nodeId, endPointId, option };
+//        String topic = String.join("/", segments);
+//        publish(topic, map1);
+    }
+
+    
+    /**
      * mqtt publish 토픽 생성
      * @param topicLeadingPath //0 none, 1 crc
      * @return
@@ -334,18 +362,6 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                         // node status "" 경우에는 node 가 신규로 들어왔으나 host 에서 신규노드로 확인이 안된경 node status add일 경우 신규 등록 기기
                         if (nodeId == zwave.getNodeId()) {
                             bInsert=true;
-//                            if(Common.empty(zwave.getStatus())) {
-//                                Map req = new HashMap();
-//                                req.put("serial", gateway.getSerial());
-//                                req.put("nodeId", nodeId);
-//                                req.put("option", nodeItem.getSecurity());
-//                                ZWaveRequest appZwaveRequest = new ZWaveRequest((HashMap<String, Object>) req, NetworkManagementInclusionCommandClass.INT_ID,
-//                                        NetworkManagementInclusionCommandClass.INT_NODE_ADD, "v1");
-//                                String topic = getMqttPublishTopic(appZwaveRequest, Target.app.name());
-//                                publish(topic, nodeItem);
-//                                zwave.setStatus("add");
-//                                zwaveRepository.save(zwave);
-//                            }
                         }
                     }
                     //등록안되어있고 node의 status가 delete가 아닐경우 일경우 insert함.
@@ -471,4 +487,39 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         return zWaveReport;
     }
 
+    @Override
+    public Map getZWaveListApp(int gatewayNo) {
+        Map map = new HashMap();
+        List<ZWave> lstZWave = zwaveRepository.findByGatewayNo(gatewayNo);
+        List<ZWaveReportByApp> rtnList = new ArrayList<>();
+        for (int i = 0; i < lstZWave.size(); i++) {
+            ZWave zwave = lstZWave.get(i);
+            if(zwave.getNodeId()!=1) {
+                ZWaveReportByApp zWaveReportByApp = new ZWaveReportByApp();
+                zWaveReportByApp.setZwaveNo(zwave.getNo());
+                zWaveReportByApp.setNodeId(zwave.getNodeId());
+                zWaveReportByApp.setNicname(zwave.getNickname());
+                zWaveReportByApp.setStatus(zwave.getStatus());
+                
+                List<EndpointReportByApp> lstEndpointReportByApp= new ArrayList<>();
+                List<Endpoint> lstEndpoint= zwave.getEndpoints();
+                for (int j = 0; j < lstEndpoint.size(); j++) {
+                    Endpoint endpoint = lstEndpoint.get(j);
+                    EndpointReportByApp endpointReportByApp = new EndpointReportByApp();
+                    endpointReportByApp.setEndpointNo(endpoint.getNo());
+                    endpointReportByApp.setEpStatus(endpoint.getStatus());
+                    endpointReportByApp.setEpid(endpoint.getEpid());
+                    endpointReportByApp.setNickname(endpoint.getNickname());
+                    lstEndpointReportByApp.add(endpointReportByApp);
+                }
+                zWaveReportByApp.setEndpoints(lstEndpointReportByApp);
+                rtnList.add(zWaveReportByApp);
+            }
+            
+        }
+        map.put("nodelist",rtnList);
+        map.put("nodeCnt",lstZWave.size()-1);
+        return map;
+    }
+    
 }

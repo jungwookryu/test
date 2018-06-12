@@ -57,23 +57,13 @@ public class Endpoint {
   
     @Column(name = "cmd_cls")
     String cmdCls;
-    
+    @JsonProperty("status")
+    @Column(name = "status")
+    int status;
     
     @JsonProperty("cmd_cls")
     @Transient
     List<CmdCls> cmdClses;
-    
-//    @OneToMany
-//    @JoinTable(name = "zwave",
-//            joinColumns = @JoinColumn(name="no"),
-//            inverseJoinColumns = @JoinColumn(name="zwave_no"))
-//    private ZWave zwave;
-    
-//    @ManyToOne
-//    @JoinTable(name = "cmd_cls",
-//            inverseJoinColumns = @JoinColumn(name="endpoint_no"),
-//            joinColumns = @JoinColumn(name="no"))
-//    List<CmdCls> cmdClss;
     
     public boolean addEndpoints(CmdCls cmdCls) {
         
@@ -141,24 +131,12 @@ public class Endpoint {
         this.cmdCls = cmdCls;
     }
 
-//    public ZWave getZwave() {
-//        return zwave;
-//    }
-//    public void setZwave(ZWave zwave) {
-//        this.zwave = zwave;
-//    }
     public List<CmdCls> getCmdClses() {
         return cmdClses;
     }
     public void setCmdClses(List<CmdCls> cmdClses) {
         this.cmdClses = cmdClses;
     }
-//    public List<CmdCls> getCmdClss() {
-//        return cmdClss;
-//    }
-//    public void setCmdClss(List<CmdCls> cmdClss) {
-//        this.cmdClss = cmdClss;
-//    }
     public String getCmdCls() {
         return cmdCls;
     }
@@ -169,6 +147,14 @@ public class Endpoint {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
 }
