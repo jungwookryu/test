@@ -16,10 +16,9 @@ import com.ht.connected.home.backend.sip.message.model.dto.SipMqttRequestMessage
 import com.ht.connected.home.backend.sip.message.model.dto.SipSharedDeviceDto;
 import com.ht.connected.home.backend.sip.message.model.entity.SipEvent;
 
-
 /**
- * SIP MQTT 메시지 Subscirber 
- * 메세지의 Method 필드를 참고하여 수신된 메세지를 처리할 메소드를 동적으로 호출한다
+ * SIP MQTT 메시지 Subscirber 메세지의 Method 필드를 참고하여 수신된 메세지를 처리할 메소드를 동적으로 호출한다
+ * 
  * @author 구정화
  *
  */
@@ -33,21 +32,22 @@ public class SipMqttSubscribeService {
 
     @Autowired
     private SipUserService userService;
-    
+
     @Autowired
     private SipMqttPublishService mqttPublishService;
-    
+
     @Autowired
     private SipDeviceService deviceService;
-    
+
     @Autowired
     private SipShareService shareService;
-    
+
     @Autowired
     private SipEventService eventService;
-    
+
     /**
      * 회원가입
+     * 
      * @param request
      */
     public void user(SipMqttRequestMessageDto request) {
@@ -59,9 +59,10 @@ public class SipMqttSubscribeService {
             mqttPublishService.publish(request, null);
         }
     }
-    
+
     /**
      * 기기 추가 삭제
+     * 
      * @param request
      */
     public void device(SipMqttRequestMessageDto request) {
@@ -69,12 +70,12 @@ public class SipMqttSubscribeService {
             boolean isSuccess = deviceService.addDevice(request);
             request.setResult(isSuccess);
             mqttPublishService.publish(request, null);
-        }else if(request.getCrudType().equals("delete")) {
+        } else if (request.getCrudType().equals("delete")) {
             deviceService.deleteDevice(request);
             mqttPublishService.publish(request, null);
         }
     }
-    
+
     /**
      * 도어벨정보요청
      * 
@@ -88,17 +89,17 @@ public class SipMqttSubscribeService {
         body.put("ownerShared", deviceService.getAccountInfo(userId, "ownerShared"));
         mqttPublishService.publish(request, body);
     }
-    
+
     /**
      * 푸시토큰 업데이트
      * 
      * @param request
      */
-    public void pushToken(SipMqttRequestMessageDto request) {        
+    public void pushToken(SipMqttRequestMessageDto request) {
         userService.updateUserToken(request);
-        mqttPublishService.publish(request, null);        
+        mqttPublishService.publish(request, null);
     }
-    
+
     /**
      * 기기 등록 여부 검사
      * 
@@ -116,7 +117,7 @@ public class SipMqttSubscribeService {
         }
         mqttPublishService.publish(request, body);
     }
-    
+
     /**
      * 공유신청 상태 조회
      * 
@@ -142,7 +143,7 @@ public class SipMqttSubscribeService {
             mqttPublishService.publish(request, null);
         }
     }
-    
+
     public void ownerDeviceSharedStatus(SipMqttRequestMessageDto request) {
         if (request.getCrudType().equals("get")) {
             /**
@@ -162,7 +163,7 @@ public class SipMqttSubscribeService {
             mqttPublishService.publish(request, objectMapper.valueToTree(request));
         }
     }
-    
+
     /**
      * 이벤트 기록 조회
      * 
@@ -175,7 +176,7 @@ public class SipMqttSubscribeService {
         body.put("list", events);
         mqttPublishService.publish(request, body);
     }
-    
+
     public void subscribe(Message<?> message) {
         SipMqttRequestMessageDto request = null;
         String topic = String.valueOf(message.getHeaders().get("mqtt_topic"));
@@ -188,11 +189,15 @@ public class SipMqttSubscribeService {
                 String method = Introspector.decapitalize(request.getMethod());
                 SipMqttSubscribeService.class.getMethod(method, SipMqttRequestMessageDto.class).invoke(this, request);
             }
+        } catch(IndexOutOfBoundsException e) {
+            /**
+             * 미디어 서버로 갈 토픽이라면 처리되지 않고 넘김          
+             */
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * 기기 등록 여부 예외 메세지
      * 
