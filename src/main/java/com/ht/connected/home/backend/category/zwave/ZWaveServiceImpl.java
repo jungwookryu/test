@@ -309,14 +309,18 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         mqttRequest.setEndpointId(endpoint.getEpid());
         mqttRequest.setSerialNo(gateway.getSerial());
         mqttRequest.setModel(gateway.getModel());
-        mqttRequest.setCommandKey(BasicCommandClass.INT_ID);
-        mqttRequest.setClassKey(BasicCommandClass.INT_BASIC_SET);
+        mqttRequest.setClassKey(BasicCommandClass.INT_ID);
+        mqttRequest.setCommandKey(BasicCommandClass.INT_BASIC_SET);
         mqttRequest.setVersion("v1");
         mqttRequest.setSecurityOption("0");
         
         HashMap map = new HashMap<>();
         map.put("value", zWaveControl.getValue());
-        mqttRequest.setSetData(map);
+//        map.put("currentValue", zWaveControl.getCurrentValue());
+//        map.put("duration", zWaveControl.getDuration());
+        HashMap map1 = new HashMap<>();
+        map1.put("set_data", map);
+        mqttRequest.setSetData(map1);
         publish(mqttRequest);
     }
 
@@ -424,7 +428,9 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         // mqttRequest.setVersion(gateway.getVersion());
         HashMap map = new HashMap<>();
         map.put("mode", 1);
-        mqttRequest.setSetData((HashMap<String, Object>) new HashMap().put("set_data", map));
+        HashMap map1 = new HashMap<>();
+        map1.put("set_data", map);
+        mqttRequest.setSetData(map1);
         publish(mqttRequest);
         return iRtn;
 
