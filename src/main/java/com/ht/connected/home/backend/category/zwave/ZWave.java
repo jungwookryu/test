@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -47,8 +48,8 @@ public class ZWave {
     @Column(name = "nickname")
     String nickname;
 
-    @Column(name = "event")
-    String event;
+/*    @Column(name = "event")
+    String event;*/
 
     @Column(name = "status")
     String status;
@@ -110,10 +111,8 @@ public class ZWave {
     @Transient
     List<Endpoint> endpoint;
     
-    @OneToMany
-    @JoinTable(name = "zwave_endpoint",
-            inverseJoinColumns = @JoinColumn(name="zwave_no"),
-            joinColumns = @JoinColumn(name="endpoint_no"))
+    @OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name="zwave_no")
     List<Endpoint> endpoints;
     
     public boolean addEndpoints(Endpoint endpoint) {
@@ -156,7 +155,7 @@ public class ZWave {
         this.nickname = nickname;
     }
 
-
+/*
     public String getEvent() {
         return event;
     }
@@ -164,7 +163,7 @@ public class ZWave {
     public void setEvent(String event) {
         this.event = event;
     }
-
+*/
     public String getStatus() {
         return status;
     }
@@ -214,7 +213,7 @@ public class ZWave {
     @Override
     public String toString() {
         return "Zwave [no=" + no + ", gatewayNo=" + gatewayNo + ", nodeId=" + nodeId + ", endpointId=" + endpointId + ", nickname=" + nickname
-                + ", event=" + event + ", status=" + status + ", creratedTime=" + creratedTime + ", lastModifiedDate=" + lastModifiedDate + ", endpoint=" + sEndpoint + "]";
+               /* + ", event=" + event*/ + ", status=" + status + ", creratedTime=" + creratedTime + ", lastModifiedDate=" + lastModifiedDate + ", endpoint=" + sEndpoint + "]";
     }
 
     public int getEndpointId() {

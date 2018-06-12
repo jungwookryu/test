@@ -13,8 +13,8 @@ public interface ZWaveRepository extends JpaRepository<ZWave, Integer>{
     List<ZWave> findByGatewayNo(int gatewayNos);
     
     @Modifying
-    @Query("update ZWave z set z.event = ?1, z.status = ?2  where z.no = ?3")
-    int setFixedEventAndStatusForNo(String event, String status, int no);
+    @Query("update ZWave z set z.status = ?2  where z.no = ?3")
+    int setFixedStatusForNo(String status, int no);
     
     
     int deleteByGatewayNo(int gatewayNo);

@@ -1,24 +1,18 @@
 package com.ht.connected.home.backend.category.zwave.cmdcls;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
 
 @Entity
 @Table(name = "cmd_cls")
@@ -58,12 +52,6 @@ public class CmdCls {
     @Column(name = "endpoint_no")
     @JsonProperty("endpoint_no")
     int endpointNo;
-
-    @ManyToOne(optional = false)
-    @JoinTable(name = "endpoint_cmdcls",
-        joinColumns = @JoinColumn(name = "cmdcls_no"),
-        inverseJoinColumns = @JoinColumn(name = "endpoint_no"))
-    private Endpoint endpoint;
 
     public boolean addRptCmd(String sRptCmd) {
         if(rptCmds == null) {
@@ -134,14 +122,6 @@ public class CmdCls {
 
     public void setEndpointNo(int endpointNo) {
         this.endpointNo = endpointNo;
-    }
-
-    public Endpoint getEndpoint() {
-        return endpoint;
-    }
-
-    public void setEndpoint(Endpoint endpoint) {
-        this.endpoint = endpoint;
     }
 
     public String[] getRptCmds() {

@@ -392,7 +392,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         // TODO DB 에서 기기삭제 status 로 update
         ZWave zwave = zwaveRepository.getOne(no);
         Gateway gateway = gatewayRepository.getOne(zwave.getGatewayNo());
-        int iRtn = zwaveRepository.setFixedEventAndStatusForNo(event.delete.name(), status.delete.name(), no);
+        int iRtn = zwaveRepository.setFixedStatusForNo( status.delete.name(), no);
         MqttRequest mqttRequest = new MqttRequest();
         mqttRequest.setSerialNo(gateway.getSerial());
         mqttRequest.setModel(gateway.getModel());
@@ -461,6 +461,14 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         // int zwaveUpdateCnt =zwaveRepository.setFixedStatusForGatewayNo(status.delete.name(), gatewayNo);
         // return zwaveUpdateCnt;
         return 0;
+    }
+
+    @Override
+    public ZWaveReport getZWaveList(int gatewayNo) {
+        ZWaveReport zWaveReport = new ZWaveReport();
+        List<ZWave> lstZWave = zwaveRepository.findByGatewayNo(gatewayNo);
+        zWaveReport.setNodelist(lstZWave);
+        return zWaveReport;
     }
 
 }

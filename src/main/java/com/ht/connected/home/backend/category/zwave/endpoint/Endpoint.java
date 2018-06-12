@@ -46,7 +46,10 @@ public class Endpoint {
     @Column(name = "`specific`")
     @JsonProperty("specific")
     String specific;
-
+    
+    @Column(name = "nickname")
+    @JsonProperty("nickname")
+    String nickname;
 
     @Column(name = "zwave_no")
     @JsonProperty("zwave_no")
@@ -60,17 +63,17 @@ public class Endpoint {
     @Transient
     List<CmdCls> cmdClses;
     
-    @ManyToOne(optional = false)
-    @JoinTable(name = "zwave_endpoint",
-      joinColumns = @JoinColumn(name = "zwave_no"),
-      inverseJoinColumns = @JoinColumn(name = "no"))
-    private ZWave zwave;
+//    @OneToMany
+//    @JoinTable(name = "zwave",
+//            joinColumns = @JoinColumn(name="no"),
+//            inverseJoinColumns = @JoinColumn(name="zwave_no"))
+//    private ZWave zwave;
     
-    @OneToMany
-    @JoinTable(name = "endpoint_cmd_cls",
-            joinColumns = @JoinColumn(name="no"),
-            inverseJoinColumns = @JoinColumn(name="endpoint_no"))
-    List<CmdCls> cmdClss;
+//    @ManyToOne
+//    @JoinTable(name = "cmd_cls",
+//            inverseJoinColumns = @JoinColumn(name="endpoint_no"),
+//            joinColumns = @JoinColumn(name="no"))
+//    List<CmdCls> cmdClss;
     
     public boolean addEndpoints(CmdCls cmdCls) {
         
@@ -138,26 +141,34 @@ public class Endpoint {
         this.cmdCls = cmdCls;
     }
 
-    public ZWave getZwave() {
-        return zwave;
-    }
-    public void setZwave(ZWave zwave) {
-        this.zwave = zwave;
-    }
+//    public ZWave getZwave() {
+//        return zwave;
+//    }
+//    public void setZwave(ZWave zwave) {
+//        this.zwave = zwave;
+//    }
     public List<CmdCls> getCmdClses() {
         return cmdClses;
     }
     public void setCmdClses(List<CmdCls> cmdClses) {
         this.cmdClses = cmdClses;
     }
-    public List<CmdCls> getCmdClss() {
-        return cmdClss;
-    }
-    public void setCmdClss(List<CmdCls> cmdClss) {
-        this.cmdClss = cmdClss;
-    }
+//    public List<CmdCls> getCmdClss() {
+//        return cmdClss;
+//    }
+//    public void setCmdClss(List<CmdCls> cmdClss) {
+//        this.cmdClss = cmdClss;
+//    }
     public String getCmdCls() {
         return cmdCls;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
 }
