@@ -44,8 +44,8 @@ public class SipMqttPublishService {
         try {
             String payload = objectMapper.writeValueAsString(resp);
             mqttGateway.sendToMqtt(payload);
-            LOGGER.info(String.format("=== MQTT published Topic: %s ===", request.getResponseTopic()));
-            LOGGER.info(String.format("=== MQTT published Message: %s ===", payload.toString()));
+            LOGGER.info(String.format("=== MQTT SIP Message server published Topic: %s ===", request.getResponseTopic()));
+            LOGGER.info(String.format("=== MQTT SIP Message server published Message: %s ===", payload.toString()));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
