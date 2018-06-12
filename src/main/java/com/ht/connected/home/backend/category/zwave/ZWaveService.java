@@ -39,7 +39,7 @@ public interface ZWaveService extends CrudService<ZWave, Integer>, MqttBase<Obje
     
     ZWaveReport getZWaveList(int gatewayNo);
 
-    void zwaveControl(ZWaveControl zWaveControl);
+    void zwaveControl(ZWaveControl zWaveControl) throws JsonProcessingException;
 
     Map getZWaveListApp(int gatewayNo);
 }
