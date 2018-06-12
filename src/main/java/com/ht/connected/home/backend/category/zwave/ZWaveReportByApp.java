@@ -19,8 +19,8 @@ public class ZWaveReportByApp {
     @JsonProperty("nodeId")
     int nodeId;
     
-    @JsonProperty("nicname")
-    String nicname;
+    @JsonProperty("nickname")
+    String nickname;
     
     @JsonProperty("status")
     String status;
@@ -53,11 +53,11 @@ public class ZWaveReportByApp {
     }
 
     public String getNicname() {
-        return nicname;
+        return nickname;
     }
 
-    public void setNicname(String nicname) {
-        this.nicname = nicname;
+    public void setNicname(String nickname) {
+        this.nickname = nickname;
     }
 
     public String getStatus() {
@@ -78,7 +78,7 @@ public class ZWaveReportByApp {
 
     @Override
     public String toString() {
-        return "ZWaveReportByApp [zwaveNo=" + zwaveNo + ", nodeId=" + nodeId + ", nicname=" + nicname + ", status=" + status + ", endpoints=" + endpoints + "]";
+        return "ZWaveReportByApp [zwaveNo=" + zwaveNo + ", nodeId=" + nodeId + ", nicname=" + nickname + ", status=" + status + ", endpoints=" + endpoints + "]";
     }
 
   }
