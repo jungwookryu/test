@@ -294,27 +294,30 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     /**
      * Zwave 기기제어
      * @author lij
+     * @throws JsonProcessingException 
      */
     // 제어
     @Override
-    public void zwaveControl(ZWaveControl zWaveControl) {
+    public void zwaveControl(ZWaveControl zWaveControl) throws JsonProcessingException {
         
-//        Gateway gateway = gatewayRepository.findOne(zWaveControl.getGateway_no()); 
-//        ZWave zwave = zwaveRepository.findOne(zWaveControl.getZwave_no());
-//        Endpoint endpoint = endpointRepository.findOne(zWaveControl.getEndpoint_no());
-//        Map map = new HashMap();
-//        "nodeId"ByteUtil.getHexString((Integer) zwave.getNodeId());;
-//        String endPointId = ByteUtil.getHexString((Integer) endpoint.getEpid());
-//        String serial = gateway.getSerial();
-//        String commandKey = ByteUtil.getHexString(BasicCommandClass.INT_ID);
-//        String classkey = ByteUtil.getHexString(BasicCommandClass.INT_BASIC_SET);
-//        String version = "v1";
-//        String option =  "0" ;
-//        String model = gateway.getModel();
-//        String[] segments = new String[] { "/server", Target.host.name(), model, serial, "zwave", "certi",
-//                classkey, commandKey, version, nodeId, endPointId, option };
-//        String topic = String.join("/", segments);
-//        publish(topic, map1);
+        Gateway gateway = gatewayRepository.findOne(zWaveControl.getGateway_no()); 
+        ZWave zwave = zwaveRepository.findOne(zWaveControl.getZwave_no());
+        Endpoint endpoint = endpointRepository.findOne(zWaveControl.getEndpoint_no());
+        MqttRequest mqttRequest = new MqttRequest();
+        
+        mqttRequest.setNodeId(zwave.getNodeId());
+        mqttRequest.setEndpointId(endpoint.getEpid());
+        mqttRequest.setSerialNo(gateway.getSerial());
+        mqttRequest.setModel(gateway.getModel());
+        mqttRequest.setCommandKey(BasicCommandClass.INT_ID);
+        mqttRequest.setClassKey(BasicCommandClass.INT_BASIC_SET);
+        mqttRequest.setVersion("v1");
+        mqttRequest.setSecurityOption("0");
+        
+        HashMap map = new HashMap<>();
+        map.put("value", zWaveControl.getValue());
+        mqttRequest.setSetData(map);
+        publish(mqttRequest);
     }
 
     
@@ -369,11 +372,13 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                         saveGatewayCategory(zwaveRequest, nodeItem.getNodeId());
                         nodeItem.setGatewayNo(gateway.getNo());
                         nodeItem.setCreratedTime(new Date());
+                        nodeItem.setNickname(getDefaultNickName(nodeItem.getBasic(), nodeItem.getGeneric(), nodeItem.getSpecific()));
                         ZWave saveZwave = zwaveRepository.save(nodeItem);
                         List<Endpoint> newEndpoints = nodeItem.getEndpoint();
                         for(int iE = 0; iE<newEndpoints.size();iE++) {
                             Endpoint endpoint = newEndpoints.get(iE);
                             endpoint.setZwaveNo(saveZwave.getNo());
+                            endpoint.setCmdCls(endpoint.getScmdClses(endpoint.getCmdClses()));
                             endpoint.setCmdCls(endpoint.getScmdClses(endpoint.getCmdClses()));
                             Endpoint saveEndpoint = endpointRepository.save(endpoint);
                             List<CmdCls> newCmdCls = newEndpoints.get(iE).getCmdClses();
@@ -520,6 +525,9 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         map.put("nodelist",rtnList);
         map.put("nodeCnt",lstZWave.size()-1);
         return map;
+    }
+    private String getDefaultNickName(String basic, String generic, String specific) {
+        return "";
     }
     
 }

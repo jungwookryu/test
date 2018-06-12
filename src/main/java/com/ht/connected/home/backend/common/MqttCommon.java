@@ -66,46 +66,7 @@ public class MqttCommon {
         return topic;
     }
     public static String getMqttPublishTopic(MqttRequest mqttRequest) {
-        String topic = "";
-        int nodeId = 0;
-        int endPointId = 0;
-        if (!Objects.isNull(mqttRequest.getNodeId())) {
-            nodeId = mqttRequest.getNodeId();
-        }
-        if (!Objects.isNull(mqttRequest.getEndpointId())) {
-            endPointId = mqttRequest.getEndpointId();
-        }
-        
-        topic = "/server"
-                +"/"+ Target.host.name() 
-                +"/"+ mqttRequest.getModel()
-                +"/"+ mqttRequest.getSerialNo()
-                +"/"+ "zwave"
-                +"/"+ "certi"
-                +"/"+ ByteUtil.getHexString(mqttRequest.getClassKey())
-                +"/"+ ByteUtil.getHexString(mqttRequest.getCommandKey());
-                if(!Common.empty(mqttRequest.getVersion())){
-                    topic += "/"+ mqttRequest.getVersion();
-                    if(!Common.empty(mqttRequest.getNodeId())){
-                        topic += "/"+ ByteUtil.getHexString(nodeId);
-                        if(!Common.empty(mqttRequest.getEndpointId())){
-                            topic += "/"+ ByteUtil.getHexString(endPointId);
-                            if(!Common.empty(mqttRequest.getSecurityOption())){
-                                topic += "/"+ mqttRequest.getSecurityOption();
-                            } else {
-                                topic += "/none";
-                            }
-                        } else {
-                            topic += "/none";
-                        }
-                    } else {
-                        topic += "/none";
-                    }
-                }else {
-                    topic += "/none";
-                }
-        logger.info("====================== ZWAVE PROTO MQTT PUBLISH TOPIC ======================");
-        logger.info(topic);
+        String topic = getMqttPublishTopic(mqttRequest, Target.host.name());
         return topic;
     }
 }
