@@ -34,12 +34,12 @@ public class SipDeviceService {
      */
     public boolean addDevice(SipMqttRequestMessageDto request) {
         boolean isSuccess = false;
-        SipDevice device = deviceRepository.findBySerialNumber(request.getBody().get("deviceNo").toString());
+        SipDevice device = deviceRepository.findBySerialNumberAndUserPassword(request.getBody().get("deviceNo").toString(), request.getBody().get("devicePassword").toString());
         if (!isNull(device)) {
             device.setOwnerAccount(request.getBody().get("userID").toString());
             device.setSerialNumber(request.getBody().get("deviceNo").toString());
             device.setDeviceNickname(request.getBody().get("deviceAlias").toString());
-            device.setUserPassword(request.getBody().get("devicePassword").toString());
+//            device.setUserPassword(request.getBody().get("devicePassword").toString());
             device.setLocLatitude(request.getBody().get("latitude").toString());
             device.setLocLongitude(request.getBody().get("longitude").toString());
             device.setOwnership(request.getBody().get("ownership").toString());
