@@ -83,7 +83,7 @@ public class ZWaveController extends CommonController {
         zwaveService.execute(req, zwaveRequest, false);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
-
+/*
     @GetMapping(value = "/{serial}")
     public ResponseEntity getList(@PathVariable("serial") String serial) throws JsonProcessingException {
         HashMap map = new HashMap();
@@ -94,6 +94,12 @@ public class ZWaveController extends CommonController {
         if (certification.size() > 0) {
             sRtnList = certification.get(0).getPayload();
         }
+        return new ResponseEntity<>(sRtnList, HttpStatus.ACCEPTED);
+    }
+*/
+    @GetMapping(value = "/{gateway_no}")
+    public ResponseEntity getList(@PathVariable("gateway_no") int gateway_no) {
+        ZWaveReport sRtnList = zwaveService.getZWaveList(gateway_no);
         return new ResponseEntity<>(sRtnList, HttpStatus.ACCEPTED);
     }
 

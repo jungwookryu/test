@@ -36,4 +36,6 @@ public interface ZWaveService extends CrudService<ZWave, Integer>, MqttBase<Obje
     void subscribeInit(Gateway gateway) throws JsonProcessingException;
 
     int deleteByGatewayNo(int gatewayNo);
+    
+    ZWaveReport getZWaveList(int gatewayNo);
 }

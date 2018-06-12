@@ -16,6 +16,9 @@ public class ZWaveReport {
     @JsonProperty("nodelist")
     public List<ZWave> nodelist;
 
+    public ZWaveReport() {
+    }
+    
     public List<ZWave> getNodelist() {
         return nodelist;
     }
