@@ -107,7 +107,8 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
         }
         return gateway;
     }
-
+    
+    
     /**
      * 호스트 정보 업데이트
      * @param messageArrived
@@ -163,10 +164,10 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
             gateway.setStatus(gateway.getType());
             if (type.register.name().equals(gateway.getType())) {
                 Gateway exangeGateway = gatewayRepository.findBySerial(gateway.getSerial());
-                if(exangeGateway.getCreatedUserId().equals(gateway.getCreatedUserId())) {
+                if(null != exangeGateway && exangeGateway.getCreatedUserId().equals(gateway.getCreatedUserId())) {
                     exangeGateway.setStatus("failAp");
                 }else {
-                    exangeGateway.setStatus("sucessAp");
+                   
                     List<User> users = userRepository.findByUserEmail(gateway.getUserEmail());
                     gateway.setLastModifiedTime(new Date());
                     if (users.size() > 0) {
@@ -177,6 +178,7 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
                         } else {
                             exangeGateway.setLastModifiedTime(new Date());
                         }
+                        exangeGateway.setStatus("sucessAp");
                         exangeGateway.setCreatedTime(new Date());
                         exangeGateway.setBssid(gateway.getBssid());
                         exangeGateway.setSsid(gateway.getSsid());
@@ -256,4 +258,35 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
         }
 
     }
+    
+    @Override
+    public Gateway modifyGateway(Gateway originGateway, Gateway gateway) {
+        Gateway saveGateway = originGateway;
+        if(originGateway !=null) {
+            if(Common.notEmpty(gateway.getNickname())) {
+                saveGateway.setNickname(gateway.getNickname());
+            }
+            if(Common.notEmpty(gateway.getStatus())) {
+                saveGateway.setStatus(gateway.getStatus());
+            }
+            if(Common.notEmpty(gateway.getCreatedUserId())) {
+                saveGateway.setCreatedUserId(gateway.getCreatedUserId());
+            }
+            if(originGateway != saveGateway) {
+                Gateway rtnGateway = gatewayRepository.save(originGateway);
+                return rtnGateway;
+            }else {
+                return originGateway;
+            }
+        }else {
+            return new Gateway(); 
+        }
+    }
+
+
+    @Override
+    public Gateway getOne(int no) {
+        return gatewayRepository.getOne(no);
+    }
+
 }

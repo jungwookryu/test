@@ -9,4 +9,6 @@ public interface GatewayService extends MqttBase<Object, Object>{
     List getGatewayList(String status,String authUserEmail);
     void delete(int no);
     void deleteCategory(GatewayCategory gatewayCategory);
+    Gateway modifyGateway(Gateway originGateway, Gateway gateway);
+    Gateway getOne(int no);
 }
