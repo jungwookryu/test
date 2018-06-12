@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -87,15 +86,14 @@ public class ZWaveController extends CommonController {
         return new ResponseEntity<>(sRtnList, HttpStatus.ACCEPTED);
     }
 
-    @PutMapping
-    @ResponseBody
-    public ResponseEntity control(@RequestBody HashMap map) throws JsonProcessingException {
-        zwaveService.execute(map, false);
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
-    }
+//    @PutMapping
+//    @ResponseBody
+//    public ResponseEntity control(@RequestBody HashMap map) throws JsonProcessingException {
+//        zwaveService.execute(map, false);
+//        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+//    }
 
-    @PutMapping(value="{/zwave_no}")
-    @ResponseBody
+    @PutMapping("/{zwave_no}")
     public ResponseEntity control(@PathVariable int zwave_no, @RequestBody ZWaveControl zWaveControl) throws JsonProcessingException {
         zWaveControl.setZwave_no(zwave_no);
         zwaveService.zwaveControl(zWaveControl);

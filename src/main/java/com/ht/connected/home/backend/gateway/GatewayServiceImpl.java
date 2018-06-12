@@ -229,14 +229,12 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     @Override
     @Transactional
     public void delete(int no) {
-        // db 삭제
+        // db 삭제모드 업데이트
         updateDeleteDB(no);
         // host 삭제 모드 요청 publish
-        //Gateway gateway = findOne(no);
-        //String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/manager/product/registration", gateway.getModel(), gateway.getSerial());
-        // publish(exeTopic, null);
-        //{source}/{target}/{model}/{serial}/manager/reset
-
+        Gateway gateway = findOne(no);
+        String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/reset", gateway.getModel(), gateway.getSerial());
+        publish(exeTopic, null);
     }
 
     private void updateDeleteDB(int gatewayNo) {
