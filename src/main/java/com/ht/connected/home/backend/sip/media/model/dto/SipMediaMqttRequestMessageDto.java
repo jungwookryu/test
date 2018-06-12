@@ -3,7 +3,6 @@ package com.ht.connected.home.backend.sip.media.model.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
 /**
  * MQTT 수신 메세지 데이터 모델 클래스
  * 
@@ -16,19 +15,20 @@ public class SipMediaMqttRequestMessageDto {
     private String[] topic;
     private String serialNumber;
 
+    @JsonProperty(value = "Event")
+    private String event;
+
     @JsonProperty(value = "EventID")
     private String eventId;
 
-    @JsonProperty(value = "Event")
-    private String event;
+    @JsonProperty(value = "TimeStamp")
+    private String timestamp;
 
     @JsonProperty(value = "Data")
     private String data;
 
     @JsonProperty(value = "FileInfo")
     private FileInfoDto fileInfo;
-
-    private String timestamp;
 
     public String[] getTopic() {
         return topic;
@@ -47,16 +47,28 @@ public class SipMediaMqttRequestMessageDto {
         this.serialNumber = serialNumber;
     }
 
-    public String getEventId() {
-        return eventId;
-    }
-
     public String getEvent() {
         return event;
     }
 
     public void setEvent(String event) {
         this.event = event;
+    }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timeStamp) {
+        this.timestamp = timeStamp;
     }
 
     public String getData() {
@@ -75,22 +87,6 @@ public class SipMediaMqttRequestMessageDto {
         this.fileInfo = fileInfo;
     }
 
-    public void setTopic(String[] topic) {
-        this.topic = topic;
-    }
-
-    public void setEventId(String eventId) {
-        this.eventId = eventId;
-    }
-
-    public String getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
-    }
-
     public static class FileInfoDto {
 
         @JsonProperty(value = "FileExt")
@@ -98,6 +94,18 @@ public class SipMediaMqttRequestMessageDto {
 
         @JsonProperty(value = "VideoExist")
         private boolean videoExist;
+
+        @JsonProperty(value = "RawFileTotSize")
+        private int rawFileTotSize;
+
+        @JsonProperty(value = "NumOfSlot")
+        private int numOfSlot;
+
+        @JsonProperty(value = "SlotIndex")
+        private int slotIndex;
+
+        @JsonProperty(value = "SlotSize")
+        private SlotSizeDto SlotSize;
 
         public String getFileExt() {
             return fileExt;
@@ -113,6 +121,64 @@ public class SipMediaMqttRequestMessageDto {
 
         public void setVideoExist(boolean videoExist) {
             this.videoExist = videoExist;
+        }
+
+        public int getRawFileTotSize() {
+            return rawFileTotSize;
+        }
+
+        public void setRawFileTotSize(int rawFileTotSize) {
+            this.rawFileTotSize = rawFileTotSize;
+        }
+
+        public int getNumOfSlot() {
+            return numOfSlot;
+        }
+
+        public void setNumOfSlot(int numOfSlot) {
+            this.numOfSlot = numOfSlot;
+        }
+
+        public int getSlotIndex() {
+            return slotIndex;
+        }
+
+        public void setSlotIndex(int slotIndex) {
+            this.slotIndex = slotIndex;
+        }
+
+        public SlotSizeDto getSlotSize() {
+            return SlotSize;
+        }
+
+        public void setSlotSize(SlotSizeDto slotSize) {
+            SlotSize = slotSize;
+        }
+
+    }
+
+    public static class SlotSizeDto {
+
+        @JsonProperty(value = "Raw")
+        private int raw;
+
+        @JsonProperty(value = "Base64")
+        private int base64;
+
+        public int getRaw() {
+            return raw;
+        }
+
+        public void setRaw(int raw) {
+            this.raw = raw;
+        }
+
+        public int getBase64() {
+            return base64;
+        }
+
+        public void setBase64(int base64) {
+            this.base64 = base64;
         }
 
     }

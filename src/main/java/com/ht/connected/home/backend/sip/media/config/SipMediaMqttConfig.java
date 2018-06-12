@@ -44,17 +44,15 @@ public class SipMediaMqttConfig {
     @Qualifier(value = "mqttClientFactory")
     private DefaultMqttPahoClientFactory sipMediaMqttClientFactory;
 
-    @Autowired
-    MessageChannel mqttInputChannel;
     /**
      * subscriber가 사용할 채널
      * 
      * @return
      */
-//    @Bean
-//    public MessageChannel sipMediaMqttInputChannel() {
-//        return new DirectChannel();
-//    }
+    @Bean
+    public MessageChannel sipMediaMqttInputChannel() {
+        return new DirectChannel();
+    }
 
     /**
      * Subscriber
@@ -64,11 +62,11 @@ public class SipMediaMqttConfig {
     @Bean
     public MessageProducer SIPMediaMqttInbound() {
         MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(
-                "SIP" + springMqttClientIdPrefix + System.nanoTime(), sipMediaMqttClientFactory, springMqttChannelServer);
+                "SIP-Media" + springMqttClientIdPrefix + System.nanoTime(), sipMediaMqttClientFactory, springMqttChannelServer);
         // adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(1);
-        adapter.setOutputChannel(mqttInputChannel);
+        adapter.setOutputChannel(sipMediaMqttInputChannel());
         return adapter;
     }
 

@@ -88,7 +88,7 @@ public class SipMediaMqttSubscribeService {
         try {
             request = objectMapper.readValue(payload, SipMediaMqttRequestMessageDto.class);
             request.setTopic(topic);
-            if((request.getTopic()[2].equals("request") || request.getTopic()[3].equals("request")) && !isNull(request.getEvent())) {
+            if(request.getTopic()[2].equalsIgnoreCase("SendEvent") && !isNull(request.getEvent())) {
                 LOGGER.info("messageArrived-SIP-Media: Topic=" + topic + ", Payload=" + payload);
                 request.setTimestamp(new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime()));            
                 upload(request);
