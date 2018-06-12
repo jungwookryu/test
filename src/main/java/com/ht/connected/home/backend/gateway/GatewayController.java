@@ -18,10 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.category.zwave.ZWaveController;
 import com.ht.connected.home.backend.controller.rest.CommonController;
-import com.ht.connected.home.backend.gatewayCategory.GatewayCategory;
 import com.ht.connected.home.backend.user.User;
 import com.ht.connected.home.backend.user.UserRepository;
 import com.ht.connected.home.backend.userGateway.UserGateway;
@@ -38,16 +36,12 @@ public class GatewayController extends CommonController {
     GatewayService gateWayService;
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     GatewayRepository gatewayRepository;
-
     @Autowired
     UserGatewayRepository userGatewayRepository;
-
     @Autowired
     ZWaveController zwaveController;
-
     @Autowired
     public GatewayController(GatewayService gateWayService) {
         this.gateWayService = gateWayService;
@@ -108,11 +102,33 @@ public class GatewayController extends CommonController {
         gateWayService.delete(no);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
+    
+//    
+//    @DeleteMapping(value = "/{no}")
+//    public ResponseEntity deleteGateway(@RequestBody GatewayCategory gatewayCategory) throws JsonProcessingException {
+//
+//        gateWayService.deleteCategory(gatewayCategory);
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
+    
     @PutMapping(value = "/{no}")
+    public ResponseEntity modifyGateway(@PathVariable("no") int no, @RequestBody Gateway gateway) {
+        String userEmail = getAuthUserEmail();
+        Gateway originGateway = gateWayService.findOne(no);
+        if(null!=originGateway) {
+            if(originGateway.getCreatedUserId().equals(userEmail)){
+                Gateway rtnGateway = gateWayService.modifyGateway(originGateway, gateway);
+                return new ResponseEntity<>(rtnGateway,HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+    }
+/*    
+    @DeleteMapping(value = "/{no}")
     public ResponseEntity deleteIoTDevice(@RequestBody GatewayCategory gatewayCategory) throws JsonProcessingException {
 
         gateWayService.deleteCategory(gatewayCategory);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
+    }*/
+    
 }

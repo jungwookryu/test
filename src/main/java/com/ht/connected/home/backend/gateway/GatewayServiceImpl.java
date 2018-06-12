@@ -103,7 +103,7 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
             gateway = gatewayRepository.findByUsers(user);
         }
         else {
-            gateway = gatewayRepository.findByStatusAndUsers(status, user);
+            gateway = gatewayRepository.findByUsersAndStatusContaining(user,status);
         }
         return gateway;
     }
@@ -234,6 +234,10 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
         // db 삭제
         updateDeleteDB(no);
         // host 삭제 모드 요청 publish
+        //Gateway gateway = findOne(no);
+        //String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/manager/product/registration", gateway.getModel(), gateway.getSerial());
+        // publish(exeTopic, null);
+        //{source}/{target}/{model}/{serial}/manager/reset
 
     }
 
@@ -285,8 +289,8 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
 
 
     @Override
-    public Gateway getOne(int no) {
-        return gatewayRepository.getOne(no);
+    public Gateway findOne(int no) {
+        return gatewayRepository.findOne(no);
     }
 
 }
