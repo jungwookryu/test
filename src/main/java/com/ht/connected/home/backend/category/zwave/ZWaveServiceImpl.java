@@ -33,6 +33,7 @@ import com.ht.connected.home.backend.category.zwave.certification.CertificationS
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdCls;
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdClsRepository;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.BasicCommandClass;
+import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementBasicCommandClass;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementInclusionCommandClass;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementProxyCommandClass;
 import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
@@ -138,55 +139,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         return response;
     }
 
-    /**
-     * mqtt publish 토픽 생성
-     * @param topicLeadingPath
-     * @return
-     */
-    public String getMqttPublishTopic(ZWaveRequest zwaveRequest) {
-        return getMqttPublishTopic(zwaveRequest, Target.host.name());
-    }
-
-    /**
-     * mqtt publish 토픽 생성
-     * @param topicLeadingPath
-     * @return
-     */
-    public String getMqttPublishTopic(ZWaveRequest zwaveRequest, String target) {
-        String topic = "";
-        Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
-        if (!isNull(gateway)) {
-            int nodeId = 0;
-            int endPointId = 0;
-            if (!Objects.isNull(zwaveRequest.getNodeId())) {
-                nodeId = zwaveRequest.getNodeId();
-            }
-            if (!Objects.isNull(zwaveRequest.getEndpointId())) {
-                endPointId = zwaveRequest.getEndpointId();
-            }
-            String[] segments = new String[] { "/server", target, gateway.getModel(), gateway.getSerial(), "zwave", "certi",
-                    ByteUtil.getHexString(zwaveRequest.getClassKey()), ByteUtil.getHexString(zwaveRequest.getCommandKey()), zwaveRequest.getVersion(),
-                    ByteUtil.getHexString(nodeId), ByteUtil.getHexString(endPointId),
-                    zwaveRequest.getSecurityOption() };
-            topic = String.join("/", segments);
-            logging.info("====================== ZWAVE PROTO MQTT PUBLISH TOPIC ======================");
-            logging.info(topic);
-        }
-        return topic;
-    }
-
-    protected HashMap<String, Object> getPublishPayload(HashMap<String, Object> req) {
-        HashMap<String, Object> payload = new HashMap<>();
-        Object payloadData = req.get("get_data");
-        if (!isNull(payloadData)) {
-            payload.put("get_data", payloadData);
-        }
-        payloadData = req.get("set_data");
-        if (!isNull(payloadData)) {
-            payload.put("set_data", payloadData);
-        }
-        return payload;
-    }
+   
 
     @Override
     public void subscribe(Object zwaveRequest, Object payload) throws Exception {
@@ -263,6 +216,15 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
 
             }
         }
+        //기기 초기화 결과 0x4D/0x07
+        if (zwaveRequest.getClassKey() == NetworkManagementBasicCommandClass.INT_ID) {
+            // 기기상태값모드 받은 경우
+            if (zwaveRequest.getCommandKey() == NetworkManagementBasicCommandClass.DEFAULT_SET_COMPLETE) {
+                //해당기기의 정보를 모두 삭제한다. 
+                hostReset(zwaveRequest);
+            }
+        }
+        
     }
 
     /**
@@ -373,7 +335,9 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                     }
                     //등록안되어있고 node의 status가 delete가 아닐경우 일경우 insert함.
                     if(!bInsert) {
+                        //zwave nodeId Category 별 저장함.
                         saveGatewayCategory(zwaveRequest, nodeItem.getNodeId());
+                        
                         nodeItem.setGatewayNo(gateway.getNo());
                         nodeItem.setCreratedTime(new Date());
                         nodeItem.setNickname(getDefaultNickName(nodeItem.getBasic(), nodeItem.getGeneric(), nodeItem.getSpecific()));
@@ -399,6 +363,41 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                     }
                 }
             }
+            //기기삭제에대한 노드리스트 로직을 구현
+            if(zwaveRequest.getNodeId()==0) {
+                List<ZWave> lstDeleteZwave = zwaveRepository.findByGatewayNoAndStatus(gateway.getNo(), status.delete.name());
+                for (int i = 0; i < lstDeleteZwave.size(); i++) {
+                    boolean bDelete = true;
+                    ZWave zwave = lstDeleteZwave.get(i);
+                    if (zwaveReport.getNodelist() != null) {
+                        List<ZWave> nodeListItem = (List<ZWave>) zwaveReport.getNodelist();
+                        for(int j = 0; j< nodeListItem.size(); j++) {
+                            ZWave hostZwave = nodeListItem.get(j);
+                            if(zwave.equals(hostZwave.getNodeId())){
+                                bDelete = false;
+                            }
+                        }
+                    }
+                    if(bDelete) {
+                        //zwave
+                        zwaveRepository.delete(zwave.getNo());
+                        //endpoint
+                        List<Endpoint> lstEndpoint = endpointRepository.findByZwaveNo(zwave.getNo());
+                        for (int j = 0; j < lstEndpoint.size(); j++) {
+                            Endpoint arrayEndpoint = lstEndpoint.get(j);
+                            endpointRepository.deleteByZwaveNo(arrayEndpoint.getNo());
+                            //cmdcls
+                            cmdClsRepository.deleteByEndpointNo(arrayEndpoint.getNo());
+                        }
+                        //GatewayCategory
+                        gatewayCategoryRepository.deleteByNodeId(zwave.getNodeId());
+                    }
+                }
+               //server/app/[Model]/[Serial]/manager/product/remove
+                String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/manager/product/remove", gateway.getModel(),
+                        gateway.getSerial());
+                publish(exeTopic);
+            }
 
         } else {
             logging.info(String.format("Gateway Serial Number(%s) is not registered", zwaveRequest.getSerialNo()));;
@@ -417,7 +416,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         // TODO DB 에서 기기삭제 status 로 update
         ZWave zwave = zwaveRepository.getOne(no);
         Gateway gateway = gatewayRepository.getOne(zwave.getGatewayNo());
-        int iRtn = zwaveRepository.setFixedStatusForNo( status.delete.name(), no);
+        int iRtn = zwaveRepository.setFixedStatusForNo(status.delete.name(), no);
         MqttRequest mqttRequest = new MqttRequest();
         mqttRequest.setSerialNo(gateway.getSerial());
         mqttRequest.setModel(gateway.getModel());
@@ -513,7 +512,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                 zWaveReportByApp.setStatus(zwave.getStatus());
                 
                 List<EndpointReportByApp> lstEndpointReportByApp= new ArrayList<>();
-                List<Endpoint> lstEndpoint= zwave.getEndpoints();
+                List<Endpoint> lstEndpoint= endpointRepository.findByZwaveNo(zwave.getNo());
                 for (int j = 0; j < lstEndpoint.size(); j++) {
                     Endpoint endpoint = lstEndpoint.get(j);
                     EndpointReportByApp endpointReportByApp = new EndpointReportByApp();
@@ -535,5 +534,72 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     private String getDefaultNickName(String basic, String generic, String specific) {
         return "";
     }
+    /**
+     * mqtt publish 토픽 생성
+     * @param topicLeadingPath
+     * @return
+     */
+    public String getMqttPublishTopic(ZWaveRequest zwaveRequest) {
+        return getMqttPublishTopic(zwaveRequest, Target.host.name());
+    }
+
+    /**
+     * mqtt publish 토픽 생성
+     * @param topicLeadingPath
+     * @return
+     */
+    public String getMqttPublishTopic(ZWaveRequest zwaveRequest, String target) {
+        String topic = "";
+        Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
+        if (!isNull(gateway)) {
+            int nodeId = 0;
+            int endPointId = 0;
+            if (!Objects.isNull(zwaveRequest.getNodeId())) {
+                nodeId = zwaveRequest.getNodeId();
+            }
+            if (!Objects.isNull(zwaveRequest.getEndpointId())) {
+                endPointId = zwaveRequest.getEndpointId();
+            }
+            String[] segments = new String[] { "/server", target, gateway.getModel(), gateway.getSerial(), "zwave", "certi",
+                    ByteUtil.getHexString(zwaveRequest.getClassKey()), ByteUtil.getHexString(zwaveRequest.getCommandKey()), zwaveRequest.getVersion(),
+                    ByteUtil.getHexString(nodeId), ByteUtil.getHexString(endPointId),
+                    zwaveRequest.getSecurityOption() };
+            topic = String.join("/", segments);
+            logging.info("====================== ZWAVE PROTO MQTT PUBLISH TOPIC ======================");
+            logging.info(topic);
+        }
+        return topic;
+    }
+
+    protected HashMap<String, Object> getPublishPayload(HashMap<String, Object> req) {
+        HashMap<String, Object> payload = new HashMap<>();
+        Object payloadData = req.get("get_data");
+        if (!isNull(payloadData)) {
+            payload.put("get_data", payloadData);
+        }
+        payloadData = req.get("set_data");
+        if (!isNull(payloadData)) {
+            payload.put("set_data", payloadData);
+        }
+        return payload;
+    }
     
+    private void hostReset(ZWaveRequest zwaveRequest) {
+        //host 정보삭제
+        Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
+        gatewayRepository.delete(gateway.getNo());
+        userGatewayRepository.deleteByGatewayNo(gateway.getNo());
+        //zwaveNo
+        gatewayCategoryRepository.deleteByGatewayNo(gateway.getNo());
+        List<ZWave> lstZWave = zwaveRepository.findByGatewayNo(gateway.getNo());
+        for (ZWave zWave : lstZWave) {
+            List<Endpoint> lstEndpoint = endpointRepository.findByZwaveNo(zWave.getNo());
+            for (Endpoint endpoint : lstEndpoint) {
+                cmdClsRepository.deleteByEndpointNo(endpoint.getNo());
+            }
+            endpointRepository.deleteByZwaveNo(zWave.getNo());
+        }
+        zwaveRepository.deleteByGatewayNo(gateway.getNo());
+        
+    }
 }

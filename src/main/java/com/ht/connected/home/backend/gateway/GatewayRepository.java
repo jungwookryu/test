@@ -37,4 +37,6 @@ public interface GatewayRepository extends JpaRepository<Gateway, Integer> {
 	@Modifying
 	@Query("update Gateway set status = ?1 where no = ?2")
 	int setModifyStatusForNo(String status, int no);
+	
+	void deleteBySerial(String serial);
 }

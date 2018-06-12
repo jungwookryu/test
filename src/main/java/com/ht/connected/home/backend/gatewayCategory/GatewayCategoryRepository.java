@@ -8,4 +8,5 @@ public interface GatewayCategoryRepository extends JpaRepository<GatewayCategory
     int deleteByGatewayNoAndCategoryNo(int gatewayNo, int categoryNo);
     int deleteByGatewayNo(int gatewayNo);
     List<GatewayCategory> findByGatewayNo(int gatewayNo);
+    void deleteByNodeId(int NodeId);
 }

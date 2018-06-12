@@ -103,14 +103,6 @@ public class GatewayController extends CommonController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     
-//    
-//    @DeleteMapping(value = "/{no}")
-//    public ResponseEntity deleteGateway(@RequestBody GatewayCategory gatewayCategory) throws JsonProcessingException {
-//
-//        gateWayService.deleteCategory(gatewayCategory);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-    
     @PutMapping(value = "/{no}")
     public ResponseEntity modifyGateway(@PathVariable("no") int no, @RequestBody Gateway gateway) {
         String userEmail = getAuthUserEmail();

@@ -9,11 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 public interface ZWaveRepository extends JpaRepository<ZWave, Integer>{
 
     List<ZWave> findByNoAndGatewayNoIn(int no, List gatewayNos);
-    
     List<ZWave> findByGatewayNo(int gatewayNos);
+    List<ZWave> findByGatewayNoAndStatus(int gatewayNos, String status);
     
     @Modifying
-    @Query("update ZWave z set z.status = ?2  where z.no = ?3")
+    @Query("update ZWave z set z.status = ?1  where z.no = ?2")
     int setFixedStatusForNo(String status, int no);
     
     
