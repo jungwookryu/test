@@ -33,6 +33,7 @@ import com.ht.connected.home.backend.category.zwave.certification.CertificationS
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdCls;
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdClsRepository;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.BasicCommandClass;
+import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementBasicCommandClass;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementInclusionCommandClass;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementProxyCommandClass;
 import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
@@ -215,6 +216,15 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
 
             }
         }
+        //기기 초기화 결과 0x4D/0x07
+        if (zwaveRequest.getClassKey() == NetworkManagementBasicCommandClass.INT_ID) {
+            // 기기상태값모드 받은 경우
+            if (zwaveRequest.getCommandKey() == NetworkManagementBasicCommandClass.DEFAULT_SET_COMPLETE) {
+                //해당기기의 정보를 모두 삭제한다. 
+                hostReset(zwaveRequest);
+            }
+        }
+        
     }
 
     /**
@@ -572,5 +582,24 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             payload.put("set_data", payloadData);
         }
         return payload;
-    }    
+    }
+    
+    private void hostReset(ZWaveRequest zwaveRequest) {
+        //host 정보삭제
+        Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
+        gatewayRepository.delete(gateway.getNo());
+        userGatewayRepository.deleteByGatewayNo(gateway.getNo());
+        //zwaveNo
+        gatewayCategoryRepository.deleteByGatewayNo(gateway.getNo());
+        List<ZWave> lstZWave = zwaveRepository.findByGatewayNo(gateway.getNo());
+        for (ZWave zWave : lstZWave) {
+            List<Endpoint> lstEndpoint = endpointRepository.findByZwaveNo(zWave.getNo());
+            for (Endpoint endpoint : lstEndpoint) {
+                cmdClsRepository.deleteByEndpointNo(endpoint.getNo());
+            }
+            endpointRepository.deleteByZwaveNo(zWave.getNo());
+        }
+        zwaveRepository.deleteByGatewayNo(gateway.getNo());
+        
+    }
 }
