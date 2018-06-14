@@ -59,7 +59,7 @@ public class MqttCommon {
                         topic += "/none";
                     }
                 }else {
-                    topic += "/none";
+                    topic += "/v1";
                 }
         logger.info("====================== ZWAVE PROTO MQTT PUBLISH TOPIC ======================");
         logger.info(topic);

@@ -198,15 +198,25 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                     }
                     // 등록완료일경우 NodeGet.명령어 호출
                     // 호스트의 노드 리스트 호출을 한다.
-                    if ("0".equals(mqttPayload.getResultData().getOrDefault("status", "9").toString())) {
+                    //if ("0".equals(mqttPayload.getResultData().getOrDefault("status", "9").toString())) {
                         // 서버에 기기리스트를 요청함.
-                        zwaveRequest.setClassKey(NetworkManagementProxyCommandClass.INT_ID);
-                        zwaveRequest.setCommandKey(NetworkManagementProxyCommandClass.INT_NODE_LIST_GET);
-                        String topic = getMqttPublishTopic(zwaveRequest, "host");
-                        publish(topic);
-
+                    //    Gateway gateway = new Gateway(zwaveRequest.getModel(), zwaveRequest.getSerialNo());
+                    //    subscribeInit(gateway);
+                    //}
+                }
+                
+                // 기기삭제 상태값 받은 경우
+                if (zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_REMOVE_STATUS) {
+                    HashMap resultData = mqttPayload.getResultData();
+                    int nodeId = (int) resultData.getOrDefault("newNodeId", 9999);
+                    if(nodeId!=9999) {
+                        ///{source}/{target}/{model}/{serial}/{category}/remove/sucess
+                        String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/device/remove", zwaveRequest.getModel(),
+                                zwaveRequest.getSerialNo());
+                        publish(exeTopic);
                     }
                 }
+                
                 String status = "status null ";
                 if (!Objects.isNull(mqttPayload.getResultData())) {
                     status = mqttPayload.getResultData().getOrDefault("status", 0).toString();
@@ -394,9 +404,9 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                     }
                 }
                //server/app/[Model]/[Serial]/manager/product/remove
-                String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/manager/product/remove", gateway.getModel(),
-                        gateway.getSerial());
-                publish(exeTopic);
+//                String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/manager/product/remove", gateway.getModel(),
+//                        gateway.getSerial());
+//                publish(exeTopic);
             }
 
         } else {
@@ -550,6 +560,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
      */
     public String getMqttPublishTopic(ZWaveRequest zwaveRequest, String target) {
         String topic = "";
+        
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
         if (!isNull(gateway)) {
             int nodeId = 0;
