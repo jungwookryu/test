@@ -306,10 +306,12 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
             saveUserGateway.setUserNo(user.getNo());
             saveUserGateway.setGroupRole(share.share.name());
             userGatewayRepository.save(saveUserGateway);
+            bShare = true;
         }
         //공유해제
         if(share.shareRemove.name().equals(mode)) {
             userGatewayRepository.deleteByGatewayNoAndUserNo(originGateway.getNo(), user.getNo());
+            bShare = true;
         }
         //마스터 변경
         if(share.masterModify.name().equals(mode)) {
@@ -330,7 +332,7 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
                 shareUserGateway.setGroupRole(groupRole.master.name());
                 userGatewayRepository.save(shareUserGateway);
             }
-           
+            bShare = true;
         }
         return bShare;
     }
