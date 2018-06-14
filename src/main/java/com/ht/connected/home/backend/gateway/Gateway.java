@@ -99,8 +99,8 @@ public class Gateway {
     
     @ManyToMany(fetch = FetchType.LAZY,cascade=CascadeType.ALL )
     @JoinTable(name = "user_gateway", 
-               joinColumns = @JoinColumn(name="gateway_no"),
-               inverseJoinColumns = @JoinColumn(name="user_no"))
+               joinColumns = @JoinColumn(name="no"),
+               inverseJoinColumns = @JoinColumn(name="gateway_no"))
     private List<User> users;
     
     // getter and setter

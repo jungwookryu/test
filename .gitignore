@@ -11,6 +11,7 @@ target/
 logs/
 logs_mqtt/
 logs_db/
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
