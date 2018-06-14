@@ -23,6 +23,7 @@ public interface UserGatewayRepository extends JpaRepository<UserGateway, Intege
 	List<UserGateway> findByGatewayNoIn(List<Integer> gatewayNos);
 	
 	void deleteByGatewayNo(int gatewayNo);
+	void deleteByGatewayNoAndUserNo(int gatewayNo, int userNo);
     
     @Modifying
     @Query("update UserGateway set status = ?1 where gatewayNo = ?2")

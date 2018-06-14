@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.connected.home.backend.category.zwave.ZWaveController;
+import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 import com.ht.connected.home.backend.user.User;
 import com.ht.connected.home.backend.user.UserRepository;
@@ -115,12 +116,38 @@ public class GatewayController extends CommonController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
-/*    
-    @DeleteMapping(value = "/{no}")
-    public ResponseEntity deleteIoTDevice(@RequestBody GatewayCategory gatewayCategory) throws JsonProcessingException {
+    
+    @PutMapping
+    public ResponseEntity shareGateway(@RequestBody HashMap map) {
+        String userEmail = getAuthUserEmail();
+        int no = (int) map.getOrDefault("gateway_no",-1);
+        String share_user_email = (String) map.getOrDefault("share_user_email","");
+        String mode = (String) map.getOrDefault("mode","");
+        if(Common.empty(share_user_email)) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+        if(-1 == no) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+        Gateway originGateway = gateWayService.findOne(no);
+        if(null==originGateway) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+        List<User> users = userRepository.findByUserEmail(share_user_email);
+        if(users.size() == 0) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+//       권한체크
+//      if(!originGateway.getCreatedUserId().equals(userEmail)){
+//        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+//}
+        boolean rtnGateway = gateWayService.shareGateway(mode, originGateway, users.get(0));
+        if(rtnGateway) {
+            return new ResponseEntity<>(rtnGateway,HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
 
-        gateWayService.deleteCategory(gatewayCategory);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }*/
+    }
     
 }

@@ -51,6 +51,12 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     enum status {
         add, delete
     }
+    enum share {
+        share, shareRemove, masterModify
+    }
+    enum groupRole {
+        master, share, general
+    }
 
     Logger logger = LoggerFactory.getLogger(ZWaveServiceImpl.class);
 
@@ -287,6 +293,46 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     @Override
     public Gateway findOne(int no) {
         return gatewayRepository.findOne(no);
+    }
+
+
+    @Override
+    public boolean shareGateway(String mode, Gateway originGateway, User user) {
+        boolean bShare = false;
+        //공유
+        if(share.share.name().equals(mode)) {
+            UserGateway saveUserGateway= new UserGateway();
+            saveUserGateway.setGatewayNo(originGateway.getNo());
+            saveUserGateway.setUserNo(user.getNo());
+            saveUserGateway.setGroupRole(share.share.name());
+            userGatewayRepository.save(saveUserGateway);
+        }
+        //공유해제
+        if(share.shareRemove.name().equals(mode)) {
+            userGatewayRepository.deleteByGatewayNoAndUserNo(originGateway.getNo(), user.getNo());
+        }
+        //마스터 변경
+        if(share.masterModify.name().equals(mode)) {
+            List<User> users = userRepository.findByUserEmail(originGateway.getCreatedUserId());
+            User originUser;
+            if(users.size() > 0) {
+                originUser = users.get(0);
+                
+                //Gateway 정보의 마스터 이메일 변경
+                originGateway.setCreatedUserId(user.getUserEmail());
+                gatewayRepository.save(originGateway);
+                //master를 share로 변경
+                UserGateway originUserGateway = userGatewayRepository.findByUserNoAndGatewayNo(originGateway.getNo(), originUser.getNo());
+                originUserGateway.setGroupRole(groupRole.share.name());
+                userGatewayRepository.save(originUserGateway);
+                //share를 master로 변경
+                UserGateway shareUserGateway = userGatewayRepository.findByUserNoAndGatewayNo(originGateway.getNo(), user.getNo());
+                shareUserGateway.setGroupRole(groupRole.master.name());
+                userGatewayRepository.save(shareUserGateway);
+            }
+           
+        }
+        return bShare;
     }
 
 }
