@@ -82,7 +82,7 @@ public class ByteUtil {
      * @return
      */
     static public int getStringtoInt(String snumber) {
-        int iRtn = 9999;
+        int iRtn = 0;
         try {
             iRtn = Short.decode(snumber);
         }catch (Exception e) {
