@@ -97,10 +97,10 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
 
     @Autowired
     EndpointRepository endpointRepository;
-    
+
     @Autowired
     CmdClsRepository cmdClsRepository;
-    
+
     @Autowired
     GatewayCategoryRepository gatewayCategoryRepository;
 
@@ -139,8 +139,6 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         return response;
     }
 
-   
-
     @Override
     public void subscribe(Object zwaveRequest, Object payload) throws Exception {
         if (zwaveRequest instanceof ZWaveRequest && payload instanceof String) {
@@ -172,11 +170,33 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                  * 기기 리스트 수신시 새로 등록한 기기가 있을경우는 새로 등록 없을 경우는 업데이트함.0x52 0x02 모드일경우
                  */
                 if (zwaveRequest.getCommandKey() == NetworkManagementProxyCommandClass.INT_NODE_LIST_REPORT) {
-                    reportZWaveList(zwaveRequest, data);
-                }
-                certificationService.updateCertification(zwaveRequest, data);
-            }
+                    if (9999 == zwaveRequest.getNodeId() || 0 == zwaveRequest.getNodeId()) {
+                        reportZWaveList(zwaveRequest, data);
+                        // 신
+                    } else {
+                        saveGatewayCategory(zwaveRequest, zwaveRequest.getNodeId());
+                        Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
+                        if (!isNull(gateway)) {
+                            ZWaveReport zwaveReport = objectMapper.readValue(data, ZWaveReport.class);
+                            // 기기 리스트에 대한 정보일 경우
+                            if (zwaveReport.getNodelist() != null) {
+                                List<ZWave> nodeListItem = (List<ZWave>) zwaveReport.getNodelist();
+                                for (int i = 0; i < nodeListItem.size(); i++) {
+                                    ZWave nodeItem = nodeListItem.get(i);
+                                    int nodeId = nodeItem.getNodeId();
+                                    saveZWaveList(zwaveRequest, nodeItem, gateway);
+                                    String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/device/registration", gateway.getModel(),
+                                            gateway.getSerial());
+                                    publish(exeTopic);
+                                }
+                            }
+                        }
 
+                    }
+                    certificationService.updateCertification(zwaveRequest, data);
+                }
+
+            }
         }
         // 기기등록 모드 0x34/0x02 결과
         if (zwaveRequest.getClassKey() == NetworkManagementInclusionCommandClass.INT_ID) {
@@ -184,7 +204,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             if (zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_ADD_STATUS) {
                 // newNodeId 가 있을경우 등록 성공이고 없을경우 등록완료 전으로 상태 메세지를 확인한다.
                 if (!Objects.isNull(mqttPayload.getResultData())) {
-                    //등록 성공일 경우 해당노드의 기기리스트를 조회한다.
+                    // 등록 성공일 경우 해당노드의 기기리스트를 조회한다.
                     if (!isNull(mqttPayload.getResultData().get("newNodeId"))) {
                         // 0x52
                         int newNodeId = (int) mqttPayload.getResultData().get("newNodeId");
@@ -194,29 +214,29 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                         zwaveRequest.setNodeId(newNodeId);
                         zwaveRequest.setVersion("v1");
                         zwaveRequest.setSecurityOption("none");
-//                        saveGatewayCategory(zwaveRequest, newNodeId);
+                        saveGatewayCategory(zwaveRequest, newNodeId);
                     }
                     // 등록완료일경우 NodeGet.명령어 호출
                     // 호스트의 노드 리스트 호출을 한다.
-                    //if ("0".equals(mqttPayload.getResultData().getOrDefault("status", "9").toString())) {
-                        // 서버에 기기리스트를 요청함.
-                    //    Gateway gateway = new Gateway(zwaveRequest.getModel(), zwaveRequest.getSerialNo());
-                    //    subscribeInit(gateway);
-                    //}
+                    // if ("0".equals(mqttPayload.getResultData().getOrDefault("status", "9").toString())) {
+                    // 서버에 기기리스트를 요청함.
+                    // Gateway gateway = new Gateway(zwaveRequest.getModel(), zwaveRequest.getSerialNo());
+                    // subscribeInit(gateway);
+                    // }
                 }
-                
+
                 // 기기삭제 상태값 받은 경우
                 if (zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_REMOVE_STATUS) {
-                    HashMap resultData = mqttPayload.getResultData();
-                    int nodeId = (int) resultData.getOrDefault("newNodeId", 9999);
-                    if(nodeId!=9999) {
-                        ///{source}/{target}/{model}/{serial}/{category}/remove/sucess
+                    HashMap resultMapData = mqttPayload.getResultData();
+                    int nodeId = (int) resultMapData.getOrDefault("newNodeId", 9999);
+                    if (nodeId != 9999) {
+                        /// {source}/{target}/{model}/{serial}/{category}/remove/sucess
                         String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/device/remove", zwaveRequest.getModel(),
                                 zwaveRequest.getSerialNo());
                         publish(exeTopic);
                     }
                 }
-                
+
                 String status = "status null ";
                 if (!Objects.isNull(mqttPayload.getResultData())) {
                     status = mqttPayload.getResultData().getOrDefault("status", 0).toString();
@@ -226,15 +246,15 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
 
             }
         }
-        //기기 초기화 결과 0x4D/0x07
+        // 기기 초기화 결과 0x4D/0x07
         if (zwaveRequest.getClassKey() == NetworkManagementBasicCommandClass.INT_ID) {
             // 기기상태값모드 받은 경우
             if (zwaveRequest.getCommandKey() == NetworkManagementBasicCommandClass.DEFAULT_SET_COMPLETE) {
-                //해당기기의 정보를 모두 삭제한다. 
+                // 해당기기의 정보를 모두 삭제한다.
                 hostReset(zwaveRequest);
             }
         }
-        
+
     }
 
     /**
@@ -266,17 +286,17 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     /**
      * Zwave 기기제어
      * @author lij
-     * @throws JsonProcessingException 
+     * @throws JsonProcessingException
      */
     // 제어
     @Override
     public void zwaveControl(ZWaveControl zWaveControl) throws JsonProcessingException {
-        
-        Gateway gateway = gatewayRepository.findOne(zWaveControl.getGateway_no()); 
+
+        Gateway gateway = gatewayRepository.findOne(zWaveControl.getGateway_no());
         ZWave zwave = zwaveRepository.findOne(zWaveControl.getZwave_no());
         Endpoint endpoint = endpointRepository.findOne(zWaveControl.getEndpoint_no());
         MqttRequest mqttRequest = new MqttRequest();
-        
+
         mqttRequest.setNodeId(zwave.getNodeId());
         mqttRequest.setEndpointId(endpoint.getEpid());
         mqttRequest.setSerialNo(gateway.getSerial());
@@ -285,18 +305,17 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         mqttRequest.setCommandKey(BasicCommandClass.INT_BASIC_SET);
         mqttRequest.setVersion("v1");
         mqttRequest.setSecurityOption("0");
-        
+
         HashMap map = new HashMap<>();
         map.put("value", zWaveControl.getValue());
-//        map.put("currentValue", zWaveControl.getCurrentValue());
-//        map.put("duration", zWaveControl.getDuration());
+        // map.put("currentValue", zWaveControl.getCurrentValue());
+        // map.put("duration", zWaveControl.getDuration());
         HashMap map1 = new HashMap<>();
         map1.put("set_data", map);
         mqttRequest.setSetData(map1);
         publish(mqttRequest);
     }
 
-    
     /**
      * mqtt publish 토픽 생성
      * @param topicLeadingPath //0 none, 1 crc
@@ -336,77 +355,22 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                     boolean bInsert = false;
                     for (int j = 0; j < lstZwave.size(); j++) {
                         ZWave zwave = lstZwave.get(j);
-                        //host 노드리스트와 DB 노드리스트를 비교하여 없으면 insert시킴
-                        //int nodeId = (int) nodeItem.getOrDefault("nodeId", 0);
+                        // host 노드리스트와 DB 노드리스트를 비교하여 없으면 insert시킴
+                        // int nodeId = (int) nodeItem.getOrDefault("nodeId", 0);
                         // node status "" 경우에는 node 가 신규로 들어왔으나 host 에서 신규노드로 확인이 안된경 node status add일 경우 신규 등록 기기
                         if (nodeId == zwave.getNodeId()) {
-                            bInsert=true;
+                            bInsert = true;
                         }
                     }
-                    //등록안되어있고 node의 status가 delete가 아닐경우 일경우 insert함.
-                    if(!bInsert) {
-                        //zwave nodeId Category 별 저장함.
-                        saveGatewayCategory(zwaveRequest, nodeItem.getNodeId());
-                        
-                        nodeItem.setGatewayNo(gateway.getNo());
-                        nodeItem.setCreratedTime(new Date());
-                        nodeItem.setNickname(getDefaultNickName(nodeItem.getBasic(), nodeItem.getGeneric(), nodeItem.getSpecific()));
-                        ZWave saveZwave = zwaveRepository.save(nodeItem);
-                        List<Endpoint> newEndpoints = nodeItem.getEndpoint();
-                        for(int iE = 0; iE<newEndpoints.size();iE++) {
-                            Endpoint endpoint = newEndpoints.get(iE);
-                            endpoint.setZwaveNo(saveZwave.getNo());
-                            endpoint.setCmdCls(endpoint.getScmdClses(endpoint.getCmdClses()));
-                            endpoint.setCmdCls(endpoint.getScmdClses(endpoint.getCmdClses()));
-                            Endpoint saveEndpoint = endpointRepository.save(endpoint);
-                            List<CmdCls> newCmdCls = newEndpoints.get(iE).getCmdClses();
-                            for(int iCmdCls = 0; iCmdCls < newCmdCls.size();iCmdCls++) {
-                                CmdCls cmdcls = newCmdCls.get(iCmdCls);
-                                cmdcls.setRptCmd(cmdcls.getSrptCmd(cmdcls.getRptCmds()));
-                                cmdcls.setEndpointNo(saveEndpoint.getNo());
-                                cmdClsRepository.save(newCmdCls.get(iCmdCls));
-                            }   
-                        }
+                    // 등록안되어있고 node의 status가 delete가 아닐경우 일경우 insert함.
+                    if (!bInsert) {
+                        // zwave nodeId Category 별 저장함.
+                        saveZWaveList(zwaveRequest, nodeItem, gateway);
                         String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/device/registration", gateway.getModel(),
                                 gateway.getSerial());
                         publish(exeTopic);
                     }
                 }
-            }
-            //기기삭제에대한 노드리스트 로직을 구현
-            if(zwaveRequest.getNodeId()==0) {
-                List<ZWave> lstDeleteZwave = zwaveRepository.findByGatewayNoAndStatus(gateway.getNo(), status.delete.name());
-                for (int i = 0; i < lstDeleteZwave.size(); i++) {
-                    boolean bDelete = true;
-                    ZWave zwave = lstDeleteZwave.get(i);
-                    if (zwaveReport.getNodelist() != null) {
-                        List<ZWave> nodeListItem = (List<ZWave>) zwaveReport.getNodelist();
-                        for(int j = 0; j< nodeListItem.size(); j++) {
-                            ZWave hostZwave = nodeListItem.get(j);
-                            if(zwave.equals(hostZwave.getNodeId())){
-                                bDelete = false;
-                            }
-                        }
-                    }
-                    if(bDelete) {
-                        //zwave
-                        zwaveRepository.delete(zwave.getNo());
-                        //endpoint
-                        List<Endpoint> lstEndpoint = endpointRepository.findByZwaveNo(zwave.getNo());
-                        for (int j = 0; j < lstEndpoint.size(); j++) {
-                            Endpoint arrayEndpoint = lstEndpoint.get(j);
-                            endpointRepository.deleteByZwaveNo(arrayEndpoint.getNo());
-                            //cmdcls
-                            cmdClsRepository.deleteByEndpointNo(arrayEndpoint.getNo());
-                        }
-                        //GatewayCategory
-                        gatewayCategoryRepository.deleteByNodeId(zwave.getNodeId());
-                    }
-                }
-               //server/app/[Model]/[Serial]/manager/product/remove
-//                String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/manager/product/remove", gateway.getModel(),
-//                        gateway.getSerial());
-//                publish(exeTopic);
             }
 
         } else {
@@ -514,15 +478,15 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         List<ZWaveReportByApp> rtnList = new ArrayList<>();
         for (int i = 0; i < lstZWave.size(); i++) {
             ZWave zwave = lstZWave.get(i);
-            if(zwave.getNodeId()!=1) {
+            if (zwave.getNodeId() != 1) {
                 ZWaveReportByApp zWaveReportByApp = new ZWaveReportByApp();
                 zWaveReportByApp.setZwaveNo(zwave.getNo());
                 zWaveReportByApp.setNodeId(zwave.getNodeId());
                 zWaveReportByApp.setNicname(zwave.getNickname());
                 zWaveReportByApp.setStatus(zwave.getStatus());
-                
-                List<EndpointReportByApp> lstEndpointReportByApp= new ArrayList<>();
-                List<Endpoint> lstEndpoint= endpointRepository.findByZwaveNo(zwave.getNo());
+
+                List<EndpointReportByApp> lstEndpointReportByApp = new ArrayList<>();
+                List<Endpoint> lstEndpoint = endpointRepository.findByZwaveNo(zwave.getNo());
                 for (int j = 0; j < lstEndpoint.size(); j++) {
                     Endpoint endpoint = lstEndpoint.get(j);
                     EndpointReportByApp endpointReportByApp = new EndpointReportByApp();
@@ -535,15 +499,17 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                 zWaveReportByApp.setEndpoints(lstEndpointReportByApp);
                 rtnList.add(zWaveReportByApp);
             }
-            
+
         }
-        map.put("nodelist",rtnList);
-        map.put("nodeCnt",lstZWave.size()-1);
+        map.put("nodelist", rtnList);
+        map.put("nodeCnt", lstZWave.size() - 1);
         return map;
     }
+
     private String getDefaultNickName(String basic, String generic, String specific) {
         return "";
     }
+
     /**
      * mqtt publish 토픽 생성
      * @param topicLeadingPath
@@ -560,7 +526,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
      */
     public String getMqttPublishTopic(ZWaveRequest zwaveRequest, String target) {
         String topic = "";
-        
+
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
         if (!isNull(gateway)) {
             int nodeId = 0;
@@ -594,13 +560,13 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         }
         return payload;
     }
-    
+
     private void hostReset(ZWaveRequest zwaveRequest) {
-        //host 정보삭제
+        // host 정보삭제
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
         gatewayRepository.delete(gateway.getNo());
         userGatewayRepository.deleteByGatewayNo(gateway.getNo());
-        //zwaveNo
+        // zwaveNo
         gatewayCategoryRepository.deleteByGatewayNo(gateway.getNo());
         List<ZWave> lstZWave = zwaveRepository.findByGatewayNo(gateway.getNo());
         for (ZWave zWave : lstZWave) {
@@ -611,6 +577,30 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             endpointRepository.deleteByZwaveNo(zWave.getNo());
         }
         zwaveRepository.deleteByGatewayNo(gateway.getNo());
-        
+
+    }
+
+    private void saveZWaveList(ZWaveRequest zwaveRequest, ZWave nodeItem, Gateway gateway) {
+        saveGatewayCategory(zwaveRequest, nodeItem.getNodeId());
+
+        nodeItem.setGatewayNo(gateway.getNo());
+        nodeItem.setCreratedTime(new Date());
+        nodeItem.setNickname(getDefaultNickName(nodeItem.getBasic(), nodeItem.getGeneric(), nodeItem.getSpecific()));
+        ZWave saveZwave = zwaveRepository.save(nodeItem);
+        List<Endpoint> newEndpoints = nodeItem.getEndpoint();
+        for (int iE = 0; iE < newEndpoints.size(); iE++) {
+            Endpoint endpoint = newEndpoints.get(iE);
+            endpoint.setZwaveNo(saveZwave.getNo());
+            endpoint.setCmdCls(endpoint.getScmdClses(endpoint.getCmdClses()));
+            endpoint.setCmdCls(endpoint.getScmdClses(endpoint.getCmdClses()));
+            Endpoint saveEndpoint = endpointRepository.save(endpoint);
+            List<CmdCls> newCmdCls = newEndpoints.get(iE).getCmdClses();
+            for (int iCmdCls = 0; iCmdCls < newCmdCls.size(); iCmdCls++) {
+                CmdCls cmdcls = newCmdCls.get(iCmdCls);
+                cmdcls.setRptCmd(cmdcls.getSrptCmd(cmdcls.getRptCmds()));
+                cmdcls.setEndpointNo(saveEndpoint.getNo());
+                cmdClsRepository.save(newCmdCls.get(iCmdCls));
+            }
+        }
     }
 }
