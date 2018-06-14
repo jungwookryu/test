@@ -224,27 +224,28 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                     // subscribeInit(gateway);
                     // }
                 }
-
-                // 기기삭제 상태값 받은 경우
-                if (zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_REMOVE_STATUS) {
-                    HashMap resultMapData = mqttPayload.getResultData();
-                    int nodeId = (int) resultMapData.getOrDefault("newNodeId", 9999);
-                    if (nodeId != 9999) {
-                        /// {source}/{target}/{model}/{serial}/{category}/remove/sucess
-                        String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/device/remove", zwaveRequest.getModel(),
-                                zwaveRequest.getSerialNo());
-                        publish(exeTopic);
-                    }
-                }
-
-                String status = "status null ";
-                if (!Objects.isNull(mqttPayload.getResultData())) {
-                    status = mqttPayload.getResultData().getOrDefault("status", 0).toString();
-                }
-                logging.info(String.format("<< SERIAL NO : %s, NODE_ADD_STATUS : %s >>", zwaveRequest.getSerialNo(), status));
-                certificationService.updateCertification(zwaveRequest, payload);
-
             }
+
+            // 기기삭제 상태값 받은 경우
+            if (zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_REMOVE_STATUS) {
+                HashMap resultMapData = mqttPayload.getResultData();
+                int nodeId = (int) resultMapData.getOrDefault("newNodeId", 9999);
+                if (nodeId != 9999) {
+                    deleteZwave(nodeId);
+                    /// {source}/{target}/{model}/{serial}/{category}/remove/sucess
+                    String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/device/remove", zwaveRequest.getModel(),
+                            zwaveRequest.getSerialNo());
+                    publish(exeTopic);
+                }
+            }
+
+            String status = "status null ";
+            if (!Objects.isNull(mqttPayload.getResultData())) {
+                status = mqttPayload.getResultData().getOrDefault("status", 0).toString();
+            }
+            logging.info(String.format("<< SERIAL NO : %s, NODE_ADD_STATUS : %s >>", zwaveRequest.getSerialNo(), status));
+            certificationService.updateCertification(zwaveRequest, payload);
+
         }
         // 기기 초기화 결과 0x4D/0x07
         if (zwaveRequest.getClassKey() == NetworkManagementBasicCommandClass.INT_ID) {
@@ -561,6 +562,20 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         return payload;
     }
 
+    private void deleteZwave(int nodeId) {
+        // zwave 정보삭제
+        gatewayCategoryRepository.deleteByNodeId(nodeId);
+        List<ZWave> lstZWave = zwaveRepository.findByNodeId(nodeId);
+        for (ZWave zWave : lstZWave) {
+            List<Endpoint> lstEndpoint = endpointRepository.findByZwaveNo(zWave.getNo());
+            for (Endpoint endpoint : lstEndpoint) {
+                cmdClsRepository.deleteByEndpointNo(endpoint.getNo());
+            }
+            endpointRepository.deleteByZwaveNo(zWave.getNo());
+        }
+        zwaveRepository.deleteByNodeId(nodeId);
+    }
+    
     private void hostReset(ZWaveRequest zwaveRequest) {
         // host 정보삭제
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());

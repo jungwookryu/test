@@ -9,7 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 public interface ZWaveRepository extends JpaRepository<ZWave, Integer>{
 
     List<ZWave> findByNoAndGatewayNoIn(int no, List gatewayNos);
+    
+    void deleteByNodeId(int nodeId);
+    
     List<ZWave> findByGatewayNo(int gatewayNos);
+    List<ZWave> findByNodeId(int nodeId);
     List<ZWave> findByGatewayNoAndStatus(int gatewayNos, String status);
     
     @Modifying
