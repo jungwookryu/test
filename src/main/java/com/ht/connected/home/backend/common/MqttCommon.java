@@ -26,19 +26,27 @@ public class MqttCommon {
         String topic = "";
         int nodeId = 0;
         int endPointId = 0;
+        String category = "zwave";
+        String function = "certi";
+        
         if (!Objects.isNull(mqttRequest.getNodeId())) {
             nodeId = mqttRequest.getNodeId();
         }
         if (!Objects.isNull(mqttRequest.getEndpointId())) {
             endPointId = mqttRequest.getEndpointId();
         }
-        
+        if (!Objects.isNull(mqttRequest.getCategory())) {
+            category = mqttRequest.getCategory();
+        }
+        if (!Objects.isNull(mqttRequest.getFunction())) {
+            category = mqttRequest.getFunction();
+        }      
         topic = "/server"
                 +"/"+ target 
                 +"/"+ mqttRequest.getModel()
                 +"/"+ mqttRequest.getSerialNo()
-                +"/"+ "zwave"
-                +"/"+ "certi"
+                +"/"+ category
+                +"/"+ function
                 +"/"+ ByteUtil.getHexString(mqttRequest.getClassKey())
                 +"/"+ ByteUtil.getHexString(mqttRequest.getCommandKey());
                 if(!Common.empty(mqttRequest.getVersion())){
@@ -50,13 +58,13 @@ public class MqttCommon {
                             if(!Common.empty(mqttRequest.getSecurityOption())){
                                 topic += "/"+ mqttRequest.getSecurityOption();
                             } else {
-                                topic += "/none";
+                                topic += "/s0";
                             }
                         } else {
-                            topic += "/none";
+                            topic += "/0x00";
                         }
                     } else {
-                        topic += "/none";
+                        topic += "0x00";
                     }
                 }else {
                     topic += "/v1";

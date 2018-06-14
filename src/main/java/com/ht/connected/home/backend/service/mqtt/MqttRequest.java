@@ -40,6 +40,12 @@ public class MqttRequest {
 
     private int classKey;
 
+    @JsonProperty("category")
+    private String category;
+    
+    @JsonProperty("function")
+    private String function;
+    
     @JsonProperty("classKey")
     private String sClassKey;
     
@@ -209,6 +215,18 @@ public class MqttRequest {
                 + ", sClassKey=" + sClassKey + ", commandKey=" + commandKey 
                 + ", sCommandKey=" + sCommandKey + ", version=" + version  + ", model=" + model
                 + ", gateway=" + gateway + ", setData=" + setData + ", target=" + target+  "]";
+    }
+    public String getCategory() {
+        return category;
+    }
+    public void setCategory(String category) {
+        this.category = category;
+    }
+    public String getFunction() {
+        return function;
+    }
+    public void setFunction(String function) {
+        this.function = function;
     }
     
 }
