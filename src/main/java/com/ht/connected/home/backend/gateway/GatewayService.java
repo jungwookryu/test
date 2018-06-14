@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategory;
 import com.ht.connected.home.backend.service.base.MqttBase;
+import com.ht.connected.home.backend.user.User;
 
 public interface GatewayService extends MqttBase<Object, Object>{
     List getGatewayList(String status,String authUserEmail);
@@ -11,4 +12,5 @@ public interface GatewayService extends MqttBase<Object, Object>{
     void deleteCategory(GatewayCategory gatewayCategory);
     Gateway modifyGateway(Gateway originGateway, Gateway gateway);
     Gateway findOne(int no);
+    boolean shareGateway(String mode , Gateway originGateway, User user);
 }

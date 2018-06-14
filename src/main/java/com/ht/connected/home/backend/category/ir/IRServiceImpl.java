@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.app.AppController;
+import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.config.service.MqttConfig;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
@@ -83,10 +84,10 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
             publish(topic, publishPayload);
             if (AppController.Command.stop.name().equals(ir.getStatus())) {
                 // 등록모드로 추가된 ir 학습 기기정보삭제
-                List<IR> irs = irRepository.findBySerialAndStatusAndModelOrUserEmail(ir.getSerial(), "", ir.getModel(), ir.getUserEmail());
-                for (IR ir2 : irs) {
-                    irRepository.delete(ir2.getNo());
-                }
+//                List<IR> irs = irRepository.findBySerialAndStatusAndModelOrUserEmail(ir.getSerial(), "", ir.getModel(), ir.getUserEmail());
+//                for (IR ir2 : irs) {
+//                    irRepository.delete(ir2.getNo());
+//                }
             }
         }
 
@@ -101,29 +102,31 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
         if (topicSplited.length > 4) {
             String model = topicSplited[3];
             String serial = topicSplited[4];
-            HashMap<String, Object> map = objectMapper.readValue(payload, HashMap.class);
-            if (Type.add.name().equals((String) map.getOrDefault("type", "")) 
-                    && !AppController.Command.stop.name().equals(map.getOrDefault("action",""))) {
-                HashMap rtnMap = (HashMap) map.getOrDefault("response", new HashMap());
-                List<IR> irs = irRepository.findBySerialAndStatusAndModel(serial, "", model);
-                if(irs.size()>0) {
-                    IR ir = irs.get(0);
-                    List lst = (List) rtnMap.getOrDefault("value", new ArrayList<>());
-                    int gap = (int) rtnMap.getOrDefault("gap", 0);
-                    String format = (String) rtnMap.getOrDefault("format", "");
-                    int rptcnt = (int) rtnMap.getOrDefault("rptcnt", 0);
-                    for (int i = 0; i < 1; i++) {// 0번째만 저장해보자.
-                        HashMap rtnMap2 = (HashMap) lst.get(i);
-                        int length = (int) rtnMap2.getOrDefault("length", 0);
-                        String data = (String) rtnMap2.getOrDefault("data", "");
-                        ir.setNo(ir.getNo());
-                        ir.setStatus("active");
-                        ir.setFormat(format);
-                        ir.setLength(length);
-                        ir.setData(data);
-                        ir.setGap(gap);
-                        ir.setRptcnt(rptcnt);;
-                        irRepository.save(ir);
+            if(Common.notEmpty(payload)) {
+                HashMap<String, Object> map = objectMapper.readValue(payload, HashMap.class);
+                if (Type.add.name().equals((String) map.getOrDefault("type", "")) 
+                        && !AppController.Command.stop.name().equals(map.getOrDefault("action",""))) {
+                    HashMap rtnMap = (HashMap) map.getOrDefault("response", new HashMap());
+                    List<IR> irs = irRepository.findBySerialAndStatusAndModel(serial, "", model);
+                    if(irs.size()>0) {
+                        IR ir = irs.get(0);
+                        List lst = (List) rtnMap.getOrDefault("value", new ArrayList<>());
+                        int gap = (int) rtnMap.getOrDefault("gap", 0);
+                        String format = (String) rtnMap.getOrDefault("format", "");
+                        int rptcnt = (int) rtnMap.getOrDefault("rptcnt", 0);
+                        for (int i = 0; i < 1; i++) {// 0번째만 저장해보자.
+                            HashMap rtnMap2 = (HashMap) lst.get(i);
+                            int length = (int) rtnMap2.getOrDefault("length", 0);
+                            String data = (String) rtnMap2.getOrDefault("data", "");
+                            ir.setNo(ir.getNo());
+                            ir.setStatus("active");
+                            ir.setFormat(format);
+                            ir.setLength(length);
+                            ir.setData(data);
+                            ir.setGap(gap);
+                            ir.setRptcnt(rptcnt);;
+                            irRepository.save(ir);
+                        }
                     }
                 }
             }
