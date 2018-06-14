@@ -98,7 +98,7 @@ public class Gateway {
     private String type;
     
     @ManyToMany(fetch = FetchType.LAZY,cascade=CascadeType.ALL )
-    @JoinTable(name = "user_gateway", 
+    @JoinTable(name = "user", 
                joinColumns = @JoinColumn(name="no"),
                inverseJoinColumns = @JoinColumn(name="gateway_no"))
     private List<User> users;
