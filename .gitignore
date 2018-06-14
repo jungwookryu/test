@@ -10,7 +10,7 @@ target/
 .springBeans
 logs/
 logs_mqtt/
-log/
+logs_db/
 ### IntelliJ IDEA ###
 .idea
 *.iws
