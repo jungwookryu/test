@@ -51,8 +51,6 @@ public class ZWaveController extends CommonController {
     @Autowired
     CertificationRepository certificationRepository;
 
-    @Autowired
-    Properties zWaveProperties;
     /**
      * 모든 요청에 version 이 있다 모든 요청을 처리가능 인증프로토몰과 실서비스 프로토몰 공통 사용 (execute 인자값 확인)
      * @param classKey
@@ -94,7 +92,6 @@ public class ZWaveController extends CommonController {
     @GetMapping(value = "/{gateway_no}")
     public ResponseEntity getList(@PathVariable("gateway_no") int gatewayNo) {
         
-        Common.zwaveNickname(zWaveProperties,"07.01");
         Map sRtnList = (Map) zwaveService.getZWaveListApp(gatewayNo);
         return new ResponseEntity<>(sRtnList, HttpStatus.ACCEPTED);
     }

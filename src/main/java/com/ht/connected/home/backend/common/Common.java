@@ -381,13 +381,12 @@ public class Common {
     
     
     public static String zwaveNickname(Properties properties, String key) {
+        
         String rtnNickname = "Device";
-        if(!StringUtils.isEmpty(properties.getProperty(key))) {
-            rtnNickname = properties.getProperty(key);
-            rtnNickname.replace("SPECIFIC_TYPE_","");
-            rtnNickname.replace("_BINARY","");
-            rtnNickname.replace("_"," ");
-            rtnNickname = rtnNickname.toLowerCase();
+        if(null!=properties) {
+            if(!StringUtils.isEmpty(properties.getProperty(key))) {
+                rtnNickname = properties.getProperty(key).replace("SPECIFIC_TYPE_","").replace("_BINARY","").replace("_"," ").toLowerCase();
+            }
         }
         return rtnNickname;
     }

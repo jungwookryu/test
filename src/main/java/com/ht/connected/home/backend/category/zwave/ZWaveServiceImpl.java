@@ -70,9 +70,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     enum status {
         add, delete, active, failed
     }
-    @Autowired
-    @Qualifier("zWaveProperties")
-    private static Properties zWaveProperties;
+
     @Autowired
     public ZWaveServiceImpl(ZWaveRepository zwaveRepository) {
         super(zwaveRepository);
@@ -112,6 +110,10 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     @Qualifier(value = "MqttOutbound")
     MqttPahoMessageHandler messageHandler;
 
+
+    @Autowired
+    Properties zWaveProperties;
+    
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -582,15 +584,18 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
      */
     private void saveGatewayCategory(ZWaveRequest zwaveRequest, int nodeId) {
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
-        GatewayCategory gatewayCategory = new GatewayCategory();
-        gatewayCategory.setGatewayNo(gateway.getNo());
-        gatewayCategory.setCategory(CategoryActive.gateway.zwave.name());
-        gatewayCategory.setCategoryNo(CategoryActive.gateway.zwave.ordinal());
-        gatewayCategory.setNodeId(nodeId);
-        gatewayCategory.setStatus(status.add.name());
-        gatewayCategory.setCreatedTime(new Date());
-        gatewayCategory.setLastmodifiedTime(new Date());
-        gatewayCategoryRepository.save(gatewayCategory);
+        List<GatewayCategory> gatewayCategorys = gatewayCategoryRepository.findByGatewayNoAndNodeIdAndCategory(gateway.getNo(), nodeId,CategoryActive.gateway.zwave.name() );
+        if(gatewayCategorys.size()==0) {
+            GatewayCategory gatewayCategory = new GatewayCategory();
+            gatewayCategory.setGatewayNo(gateway.getNo());
+            gatewayCategory.setCategory(CategoryActive.gateway.zwave.name());
+            gatewayCategory.setCategoryNo(CategoryActive.gateway.zwave.ordinal());
+            gatewayCategory.setNodeId(nodeId);
+            gatewayCategory.setStatus(status.add.name());
+            gatewayCategory.setCreatedTime(new Date());
+            gatewayCategory.setLastmodifiedTime(new Date());
+            gatewayCategoryRepository.save(gatewayCategory);
+        }
     }
 
 }
