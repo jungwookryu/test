@@ -14,11 +14,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ht.connected.home.backend.gateway.Gateway;
+import com.ht.connected.home.backend.userGateway.UserGateway;
 
 /**
  * Project : HT-CONNECTED-HOME-SERVER Package :
@@ -94,19 +95,19 @@ public class User {
 	private int pushType;
 	
 
-    @ManyToMany(fetch = FetchType.LAZY,cascade=CascadeType.ALL )
-    @JoinTable(name = "gateway", 
-               joinColumns = @JoinColumn(name="no"),
-               inverseJoinColumns = @JoinColumn(name="user_no"))
-    private List<Gateway> gateways;
-    
+/*    @OneToMany(fetch = FetchType.LAZY,cascade=CascadeType.ALL )
+    @JoinTable(name = "user_gateway", 
+               joinColumns = @JoinColumn(name="user_no"),
+               inverseJoinColumns = @JoinColumn(name="no"))
+    private List<UserGateway> userGateways;
+    */
     // getter and setter
-    public boolean addGateway(Gateway gateway) {
-        if(gateways == null)
-            gateways = new ArrayList();
-        return gateways.add(gateway);
+/*    public boolean addGateway(UserGateway userGateway) {
+        if(userGateways == null)
+            userGateways = new ArrayList();
+        return userGateways.add(userGateway);
     }
-    
+    */
 
 	public User(String userEmail, String password) {
 		this.userEmail = userEmail;
@@ -365,5 +366,15 @@ public class User {
                 + ", lastmodifiedTime=" + lastmodifiedTime + ", active=" + active + ", authority=" + authority + ", locale=" + locale + ", redirectiedCode=" + redirectiedCode + ", connectedType="
                 + connectedType + ", pushType=" + pushType + "]";
     }
+/*
 
+    public List<UserGateway> getGateways() {
+        return userGateways;
+    }
+
+
+    public void setGateways(List<UserGateway> userGateways) {
+        this.userGateways = userGateways;
+    }
+*/
 }

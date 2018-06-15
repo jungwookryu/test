@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ht.connected.home.backend.user.User;
+import com.ht.connected.home.backend.userGateway.UserGateway;
 
 @Entity
 @Table(name = "gateway")
@@ -96,20 +97,6 @@ public class Gateway {
     @Transient
     @JsonProperty("type")
     private String type;
-    
-    @ManyToMany(fetch = FetchType.LAZY,cascade=CascadeType.ALL )
-    @JoinTable(name = "user", 
-               joinColumns = @JoinColumn(name="no"),
-               inverseJoinColumns = @JoinColumn(name="gateway_no"))
-    private List<User> users;
-    
-    // getter and setter
-    public boolean addUser(User user) {
-        if(users == null)
-            users = new ArrayList();
-        return users.add(user);
-    }
-    
     
     public Gateway() {
     }

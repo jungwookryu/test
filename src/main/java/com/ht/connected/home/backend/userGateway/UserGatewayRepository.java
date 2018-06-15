@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.ht.connected.home.backend.gateway.Gateway;
+import com.ht.connected.home.backend.user.User;
+
 
 /**
  * user_gateway 테이블 repository
@@ -21,7 +24,6 @@ public interface UserGatewayRepository extends JpaRepository<UserGateway, Intege
 	UserGateway findByUserNoAndGatewayNo(int no, int no2);
 
 	List<UserGateway> findByGatewayNoIn(List<Integer> gatewayNos);
-	
 	void deleteByGatewayNo(int gatewayNo);
 	void deleteByGatewayNoAndUserNo(int gatewayNo, int userNo);
     
