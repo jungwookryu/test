@@ -25,14 +25,13 @@ import com.ht.connected.home.backend.user.User;
 @Repository
 public interface GatewayRepository extends JpaRepository<Gateway, Integer> {
     
-    List<Gateway> findByStatusAndUsers(String status, User user);
+/*    List<Gateway> findByUsersAndStatusContaining(User user, String status);
     
-    List<Gateway> findByUsersAndStatusContaining(User user, String status);
-    
-    List<Gateway> findByUsers(User user);
+    List<Gateway> findByUsers(User user);*/
     
 	Gateway findBySerial(String serial);
 	List<Gateway> findByNoIn(List<Integer> nos);
+	List<Gateway> findByNoInAndStatusContaining(List<Integer> nos, String status);
 	
 	@Modifying
 	@Query("update Gateway set status = ?1 where no = ?2")

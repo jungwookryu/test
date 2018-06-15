@@ -101,17 +101,20 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
      * @throws Exception
      */
 
-    public List getGatewayList(String status,String authUserEmail) {
+    public List<Gateway> getGatewayList(String status,String authUserEmail) {
         List<User> users = userRepository.findByUserEmail(authUserEmail);
         User user = users.get(0);
-        List<Gateway> gateway = new ArrayList();
+        List<Integer> nos = new ArrayList<>();
         if(Common.empty(status)) {
-            gateway = gatewayRepository.findByUsers(user);
+            List<UserGateway> userGateways = userGatewayRepository.findByUserNo(user.getNo());
+            userGateways.forEach(UserGateway -> nos.add(UserGateway.getGatewayNo()));
+            return gatewayRepository.findByNoIn(nos);
         }
         else {
-            gateway = gatewayRepository.findByUsersAndStatusContaining(user,status);
+            List<UserGateway> userGateways = userGatewayRepository.findByUserNo(user.getNo());
+            userGateways.forEach(UserGateway -> nos.add(UserGateway.getGatewayNo()));
+            return gatewayRepository.findByNoInAndStatusContaining(nos,status);
         }
-        return gateway;
     }
     
     
