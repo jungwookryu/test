@@ -20,6 +20,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.category.zwave.certification.CertificationRepository;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementInclusionCommandClass;
 import com.ht.connected.home.backend.controller.rest.CommonController;
+import com.ht.connected.home.backend.gateway.Gateway;
+import com.ht.connected.home.backend.gateway.GatewayRepository;
 import com.ht.connected.home.backend.user.User;
 import com.ht.connected.home.backend.user.UserRepository;
 import com.ht.connected.home.backend.userGateway.UserGateway;
@@ -38,7 +40,9 @@ public class ZWaveController extends CommonController {
 
     @Autowired
     UserGatewayRepository userGatewayRepository;
-
+    @Autowired
+    GatewayRepository gatewayRepository;
+    
     @Autowired
     UserRepository userRepository;
 
@@ -75,7 +79,10 @@ public class ZWaveController extends CommonController {
         String userEmail = getAuthUserEmail();
         int classKey = NetworkManagementInclusionCommandClass.INT_ID;
         int commandKey = (int) req.getOrDefault("mode", 1);
+        String serial = (String) req.getOrDefault("serial", "");
+        Gateway gateway = gatewayRepository.findBySerial(serial);
         ZWaveRequest zwaveRequest = new ZWaveRequest(req, classKey, commandKey, "v1");
+        zwaveRequest.setModel(gateway.getModel());
         zwaveService.execute(req, zwaveRequest, false);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
