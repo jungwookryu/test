@@ -44,7 +44,6 @@ import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.config.service.MqttConfig;
-import com.ht.connected.home.backend.config.service.ZWaveConfig;
 import com.ht.connected.home.backend.gateway.Gateway;
 import com.ht.connected.home.backend.gateway.GatewayRepository;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
@@ -71,7 +70,9 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     enum status {
         add, delete, active, failed
     }
-
+    @Autowired
+    @Qualifier("zWaveProperties")
+    private static Properties zWaveProperties;
     @Autowired
     public ZWaveServiceImpl(ZWaveRepository zwaveRepository) {
         super(zwaveRepository);
@@ -554,7 +555,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         nodeItem.setGatewayNo(gateway.getNo());
         nodeItem.setCreratedTime(new Date());
         String nodeKey = nodeItem.getGeneric() + "." +  nodeItem.getSpecific();
-        nodeItem.setNickname(Common.zwaveNickname(nodeKey));
+        nodeItem.setNickname(Common.zwaveNickname(zWaveProperties, nodeKey));
         ZWave saveZwave = zwaveRepository.save(nodeItem);
         List<Endpoint> newEndpoints = nodeItem.getEndpoint();
         for (int iE = 0; iE < newEndpoints.size(); iE++) {
@@ -562,7 +563,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             endpoint.setZwaveNo(saveZwave.getNo());
             endpoint.setCmdCls(endpoint.getScmdClses(endpoint.getCmdClses()));
             String endpointKey = endpoint.getGeneric() + "." +  endpoint.getSpecific();
-            endpoint.setNickname(Common.zwaveNickname(nodeKey));
+            endpoint.setNickname(Common.zwaveNickname(zWaveProperties, nodeKey));
             Endpoint saveEndpoint = endpointRepository.save(endpoint);
             List<CmdCls> newCmdCls = newEndpoints.get(iE).getCmdClses();
             for (int iCmdCls = 0; iCmdCls < newCmdCls.size(); iCmdCls++) {

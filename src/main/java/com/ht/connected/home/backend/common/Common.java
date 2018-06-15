@@ -41,14 +41,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 //import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.config.service.EmailConfig;
 import com.ht.connected.home.backend.user.User;
-
 /**
  * @author ijlee
  *         <p>
@@ -60,8 +58,7 @@ public class Common {
     private static Key keySpec;
     private static Logger logger = LoggerFactory.getLogger(Common.class);
     
-    @Autowired
-    static Properties zWaveProperties;
+
     /**
      * 날짜계산
      * @return string string
@@ -383,10 +380,10 @@ public class Common {
     }
     
     
-    public static String zwaveNickname(String key) {
+    public static String zwaveNickname(Properties properties, String key) {
         String rtnNickname = "Device";
-        if(!StringUtils.isEmpty(zWaveProperties.getProperty(key))) {
-            rtnNickname = zWaveProperties.getProperty(key);
+        if(!StringUtils.isEmpty(properties.getProperty(key))) {
+            rtnNickname = properties.getProperty(key);
             rtnNickname.replace("SPECIFIC_TYPE_","");
             rtnNickname.replace("_BINARY","");
             rtnNickname.replace("_"," ");
