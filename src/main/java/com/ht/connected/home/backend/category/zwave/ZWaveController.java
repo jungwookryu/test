@@ -3,6 +3,7 @@ package com.ht.connected.home.backend.category.zwave;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.category.zwave.certification.CertificationRepository;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementInclusionCommandClass;
+import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 import com.ht.connected.home.backend.gateway.Gateway;
 import com.ht.connected.home.backend.gateway.GatewayRepository;
@@ -49,6 +51,8 @@ public class ZWaveController extends CommonController {
     @Autowired
     CertificationRepository certificationRepository;
 
+    @Autowired
+    Properties zWaveProperties;
     /**
      * 모든 요청에 version 이 있다 모든 요청을 처리가능 인증프로토몰과 실서비스 프로토몰 공통 사용 (execute 인자값 확인)
      * @param classKey
@@ -89,6 +93,8 @@ public class ZWaveController extends CommonController {
 
     @GetMapping(value = "/{gateway_no}")
     public ResponseEntity getList(@PathVariable("gateway_no") int gatewayNo) {
+        
+        Common.zwaveNickname(zWaveProperties,"07.01");
         Map sRtnList = (Map) zwaveService.getZWaveListApp(gatewayNo);
         return new ResponseEntity<>(sRtnList, HttpStatus.ACCEPTED);
     }
