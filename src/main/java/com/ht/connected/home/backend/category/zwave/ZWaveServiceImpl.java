@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 
 import javax.transaction.Transactional;
 
@@ -43,6 +44,7 @@ import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.config.service.MqttConfig;
+import com.ht.connected.home.backend.config.service.ZWaveConfig;
 import com.ht.connected.home.backend.gateway.Gateway;
 import com.ht.connected.home.backend.gateway.GatewayRepository;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
@@ -104,7 +106,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     CertificationService certificationService;
     @Autowired
     MqttConfig.MqttGateway mqttGateway;
-
+ 
     @Autowired
     @Qualifier(value = "MqttOutbound")
     MqttPahoMessageHandler messageHandler;
@@ -551,14 +553,16 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
 
         nodeItem.setGatewayNo(gateway.getNo());
         nodeItem.setCreratedTime(new Date());
-        nodeItem.setNickname(getDefaultNickName(nodeItem.getBasic(), nodeItem.getGeneric(), nodeItem.getSpecific()));
+        String nodeKey = nodeItem.getGeneric() + "." +  nodeItem.getSpecific();
+        nodeItem.setNickname(Common.zwaveNickname(nodeKey));
         ZWave saveZwave = zwaveRepository.save(nodeItem);
         List<Endpoint> newEndpoints = nodeItem.getEndpoint();
         for (int iE = 0; iE < newEndpoints.size(); iE++) {
             Endpoint endpoint = newEndpoints.get(iE);
             endpoint.setZwaveNo(saveZwave.getNo());
             endpoint.setCmdCls(endpoint.getScmdClses(endpoint.getCmdClses()));
-            endpoint.setCmdCls(endpoint.getScmdClses(endpoint.getCmdClses()));
+            String endpointKey = endpoint.getGeneric() + "." +  endpoint.getSpecific();
+            endpoint.setNickname(Common.zwaveNickname(nodeKey));
             Endpoint saveEndpoint = endpointRepository.save(endpoint);
             List<CmdCls> newCmdCls = newEndpoints.get(iE).getCmdClses();
             for (int iCmdCls = 0; iCmdCls < newCmdCls.size(); iCmdCls++) {
