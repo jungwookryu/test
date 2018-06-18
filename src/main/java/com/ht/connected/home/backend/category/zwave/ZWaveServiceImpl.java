@@ -191,6 +191,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                                     ZWave nodeItem = nodeListItem.get(i);
                                     int nodeId = nodeItem.getNodeId();
                                     saveZWaveList(zwaveRequest, nodeItem, gateway);
+//                                    syncZWaveList(zwaveRequest, nodeItem, gateway);
                                     String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/device/registration", gateway.getModel(),
                                             gateway.getSerial());
                                     publish(exeTopic);
@@ -208,7 +209,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         if (zwaveRequest.getClassKey() == NetworkManagementInclusionCommandClass.INT_ID) {
             // 기기삭제 상태값 받은 경우
             if (zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_REMOVE_STATUS || 
-                    zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_REMOVE_STATUS) {
+                    zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_FAILED_NODE_STATUS) {
                 HashMap resultMapData = mqttPayload.getResultData();
                 int nodeId = -1;
                 if(resultMapData!=null) {
@@ -219,7 +220,6 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                 }
                 if (nodeId != -1) {
                     deleteZwave(nodeId);
-                    // {source}/{target}/{model}/{serial}/{category}/remove/sucess
                     String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/device/remove", zwaveRequest.getModel(),
                             zwaveRequest.getSerialNo());
                     publish(exeTopic);

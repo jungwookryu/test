@@ -104,7 +104,14 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
         }
 
         if (ir.getStatus().isEmpty()) {
-            irRepository.save(ir);
+            List<IR> lstIr = irRepository.findByIrTypeAndSerialAndActionAndModelOrUserEmail(ir.getIrType(),ir.getSerial(), ir.getAction(), ir.getModel(), ir.getUserEmail());
+            if(lstIr.size()>0) {
+                IR saveIR = (IR) lstIr.get(0);
+                saveIR.setStatus("");
+                irRepository.save(saveIR);
+            }else {
+                irRepository.save(ir);
+            }
         }
 
     }
@@ -126,22 +133,30 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                         int gap = (int) rtnMap.getOrDefault("gap", 0);
                         String format = (String) rtnMap.getOrDefault("format", "");
                         int rptcnt = (int) rtnMap.getOrDefault("rptcnt", 0);
-                        for (int i = 0; i < 1; i++) {// 0번째만 저장해보자.
+                        
+                        
+                        for (int i = 0; i < lst.size(); i++) {// 0번째만 저장해보자.
                             HashMap rtnMap2 = (HashMap) lst.get(i);
                             int length = (int) rtnMap2.getOrDefault("length", 0);
                             String data = (String) rtnMap2.getOrDefault("data", "");
-                            ir.setNo(ir.getNo());
-                            ir.setStatus("active");
-                            ir.setFormat(format);
-                            ir.setLength(length);
-                            ir.setData(data);
-                            ir.setGap(gap);
-                            ir.setRptcnt(rptcnt);;
+                            IR saveIR = new IR();
+                            if(i==0) {
+                                saveIR.setNo(ir.getNo());
+                            }
+                            saveIR.setStatus("active");
+                            saveIR.setFormat(format);
+                            saveIR.setLength(length);
+                            saveIR.setData(data);
+                            saveIR.setGap(gap);
+                            saveIR.setRptcnt(rptcnt);;
                             irRepository.save(ir);
                         }
                     }
                 }
             }
+            String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/ir/study/complete", model,
+                    serial);
+            publish(exeTopic, new HashMap<>());
         }
 
     }
@@ -155,10 +170,12 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
         List<IR> irs = irRepository.findByUserEmailAndSubNumberAndAction(reqIr.getUserEmail(), reqIr.getSubNumber(), reqIr.getAction());
         if (irs.size() > 0) {
             IR ir = irs.get(0);
-            HashMap map = new HashMap();
-            map.put("length", ir.getLength());
-            map.put("data", ir.getData());
-            value.add(map);
+            for (int i = 0; i < irs.size() ; i++) {
+                HashMap map = new HashMap();
+                map.put("length", ir.getLength());
+                map.put("data", ir.getData());
+                value.add(map);
+            }
             HashMap requestMap = new HashMap<>();
             requestMap.put("format", ir.getFormat());
             requestMap.put("rptcnt", ir.getRptcnt());
