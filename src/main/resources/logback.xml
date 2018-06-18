@@ -75,7 +75,19 @@
         </encoder>
        
     </appender>
-    <appender name="File_db" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="File_amqp" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 파일이 하루에 한개씩 생성된다 -->
+            <fileNamePattern>${LOG_DIR}_amqp/iot_connected_home_amqp.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyyMMdd HH:mm:ss.SSS} [%thread] %-3level %logger{5} - %msg %n</pattern>
+        </encoder>
+    </appender>
+     <appender name="File_db" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 파일이 하루에 한개씩 생성된다 -->
             <fileNamePattern>${LOG_DIR}_db/iot_connected_home_db.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
@@ -99,6 +111,9 @@
 	</logger>
 	<logger name="com.ht.connected.home.backend.sip" additivity="false" level="debug">
   	<appender-ref ref="FileSip" />
+	</logger>
+	<logger name=" com.ht.connected.home.backend.controller.mqtt" additivity="false" level="debug">
+  	<appender-ref ref="File_amqp" />
 	</logger>
 	<!-- ResultSet을 제외한 모든 JDBC 호출 정보를 로그로 남긴다. 많은 양의 로그가 생성되므로 특별히 JDBC 문제를 
 		추적해야 할 필요가 있는 경우를 제외하고는 사용을 권장하지 않는다. -->

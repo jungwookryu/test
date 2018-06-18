@@ -162,10 +162,10 @@
 			<version>2.5.10</version>
 		</dependency>
 		<dependency>
-      <groupId>com.github.fernandospr</groupId>
-      <artifactId>javapns-jdk16</artifactId>
-      <version>2.3</version>
-    </dependency>
+			<groupId>com.github.fernandospr</groupId>
+			<artifactId>javapns-jdk16</artifactId>
+			<version>2.3</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

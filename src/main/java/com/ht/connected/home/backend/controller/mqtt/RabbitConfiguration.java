@@ -1,25 +1,30 @@
 package com.ht.connected.home.backend.controller.mqtt;
 
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Exchange;
-import org.springframework.amqp.core.ExchangeBuilder;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitAdmin;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
-import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
+
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.Envelope;
 
 @Configuration
+@EnableRabbit
 public class RabbitConfiguration {
     String activemqUser = "iot2";
     String activemqPassword = "@iot@";
@@ -27,14 +32,15 @@ public class RabbitConfiguration {
     int activemqPoolMaxConnections = 50;
     int activemqPoolColseTimeout = 1000;
     String activemqZwaveCert = "certi";
-    String activemqQueueName = "mqtt";
+    String activemqQueueName = "amqp";
     String activemqExchangeQueueName = "amq.topic";
-    String springMqttChannelServer = "#";
+    String springMqttChannelServer = "/host/#";
     public static final String LOG = "rabbitmqlog";
-
+    private static final Logger logger = LoggerFactory.getLogger(RabbitConfiguration.class);
     @Bean
     public Queue queue() {
-        return new Queue(activemqQueueName, false);
+        Queue queue =new Queue (activemqQueueName, false) ;
+        return queue;
     }
 
     @Bean
@@ -43,8 +49,8 @@ public class RabbitConfiguration {
     }
 
     @Bean
-    public Binding binding(Queue queue, TopicExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(springMqttChannelServer);
+    public Binding binding() {
+        return BindingBuilder.bind(queue()).to(exchange()).with(springMqttChannelServer);
     }
 
     @Bean
@@ -52,59 +58,100 @@ public class RabbitConfiguration {
         return new Jackson2JsonMessageConverter();
     }
 
-    @Bean
-    MessageListenerAdapter listenerAdapter() {
-        return new MessageListenerAdapter(new Receiver(), "receiveMessage");
-    }
+//    @Bean
+//    public SimpleMessageListenerContainer messageListenerContainer() {
+//        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(connectionFactory());
+//        container.setQueues(queue());
+//        container.setMessageListener(exampleListener());
+//        container.setAcknowledgeMode(AcknowledgeMode.AUTO);
+//        return container;
+//    }
 
-    @Bean
-    public SimpleMessageListenerContainer messageListenerContainer() {
-        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory());
-//        container.setQueueNames("injeong");
-        container.setMessageListener(exampleListener());
-        return container;
-    }
-    
     @Bean
     public MessageListener exampleListener() {
         return new MessageListener() {
-            
+            @Override
             public void onMessage(Message message) {
-                System.out.println("received: " + message);
+                logger.info("received: " + message);
             }
         };
-          
-    }
-    
 
+    }
     @Bean
-    public CachingConnectionFactory connectionFactory() {
+    public ConnectionFactory connectionFactory() {
         String springMqttActualHost = "iot.testing.htiotservice.com";
         int springMqttActualPort = 5673;
-        CachingConnectionFactory connectionFactory = new CachingConnectionFactory(springMqttActualHost, springMqttActualPort);
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+        connectionFactory.setHost(springMqttActualHost);
+        connectionFactory.setPort(springMqttActualPort);
         connectionFactory.setUsername("iot3");
         connectionFactory.setPassword("@iot@");
-        connectionFactory.setPublisherConfirms(true);
         return connectionFactory;
     }
+//    @Bean
+//    public CachingConnectionFactory connectionFactory() {
+//        String springMqttActualHost = "iot.testing.htiotservice.com";
+//        int springMqttActualPort = 5673;
+//        CachingConnectionFactory connectionFactory = new CachingConnectionFactory(springMqttActualHost, springMqttActualPort);
+//        connectionFactory.setUsername("iot3");
+//        connectionFactory.setPassword("@iot@");
+//        connectionFactory.setPublisherConfirms(true);
+//        return connectionFactory;
+//    }
     
-     @Bean
-     public RabbitAdmin rabbitAdmin(){
-     return new RabbitAdmin(connectionFactory());
-     }
-    
-     @Bean
-     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-     public RabbitTemplate rabbitTemplate() {
-     RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory());
-     rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
-     return rabbitTemplate;
-     }
+//    @Bean
+//    public ConnectionFactory connectionFactory() {
+//        String springMqttActualHost = "iot.testing.htiotservice.com";
+//        int springMqttActualPort = 5673;
+//        CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
+//        connectionFactory.setHost(springMqttActualHost);
+//        connectionFactory.setPort(springMqttActualPort);
+//        connectionFactory.setUsername("iot3");
+//        connectionFactory.setPassword("@iot@");
+//        return connectionFactory;
+//    }
 
+
+    
     @Bean
-    Exchange directLogExchange() {
-        return ExchangeBuilder.directExchange(LOG).durable(true).build();
+    Channel zwaveChannel() throws IOException, TimeoutException {
+        Connection newConnection = connectionFactory().newConnection();
+        Channel zwaveChannel = newConnection.createChannel();
+        
+//        zwaveChannel.queueDeclare(QUEUE_NAME, false, false, false, null);
+        zwaveChannel.queueBind(activemqQueueName, activemqExchangeQueueName, ".server.#");
+//      
+//          zwaveChannel.basicConsume(activemqQueueName, true,  new DefaultConsumer(zwaveChannel) {
+//              @Override
+//              public void handleDelivery(String consumerTag,
+//                                         Envelope envelope,
+//                                         AMQP.BasicProperties properties,
+//                                         byte[] body)
+//                  throws IOException
+//              {
+//                  String routingKey = envelope.getRoutingKey();
+//                  String contentType = properties.getContentType();
+//                  long deliveryTag = envelope.getDeliveryTag();
+//                  // (process the message components here ...)
+//                  zwaveChannel.basicAck(deliveryTag, false);
+//              }
+//          });
+//          new MessageListener() {
+//              @Override
+//              public void onMessage(Message message) {
+//                  logger.info("received: " + message);
+//              }
+//          };
+
+        zwaveChannel.close();
+        newConnection.close();
+        return zwaveChannel;
     }
+    
+    
+    
+    
+    
+    
 
 }
