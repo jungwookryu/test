@@ -149,7 +149,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                             saveIR.setData(data);
                             saveIR.setGap(gap);
                             saveIR.setRptcnt(rptcnt);;
-                            irRepository.save(ir);
+                            irRepository.save(saveIR);
                         }
                     }
                     String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/ir/study/complete", model,
