@@ -2,6 +2,7 @@ package com.ht.connected.home.backend.category.ir;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -134,7 +135,6 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                         String format = (String) rtnMap.getOrDefault("format", "");
                         int rptcnt = (int) rtnMap.getOrDefault("rptcnt", 0);
                         
-                        
                         for (int i = 0; i < lst.size(); i++) {// 0번째만 저장해보자.
                             HashMap rtnMap2 = (HashMap) lst.get(i);
                             int length = (int) rtnMap2.getOrDefault("length", 0);
@@ -143,12 +143,20 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                             if(i==0) {
                                 saveIR.setNo(ir.getNo());
                             }
+                            
+                            saveIR.setAction(ir.getAction());
+                            saveIR.setIrType(ir.getIrType());
+                            saveIR.setSubNumber(ir.getSubNumber());
+                            saveIR.setSerial(serial);
+                            saveIR.setModel(model);
                             saveIR.setStatus("active");
                             saveIR.setFormat(format);
                             saveIR.setLength(length);
                             saveIR.setData(data);
                             saveIR.setGap(gap);
-                            saveIR.setRptcnt(rptcnt);;
+                            saveIR.setRptcnt(rptcnt);
+                            saveIR.setLastmodifiedTime(new Date());
+                            saveIR.setUserEmail(ir.getUserEmail());
                             irRepository.save(saveIR);
                         }
                     }
