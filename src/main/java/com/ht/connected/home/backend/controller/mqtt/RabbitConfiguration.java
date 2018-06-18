@@ -113,13 +113,13 @@ public class RabbitConfiguration {
 
 
     
-    @Bean
-    Channel zwaveChannel() throws IOException, TimeoutException {
-        Connection newConnection = connectionFactory().newConnection();
-        Channel zwaveChannel = newConnection.createChannel();
+//    @Bean
+//    Channel zwaveChannel() throws IOException, TimeoutException {
+//        Connection newConnection = connectionFactory().newConnection();
+//        Channel zwaveChannel = newConnection.createChannel();
         
 //        zwaveChannel.queueDeclare(QUEUE_NAME, false, false, false, null);
-        zwaveChannel.queueBind(activemqQueueName, activemqExchangeQueueName, ".server.#");
+//        zwaveChannel.queueBind(activemqQueueName, activemqExchangeQueueName, ".server.#");
 //      
 //          zwaveChannel.basicConsume(activemqQueueName, true,  new DefaultConsumer(zwaveChannel) {
 //              @Override
@@ -143,10 +143,10 @@ public class RabbitConfiguration {
 //              }
 //          };
 
-        zwaveChannel.close();
-        newConnection.close();
-        return zwaveChannel;
-    }
+//        zwaveChannel.close();
+//        newConnection.close();
+//        return zwaveChannel;
+//    }
     
     
     
