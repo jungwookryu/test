@@ -98,7 +98,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
 
     @Autowired
     CmdClsRepository cmdClsRepository;
-    
+
     @Autowired
     IRService irService;
 
@@ -109,15 +109,14 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     CertificationService certificationService;
     @Autowired
     MqttConfig.MqttGateway mqttGateway;
- 
+
     @Autowired
     @Qualifier(value = "MqttOutbound")
     MqttPahoMessageHandler messageHandler;
 
-
     @Autowired
     Properties zWaveProperties;
-    
+
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -177,8 +176,8 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                 if (zwaveRequest.getCommandKey() == NetworkManagementProxyCommandClass.INT_NODE_LIST_REPORT) {
                     if (-1 == zwaveRequest.getNodeId() || 0 == zwaveRequest.getNodeId()) {
                         reportZWaveList(zwaveRequest, data);
-                    } 
-//                    신규 등록 기기 정보
+                    }
+                    // 신규 등록 기기 정보
                     else {
                         saveGatewayCategory(zwaveRequest, zwaveRequest.getNodeId());
                         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
@@ -191,7 +190,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                                     ZWave nodeItem = nodeListItem.get(i);
                                     int nodeId = nodeItem.getNodeId();
                                     saveZWaveList(zwaveRequest, nodeItem, gateway);
-//                                    syncZWaveList(zwaveRequest, nodeItem, gateway);
+                                    // syncZWaveList(zwaveRequest, nodeItem, gateway);
                                     String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/device/registration", gateway.getModel(),
                                             gateway.getSerial());
                                     publish(exeTopic);
@@ -208,13 +207,13 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         // 기기삭제 모드 0x34/0x04 결과
         if (zwaveRequest.getClassKey() == NetworkManagementInclusionCommandClass.INT_ID) {
             // 기기삭제 상태값 받은 경우
-            if (zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_REMOVE_STATUS || 
+            if (zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_REMOVE_STATUS ||
                     zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_FAILED_NODE_STATUS) {
                 HashMap resultMapData = mqttPayload.getResultData();
                 int nodeId = -1;
-                if(resultMapData!=null) {
+                if (resultMapData != null) {
                     int status = (int) resultMapData.getOrDefault("status", -1);
-                    if(status == 0) {
+                    if (status == 0) {
                         nodeId = (int) resultMapData.getOrDefault("newNodeId", zwaveRequest.getNodeId());
                     }
                 }
@@ -224,9 +223,9 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                             zwaveRequest.getSerialNo());
                     publish(exeTopic);
                 }
-                
+
             }
-                
+
         }
         // 기기 초기화 결과 0x4D/0x07
         if (zwaveRequest.getClassKey() == NetworkManagementBasicCommandClass.INT_ID) {
@@ -314,6 +313,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             // 기기 리스트에 대한 정보일 경우
             if (zwaveReport.getNodelist() != null) {
                 List<ZWave> nodeListItem = (List<ZWave>) zwaveReport.getNodelist();
+                // 추가
                 for (int i = 0; i < nodeListItem.size(); i++) {
                     ZWave nodeItem = nodeListItem.get(i);
                     int nodeId = nodeItem.getNodeId();
@@ -334,6 +334,25 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                         String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/device/registration", gateway.getModel(),
                                 gateway.getSerial());
                         publish(exeTopic);
+                    }
+                }
+                // host에는 있고 server에는 없을경우 삭제한다.
+                // 추가
+                for (int j = 0; j < lstZwave.size(); j++) {
+                    boolean bDelete = true;
+                    ZWave zwave = lstZwave.get(j);
+                    for (int i = 0; i < nodeListItem.size(); i++) {
+                        ZWave nodeItem = nodeListItem.get(i);
+                        int nodeId = nodeItem.getNodeId();
+                        // host 노드리스트와 DB 노드리스트를 비교하여 없으면 delete 시킴
+                        if (nodeId == zwave.getNodeId()) {
+                            bDelete = false;
+                        }
+                    }
+                    // 등록되어있고 node가 없을경우 삭제함
+                    if (bDelete) {
+                        // zwave nodeId Category 별삭제함.
+                        deleteZwave(zwave.getNo());
                     }
                 }
             }
@@ -535,7 +554,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         }
         zwaveRepository.deleteByNodeId(nodeId);
     }
-    
+
     private void hostReset(ZWaveRequest zwaveRequest) {
         // host 정보삭제
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
@@ -552,7 +571,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             endpointRepository.deleteByZwaveNo(zWave.getNo());
         }
         zwaveRepository.deleteByGatewayNo(gateway.getNo());
-        irService.deleteIrs(gateway.getNo(),"");
+        irService.deleteIrs(gateway.getNo(), "");
 
     }
 
@@ -561,7 +580,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
 
         nodeItem.setGatewayNo(gateway.getNo());
         nodeItem.setCreratedTime(new Date());
-        String nodeKey = nodeItem.getGeneric() + "." +  nodeItem.getSpecific();
+        String nodeKey = nodeItem.getGeneric() + "." + nodeItem.getSpecific();
         nodeItem.setNickname(Common.zwaveNickname(zWaveProperties, nodeKey));
         ZWave saveZwave = zwaveRepository.save(nodeItem);
         List<Endpoint> newEndpoints = nodeItem.getEndpoint();
@@ -569,7 +588,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             Endpoint endpoint = newEndpoints.get(iE);
             endpoint.setZwaveNo(saveZwave.getNo());
             endpoint.setCmdCls(endpoint.getScmdClses(endpoint.getCmdClses()));
-            String endpointKey = endpoint.getGeneric() + "." +  endpoint.getSpecific();
+            String endpointKey = endpoint.getGeneric() + "." + endpoint.getSpecific();
             endpoint.setNickname(Common.zwaveNickname(zWaveProperties, nodeKey));
             Endpoint saveEndpoint = endpointRepository.save(endpoint);
             List<CmdCls> newCmdCls = newEndpoints.get(iE).getCmdClses();
@@ -589,8 +608,8 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
      */
     private void saveGatewayCategory(ZWaveRequest zwaveRequest, int nodeId) {
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
-        List<GatewayCategory> gatewayCategorys = gatewayCategoryRepository.findByGatewayNoAndNodeIdAndCategory(gateway.getNo(), nodeId,CategoryActive.gateway.zwave.name() );
-        if(gatewayCategorys.size()==0) {
+        List<GatewayCategory> gatewayCategorys = gatewayCategoryRepository.findByGatewayNoAndNodeIdAndCategory(gateway.getNo(), nodeId, CategoryActive.gateway.zwave.name());
+        if (gatewayCategorys.size() == 0) {
             GatewayCategory gatewayCategory = new GatewayCategory();
             gatewayCategory.setGatewayNo(gateway.getNo());
             gatewayCategory.setCategory(CategoryActive.gateway.zwave.name());
@@ -604,4 +623,3 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     }
 
 }
-
