@@ -242,7 +242,7 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
         updateDeleteDB(no);
         // host 삭제 모드 요청 publish
         Gateway gateway = findOne(no);
-        String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/reset", gateway.getModel(), gateway.getSerial());
+        String exeTopic = String.format("/" + Target.server.name() + "/" + Target.host.name() + "/%s/%s/manager/reset", gateway.getModel(), gateway.getSerial());
         publish(exeTopic, null);
     }
 
