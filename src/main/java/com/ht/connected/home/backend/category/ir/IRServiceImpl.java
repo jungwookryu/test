@@ -154,6 +154,9 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                     }
                 }
             }
+            String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/ir/study/complete", model,
+                    serial);
+            publish(exeTopic, new HashMap<>());
         }
 
     }
