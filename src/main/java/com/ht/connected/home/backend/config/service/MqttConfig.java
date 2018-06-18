@@ -183,7 +183,7 @@ public class MqttConfig {
                                     zwaveService.subscribeInit(gateway);
                                 }
                             }
-                            if (CategoryActive.gateway.ir.name().equals(topicSplited[5].toString())) {
+                            if (CategoryActive.gateway.ir.name().equals(topicSplited[5].toString().trim())) {
                                 irService.subscribe(topicSplited, payload);
                             }
                         }
