@@ -135,15 +135,25 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                         String format = (String) rtnMap.getOrDefault("format", "");
                         int rptcnt = (int) rtnMap.getOrDefault("rptcnt", 0);
                         
-                        for (int i = 0; i < lst.size(); i++) {// 0번째만 저장해보자.
+                        for (int i = 0; i < 1; i++) {// 0번째만 저장해보자.
                             HashMap rtnMap2 = (HashMap) lst.get(i);
                             int length = (int) rtnMap2.getOrDefault("length", 0);
                             String data = (String) rtnMap2.getOrDefault("data", "");
+                            ir.setStatus("active");
+                            ir.setFormat(format);
+                            ir.setLength(length);
+                            ir.setData(data);
+                            ir.setGap(gap);
+                            ir.setRptcnt(rptcnt);;
+                            irRepository.save(ir);
+                        }
+                        
+                        
+                        for (int i = 1; i < lst.size(); i++) {// 0번째만 저장해보자.
+                            HashMap rtnMap3 = (HashMap) lst.get(i);
+                            int length_1 = (int) rtnMap3.getOrDefault("length", 0);
+                            String data_1 = (String) rtnMap3.getOrDefault("data", "");
                             IR saveIR = new IR();
-                            if(i==0) {
-                                saveIR.setNo(ir.getNo());
-                            }
-                            
                             saveIR.setAction(ir.getAction());
                             saveIR.setIrType(ir.getIrType());
                             saveIR.setSubNumber(ir.getSubNumber());
@@ -151,12 +161,10 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                             saveIR.setModel(model);
                             saveIR.setStatus("active");
                             saveIR.setFormat(format);
-                            saveIR.setLength(length);
-                            saveIR.setData(data);
+                            saveIR.setLength(length_1);
+                            saveIR.setData(data_1);
                             saveIR.setGap(gap);
                             saveIR.setRptcnt(rptcnt);
-                            saveIR.setLastmodifiedTime(new Date());
-                            saveIR.setUserEmail(ir.getUserEmail());
                             irRepository.save(saveIR);
                         }
                     }
