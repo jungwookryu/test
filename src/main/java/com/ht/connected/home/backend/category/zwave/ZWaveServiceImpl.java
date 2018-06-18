@@ -29,6 +29,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ht.connected.home.backend.category.ir.IRService;
 import com.ht.connected.home.backend.category.zwave.certification.CertificationRepository;
 import com.ht.connected.home.backend.category.zwave.certification.CertificationService;
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdCls;
@@ -97,6 +98,9 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
 
     @Autowired
     CmdClsRepository cmdClsRepository;
+    
+    @Autowired
+    IRService irService;
 
     @Autowired
     GatewayCategoryRepository gatewayCategoryRepository;
@@ -548,6 +552,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             endpointRepository.deleteByZwaveNo(zWave.getNo());
         }
         zwaveRepository.deleteByGatewayNo(gateway.getNo());
+        irService.deleteIrs(gateway.getNo(),"");
 
     }
 

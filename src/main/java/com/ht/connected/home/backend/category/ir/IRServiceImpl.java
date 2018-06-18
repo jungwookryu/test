@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +24,7 @@ import com.ht.connected.home.backend.app.AppController;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.config.service.MqttConfig;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
+import com.ht.connected.home.backend.gatewayCategory.GatewayCategoryRepository;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 import com.ht.connected.home.backend.service.mqtt.Target;
 
@@ -39,6 +39,9 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     }
     @Autowired
     IRRepository irRepository;
+    
+    @Autowired
+    GatewayCategoryRepository gatewayCategoryRepository;
     
     @Autowired
     MqttConfig.MqttGateway mqttGateway;
@@ -71,6 +74,15 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
         }
    }
 
+    @Override
+    @Transactional
+    public void deleteIrs(int gatewayNo, String userEmail) {
+        //TODO irCategory 삭제
+        gatewayCategoryRepository.deleteByGatewayNoAndCategoryNo(gatewayNo, CategoryActive.gateway.ir.ordinal());
+        irRepository.deleteByUserEmailContainingAndGatewayNo(userEmail, gatewayNo);
+   }
+ 
+    
     @Override
     public void studyIR(IR ir) throws JsonProcessingException {
 

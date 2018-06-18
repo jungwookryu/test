@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,13 +19,10 @@ public class ProducerRestController{
     
     @Value("${spring.activemq.queueName}")
     String activemqQueueName;
-    private final RabbitTemplate rabbitTemplate;
-    private final Receiver receiver;
+    
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
-    public ProducerRestController(Receiver receiver, RabbitTemplate rabbitTemplate) {
-        this.receiver = receiver;
-        this.rabbitTemplate = rabbitTemplate;
-    }
     private static final Logger logger = LoggerFactory.getLogger(ProducerRestController.class);
    
     @PostMapping("/")

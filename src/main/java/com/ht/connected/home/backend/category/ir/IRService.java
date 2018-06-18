@@ -18,5 +18,5 @@ public interface IRService extends MqttBase<Object, Object>, CrudService<IR, Int
     void studyIR(IR ir) throws JsonProcessingException;
     void subscribe(String[] topicSplited, String payload) throws JsonParseException, JsonMappingException, IOException, JSONException;
     void controlIR(IR ir) throws JsonProcessingException;
-
+    void deleteIrs(int gatewayNo, String userEmail);
 }

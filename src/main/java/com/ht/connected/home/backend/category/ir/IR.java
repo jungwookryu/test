@@ -98,6 +98,9 @@ public class IR {
     @Column(name = "user_email")
     private String userEmail;
 
+    @JsonProperty("gateway_no")
+    @Column(name = "gateway_no")
+    private int gatewayNo;
     
     public IR() {
         this.createdTime = new Date();
@@ -369,5 +372,13 @@ public class IR {
      */
     public void setData(String data) {
         this.data = data;
+    }
+
+    public int getGatewayNo() {
+        return gatewayNo;
+    }
+
+    public void setGatewayNo(int gatewayNo) {
+        this.gatewayNo = gatewayNo;
     }
 }

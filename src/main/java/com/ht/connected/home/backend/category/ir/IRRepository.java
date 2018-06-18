@@ -20,11 +20,11 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface IRRepository extends JpaRepository<IR, Integer> {
-    List<IR> findByUserEmail(String useremail);
+    List<IR> findByUserEmail(String userEmail);
     
-    List<IR> findByUserEmailAndStatus(String useremail, String status);
+    List<IR> findByUserEmailAndStatus(String userEmail, String status);
     
-    List<IR> findByUserEmailAndSubNumberAndAction(String useremail, int subNumber, String action);
+    List<IR> findByUserEmailAndSubNumberAndAction(String userEmail, int subNumber, String action);
     
     List<IR> findBySerialAndStatusAndModel(String serial, String status, String model);
     
@@ -38,4 +38,6 @@ public interface IRRepository extends JpaRepository<IR, Integer> {
     void deleteBySubNumber(int subNumber);
 
     List<IR> getBySubNumber(int no);
+    
+    void deleteByUserEmailContainingAndGatewayNo(String userEmail, int gatewayNo);
 }
