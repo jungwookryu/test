@@ -139,6 +139,8 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                             HashMap rtnMap2 = (HashMap) lst.get(i);
                             int length = (int) rtnMap2.getOrDefault("length", 0);
                             String data = (String) rtnMap2.getOrDefault("data", "");
+                            ir.setIrType(ir.getIrType());
+                            ir.setSubNumber(ir.getIrType());
                             ir.setStatus("active");
                             ir.setFormat(format);
                             ir.setLength(length);
@@ -147,7 +149,6 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                             ir.setRptcnt(rptcnt);;
                             irRepository.save(ir);
                         }
-                        
                         
                         for (int i = 1; i < lst.size(); i++) {// 0번째만 저장해보자.
                             HashMap rtnMap3 = (HashMap) lst.get(i);
@@ -173,9 +174,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                     publish(exeTopic, new HashMap<>());
                 }
             }
-          
         }
-
     }
 
     @Override
