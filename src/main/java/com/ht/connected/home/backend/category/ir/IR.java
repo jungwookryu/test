@@ -65,7 +65,7 @@ public class IR {
     @Column(name = "action")
     private String action;
 
-    @JsonProperty("command")
+    @JsonProperty("status")
     @Column(name = "status")
     private String status;
 
