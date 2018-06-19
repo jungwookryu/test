@@ -18,11 +18,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class IR {
-    
+
     public enum Command {
         start, stop, add, del
     }
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("no")
@@ -72,15 +72,15 @@ public class IR {
     @JsonProperty("format")
     @Column(name = "format")
     private String format;
-    
+
     @JsonProperty("rptcnt")
     @Column(name = "rptcnt")
     private int rptcnt;
-    
+
     @JsonProperty("gap")
     @Column(name = "gap")
     private int gap;
-    
+
     @JsonProperty("length")
     @Column(name = "length")
     private int length;
@@ -89,7 +89,6 @@ public class IR {
     @Column(name = "data")
     private String data;
 
-    
     @JsonProperty("sub_number")
     @Column(name = "sub_number")
     private int subNumber;
@@ -101,11 +100,11 @@ public class IR {
     @JsonProperty("gateway_no")
     @Column(name = "gateway_no")
     private int gatewayNo;
-    
+
     public IR() {
         this.createdTime = new Date();
     }
-    
+
     public IR(String devType, String action, int irType) {
         this.devType = devType;
         this.action = action;

@@ -2,7 +2,6 @@ package com.ht.connected.home.backend.category.ir;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -96,23 +95,28 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
             publishPayload.put("action", ir.getStatus());
             publish(topic, publishPayload);
             if (AppController.Command.stop.name().equals(ir.getStatus())) {
-                // 등록모드로 추가된 ir 학습 기기정보삭제
-//                List<IR> irs = irRepository.findBySerialAndStatusAndModelOrUserEmail(ir.getSerial(), "", ir.getModel(), ir.getUserEmail());
-//                for (IR ir2 : irs) {
-//                    irRepository.delete(ir2.getNo());
-//                }
+
+                List<IR> irs = irRepository.findBySerialAndStatusAndModel(ir.getSerial(), "", ir.getModel());
+                // 취소됬을경우 신규추가된 ir 학습 기기정보삭제
+                for (IR ir2 : irs) {
+                    irRepository.delete(ir2.getNo());
+                }
+                // 취소됬을경우 신규추가된 ir 학습 기기정보삭제
+                if(irs.size()==0) {
+                    irRepository.setModifyStatusForSerial("active",ir.getSerial());
+                }
             }
         }
 
         if (ir.getStatus().isEmpty()) {
-            List<IR> lstIr = irRepository.findByIrTypeAndSerialAndActionAndModelOrUserEmail(ir.getIrType(),ir.getSerial(), ir.getAction(), ir.getModel(), ir.getUserEmail());
+            List<IR> lstIr = irRepository.findBySubNumberAndSerialAndActionAndModelAndUserEmail(ir.getSubNumber(),ir.getSerial(), ir.getAction(), ir.getModel(), ir.getUserEmail());
             if(lstIr.size()>0) {
-                IR saveIR = (IR) lstIr.get(0);
-                saveIR.setStatus("");
-                irRepository.save(saveIR);
-            }else {
-                irRepository.save(ir);
+                lstIr.forEach(IR->{
+                    IR.setStatus("delete");
+                    irRepository.save(IR);
+                });
             }
+            irRepository.save(ir);
         }
 
     }
