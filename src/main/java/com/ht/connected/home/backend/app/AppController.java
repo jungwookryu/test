@@ -217,7 +217,7 @@ public class AppController extends CommonController {
      */
     @PostMapping("/irStudy")
     public ResponseEntity learnRemoteControl(@RequestBody HashMap hashMap) throws JsonProcessingException {
-
+ 
         HashMap<String, Object> rtnMap = new HashMap();
         rtnMap.put("result_code", "200");
         rtnMap.put("result_msg", "Success");
@@ -225,7 +225,7 @@ public class AppController extends CommonController {
         String serial = (String) hashMap.getOrDefault("serial", "");
         String model = (String) hashMap.getOrDefault("model", "");
         IR ir = new IR();
-        ir.setSerial(serial);
+       ir.setSerial(serial);
         ir.setModel(model);
         ir.setAction(actionname);
         ir.setStatus("");

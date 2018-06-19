@@ -101,7 +101,7 @@ public class IRController extends CommonController {
         String serial = (String) hashMap.getOrDefault("serial", "");
         String model = (String) hashMap.getOrDefault("model", "");
 //        List<IR> ir = iRRepository.findByIrTypeAndUserEmail(irType, useEmail);
-        List<IR> ir = iRRepository.findByIrTypeAndUserEmailAndSerialAndModel(irType, useEmail, serial, model);
+        List<IR> ir = iRRepository.findByIrTypeAndUserEmailContainingAndSerialAndModel(irType, useEmail, serial, model);
         return new ResponseEntity<List<IR>>(ir, HttpStatus.OK);
     }
     

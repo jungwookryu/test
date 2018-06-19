@@ -20,37 +20,45 @@ import com.ht.connected.home.backend.config.security.SecretKeyProvider;
 
 @Controller
 public class CommonController extends Common {
-	@Autowired
-	private SecretKeyProvider keyProvider;
-	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-	protected ObjectMapper objectMapper = new ObjectMapper();
-	/**
-	 * 사용자 접속을 위한 SSO로 들어오는 사용자만 허용되는 session 확인
-	 *
-	 * @return Authentication
-	 */
-	public Authentication getAuthentication() {
-		if (SecurityContextHolder.getContext() == null) {
-			throw new InternalAuthenticationServiceException("세션이 존재하지 않습니다.", new Exception("세션에러"));
-		}
-		return SecurityContextHolder.getContext().getAuthentication();
+    @Autowired
+    private SecretKeyProvider keyProvider;
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected ObjectMapper objectMapper = new ObjectMapper();
 
-	}
+    /**
+     * 사용자 접속을 위한 SSO로 들어오는 사용자만 허용되는 session 확인
+     * @return Authentication
+     */
+    public Authentication getAuthentication() {
+        if (SecurityContextHolder.getContext() == null) {
+            throw new InternalAuthenticationServiceException("세션이 존재하지 않습니다.", new Exception("세션에러"));
+        }
+        return SecurityContextHolder.getContext().getAuthentication();
 
-	public void expireLogout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
-			HttpSession session) {
-		if (session != null) {
-			session.invalidate();
-		}
-		SecurityContextLogoutHandler ctxLogOut = new SecurityContextLogoutHandler(); // concern
-		Authentication auth = getAuthentication(); // concern you
-		ctxLogOut.logout(httpServletRequest, httpServletResponse, auth);
-	}
-	public String getAuthUserEmail(String access_token) {
-		return getAuthUserEmail();
-	}
+    }
 
-	public String getAuthUserEmail() {
-		return (String) getAuthentication().getPrincipal();
+    public void expireLogout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+            HttpSession session) {
+        if (session != null) {
+            session.invalidate();
+        }
+        SecurityContextLogoutHandler ctxLogOut = new SecurityContextLogoutHandler(); // concern
+        Authentication auth = getAuthentication(); // concern you
+        ctxLogOut.logout(httpServletRequest, httpServletResponse, auth);
+    }
+
+    public String getAuthUserEmail(String access_token) {
+        return getAuthUserEmail();
+    }
+
+    public String getAuthUserEmail() {
+	    String userEmail="";
+	    try {
+	        userEmail = (String) getAuthentication().getPrincipal();
+            
+        } catch (Exception e) {
+           e.printStackTrace();
+	    }
+		return userEmail;
 	}
 }

@@ -22,17 +22,16 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface IRRepository extends JpaRepository<IR, Integer> {
-    List<IR> findByUserEmail(String userEmail);
     
-    List<IR> findByUserEmailAndStatus(String userEmail, String status);
+    List<IR> findByUserEmailContainingAndStatus(String userEmail, String status);
     
-    List<IR> findByUserEmailAndSubNumberAndAction(String userEmail, int subNumber, String action);
+    List<IR> findByUserEmailContainingAndSubNumberAndAction(String userEmail, int subNumber, String action);
     
     List<IR> findBySerialAndStatusAndModel(String serial, String status, String model);
     
-    List<IR> findBySubNumberAndSerialAndActionAndModelAndUserEmail(int subNumber, String serial, String action, String model, String userEmail);
+    List<IR> findBySubNumberAndSerialAndActionAndModelAndUserEmailContaining(int subNumber, String serial, String action, String model, String userEmail);
     
-    List<IR> findByIrTypeAndUserEmailAndSerialAndModel(int irType, String useEmail, String serial, String model);
+    List<IR> findByIrTypeAndUserEmailContainingAndSerialAndModel(int irType, String useEmail, String serial, String model);
     void deleteBySubNumber(int subNumber);
 
     List<IR> getBySubNumber(int no);

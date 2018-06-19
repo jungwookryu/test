@@ -57,7 +57,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     }
     @Override
     public List<IR> getIRByUser(String userEmail) {
-        return irRepository.findByUserEmailAndStatus(userEmail, Type.add.name());
+        return irRepository.findByUserEmailContainingAndStatus(userEmail, Type.add.name());
     }
 
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -110,7 +110,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
         }
 
         if (ir.getStatus().isEmpty()) {
-            List<IR> lstIr = irRepository.findBySubNumberAndSerialAndActionAndModelAndUserEmail(ir.getSubNumber(),ir.getSerial(), ir.getAction(), ir.getModel(), ir.getUserEmail());
+            List<IR> lstIr = irRepository.findBySubNumberAndSerialAndActionAndModelAndUserEmailContaining(ir.getSubNumber(),ir.getSerial(), ir.getAction(), ir.getModel(), ir.getUserEmail());
             if(lstIr.size()>0) {
                 lstIr.forEach(IR->{
                     IR.setStatus("delete");
@@ -188,7 +188,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
         HashMap<String, Object> publishPayload = new HashMap<String, Object>();
         List value = new ArrayList<>();
         // IR ir = irRepository.findOne(reqIr.getNo());
-        List<IR> irs = irRepository.findByUserEmailAndSubNumberAndAction(reqIr.getUserEmail(), reqIr.getSubNumber(), reqIr.getAction());
+        List<IR> irs = irRepository.findByUserEmailContainingAndSubNumberAndAction(reqIr.getUserEmail(), reqIr.getSubNumber(), reqIr.getAction());
         if (irs.size() > 0) {
             IR ir = irs.get(0);
             for (int i = 0; i < irs.size() ; i++) {
