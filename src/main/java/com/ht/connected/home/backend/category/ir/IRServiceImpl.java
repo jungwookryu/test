@@ -23,6 +23,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.app.AppController;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.config.service.MqttConfig;
+import com.ht.connected.home.backend.gateway.Gateway;
+import com.ht.connected.home.backend.gateway.GatewayRepository;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategoryRepository;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
@@ -39,7 +41,10 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     }
     @Autowired
     IRRepository irRepository;
-    
+
+    @Autowired
+    GatewayRepository gatewayRepository;
+
     @Autowired
     GatewayCategoryRepository gatewayCategoryRepository;
     
@@ -78,8 +83,10 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     @Transactional
     public void deleteIrs(int gatewayNo, String userEmail) {
         //TODO irCategory 삭제
+        Gateway gateway = gatewayRepository.getOne(gatewayNo);
         gatewayCategoryRepository.deleteByGatewayNoAndCategoryNo(gatewayNo, CategoryActive.gateway.ir.ordinal());
         irRepository.deleteByUserEmailContainingAndGatewayNo(userEmail, gatewayNo);
+        irRepository.deleteBySerial(gateway.getSerial());
    }
  
     
@@ -153,6 +160,8 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                             String data = (String) rtnMap2.getOrDefault("data", "");
                             ir.setIrType(ir.getIrType());
                             ir.setSubNumber(ir.getIrType());
+                            ir.setGatewayNo(ir.getGatewayNo());
+                            ir.setUserEmail(ir.getUserEmail());
                             ir.setStatus("active");
                             ir.setFormat(format);
                             ir.setLength(length);
@@ -174,6 +183,8 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                             saveIR.setModel(model);
                             saveIR.setStatus("active");
                             saveIR.setFormat(format);
+                            saveIR.setGatewayNo(ir.getGatewayNo());
+                            saveIR.setUserEmail(ir.getUserEmail());
                             saveIR.setLength(length_1);
                             saveIR.setData(data_1);
                             saveIR.setGap(gap);

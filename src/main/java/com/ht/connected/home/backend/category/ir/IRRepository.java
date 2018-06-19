@@ -42,6 +42,8 @@ public interface IRRepository extends JpaRepository<IR, Integer> {
     
     void deleteByStatusAndSerial(String status, String serial);
     
+    void deleteBySerial(String serial);
+    
     @Modifying
     @Transactional
     @Query("update IR set status = ?1 where serial = ?2")
