@@ -56,8 +56,8 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
         this.irRepository = irRepository;
     }
     @Override
-    public List<IR> getIRByUser(String userEmail) {
-        return irRepository.findByUserEmailContainingAndStatus(userEmail, Type.add.name());
+    public List<IR> getIRByUser(String userEmail, String serial) {
+        return irRepository.findByUserEmailContainingAndStatusAndSerial(userEmail, Type.add.name(), serial);
     }
 
     private ObjectMapper objectMapper = new ObjectMapper();

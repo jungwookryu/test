@@ -13,7 +13,7 @@ import com.ht.connected.home.backend.service.base.MqttBase;
 
 public interface IRService extends MqttBase<Object, Object>, CrudService<IR, Integer>{
 
-    List<IR> getIRByUser(String userEmail);
+    List<IR> getIRByUser(String userEmail, String serial);
     void delete(int no);
     void studyIR(IR ir) throws JsonProcessingException;
     void subscribe(String[] topicSplited, String payload) throws JsonParseException, JsonMappingException, IOException, JSONException;
