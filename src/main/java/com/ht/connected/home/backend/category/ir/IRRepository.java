@@ -42,4 +42,9 @@ public interface IRRepository extends JpaRepository<IR, Integer> {
     @Modifying
     @Query("update IR set status = ?1 where serial = ?2")
     int setModifyStatusForSerial(String status, String serial);
+    
+    @Modifying
+    @Query("update UserGateway set status = ?1 where serial = ?2 and status1= ?3")
+    int setModifyStatusForSerialAndStatus(String status, String serial, String status1);
+    
 }
