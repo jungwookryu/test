@@ -11,6 +11,8 @@ package com.ht.connected.home.backend.category.ir;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -38,12 +40,16 @@ public interface IRRepository extends JpaRepository<IR, Integer> {
     
     void deleteByUserEmailContainingAndGatewayNo(String userEmail, int gatewayNo);
     
+    void deleteByStatusAndSerial(String status, String serial);
+    
     @Modifying
+    @Transactional
     @Query("update IR set status = ?1 where serial = ?2")
     int setModifyStatusForSerial(String status, String serial);
     
     @Modifying
-    @Query("update UserGateway set status = ?1 where serial = ?2 and status1= ?3")
+    @Transactional
+    @Query("update IR set status = ?1 where serial = ?2 and status= ?3")
     int setModifyStatusForSerialAndStatus(String status, String serial, String status1);
     
 }
