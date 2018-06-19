@@ -25,7 +25,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IRRepository extends JpaRepository<IR, Integer> {
     
-    List<IR> findByUserEmailContainingAndStatus(String userEmail, String status);
+    List<IR> findByUserEmailContainingAndStatusAndSerial(String userEmail, String status, String serial);
     
     List<IR> findByUserEmailContainingAndSubNumberAndAction(String userEmail, int subNumber, String action);
     

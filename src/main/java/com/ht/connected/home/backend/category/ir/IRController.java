@@ -5,7 +5,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.shiro.crypto.hash.Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -87,12 +89,13 @@ public class IRController extends CommonController {
 
     // 기기리스트
     @GetMapping
-    public ResponseEntity<HashMap<String, ?>> getIR() {
+    public ResponseEntity getIR(@RequestParam Map<String, String> parameters) {
+        String serial = (String) parameters.getOrDefault("serial", "");
         String userEmail = getAuthUserEmail();
-        List<IR> lstIR = iRService.getIRByUser(userEmail);
+        List<IR> lstIR = iRService.getIRByUser(userEmail, serial);
         HashMap<String, List<?>> map = new HashMap<String, List<?>>();
         map.put("list", lstIR);
-        return new ResponseEntity<HashMap<String, ?>>(map, HttpStatus.OK);
+        return new ResponseEntity(map, HttpStatus.OK);
     }
 
     // 기기정보 가져오기

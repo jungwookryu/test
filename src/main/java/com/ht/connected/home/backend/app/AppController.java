@@ -85,8 +85,8 @@ public class AppController extends CommonController {
      * @return
      */
     @PostMapping("/irDeviceList")
-    public ResponseEntity irDeviceList() {
-        ResponseEntity<HashMap<String, ?>> rss = iRController.getIR();
+    public ResponseEntity irDeviceList(@RequestBody HashMap requestMap) {
+        ResponseEntity<HashMap<String, ?>> rss = iRController.getIR(requestMap);
         HashMap<String, Object> rtnMap = new HashMap();
         HashMap<String, Object> rtnIrcategoryMap = new HashMap();
         rtnMap.put("result_code", "200");
