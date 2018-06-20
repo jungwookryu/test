@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.HttpStatus;
@@ -225,7 +226,7 @@ public class AppController extends CommonController {
         String serial = (String) hashMap.getOrDefault("serial", "");
         String model = (String) hashMap.getOrDefault("model", "");
         IR ir = new IR();
-       ir.setSerial(serial);
+        ir.setSerial(serial);
         ir.setModel(model);
         ir.setAction(actionname);
         ir.setStatus("");
@@ -241,10 +242,11 @@ public class AppController extends CommonController {
      * @param requestDto
      * @return
      * @throws JsonProcessingException
+     * @throws ParseException 
      * @throws Exception
      */
     @PostMapping("/irControl")
-    public ResponseEntity irControl(@RequestBody HashMap hashMap, HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity irControl(@RequestBody HashMap hashMap, HttpServletRequest request) throws JsonProcessingException, ParseException {
         HashMap<String, Object> rtnMap = new HashMap();
         HashMap<String, Object> rtnDataMap = new HashMap();
         List rtnIrbuttonList = new ArrayList();

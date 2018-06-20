@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.shiro.crypto.hash.Hash;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -131,8 +132,9 @@ public class IRController extends CommonController {
     }
 
     // 기기 제어
+    @SuppressWarnings("rawtypes")
     @PutMapping("/ir/{no}")
-    public ResponseEntity controlIR(@PathVariable("no") int no, @RequestBody IR ir) throws JsonProcessingException {
+    public ResponseEntity controlIR(@PathVariable("no") int no, @RequestBody IR ir) throws JsonProcessingException, ParseException {
         ir.setUserEmail(getAuthUserEmail());
         iRService.controlIR(ir);
         return new ResponseEntity(HttpStatus.OK);
@@ -140,7 +142,7 @@ public class IRController extends CommonController {
 
     private IR modifyIRForGateway(IR ir, String serial) {
         Gateway gateway = gatewayRepository.findBySerial(serial);
-        if (Common.empty(ir.getUserEmail())) {
+        if (Common.empty(ir.getUserEmail())||"anonymousUser".equals(ir.getUserEmail())) {
             ir.setUserEmail(gateway.getCreatedUserId());
         }
         if (Common.empty(ir.getModel())) {
