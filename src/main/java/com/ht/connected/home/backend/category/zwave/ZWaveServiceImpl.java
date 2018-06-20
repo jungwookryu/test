@@ -122,12 +122,6 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     @Override
     public ResponseEntity execute(HashMap<String, Object> req, ZWaveRequest zwaveRequest, boolean isCert) throws JsonProcessingException {
         logging.info("zwaveRequest.getClassKey()::::" + zwaveRequest.getClassKey());
-
-        if (NetworkManagementInclusionCommandClass.INT_ID == zwaveRequest.getClassKey()) {
-            HashMap map = new HashMap<>();
-            map.put("mode", 1);
-            req.put("set_data", map);
-        }
         return publish(req, zwaveRequest);
     }
 
