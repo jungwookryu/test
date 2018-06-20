@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.json.JSONException;
+import org.json.simple.parser.ParseException;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,6 +18,6 @@ public interface IRService extends MqttBase<Object, Object>, CrudService<IR, Int
     void delete(int no);
     void studyIR(IR ir) throws JsonProcessingException;
     void subscribe(String[] topicSplited, String payload) throws JsonParseException, JsonMappingException, IOException, JSONException;
-    void controlIR(IR ir) throws JsonProcessingException;
+    void controlIR(IR ir) throws JsonProcessingException, ParseException;
     void deleteIrs(int gatewayNo, String userEmail);
 }

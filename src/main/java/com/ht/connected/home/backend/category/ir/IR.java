@@ -89,6 +89,10 @@ public class IR {
     @Column(name = "data")
     private String data;
 
+    @JsonProperty("value")
+    @Column(name = "value")
+    private String value;
+    
     @JsonProperty("sub_number")
     @Column(name = "sub_number")
     private int subNumber;
@@ -293,15 +297,6 @@ public class IR {
         this.subNumber = subNumber;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "IR [no=" + no + ", serial=" + serial + ", model=" + model + ", irName=" + irName + ", irType=" + irType + ", devType=" + devType + ", description=" + description + ", createdTime="
-                + createdTime + ", lastmodifiedTime=" + lastmodifiedTime + ", action=" + action + ", status=" + status + ", format=" + format + ", subNumber=" + subNumber + ", toString()="
-                + super.toString() + "]";
-    }
 
     /**
      * @return the userEmail
@@ -379,5 +374,20 @@ public class IR {
 
     public void setGatewayNo(int gatewayNo) {
         this.gatewayNo = gatewayNo;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return "IR [no=" + no + ", serial=" + serial + ", model=" + model + ", irName=" + irName + ", irType=" + irType + ", devType=" + devType + ", description=" + description + ", createdTime="
+                + createdTime + ", lastmodifiedTime=" + lastmodifiedTime + ", action=" + action + ", status=" + status + ", format=" + format + ", rptcnt=" + rptcnt + ", gap=" + gap + ", length="
+                + length + ", data=" + data + ", value=" + value + ", subNumber=" + subNumber + ", userEmail=" + userEmail + ", gatewayNo=" + gatewayNo + "]";
     }
 }

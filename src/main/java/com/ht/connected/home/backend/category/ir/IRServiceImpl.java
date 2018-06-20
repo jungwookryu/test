@@ -9,6 +9,7 @@ import java.util.Objects;
 import javax.transaction.Transactional;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,10 @@ import com.ht.connected.home.backend.gateway.GatewayRepository;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategoryRepository;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
-import com.ht.connected.home.backend.service.mqtt.Target;
+import com.ht.connected.home.backend.service.mqtt.Target;   
+
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 @Service
 public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRService {
@@ -101,11 +105,11 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
             publishPayload.put("type", Type.add.name());
             publishPayload.put("request", CategoryActive.gateway.ir.name());
             publishPayload.put("action", ir.getStatus());
-            if (AppController.Command.stop.name().equals(ir.getStatus())) {
+//            if (AppController.Command.stop.name().equals(ir.getStatus())) {
 /**
  * Stop 일경우  status가 "" 인 데이터가 없으면 학습이 완료된경우
  * Stop 일경우  status가 "" 인 데이터가 있으면 없으면 학습이 취소된경우
- */
+
                 List<IR> irs = irRepository.findBySerialAndStatusAndModel(ir.getSerial(), "", ir.getModel());
 
                 // 학습 완료 됬을경우 
@@ -120,17 +124,18 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                     }
                 }
             }
+             */
             publish(topic, publishPayload);
         }
 
         if (ir.getStatus().isEmpty()) {
-            List<IR> lstIr = irRepository.findBySubNumberAndSerialAndActionAndModelAndUserEmailContaining(ir.getSubNumber(),ir.getSerial(), ir.getAction(), ir.getModel(), ir.getUserEmail());
-            if(lstIr.size()>0) {
-                lstIr.forEach(IR->{
-                    IR.setStatus("delete");
-                    irRepository.save(IR);
-                });
-            }
+//            List<IR> lstIr = irRepository.findBySubNumberAndSerialAndActionAndModelAndUserEmailContaining(ir.getSubNumber(),ir.getSerial(), ir.getAction(), ir.getModel(), ir.getUserEmail());
+//            if(lstIr.size()>0) {
+//                lstIr.forEach(IR->{
+//                    IR.setStatus("delete");
+//                    irRepository.save(IR);
+//                });
+//            }
             irRepository.save(ir);
         }
 
@@ -147,51 +152,17 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                         && !AppController.Command.stop.name().equals(map.getOrDefault("action",""))) {
                     HashMap rtnMap = (HashMap) map.getOrDefault("response", new HashMap());
                     List<IR> irs = irRepository.findBySerialAndStatusAndModel(serial, "", model);
-                    if(irs.size()>0) {
-                        IR ir = irs.get(0);
-                        List lst = (List) rtnMap.getOrDefault("value", new ArrayList<>());
-                        int gap = (int) rtnMap.getOrDefault("gap", 0);
-                        String format = (String) rtnMap.getOrDefault("format", "");
-                        int rptcnt = (int) rtnMap.getOrDefault("rptcnt", 0);
-                        
-                        for (int i = 0; i < 1; i++) {// 0번째만 저장해보자.
-                            HashMap rtnMap2 = (HashMap) lst.get(i);
-                            int length = (int) rtnMap2.getOrDefault("length", 0);
-                            String data = (String) rtnMap2.getOrDefault("data", "");
-                            ir.setIrType(ir.getIrType());
-                            ir.setSubNumber(ir.getIrType());
-                            ir.setGatewayNo(ir.getGatewayNo());
-                            ir.setUserEmail(ir.getUserEmail());
-                            ir.setStatus("active");
-                            ir.setFormat(format);
-                            ir.setLength(length);
-                            ir.setData(data);
-                            ir.setGap(gap);
-                            ir.setRptcnt(rptcnt);;
-                            irRepository.save(ir);
-                        }
-                        
-                        for (int i = 1; i < lst.size(); i++) {// 0번째만 저장해보자.
-                            HashMap rtnMap3 = (HashMap) lst.get(i);
-                            int length_1 = (int) rtnMap3.getOrDefault("length", 0);
-                            String data_1 = (String) rtnMap3.getOrDefault("data", "");
-                            IR saveIR = new IR();
-                            saveIR.setAction(ir.getAction());
-                            saveIR.setIrType(ir.getIrType());
-                            saveIR.setSubNumber(ir.getSubNumber());
-                            saveIR.setSerial(serial);
-                            saveIR.setModel(model);
-                            saveIR.setStatus("active");
-                            saveIR.setFormat(format);
-                            saveIR.setGatewayNo(ir.getGatewayNo());
-                            saveIR.setUserEmail(ir.getUserEmail());
-                            saveIR.setLength(length_1);
-                            saveIR.setData(data_1);
-                            saveIR.setGap(gap);
-                            saveIR.setRptcnt(rptcnt);
-                            irRepository.save(saveIR);
-                        }
-                    }
+                    IR ir = (irs.size()==0)?new IR():irs.get(0);
+                    List lst = (List) rtnMap.getOrDefault("value", new ArrayList<>());
+                    int gap = (int) rtnMap.getOrDefault("gap", 0);
+                    String format = (String) rtnMap.getOrDefault("format", "");
+                    int rptcnt = (int) rtnMap.getOrDefault("rptcnt", 0);
+                    ir.setStatus("active");
+                    ir.setValue(objectMapper.writeValueAsString(lst));
+                    ir.setFormat(format);
+                    ir.setGap(gap);
+                    ir.setRptcnt(rptcnt);;
+                    irRepository.save(ir);
                     String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/ir/study/complete", model,
                             serial);
                     publish(exeTopic, new HashMap<>());
@@ -201,7 +172,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     }
 
     @Override
-    public void controlIR(IR reqIr) throws JsonProcessingException {
+    public void controlIR(IR reqIr) throws JsonProcessingException, ParseException {
         String topic = getMqttPublishTopic(reqIr, Target.host.name(), Target.server.name());
         HashMap<String, Object> publishPayload = new HashMap<String, Object>();
         List value = new ArrayList<>();
@@ -209,17 +180,13 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
         List<IR> irs = irRepository.findByUserEmailContainingAndSubNumberAndAction(reqIr.getUserEmail(), reqIr.getSubNumber(), reqIr.getAction());
         if (irs.size() > 0) {
             IR ir = irs.get(0);
-            for (int i = 0; i < irs.size() ; i++) {
-                HashMap map = new HashMap();
-                map.put("length", ir.getLength());
-                map.put("data", ir.getData());
-                value.add(map);
-            }
             HashMap requestMap = new HashMap<>();
             requestMap.put("format", ir.getFormat());
             requestMap.put("rptcnt", ir.getRptcnt());
             requestMap.put("gap", ir.getGap());
-            requestMap.put("value", value);
+            JSONParser parser = new JSONParser(); 
+            Object obj = parser.parse(ir.getValue()); 
+            requestMap.put("value",  obj);
             publishPayload.put("type", Type.control.name());
             publishPayload.put("request", requestMap);
             publish(topic, publishPayload);
