@@ -71,7 +71,7 @@ public class ZWaveController extends CommonController {
     }
 
     /**
-     * 기기등록
+     * 기기등록 취소
      * @param req
      * @return
      * @throws JsonProcessingException
@@ -79,13 +79,24 @@ public class ZWaveController extends CommonController {
     @PostMapping
     public ResponseEntity regist(@RequestBody HashMap<String, Object> req) throws JsonProcessingException {
         String userEmail = getAuthUserEmail();
+        HashMap map = new HashMap<>();
         int classKey = NetworkManagementInclusionCommandClass.INT_ID;
-        int commandKey = (int) req.getOrDefault("mode", 1);
+        //mode 1 == add, 5==stop
+        int mode = (int) req.getOrDefault("mode", 1);
+        int commandKey = NetworkManagementInclusionCommandClass.INT_NODE_ADD;
         String serial = (String) req.getOrDefault("serial", "");
         Gateway gateway = gatewayRepository.findBySerial(serial);
+        HashMap requestMap = new HashMap<>();
+        if (mode == 1) {
+            map.put("mode", 1);
+        }
+        if (mode == 5) {
+            map.put("mode", 2);
+        }
+        requestMap.put("set_data", map);
         ZWaveRequest zwaveRequest = new ZWaveRequest(req, classKey, commandKey, "v1");
         zwaveRequest.setModel(gateway.getModel());
-        zwaveService.execute(req, zwaveRequest, false);
+        zwaveService.publish(requestMap, zwaveRequest);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
