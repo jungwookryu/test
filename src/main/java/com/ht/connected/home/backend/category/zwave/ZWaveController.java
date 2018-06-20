@@ -83,6 +83,7 @@ public class ZWaveController extends CommonController {
         int classKey = NetworkManagementInclusionCommandClass.INT_ID;
         //mode 1 == add, 5==stop
         int mode = (int) req.getOrDefault("mode", 1);
+        logger.debug("mode:::"+mode);
         int commandKey = NetworkManagementInclusionCommandClass.INT_NODE_ADD;
         String serial = (String) req.getOrDefault("serial", "");
         Gateway gateway = gatewayRepository.findBySerial(serial);
@@ -90,7 +91,7 @@ public class ZWaveController extends CommonController {
         if (mode == 1) {
             map.put("mode", 1);
         }
-        if (mode == 5) {
+        if (mode == 2) {
             map.put("mode", 2);
         }
         requestMap.put("set_data", map);
