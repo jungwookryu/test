@@ -40,9 +40,7 @@ public interface IRRepository extends JpaRepository<IR, Integer> {
     
     void deleteByUserEmailContainingAndGatewayNo(String userEmail, int gatewayNo);
     
-    void deleteByStatusAndSerial(String status, String serial);
-    
-    void deleteBySerial(String serial);
+//    void deleteBySerial(String serial);
     
     @Modifying
     @Transactional
