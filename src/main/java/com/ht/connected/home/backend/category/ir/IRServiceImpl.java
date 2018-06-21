@@ -101,37 +101,10 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
             publishPayload.put("type", Type.add.name());
             publishPayload.put("request", CategoryActive.gateway.ir.name());
             publishPayload.put("action", ir.getStatus());
-//            if (AppController.Command.stop.name().equals(ir.getStatus())) {
-/**
- * Stop 일경우  status가 "" 인 데이터가 없으면 학습이 완료된경우
- * Stop 일경우  status가 "" 인 데이터가 있으면 없으면 학습이 취소된경우
-
-                List<IR> irs = irRepository.findBySerialAndStatusAndModel(ir.getSerial(), "", ir.getModel());
-
-                // 학습 완료 됬을경우 
-                if(irs.size()==0) {
-//                    irRepository.deleteBySerial(ir.getSerial());
-                    irRepository.deleteByStatusAndSerial("delete", ir.getSerial());
-                }else {
-                // 취소됬을경우 신규추가된 ir 학습 기기정보삭제 , and delete 모드로 된 정보를 다시 active로 바꿔줌.
-                    for (IR ir2 : irs) {
-                        irRepository.delete(ir2.getNo());
-                        irRepository.setModifyStatusForSerialAndStatus("active",ir.getSerial(),"delete");
-                    }
-                }
-            }
-             */
             publish(topic, publishPayload);
         }
 
         if (ir.getStatus().isEmpty()) {
-//            List<IR> lstIr = irRepository.findBySubNumberAndSerialAndActionAndModelAndUserEmailContaining(ir.getSubNumber(),ir.getSerial(), ir.getAction(), ir.getModel(), ir.getUserEmail());
-//            if(lstIr.size()>0) {
-//                lstIr.forEach(IR->{
-//                    IR.setStatus("delete");
-//                    irRepository.save(IR);
-//                });
-//            }
             irRepository.save(ir);
         }
 
