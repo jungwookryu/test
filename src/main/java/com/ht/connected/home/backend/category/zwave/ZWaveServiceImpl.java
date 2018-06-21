@@ -423,14 +423,14 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     @Override
     public void subscribeInit(Gateway gateway) throws JsonProcessingException {
         // TODO 기기리스트 가져오기 topic
-        MqttRequest mqttRequest = new MqttRequest(gateway);
-        mqttRequest.setClassKey(NetworkManagementProxyCommandClass.INT_ID);
-        mqttRequest.setCommandKey(NetworkManagementProxyCommandClass.INT_NODE_LIST_GET);
-        mqttRequest.setVersion("v1");
-        mqttRequest.setNodeId(00);
-        mqttRequest.setEndpointId(00);
-        String requestTopic = MqttCommon.getMqttPublishTopic(mqttRequest, Target.host.name());
-        publish(requestTopic);
+//        MqttRequest mqttRequest = new MqttRequest(gateway);
+//        mqttRequest.setClassKey(NetworkManagementProxyCommandClass.INT_ID);
+//        mqttRequest.setCommandKey(NetworkManagementProxyCommandClass.INT_NODE_LIST_GET);
+//        mqttRequest.setVersion("v1");
+//        mqttRequest.setNodeId(00);
+//        mqttRequest.setEndpointId(00);
+//        String requestTopic = MqttCommon.getMqttPublishTopic(mqttRequest, Target.host.name());
+//        publish(requestTopic);
         // TODO 기기 상태정보 가져오기
     }
 
