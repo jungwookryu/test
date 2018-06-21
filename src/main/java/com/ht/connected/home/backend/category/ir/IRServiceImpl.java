@@ -9,7 +9,8 @@ import java.util.Objects;
 import javax.transaction.Transactional;
 
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +30,7 @@ import com.ht.connected.home.backend.gateway.GatewayRepository;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategoryRepository;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
-import com.ht.connected.home.backend.service.mqtt.Target;   
-
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import com.ht.connected.home.backend.service.mqtt.Target;
 
 @Service
 public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRService {
@@ -87,10 +85,8 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     @Transactional
     public void deleteIrs(int gatewayNo, String userEmail) {
         //TODO irCategory 삭제
-        Gateway gateway = gatewayRepository.getOne(gatewayNo);
         gatewayCategoryRepository.deleteByGatewayNoAndCategoryNo(gatewayNo, CategoryActive.gateway.ir.ordinal());
         irRepository.deleteByUserEmailContainingAndGatewayNo(userEmail, gatewayNo);
-        irRepository.deleteBySerial(gateway.getSerial());
    }
  
     
