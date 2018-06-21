@@ -8,9 +8,9 @@ target/
 .project
 .settings
 .springBeans
-logs/
-logs_mqtt/
-logs_db/
+/logs/
+/logs_mqtt/
+/logs_db/
 
 ### IntelliJ IDEA ###
 .idea
@@ -26,3 +26,4 @@ dist/
 nbdist/
 .nb-gradle/
 /bin/
+/logs_amqp/
