@@ -153,7 +153,7 @@ public class ZWaveController extends CommonController {
         return new ResponseEntity<>(0, HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/{zwaveInfo}")
+    @PutMapping("/{zwave_no}")
     public ResponseEntity control(@PathVariable int zwave_no, @RequestBody ZWaveControl zWaveControl) throws JsonProcessingException {
         zWaveControl.setZwave_no(zwave_no);
         zwaveService.zwaveControl(zWaveControl);

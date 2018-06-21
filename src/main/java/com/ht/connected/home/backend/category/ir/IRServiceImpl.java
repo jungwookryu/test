@@ -121,20 +121,22 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                         && !AppController.Command.stop.name().equals(map.getOrDefault("action",""))) {
                     HashMap rtnMap = (HashMap) map.getOrDefault("response", new HashMap());
                     List<IR> irs = irRepository.findBySerialAndStatusAndModel(serial, "", model);
-                    IR ir = (irs.size()==0)?new IR():irs.get(0);
-                    List lst = (List) rtnMap.getOrDefault("value", new ArrayList<>());
-                    int gap = (int) rtnMap.getOrDefault("gap", 0);
-                    String format = (String) rtnMap.getOrDefault("format", "");
-                    int rptcnt = (int) rtnMap.getOrDefault("rptcnt", 0);
-                    ir.setStatus("active");
-                    ir.setValue(objectMapper.writeValueAsString(lst));
-                    ir.setFormat(format);
-                    ir.setGap(gap);
-                    ir.setRptcnt(rptcnt);;
-                    irRepository.save(ir);
-                    String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/ir/study/complete", model,
-                            serial);
-                    publish(exeTopic, new HashMap<>());
+                    if(irs.size()!=0) {
+                        IR ir = (irs.size()!=0)?new IR():irs.get(0);
+                        List lst = (List) rtnMap.getOrDefault("value", new ArrayList<>());
+                        int gap = (int) rtnMap.getOrDefault("gap", 0);
+                        String format = (String) rtnMap.getOrDefault("format", "");
+                        int rptcnt = (int) rtnMap.getOrDefault("rptcnt", 0);
+                        ir.setStatus("active");
+                        ir.setValue(objectMapper.writeValueAsString(lst));
+                        ir.setFormat(format);
+                        ir.setGap(gap);
+                        ir.setRptcnt(rptcnt);
+                        irRepository.save(ir);
+                        String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/ir/study/complete", model,
+                                serial);
+                        publish(exeTopic, new HashMap<>());
+                    }
                 }
             }
         }
