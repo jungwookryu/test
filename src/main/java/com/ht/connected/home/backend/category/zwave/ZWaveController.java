@@ -3,7 +3,6 @@ package com.ht.connected.home.backend.category.zwave;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.category.zwave.certification.CertificationRepository;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementInclusionCommandClass;
-import com.ht.connected.home.backend.common.Common;
+import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
+import com.ht.connected.home.backend.category.zwave.endpoint.EndpointRepository;
+import com.ht.connected.home.backend.category.zwave.endpoint.EndpointService;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 import com.ht.connected.home.backend.gateway.Gateway;
 import com.ht.connected.home.backend.gateway.GatewayRepository;
@@ -29,17 +30,16 @@ import com.ht.connected.home.backend.user.UserRepository;
 import com.ht.connected.home.backend.userGateway.UserGateway;
 import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
 
-/**
- * Rest API Zwave 요청 처리 컨트롤러
- * @author 구정화
- */
 @RestController
 @RequestMapping("/zwave")
 public class ZWaveController extends CommonController {
 
     @Autowired
-    ZWaveServiceImpl zwaveService;
+    ZWaveService zwaveService;
 
+    @Autowired
+    EndpointService endpointService;
+    
     @Autowired
     UserGatewayRepository userGatewayRepository;
     @Autowired
@@ -51,6 +51,12 @@ public class ZWaveController extends CommonController {
     @Autowired
     CertificationRepository certificationRepository;
 
+    @Autowired
+    ZWaveRepository zWaveRepository;
+    
+    @Autowired
+    EndpointRepository endpointRepository;
+    
     /**
      * 모든 요청에 version 이 있다 모든 요청을 처리가능 인증프로토몰과 실서비스 프로토몰 공통 사용 (execute 인자값 확인)
      * @param classKey
@@ -108,14 +114,17 @@ public class ZWaveController extends CommonController {
         return new ResponseEntity<>(sRtnList, HttpStatus.ACCEPTED);
     }
 
-
-    @PutMapping("/{zwave_no}")
-    public ResponseEntity control(@PathVariable int zwave_no, @RequestBody ZWaveControl zWaveControl) throws JsonProcessingException {
-        zWaveControl.setZwave_no(zwave_no);
-        zwaveService.zwaveControl(zWaveControl);
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    @PutMapping("/zwaveInfo/{zwaveNo}")
+    public ResponseEntity modifyEndpointInfo(@PathVariable int zwaveNo, @RequestBody ZWave requestZwave) throws JsonProcessingException {
+        Endpoint endpoint = endpointRepository.findByZwaveNoAndEpid(zwaveNo,0);
+        if(endpoint!=null) {
+            endpoint.setNickname(requestZwave.getNickname());
+            ZWave rtnZwave = endpointService.modify(endpoint.getNo(), endpoint);
+            return new ResponseEntity<>(rtnZwave,HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
     }
-    
     
     /**
      * 
@@ -143,4 +152,12 @@ public class ZWaveController extends CommonController {
         }
         return new ResponseEntity<>(0, HttpStatus.NO_CONTENT);
     }
+
+    @PutMapping("/{zwaveInfo}")
+    public ResponseEntity control(@PathVariable int zwave_no, @RequestBody ZWaveControl zWaveControl) throws JsonProcessingException {
+        zWaveControl.setZwave_no(zwave_no);
+        zwaveService.zwaveControl(zWaveControl);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+    
 }

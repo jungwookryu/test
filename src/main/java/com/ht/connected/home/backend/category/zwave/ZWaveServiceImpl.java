@@ -615,5 +615,5 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             gatewayCategoryRepository.save(gatewayCategory);
         }
     }
-
+    
 }
