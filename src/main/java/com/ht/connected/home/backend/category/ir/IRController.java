@@ -142,13 +142,15 @@ public class IRController extends CommonController {
 
     private IR modifyIRForGateway(IR ir, String serial) {
         Gateway gateway = gatewayRepository.findBySerial(serial);
-        if (Common.empty(ir.getUserEmail())||"anonymousUser".equals(ir.getUserEmail())) {
-            ir.setUserEmail(gateway.getCreatedUserId());
+        if(gateway!=null) {
+            if (Common.empty(ir.getUserEmail())||"anonymousUser".equals(ir.getUserEmail())) {
+                ir.setUserEmail(gateway.getCreatedUserId());
+            }
+            if (Common.empty(ir.getModel())) {
+                ir.setModel(gateway.getModel());
+            }
+            ir.setGatewayNo(gateway.getNo());
         }
-        if (Common.empty(ir.getModel())) {
-            ir.setModel(gateway.getModel());
-        }
-        ir.setGatewayNo(gateway.getNo());
         return ir;
     }
 
