@@ -173,21 +173,24 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                     }
                     // 신규 등록 기기 정보
                     else {
-                        saveGatewayCategory(zwaveRequest, zwaveRequest.getNodeId());
                         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
-                        if (!isNull(gateway)) {
-                            ZWaveReport zwaveReport = objectMapper.readValue(data, ZWaveReport.class);
-                            // 기기 리스트에 대한 정보일 경우
-                            if (zwaveReport.getNodelist() != null) {
-                                List<ZWave> nodeListItem = (List<ZWave>) zwaveReport.getNodelist();
-                                for (int i = 0; i < nodeListItem.size(); i++) {
-                                    ZWave nodeItem = nodeListItem.get(i);
-                                    int nodeId = nodeItem.getNodeId();
-                                    saveZWaveList(zwaveRequest, nodeItem, gateway);
-                                    // syncZWaveList(zwaveRequest, nodeItem, gateway);
-                                    String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/device/registration", gateway.getModel(),
-                                            gateway.getSerial());
-                                    publish(exeTopic);
+                        List<ZWave> lstOriginalZwave = zwaveRepository.findByGatewayNoAndNodeId(zwaveRequest.getGatewayNo(), zwaveRequest.getNodeId());
+                        if(lstOriginalZwave.size()!=0) {
+                            saveGatewayCategory(zwaveRequest, zwaveRequest.getNodeId());
+                            if (!isNull(gateway)) {
+                                ZWaveReport zwaveReport = objectMapper.readValue(data, ZWaveReport.class);
+                                // 기기 리스트에 대한 정보일 경우
+                                if (zwaveReport.getNodelist() != null) {
+                                    List<ZWave> nodeListItem = (List<ZWave>) zwaveReport.getNodelist();
+                                    for (int i = 0; i < nodeListItem.size(); i++) {
+                                        ZWave nodeItem = nodeListItem.get(i);
+                                        int nodeId = nodeItem.getNodeId();
+                                        saveZWaveList(zwaveRequest, nodeItem, gateway);
+                                        // syncZWaveList(zwaveRequest, nodeItem, gateway);
+                                        String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/device/registration", gateway.getModel(),
+                                                gateway.getSerial());
+                                        publish(exeTopic);
+                                    }
                                 }
                             }
                         }
@@ -212,7 +215,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                     }
                 }
                 if (nodeId != -1) {
-                    deleteZwave(nodeId);
+                    deleteZwave(zwaveRequest.getGatewayNo(),nodeId);
                     String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/device/remove", zwaveRequest.getModel(),
                             zwaveRequest.getSerialNo());
                     publish(exeTopic);
@@ -354,7 +357,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                     // 등록되어있고 node가 없을경우 삭제함
                     if (bDelete) {
                         // zwave nodeId Category 별삭제함.
-                        deleteZwave(zwave.getNo());
+                        deleteZwave(zwaveRequest.getGatewayNo(), zwave.getNo());
                     }
                 }
             }
@@ -543,10 +546,10 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         return payload;
     }
 
-    private void deleteZwave(int nodeId) {
+    private void deleteZwave(int gatewayNo, int nodeId) {
         // zwave 정보삭제
-        gatewayCategoryRepository.deleteByNodeId(nodeId);
-        List<ZWave> lstZWave = zwaveRepository.findByNodeId(nodeId);
+        gatewayCategoryRepository.deleteByGatewayNoAndNodeId(gatewayNo, nodeId);
+        List<ZWave> lstZWave = zwaveRepository.findByGatewayNoAndNodeId(gatewayNo, nodeId);
         for (ZWave zWave : lstZWave) {
             List<Endpoint> lstEndpoint = endpointRepository.findByZwaveNo(zWave.getNo());
             for (Endpoint endpoint : lstEndpoint) {
@@ -554,7 +557,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             }
             endpointRepository.deleteByZwaveNo(zWave.getNo());
         }
-        zwaveRepository.deleteByNodeId(nodeId);
+        zwaveRepository.deleteByGatewayNoAndNodeId(gatewayNo, nodeId);
     }
 
     private void hostReset(ZWaveRequest zwaveRequest) {
