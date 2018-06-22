@@ -102,10 +102,19 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
             publishPayload.put("request", CategoryActive.gateway.ir.name());
             publishPayload.put("action", ir.getStatus());
             publish(topic, publishPayload);
+            if(AppController.Command.stop.name().equals(ir.getStatus())) {
+                irRepository.deleteByUserEmailContainingAndGatewayNoAndStatus(ir.getUserEmail(), ir.getGatewayNo(), "");
+            }
         }
 
         if (ir.getStatus().isEmpty()) {
-            irRepository.save(ir);
+            List<IR> lst = irRepository.findByUserEmailContainingAndSubNumberAndAction(ir.getUserEmail(), ir.getSubNumber(), ir.getAction());
+            if(lst.size()==0) {
+                irRepository.save(ir);
+            }else {
+                lst.get(0).setStatus("");
+                irRepository.save(lst.get(0));
+            }
         }
 
     }
