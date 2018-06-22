@@ -122,7 +122,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                     HashMap rtnMap = (HashMap) map.getOrDefault("response", new HashMap());
                     List<IR> irs = irRepository.findBySerialAndStatusAndModel(serial, "", model);
                     if(irs.size()!=0) {
-                        IR ir = (irs.size()!=0)?new IR():irs.get(0);
+                        IR ir = irs.get(0);
                         List lst = (List) rtnMap.getOrDefault("value", new ArrayList<>());
                         int gap = (int) rtnMap.getOrDefault("gap", 0);
                         String format = (String) rtnMap.getOrDefault("format", "");
