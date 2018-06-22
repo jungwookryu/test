@@ -227,6 +227,10 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             if (zwaveRequest.getCommandKey() == NetworkManagementBasicCommandClass.DEFAULT_SET_COMPLETE) {
                 // 해당기기의 정보를 모두 삭제한다.
                 hostReset(zwaveRequest);
+                String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/manager/product/remove", zwaveRequest.getModel(),
+                        zwaveRequest.getSerialNo());
+                publish(exeTopic);
+                
             }
         }
 

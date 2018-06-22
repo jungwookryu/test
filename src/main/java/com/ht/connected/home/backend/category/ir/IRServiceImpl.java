@@ -2,6 +2,7 @@ package com.ht.connected.home.backend.category.ir;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -25,7 +26,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.app.AppController;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.config.service.MqttConfig;
-import com.ht.connected.home.backend.gateway.Gateway;
 import com.ht.connected.home.backend.gateway.GatewayRepository;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategoryRepository;
@@ -113,6 +113,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                 irRepository.save(ir);
             }else {
                 lst.get(0).setStatus("");
+                lst.get(0).setLastmodifiedTime(new Date());
                 irRepository.save(lst.get(0));
             }
         }
@@ -141,6 +142,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                         ir.setFormat(format);
                         ir.setGap(gap);
                         ir.setRptcnt(rptcnt);
+                        ir.setLastmodifiedTime(new Date());
                         irRepository.save(ir);
                         String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/ir/study/complete", model,
                                 serial);
