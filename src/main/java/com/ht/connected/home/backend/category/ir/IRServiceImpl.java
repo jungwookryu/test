@@ -34,13 +34,13 @@ import com.ht.connected.home.backend.service.mqtt.Target;
 
 @Service
 public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRService {
-    
 
     Logger logger = LoggerFactory.getLogger(IRServiceImpl.class);
 
     public enum Type {
         add, control
     }
+
     @Autowired
     IRRepository irRepository;
 
@@ -49,19 +49,19 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
 
     @Autowired
     GatewayCategoryRepository gatewayCategoryRepository;
-    
+
     @Autowired
     MqttConfig.MqttGateway mqttGateway;
-    
-    
+
     @Autowired
-    @Qualifier(value="MqttOutbound")
-    MqttPahoMessageHandler  messageHandler;
-    
+    @Qualifier(value = "MqttOutbound")
+    MqttPahoMessageHandler messageHandler;
+
     public IRServiceImpl(IRRepository irRepository) {
         super(irRepository);
         this.irRepository = irRepository;
     }
+
     @Override
     public List<IR> getIRByUser(String userEmail, String serial) {
         return irRepository.findByUserEmailContainingAndStatusAndSerial(userEmail, Type.add.name(), serial);
@@ -71,25 +71,34 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
 
     @Override
     @Transactional
+    public void delete(List<Integer> nos) {
+        for (int i = 0; i < nos.size(); i++) {
+            delete(nos.get(i).intValue());
+        }
+    }
+
+    @Override
+    @Transactional
     public void delete(int no) {
         // 삭제모드 없음.
-        //기기 종류 등록모드 삭제
-        irRepository.delete(no);
-        //기기 종류 등록모드에 파생되어있는 기기 삭제
-        if(irRepository.getBySubNumber(no).size()>0) {
-        irRepository.deleteBySubNumber(no);
+        if (irRepository.exists(no)) {
+            // 기기 종류 등록모드 삭제
+            irRepository.delete(no);
         }
-   }
+        // 기기 종류 등록모드에 파생되어있는 기기 삭제
+        if (irRepository.getBySubNumber(no).size() > 0) {
+            irRepository.deleteBySubNumber(no);
+        }
+    }
 
     @Override
     @Transactional
     public void deleteIrs(int gatewayNo, String userEmail) {
-        //TODO irCategory 삭제
+        // TODO irCategory 삭제
         gatewayCategoryRepository.deleteByGatewayNoAndCategoryNo(gatewayNo, CategoryActive.gateway.ir.ordinal());
         irRepository.deleteByUserEmailContainingAndGatewayNo(userEmail, gatewayNo);
-   }
- 
-    
+    }
+
     @Override
     @Transactional
     public void studyIR(IR ir) throws JsonProcessingException {
@@ -102,16 +111,16 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
             publishPayload.put("request", CategoryActive.gateway.ir.name());
             publishPayload.put("action", ir.getStatus());
             publish(topic, publishPayload);
-            if(AppController.Command.stop.name().equals(ir.getStatus())) {
+            if (AppController.Command.stop.name().equals(ir.getStatus())) {
                 irRepository.deleteByUserEmailContainingAndGatewayNoAndStatus(ir.getUserEmail(), ir.getGatewayNo(), "");
             }
         }
 
         if (ir.getStatus().isEmpty()) {
             List<IR> lst = irRepository.findByUserEmailContainingAndSubNumberAndAction(ir.getUserEmail(), ir.getSubNumber(), ir.getAction());
-            if(lst.size()==0) {
+            if (lst.size() == 0) {
                 irRepository.save(ir);
-            }else {
+            } else {
                 lst.get(0).setStatus("");
                 lst.get(0).setLastmodifiedTime(new Date());
                 irRepository.save(lst.get(0));
@@ -125,13 +134,13 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
         if (topicSplited.length > 4) {
             String model = topicSplited[3];
             String serial = topicSplited[4];
-            if(Common.notEmpty(payload)) {
+            if (Common.notEmpty(payload)) {
                 HashMap<String, Object> map = objectMapper.readValue(payload, HashMap.class);
-                if (Type.add.name().equals((String) map.getOrDefault("type", "")) 
-                        && !AppController.Command.stop.name().equals(map.getOrDefault("action",""))) {
+                if (Type.add.name().equals((String) map.getOrDefault("type", ""))
+                        && !AppController.Command.stop.name().equals(map.getOrDefault("action", ""))) {
                     HashMap rtnMap = (HashMap) map.getOrDefault("response", new HashMap());
                     List<IR> irs = irRepository.findBySerialAndStatusAndModel(serial, "", model);
-                    if(irs.size()!=0) {
+                    if (irs.size() != 0) {
                         IR ir = irs.get(0);
                         List lst = (List) rtnMap.getOrDefault("value", new ArrayList<>());
                         int gap = (int) rtnMap.getOrDefault("gap", 0);
@@ -166,9 +175,9 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
             requestMap.put("format", ir.getFormat());
             requestMap.put("rptcnt", ir.getRptcnt());
             requestMap.put("gap", ir.getGap());
-            JSONParser parser = new JSONParser(); 
-            Object obj = parser.parse(ir.getValue()); 
-            requestMap.put("value",  obj);
+            JSONParser parser = new JSONParser();
+            Object obj = parser.parse(ir.getValue());
+            requestMap.put("value", obj);
             publishPayload.put("type", Type.control.name());
             publishPayload.put("request", requestMap);
             publish(topic, publishPayload);
