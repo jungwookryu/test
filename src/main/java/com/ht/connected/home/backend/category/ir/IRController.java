@@ -61,8 +61,11 @@ public class IRController extends CommonController {
     @PostMapping
     public ResponseEntity<IR> createIR(@RequestBody IR ir) {
         ir.setUserEmail(getAuthUserEmail());
-        if (!Common.empty(ir.getGatewayNo())) {
-            ir = modifyIRForGateway(ir, ir.getSerial());
+        if (ir.getGatewayNo() > 0) {
+            ir = modifyIRForGateway(ir, ir.getGatewayNo());
+        }else {
+            ir = modifyIRForSerial(ir, ir.getSerial());
+            
         }
         IR rtnIr = iRRepository.save(ir);
         return new ResponseEntity<IR>(rtnIr, HttpStatus.OK);
@@ -81,8 +84,10 @@ public class IRController extends CommonController {
     @PostMapping("/ir")
     public ResponseEntity createStudyIR(@RequestBody IR ir) throws JsonProcessingException {
         ir.setUserEmail(getAuthUserEmail());
-        if (!Common.empty(ir.getGatewayNo())) {
-            ir = modifyIRForGateway(ir, ir.getSerial());
+        if (ir.getGatewayNo()>0) {
+            ir = modifyIRForGateway(ir, ir.getGatewayNo());
+        }else {
+            ir = modifyIRForSerial(ir, ir.getSerial());
         }
         iRService.studyIR(ir);
         return new ResponseEntity(HttpStatus.OK);
@@ -142,7 +147,23 @@ public class IRController extends CommonController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    private IR modifyIRForGateway(IR ir, String serial) {
+    private IR modifyIRForGateway(IR ir, int gatewayNo) {
+        Gateway gateway = gatewayRepository.findOne(gatewayNo);
+        if(gateway!=null) {
+            if (Common.empty(ir.getUserEmail())||"anonymousUser".equals(ir.getUserEmail())) {
+                ir.setUserEmail(gateway.getCreatedUserId());
+            }
+            if (Common.empty(ir.getModel())) {
+                ir.setModel(gateway.getModel());
+            }
+            if (Common.empty(ir.getSerial())) {
+                ir.setSerial(gateway.getSerial());
+            }
+            ir.setGatewayNo(gateway.getNo());
+        }
+        return ir;
+    }
+    private IR modifyIRForSerial(IR ir, String serial) {
         Gateway gateway = gatewayRepository.findBySerial(serial);
         if(gateway!=null) {
             if (Common.empty(ir.getUserEmail())||"anonymousUser".equals(ir.getUserEmail())) {
@@ -155,5 +176,4 @@ public class IRController extends CommonController {
         }
         return ir;
     }
-
 }

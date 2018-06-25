@@ -61,7 +61,7 @@ public class IR {
     @Column(name = "lastmodified_time")
     private Date lastmodifiedTime;
 
-    @JsonProperty("command")
+    @JsonProperty("action")
     @Column(name = "action")
     private String action;
 
