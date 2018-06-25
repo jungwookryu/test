@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.category.ir.IR;
 import com.ht.connected.home.backend.category.ir.IRController;
 import com.ht.connected.home.backend.controller.rest.CommonController;
+import com.mysql.fabric.xmlrpc.base.Array;
 
 @RestController
 @RequestMapping("/app")
@@ -54,7 +55,9 @@ public class AppController extends CommonController {
             //subnumber
             int irindex = (int) hashMap.get("irindex");
             if (Command.del.name().equals(command)) {
-                iRController.deleteIR(irindex);
+                List<Integer> irindexs = new ArrayList();
+                irindexs.add(irindex);
+                iRController.deleteIR(irindexs);
 
             }
             if (Command.add.name().equals(command)) {
