@@ -45,10 +45,6 @@ public class IR {
     @Column(name = "ir_type")
     private int irType;
 
-    @JsonProperty("command")
-    @Column(name = "dev_type")
-    private String devType;
-
     @JsonProperty("description")
     @Column(name = "description")
     private String description;
@@ -110,7 +106,6 @@ public class IR {
     }
 
     public IR(String devType, String action, int irType) {
-        this.devType = devType;
         this.action = action;
         this.irType = irType;
     }
@@ -183,20 +178,6 @@ public class IR {
      */
     public void setIrType(int irType) {
         this.irType = irType;
-    }
-
-    /**
-     * @return the devType
-     */
-    public String getDevType() {
-        return devType;
-    }
-
-    /**
-     * @param devType the devType to set
-     */
-    public void setDevType(String devType) {
-        this.devType = devType;
     }
 
     /**
@@ -386,7 +367,7 @@ public class IR {
 
     @Override
     public String toString() {
-        return "IR [no=" + no + ", serial=" + serial + ", model=" + model + ", irName=" + irName + ", irType=" + irType + ", devType=" + devType + ", description=" + description + ", createdTime="
+        return "IR [no=" + no + ", serial=" + serial + ", model=" + model + ", irName=" + irName + ", irType=" + irType + ", description=" + description + ", createdTime="
                 + createdTime + ", lastmodifiedTime=" + lastmodifiedTime + ", action=" + action + ", status=" + status + ", format=" + format + ", rptcnt=" + rptcnt + ", gap=" + gap + ", length="
                 + length + ", data=" + data + ", value=" + value + ", subNumber=" + subNumber + ", userEmail=" + userEmail + ", gatewayNo=" + gatewayNo + "]";
     }

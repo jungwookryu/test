@@ -71,7 +71,6 @@ public class AppController extends CommonController {
                 ir.setIrName(irnickname);
                 ir.setAction(command);
                 ir.setStatus(command);
-                ir.setDevType("irchannel::" + Integer.toString(irchannel));
                 ir.setIrType(irindex);
                 rss = iRController.createIR(ir);
             }
