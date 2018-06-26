@@ -3,6 +3,7 @@ package com.ht.connected.home.backend.category.zwave.endpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +20,8 @@ public class EndpointController extends CommonController {
 
     @Autowired
     EndpointService endpointService;
-
+    @Autowired
+    EndpointRepository endpointRepository;
     @PutMapping("/{endpoint_no}")
     public ResponseEntity modifyEndpointInfo(@PathVariable int endpoint_no, @RequestBody Endpoint endpoint) throws JsonProcessingException {
         ZWave rtnZwave = endpointService.modify(endpoint_no, endpoint);
@@ -30,6 +32,14 @@ public class EndpointController extends CommonController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
-    
+    @GetMapping("/{endpointNo}")
+    public ResponseEntity getEndpointInfo(@PathVariable int endpointNo) throws JsonProcessingException {
+        Endpoint endpoint = endpointRepository.findOne(endpointNo);
+        if(endpoint!=null) {
+            return new ResponseEntity<>(endpoint,HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+    }
     
 }
