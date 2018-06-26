@@ -142,6 +142,7 @@ public class IRController extends CommonController {
     @SuppressWarnings("rawtypes")
     @PutMapping("/ir/{no}")
     public ResponseEntity controlIR(@PathVariable("no") int no, @RequestBody IR ir) throws JsonProcessingException, ParseException {
+        ir.setNo(no);
         ir.setUserEmail(getAuthUserEmail());
         iRService.controlIR(ir);
         return new ResponseEntity(HttpStatus.OK);
@@ -175,5 +176,11 @@ public class IRController extends CommonController {
             ir.setGatewayNo(gateway.getNo());
         }
         return ir;
+    }
+    
+    @PostMapping("/irInfo")
+    public ResponseEntity modifyIR(@RequestBody List<IR> irs) throws JsonProcessingException, ParseException {
+        iRService.modifyIRs(irs);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

@@ -192,7 +192,7 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
                         exangeGateway.setCreatedTime(new Date());
                         exangeGateway.setBssid(gateway.getBssid());
                         exangeGateway.setSsid(gateway.getSsid());
-                        exangeGateway.setNickname((String) Common.isNullrtnByobj(gateway.getNickname(), ""));
+                        exangeGateway.setNickname((String) Common.isNullrtnByobj(gateway.getNickname(), "host_"+gateway.getSerial()));
                         updateGateway(exangeGateway);
                         updateUserGateway(exangeGateway, user.getNo());
                         String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/manager/product/registration", gateway.getModel(),

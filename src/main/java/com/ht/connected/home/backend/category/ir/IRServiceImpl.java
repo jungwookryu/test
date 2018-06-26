@@ -164,26 +164,33 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
 
     @Override
     public void controlIR(IR reqIr) throws JsonProcessingException, ParseException {
-        String topic = getMqttPublishTopic(reqIr, Target.host.name(), Target.server.name());
         HashMap<String, Object> publishPayload = new HashMap<String, Object>();
-        List value = new ArrayList<>();
-        // IR ir = irRepository.findOne(reqIr.getNo());
-        List<IR> irs = irRepository.findByUserEmailContainingAndSubNumberAndAction(reqIr.getUserEmail(), reqIr.getSubNumber(), reqIr.getAction());
-        if (irs.size() > 0) {
-            IR ir = irs.get(0);
-            HashMap requestMap = new HashMap<>();
-            requestMap.put("format", ir.getFormat());
-            requestMap.put("rptcnt", ir.getRptcnt());
-            requestMap.put("gap", ir.getGap());
-            JSONParser parser = new JSONParser();
-            Object obj = parser.parse(ir.getValue());
-            requestMap.put("value", obj);
-            publishPayload.put("type", Type.control.name());
-            publishPayload.put("request", requestMap);
-            publish(topic, publishPayload);
+        List<IR> irs  = new ArrayList<>();
+        if(reqIr.getNo()!=0) {
+            irs = irRepository.findByUserEmailContainingAndNo(reqIr.getUserEmail(), reqIr.getNo());
+            if (irs.size() > 0) {
+                IR ir = irs.get(0);
+                String topic = getMqttPublishTopic(ir, Target.host.name(), Target.server.name());
+                HashMap requestMap = new HashMap<>();
+                requestMap.put("format", ir.getFormat());
+                requestMap.put("rptcnt", ir.getRptcnt());
+                requestMap.put("gap", ir.getGap());
+                JSONParser parser = new JSONParser();
+                Object obj = parser.parse("{}");
+                if(!Common.empty(ir.getValue())) {
+                    obj = parser.parse(ir.getValue());
+                }
+                requestMap.put("value", obj);
+                publishPayload.put("type", Type.control.name());
+                publishPayload.put("request", requestMap);
+                publish(topic, publishPayload);
+            }
         }
     }
-
+    @Override
+    public void modifyIRs(List<IR> irs) {
+        irs.forEach(IR->{irRepository.setModifyIrNameForNo(IR.getIrName(), IR.getNo());});
+    }
     /**
      * mqtt publish 토픽 생성
      * @param topicLeadingPath

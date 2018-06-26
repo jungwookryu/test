@@ -1,27 +1,18 @@
 package com.ht.connected.home.backend.gateway;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ht.connected.home.backend.user.User;
-import com.ht.connected.home.backend.userGateway.UserGateway;
 
 @Entity
 @Table(name = "gateway")
@@ -34,7 +25,7 @@ public class Gateway {
     @JsonProperty("no")
     private int no;
 
-    @Column(name = "nickname")
+    @Column(name = "nickname")  
     @JsonProperty("nickname")
     private String nickname;
 
