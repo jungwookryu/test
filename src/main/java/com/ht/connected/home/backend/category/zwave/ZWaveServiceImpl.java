@@ -214,7 +214,8 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                     }
                 }
                 if (nodeId != -1) {
-                    deleteZwave(zwaveRequest.getGatewayNo(),nodeId);
+                    Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
+                    deleteZwave(gateway.getNo(),nodeId);
                     String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/device/remove", zwaveRequest.getModel(),
                             zwaveRequest.getSerialNo());
                     publish(exeTopic);
