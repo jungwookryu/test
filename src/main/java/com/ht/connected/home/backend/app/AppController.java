@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.category.ir.IR;
 import com.ht.connected.home.backend.category.ir.IRController;
+import com.ht.connected.home.backend.category.ir.IRRepository;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 import com.mysql.fabric.xmlrpc.base.Array;
 
@@ -34,7 +35,9 @@ public class AppController extends CommonController {
     public AppController(IRController iRController) {
         this.iRController = iRController;
     }
-
+    @Autowired
+    IRRepository irRepository;
+    
     public enum Command {
         start, stop, add, del
     }
@@ -255,15 +258,8 @@ public class AppController extends CommonController {
         rtnMap.put("result_code", "200");
         rtnMap.put("result_msg", "Success");
         if(hashMap.get("irindex")!=null){
-            String serial = (String) hashMap.getOrDefault("serial", "");
-            String model = (String) hashMap.getOrDefault("model", "");
-            IR ir = new IR();
-            ir.setSerial(serial);
-            ir.setModel(model);
-            ir.setSubNumber((int) hashMap.get("irindex"));
-            ir.setAction((String) hashMap.getOrDefault("actionname", ""));
-            ir.setStatus("control");
-            ResponseEntity<IR> rss = iRController.controlIR(ir.getSubNumber(), ir);
+            List<IR> irs = irRepository.findByUserEmailContainingAndSubNumberAndAction(getAuthUserEmail(),(int) hashMap.getOrDefault("irindex",0), (String) hashMap.getOrDefault("actionname", ""));
+            ResponseEntity<IR> rss = iRController.controlIR(irs.get(0).getNo(), irs.get(0));
             if (rss.getStatusCodeValue() == 200) {
             } else {
                 rtnMap.put("result_msg", rss.getHeaders().get("message"));

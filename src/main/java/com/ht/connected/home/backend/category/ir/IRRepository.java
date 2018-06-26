@@ -26,6 +26,7 @@ import org.springframework.stereotype.Repository;
 public interface IRRepository extends JpaRepository<IR, Integer> {
     
     List<IR> findByUserEmailContainingAndStatusAndSerial(String userEmail, String status, String serial);
+    List<IR> findByUserEmailContainingAndNo(String userEmail, int no);
     
     List<IR> findByUserEmailContainingAndSubNumberAndAction(String userEmail, int subNumber, String action);
     
@@ -42,7 +43,6 @@ public interface IRRepository extends JpaRepository<IR, Integer> {
     
     void deleteByUserEmailContainingAndGatewayNoAndStatus(String userEmail, int gatewayNo, String status);
     
-//    void deleteBySerial(String serial);
     
     @Modifying
     @Transactional
@@ -53,5 +53,10 @@ public interface IRRepository extends JpaRepository<IR, Integer> {
     @Transactional
     @Query("update IR set status = ?1 where serial = ?2 and status= ?3")
     int setModifyStatusForSerialAndStatus(String status, String serial, String status1);
+    
+    @Modifying
+    @Transactional
+    @Query("update IR set ir_name = ?1 where no = ?2")
+    int setModifyIrNameForNo(String irName, int no);
     
 }

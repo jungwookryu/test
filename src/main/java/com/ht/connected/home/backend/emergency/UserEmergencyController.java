@@ -95,6 +95,7 @@ public class UserEmergencyController extends CommonController {
 
     @PutMapping("/{no}")
     public ResponseEntity<HashMap<String, UserEmergency>> modifyUser(@PathVariable("no") int no, @RequestBody UserEmergency userEmergency) {
+        //TODO 석감지기가 없거나 떨어져있을 경우 방범이 안되도록 설정.
         HashMap<String, UserEmergency> map = new HashMap<>();
         UserEmergency rtnUserEmergency = userEmergencyService.modify(no, userEmergency);
         map.put("rtnUserEmergency", rtnUserEmergency);
