@@ -175,7 +175,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                     else {
                         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
                         List<ZWave> lstOriginalZwave = zwaveRepository.findByGatewayNoAndNodeId(zwaveRequest.getGatewayNo(), zwaveRequest.getNodeId());
-                        if(lstOriginalZwave.size()!=0) {
+                        if(lstOriginalZwave.size()==0) {
                             saveGatewayCategory(zwaveRequest, zwaveRequest.getNodeId());
                             if (!isNull(gateway)) {
                                 ZWaveReport zwaveReport = objectMapper.readValue(data, ZWaveReport.class);
@@ -184,7 +184,6 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                                     List<ZWave> nodeListItem = (List<ZWave>) zwaveReport.getNodelist();
                                     for (int i = 0; i < nodeListItem.size(); i++) {
                                         ZWave nodeItem = nodeListItem.get(i);
-                                        int nodeId = nodeItem.getNodeId();
                                         saveZWaveList(zwaveRequest, nodeItem, gateway);
                                         // syncZWaveList(zwaveRequest, nodeItem, gateway);
                                         String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/device/registration", gateway.getModel(),
