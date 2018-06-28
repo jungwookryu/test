@@ -23,7 +23,8 @@ public class BinarySwitchCommandClass extends CommandClass {
     public static final byte SWITCH_BINARY_REPORT = 0x03;
 
     public static final byte ID = 0x25;
-
+    public static final String genericKey = "10";
+    
     private Boolean isOn;
 
     @Override
@@ -62,5 +63,10 @@ public class BinarySwitchCommandClass extends CommandClass {
     @Override
     public String getFunctionType() {
         return "SWITCH_BINARY";
+    }
+    
+    @Override
+    public String getGenericKey() {
+        return genericKey;
     }
 }

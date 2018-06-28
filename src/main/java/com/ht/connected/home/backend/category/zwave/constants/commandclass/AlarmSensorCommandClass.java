@@ -22,7 +22,8 @@ public class AlarmSensorCommandClass extends CommandClass {
     public static final byte SENSOR_ALARM_REPORT = 0x02;
 
     public static final byte ID = (byte)0x9C;
-
+    public static final String genericKey = "A1";
+    
     private Type type;
     private byte level;
 
@@ -82,5 +83,10 @@ public class AlarmSensorCommandClass extends CommandClass {
     public String getFunctionType() {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    @Override
+    public String getGenericKey() {
+        return genericKey;
     }
 }

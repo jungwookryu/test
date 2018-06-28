@@ -29,7 +29,7 @@ public class MeterCommandClass extends CommandClass {
 
     private static final byte METER_GET = 0x01;
     private static final byte METER_REPORT = 0x02;
-
+    public static final String genericKey = "31";
 
 
     Map<Scale, MeterReadingValue> value = new HashMap<>();
@@ -258,5 +258,10 @@ public class MeterCommandClass extends CommandClass {
     public String getFunctionType() {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    @Override
+    public String getGenericKey() {
+        return genericKey;
     }
 }

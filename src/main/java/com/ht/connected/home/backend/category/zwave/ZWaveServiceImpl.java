@@ -603,9 +603,8 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             endpoint.setZwaveNo(saveZwave.getNo());
             endpoint.setCmdCls(endpoint.getScmdClses(endpoint.getCmdClses()));
             String endpointKey = endpoint.getGeneric() + "." + endpoint.getSpecific();
-//            endpoint.setDeviceType(zwaveDeviceType(endpointKey, endpoint.getCmdClses()));
-            endpoint.setNickname(zwaveNickname(zWaveProperties, nodeKey));
-            Endpoint saveEndpoint = endpointRepository.save(endpoint);
+            endpoint.setNickname(zwaveNickname(zWaveProperties, endpointKey));
+            Endpoint saveEndpoint = saveEndpoint(endpoint);
             List<CmdCls> newCmdCls = newEndpoints.get(iE).getCmdClses();
             for (int iCmdCls = 0; iCmdCls < newCmdCls.size(); iCmdCls++) {
                 CmdCls cmdcls = newCmdCls.get(iCmdCls);
@@ -647,24 +646,27 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         }
         return rtnNickname;
     }
-    private List<String> zwaveDeviceType(String endpointKey, List<CmdCls> cmdCls) {
-        List<String> zwaveDevice = new ArrayList<>();
+    private Endpoint endpointType(Endpoint endpoint) {
+        CommandClass commandClass = CommandClassFactory.createCommandClass(BinarySwitchCommandClass.ID);
         String deviceType = "";
         String nicknameType = "";
         String functionType = "";
-        if("10".equals(endpointKey.substring(0, 1))) {
-            for (int i = 0; i < cmdCls.size(); i++) {
-                if(Integer.toString(BinarySwitchCommandClass.ID).equals(cmdCls.get(i).getCmdClass())) {
-                    CommandClass commandClass = CommandClassFactory.createCommandClass(BinarySwitchCommandClass.ID);
-                    deviceType = commandClass.getDeviceType();
-//                    nicknameType = commandClass.geTypeNickname();
-//                    functionType = commandClass.getTypeFunctionName();
-                }
-            }
+        List<CmdCls> cmdCls  = endpoint.getCmdClses();
             
-        }
+        commandClass = CommandClassFactory.createSCmdClass(endpoint);
         
-//        zWaveFunctionProperties.containsValue(value)
-        return zwaveDevice;
+        endpoint.setDeviceType(commandClass.getDeviceType());
+        endpoint.setDeviceNickname(commandClass.getNicknameType());
+        endpoint.setDeviceFunctions(commandClass.getFunctionType());
+        nicknameType = commandClass.getNicknameType();
+        functionType = commandClass.getFunctionType(); 
+        return endpoint;
     }
+
+    private Endpoint saveEndpoint(Endpoint endpoint) {
+        endpoint = endpointType(endpoint);
+        endpointRepository.save(endpoint);
+        return null;
+    }
+
 }

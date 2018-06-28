@@ -108,6 +108,10 @@ public class Endpoint {
         
     }
     
+    public String getScmdClses() {
+        return cmdCls;
+    }
+    
     public int getNo() {
         return no;
     }

@@ -9,12 +9,23 @@
 */
 package com.ht.connected.home.backend.category.zwave.constants.commandclass;
 
+import java.util.Properties;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
+import com.ht.connected.home.backend.common.ByteUtil;
+
 /**
  * Convenience factory class that creates CommandClass instances from a command class ID byte.
  *
  * @author Dan Noguerol
  */
 public class CommandClassFactory {
+
+    @Autowired
+    Properties zWaveProperties;
+    
     public static CommandClass createCommandClass(byte commandClassId) {
         switch (commandClassId) {
             case AlarmCommandClass.ID:
@@ -47,14 +58,68 @@ public class CommandClassFactory {
                 return new NetworkManagementInclusionCommandClass();
             case NetworkManagementProxyCommandClass.ID:
                 return new NetworkManagementProxyCommandClass();
-            case NoOperationCommandClass.ID:
-                return new NoOperationCommandClass();
             case VersionCommandClass.ID:
                 return new VersionCommandClass();
             case WakeUpCommandClass.ID:
                 return new WakeUpCommandClass();
+            case NoOperationCommandClass.ID:
+                return new NoOperationCommandClass();
             default:
                 return null;
         }
+        
+    }
+    public static CommandClass createSCmdClass(Endpoint endpoint) {
+        
+        if(endpoint.getGeneric().equals(AlarmCommandClass.genericKey)){
+            if(endpoint.getCmdCls().contains(ByteUtil.getHexString((int) AlarmCommandClass.ID))) {
+                return new AlarmCommandClass();
+            }
+        }
+        else if(endpoint.getGeneric().equals(AlarmSensorCommandClass.genericKey)){
+            if(endpoint.getCmdCls().contains(ByteUtil.getHexString((int) AlarmSensorCommandClass.ID))) {
+                return new AlarmSensorCommandClass();
+            }
+        }
+        else if(endpoint.getGeneric().equals(BinarySensorCommandClass.genericKey)){
+            if(endpoint.getCmdCls().contains(ByteUtil.getHexString((int) BinarySensorCommandClass.ID))) {
+                return new BinarySensorCommandClass();
+            }
+        }
+        else if(endpoint.getGeneric().equals(BinarySwitchCommandClass.genericKey)){
+            if(endpoint.getCmdCls().contains(ByteUtil.getHexString((int) BinarySwitchCommandClass.ID))) {
+                return new BinarySwitchCommandClass();
+            }
+        }
+        else if(endpoint.getGeneric().equals(DoorLockCommandClass.genericKey)){
+            if(endpoint.getCmdCls().contains(ByteUtil.getHexString((int) DoorLockCommandClass.ID))) {
+                return new DoorLockCommandClass();
+            }
+        }
+        else if(endpoint.getGeneric().equals(MeterCommandClass.genericKey)){
+            if(endpoint.getCmdCls().contains(ByteUtil.getHexString((int) MeterCommandClass.ID))) {
+                return new MeterCommandClass();
+            }
+        }
+        else if(endpoint.getGeneric().equals(MultilevelSensorCommandClass.genericKey)){
+            if(endpoint.getCmdCls().contains(ByteUtil.getHexString((int) MultilevelSensorCommandClass.ID))) {
+                return new MultilevelSensorCommandClass();
+            }
+        }
+        else if(endpoint.getGeneric().equals(MultilevelSwitchCommandClass.genericKey)){
+            if(endpoint.getCmdCls().contains(ByteUtil.getHexString((int) MultilevelSwitchCommandClass.ID))) {
+                return new MultilevelSwitchCommandClass();
+            }
+        }
+//        else {
+//            if(endpoint.getCmdCls().contains(ByteUtil.getHexString((int) NoOperationCommandClass.ID))) {
+//                return new NoOperationCommandClass();
+//            }
+//        }
+         else {
+            return null;
+        }
+        return null;
     }
 }
+

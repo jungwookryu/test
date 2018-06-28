@@ -62,4 +62,9 @@ public class WakeUpCommandClass extends CommandClass {
         // TODO Auto-generated method stub
         return null;
     }
+    
+    @Override
+    public String getGenericKey() {
+        return "";
+    }
 }

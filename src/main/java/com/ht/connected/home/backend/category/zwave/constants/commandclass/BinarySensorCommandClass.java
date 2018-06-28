@@ -23,7 +23,8 @@ public class BinarySensorCommandClass extends CommandClass {
     private static final byte SENSOR_BINARY_REPORT = 0x03;
 
     public static final byte ID = 0x30;
-
+    public static final String genericKey = "20";
+    
     public Boolean isIdle;
 
     @Override
@@ -64,5 +65,10 @@ public class BinarySensorCommandClass extends CommandClass {
     public String getFunctionType() {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    @Override
+    public String getGenericKey() {
+        return genericKey;
     }
 }

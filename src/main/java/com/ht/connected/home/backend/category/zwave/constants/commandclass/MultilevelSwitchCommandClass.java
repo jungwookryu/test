@@ -23,7 +23,9 @@ public class MultilevelSwitchCommandClass extends CommandClass {
     private static final byte SWITCH_MULTILEVEL_REPORT = 0x03;
 
     public static final byte ID = 0x26;
-
+    
+    public static final String genericKey = "11";
+    
     private Byte level;
 
     @Override
@@ -64,5 +66,10 @@ public class MultilevelSwitchCommandClass extends CommandClass {
     public String getFunctionType() {
         // TODO Auto-generated method stub
         return "SWITCH_MULTILEVEL";
+    }
+    
+    @Override
+    public String getGenericKey() {
+        return genericKey;
     }
 }

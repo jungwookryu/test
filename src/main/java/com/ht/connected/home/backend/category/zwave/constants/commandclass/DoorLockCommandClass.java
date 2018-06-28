@@ -21,7 +21,7 @@ public class DoorLockCommandClass extends CommandClass {
    public static final byte DOOR_LOCK_OPERATION_SET = 0x01;
 
     public static final byte ID = (byte)0x062;
-
+    public static final String genericKey = "40";
     private Configration configration;
     private Operation operation;
     private Byte value;
@@ -72,5 +72,9 @@ public class DoorLockCommandClass extends CommandClass {
     @Override
     public String getFunctionType() {
         return "DOOR_LOCK";
+    }
+    @Override
+    public String getGenericKey() {
+        return genericKey;
     }
 }

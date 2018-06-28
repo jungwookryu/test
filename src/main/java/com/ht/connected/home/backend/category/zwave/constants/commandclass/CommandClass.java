@@ -93,6 +93,8 @@ abstract public class CommandClass {
      */
     abstract public String getFunctionType();
     
+    abstract public String getGenericKey();
+    
     @Override
     public String toString() {
         return "CommandClass{" +
