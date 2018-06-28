@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
+import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -35,6 +38,9 @@ import com.ht.connected.home.backend.category.zwave.certification.CertificationS
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdCls;
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdClsRepository;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.BasicCommandClass;
+import com.ht.connected.home.backend.category.zwave.constants.commandclass.BinarySwitchCommandClass;
+import com.ht.connected.home.backend.category.zwave.constants.commandclass.CommandClass;
+import com.ht.connected.home.backend.category.zwave.constants.commandclass.CommandClassFactory;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementBasicCommandClass;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementInclusionCommandClass;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementProxyCommandClass;
@@ -116,7 +122,10 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
 
     @Autowired
     Properties zWaveProperties;
-
+    
+    @Autowired
+    @Qualifier("zWaveFunctionProperties")
+    Properties zWaveFunctionProperties;
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -586,7 +595,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         nodeItem.setGatewayNo(gateway.getNo());
         nodeItem.setCreratedTime(new Date());
         String nodeKey = nodeItem.getGeneric() + "." + nodeItem.getSpecific();
-        nodeItem.setNickname(Common.zwaveNickname(zWaveProperties, nodeKey));
+        nodeItem.setNickname(zwaveNickname(zWaveProperties, nodeKey));
         ZWave saveZwave = zwaveRepository.save(nodeItem);
         List<Endpoint> newEndpoints = nodeItem.getEndpoint();
         for (int iE = 0; iE < newEndpoints.size(); iE++) {
@@ -594,7 +603,8 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             endpoint.setZwaveNo(saveZwave.getNo());
             endpoint.setCmdCls(endpoint.getScmdClses(endpoint.getCmdClses()));
             String endpointKey = endpoint.getGeneric() + "." + endpoint.getSpecific();
-            endpoint.setNickname(Common.zwaveNickname(zWaveProperties, nodeKey));
+//            endpoint.setDeviceType(zwaveDeviceType(endpointKey, endpoint.getCmdClses()));
+            endpoint.setNickname(zwaveNickname(zWaveProperties, nodeKey));
             Endpoint saveEndpoint = endpointRepository.save(endpoint);
             List<CmdCls> newCmdCls = newEndpoints.get(iE).getCmdClses();
             for (int iCmdCls = 0; iCmdCls < newCmdCls.size(); iCmdCls++) {
@@ -627,4 +637,34 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         }
     }
     
+    private String zwaveNickname(Properties properties, String key) {
+        
+        String rtnNickname = "Device";
+        if(null!=properties) {
+            if(!StringUtils.isEmpty(properties.getProperty(key))) {
+                rtnNickname = properties.getProperty(key).replace("SPECIFIC_TYPE_","").replace("_BINARY","").replace("_"," ").toLowerCase();
+            }
+        }
+        return rtnNickname;
+    }
+    private List<String> zwaveDeviceType(String endpointKey, List<CmdCls> cmdCls) {
+        List<String> zwaveDevice = new ArrayList<>();
+        String deviceType = "";
+        String nicknameType = "";
+        String functionType = "";
+        if("10".equals(endpointKey.substring(0, 1))) {
+            for (int i = 0; i < cmdCls.size(); i++) {
+                if(Integer.toString(BinarySwitchCommandClass.ID).equals(cmdCls.get(i).getCmdClass())) {
+                    CommandClass commandClass = CommandClassFactory.createCommandClass(BinarySwitchCommandClass.ID);
+                    deviceType = commandClass.getDeviceType();
+//                    nicknameType = commandClass.geTypeNickname();
+//                    functionType = commandClass.getTypeFunctionName();
+                }
+            }
+            
+        }
+        
+//        zWaveFunctionProperties.containsValue(value)
+        return zwaveDevice;
+    }
 }

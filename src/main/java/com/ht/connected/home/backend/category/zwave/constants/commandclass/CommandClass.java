@@ -68,6 +68,31 @@ abstract public class CommandClass {
      */
     abstract public String getName();
 
+    
+    /**
+     * Returns the command class name. This is primarily for logging purposes.
+     *
+     * @return the name
+     */
+    abstract public String getDeviceType();
+
+    
+    
+    /**
+     * Returns the command class name. This is primarily for logging purposes.
+     *
+     * @return the name
+     */
+    abstract public String getNicknameType();
+    
+    
+    /**
+     * Returns the command class name. This is primarily for logging purposes.
+     *
+     * @return the name
+     */
+    abstract public String getFunctionType();
+    
     @Override
     public String toString() {
         return "CommandClass{" +

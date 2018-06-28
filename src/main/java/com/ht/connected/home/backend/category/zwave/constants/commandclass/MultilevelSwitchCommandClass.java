@@ -47,4 +47,22 @@ public class MultilevelSwitchCommandClass extends CommandClass {
                 ", level=" + level +
                 '}';
     }
+
+    @Override
+    public String getDeviceType() {
+        // TODO Auto-generated method stub
+        return "HC9";
+    }
+
+    @Override
+    public String getNicknameType() {
+        // TODO Auto-generated method stub
+        return "Multilevel switch";
+    }
+
+    @Override
+    public String getFunctionType() {
+        // TODO Auto-generated method stub
+        return "SWITCH_MULTILEVEL";
+    }
 }

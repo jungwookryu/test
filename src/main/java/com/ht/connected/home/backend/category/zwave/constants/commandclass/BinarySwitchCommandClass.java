@@ -47,4 +47,20 @@ public class BinarySwitchCommandClass extends CommandClass {
                 ", isOn=" + isOn +
                 '}';
     }
+
+    @Override
+    public String getDeviceType() {
+        return "HC8";
+    }
+
+    @Override
+    public String getNicknameType() {
+        // TODO Auto-generated method stub
+        return "On/Off Power Switch";
+    }
+
+    @Override
+    public String getFunctionType() {
+        return "SWITCH_BINARY";
+    }
 }

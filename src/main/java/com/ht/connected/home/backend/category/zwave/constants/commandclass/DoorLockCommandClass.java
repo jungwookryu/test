@@ -9,22 +9,32 @@ package com.ht.connected.home.backend.category.zwave.constants.commandclass;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-/**
- * For door and window sensors, it is RECOMMENDED to use the Notification Type: “Access Control (0x06)“ with the events: “Door/Window Open” and ”Door/Window Closed” (respectively 0x16 and 0x17).
- * @author COM
- *
- */
-public class AlarmCommandClass extends CommandClass {
+
+public class DoorLockCommandClass extends CommandClass {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public static final byte ALARM_GET = 0x04;
-    public static final byte ALARM_REPORT = 0x05;
+   public static final byte DOOR_LOCK_CONFIGURATION_GET = 0x05;
+   public static final byte DOOR_LOCK_CONFIGURATION_REPORT = 0x06;
+   public static final byte DOOR_LOCK_CONFIGURATION_SET = 0x04;
+   public static final byte DOOR_LOCK_OPERATION_GET = 0x02;
+   public static final byte DOOR_LOCK_OPERATION_REPORT = 0x03;
+   public static final byte DOOR_LOCK_OPERATION_SET = 0x01;
 
-    public static final byte ID = (byte)0x71;
+    public static final byte ID = (byte)0x062;
 
-    private byte type;
-    private byte level;
+    private Configration configration;
+    private Operation operation;
+    private Byte value;
 
+    
+    enum Configration{
+        configration
+    }
+    
+    enum Operation{
+        operation
+    }
+    
     @Override
     public byte getId() {
         return ID;
@@ -32,23 +42,20 @@ public class AlarmCommandClass extends CommandClass {
 
     @Override
     public String getName() {
-        return "COMMAND_CLASS_SENSOR_ALARM";
+        return "COMMAND_CLASS_DOOR_LOCK";
     }
 
-    public byte getType() {
-        return type;
-    }
-
-    public byte getLevel() {
-        return level;
+    public byte getValue() {
+        return value;
     }
 
     @Override
     public String toString() {
         return "AlarmCommandClass{" +
                 "version=" + getVersion() +
-                ", type=" + type +
-                ", level=" + level +
+                "configration=" + configration +
+                "operation=" + operation +
+                ", value=" + value +
                 '}';
     }
 
@@ -59,11 +66,11 @@ public class AlarmCommandClass extends CommandClass {
 
     @Override
     public String getNicknameType() {
-        return "Notification Sensors";
+        return "Door Lock";
     }
 
     @Override
     public String getFunctionType() {
-        return "SENSOR_ALARM";
+        return "DOOR_LOCK";
     }
 }

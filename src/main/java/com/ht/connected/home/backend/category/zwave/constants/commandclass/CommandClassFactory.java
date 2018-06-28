@@ -41,6 +41,12 @@ public class CommandClassFactory {
                 return new MultilevelSensorCommandClass();
             case MultilevelSwitchCommandClass.ID:
                 return new MultilevelSwitchCommandClass();
+            case NetworkManagementBasicCommandClass.ID:
+                return new NetworkManagementBasicCommandClass();
+            case NetworkManagementInclusionCommandClass.ID:
+                return new NetworkManagementInclusionCommandClass();
+            case NetworkManagementProxyCommandClass.ID:
+                return new NetworkManagementProxyCommandClass();
             case NoOperationCommandClass.ID:
                 return new NoOperationCommandClass();
             case VersionCommandClass.ID:

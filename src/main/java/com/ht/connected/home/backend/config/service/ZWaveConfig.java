@@ -21,5 +21,14 @@ public class ZWaveConfig {
         zwaveNicknames.load(filePath);
         return zwaveNicknames;
     }
+    
+    @Bean(name="zWaveFunctionProperties")
+    public Properties zWaveFunctionProperties() throws IOException {
+        Properties zwaveNicknames =new Properties();
+        String propFile = "zwave/zwave-function-assigned.properties";
+        InputStream filePath =getClass().getClassLoader().getResourceAsStream(propFile);
+        zwaveNicknames.load(filePath);
+        return zwaveNicknames;
+    }
 
 }

@@ -57,9 +57,30 @@ public class Endpoint {
   
     @Column(name = "cmd_cls")
     String cmdCls;
+    
     @JsonProperty("status")
     @Column(name = "status")
     int status;
+
+    @JsonProperty("device_functions")
+    @Column(name = "device_functions")
+    String deviceFunctions;
+    
+    @JsonProperty("device_type")
+    @Column(name = "device_type")
+    String deviceType;
+    
+    @JsonProperty("device_nickname")
+    @Column(name = "device_nickname")
+    String deviceNickname;
+    
+    @JsonProperty("input_status")
+    @Column(name = "input_status")
+    String inputStatus;
+    
+    @JsonProperty("output_status")
+    @Column(name = "output_status")
+    String outputStatus;
     
     @JsonProperty("cmd_cls")
     @Transient
@@ -155,6 +176,46 @@ public class Endpoint {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getDeviceFunctions() {
+        return deviceFunctions;
+    }
+
+    public void setDeviceFunctions(String deviceFunctions) {
+        this.deviceFunctions = deviceFunctions;
+    }
+
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
+    }
+
+    public String getDeviceNickname() {
+        return deviceNickname;
+    }
+
+    public void setDeviceNickname(String deviceNickname) {
+        this.deviceNickname = deviceNickname;
+    }
+
+    public String getInputStatus() {
+        return inputStatus;
+    }
+
+    public void setInputStatus(String inputStatus) {
+        this.inputStatus = inputStatus;
+    }
+
+    public String getOutputStatus() {
+        return outputStatus;
+    }
+
+    public void setOutputStatus(String outputStatus) {
+        this.outputStatus = outputStatus;
     }
 
 }

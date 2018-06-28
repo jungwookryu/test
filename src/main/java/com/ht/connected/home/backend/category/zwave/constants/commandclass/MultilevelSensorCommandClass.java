@@ -163,4 +163,22 @@ public class MultilevelSensorCommandClass extends CommandClass {
                 ", values=" + values +
                 '}';
     }
+
+    @Override
+    public String getDeviceType() {
+        // TODO Auto-generated method stub
+        return "HC6";
+    }
+
+    @Override
+    public String getNicknameType() {
+        // TODO Auto-generated method stub
+        return "Multilevel Sensor";
+    }
+
+    @Override
+    public String getFunctionType() {
+        // TODO Auto-generated method stub
+        return "SENSOR_MULTILEVEL";
+    }
 }
