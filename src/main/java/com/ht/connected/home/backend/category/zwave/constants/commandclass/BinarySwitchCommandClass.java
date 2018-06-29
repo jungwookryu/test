@@ -23,7 +23,8 @@ public class BinarySwitchCommandClass extends CommandClass {
     public static final byte SWITCH_BINARY_REPORT = 0x03;
 
     public static final byte ID = 0x25;
-
+    public static final String genericKey = "10";
+    
     private Boolean isOn;
 
     @Override
@@ -46,5 +47,26 @@ public class BinarySwitchCommandClass extends CommandClass {
                 "version=" + getVersion() +
                 ", isOn=" + isOn +
                 '}';
+    }
+
+    @Override
+    public String getDeviceType() {
+        return "HC8";
+    }
+
+    @Override
+    public String getNicknameType() {
+        // TODO Auto-generated method stub
+        return "On/Off Power Switch";
+    }
+
+    @Override
+    public String getFunctionType() {
+        return "SWITCH_BINARY";
+    }
+    
+    @Override
+    public String getGenericKey() {
+        return genericKey;
     }
 }

@@ -24,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -34,7 +35,11 @@ import com.ht.connected.home.backend.category.zwave.certification.CertificationR
 import com.ht.connected.home.backend.category.zwave.certification.CertificationService;
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdCls;
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdClsRepository;
+import com.ht.connected.home.backend.category.zwave.constants.commandclass.AlarmCommandClass;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.BasicCommandClass;
+import com.ht.connected.home.backend.category.zwave.constants.commandclass.BinarySwitchCommandClass;
+import com.ht.connected.home.backend.category.zwave.constants.commandclass.CommandClass;
+import com.ht.connected.home.backend.category.zwave.constants.commandclass.CommandClassFactory;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementBasicCommandClass;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementInclusionCommandClass;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementProxyCommandClass;
@@ -116,7 +121,10 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
 
     @Autowired
     Properties zWaveProperties;
-
+    
+    @Autowired
+    @Qualifier("zWaveFunctionProperties")
+    Properties zWaveFunctionProperties;
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -174,6 +182,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                     // 신규 등록 기기 정보
                     else {
                         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
+                        zwaveRequest.setGatewayNo(gateway.getNo());
                         List<ZWave> lstOriginalZwave = zwaveRepository.findByGatewayNoAndNodeId(zwaveRequest.getGatewayNo(), zwaveRequest.getNodeId());
                         if(lstOriginalZwave.size()==0) {
                             saveGatewayCategory(zwaveRequest, zwaveRequest.getNodeId());
@@ -230,6 +239,18 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             if (zwaveRequest.getCommandKey() == NetworkManagementBasicCommandClass.DEFAULT_SET_COMPLETE) {
                 // 해당기기의 정보를 모두 삭제한다.
                 hostReset(zwaveRequest);
+                String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/manager/product/remove", zwaveRequest.getModel(),
+                        zwaveRequest.getSerialNo());
+                publish(exeTopic);
+                
+            }
+        }
+        // 기기 상태 결과
+        if (zwaveRequest.getClassKey() == AlarmCommandClass.INT_ID) {
+            // 기기상태값모드 받은 경우
+            if (zwaveRequest.getCommandKey() == AlarmCommandClass.ALARM_REPORT) {
+                // 해당기기의 정보를 모두 삭제한다.
+                notificationZWave(zwaveRequest);
                 String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/manager/product/remove", zwaveRequest.getModel(),
                         zwaveRequest.getSerialNo());
                 publish(exeTopic);
@@ -312,15 +333,19 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     private void reportZWaveList(ZWaveRequest zwaveRequest, String data) throws JsonParseException, JsonMappingException, IOException, JSONException {
 
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
+        zwaveRequest.setGatewayNo(gateway.getNo());
         if (!isNull(gateway)) {
+            //DB 데이터
             List<ZWave> lstZwave = zwaveRepository.findByGatewayNo(gateway.getNo());
             ZWaveReport zwaveReport = objectMapper.readValue(data, ZWaveReport.class);
             // 기기 리스트에 대한 정보일 경우
             if (zwaveReport.getNodelist() != null) {
+                //HOST 데이터
                 List<ZWave> nodeListItem = (List<ZWave>) zwaveReport.getNodelist();
                 // 추가
                 for (int i = 0; i < nodeListItem.size(); i++) {
                     ZWave nodeItem = nodeListItem.get(i);
+                    //HOST node ID
                     int nodeId = nodeItem.getNodeId();
                     boolean bInsert = false;
                     for (int j = 0; j < lstZwave.size(); j++) {
@@ -328,6 +353,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                         // host 노드리스트와 DB 노드리스트를 비교하여 없으면 insert시킴
                         // int nodeId = (int) nodeItem.getOrDefault("nodeId", 0);
                         // node status "" 경우에는 node 가 신규로 들어왔으나 host 에서 신규노드로 확인이 안된경 node status add일 경우 신규 등록 기기
+                        //HOST ID == DB node ID
                         if (nodeId == zwave.getNodeId()) {
                             bInsert = true;
                         }
@@ -357,7 +383,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                     // 등록되어있고 node가 없을경우 삭제함
                     if (bDelete) {
                         // zwave nodeId Category 별삭제함.
-                        deleteZwave(zwaveRequest.getGatewayNo(), zwave.getNo());
+                        deleteZwave(zwaveRequest.getGatewayNo(), zwave.getNodeId());
                     }
                 }
             }
@@ -586,7 +612,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         nodeItem.setGatewayNo(gateway.getNo());
         nodeItem.setCreratedTime(new Date());
         String nodeKey = nodeItem.getGeneric() + "." + nodeItem.getSpecific();
-        nodeItem.setNickname(Common.zwaveNickname(zWaveProperties, nodeKey));
+        nodeItem.setNickname(zwaveNickname(zWaveProperties, nodeKey));
         ZWave saveZwave = zwaveRepository.save(nodeItem);
         List<Endpoint> newEndpoints = nodeItem.getEndpoint();
         for (int iE = 0; iE < newEndpoints.size(); iE++) {
@@ -594,8 +620,8 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             endpoint.setZwaveNo(saveZwave.getNo());
             endpoint.setCmdCls(endpoint.getScmdClses(endpoint.getCmdClses()));
             String endpointKey = endpoint.getGeneric() + "." + endpoint.getSpecific();
-            endpoint.setNickname(Common.zwaveNickname(zWaveProperties, nodeKey));
-            Endpoint saveEndpoint = endpointRepository.save(endpoint);
+            endpoint.setNickname(zwaveNickname(zWaveProperties, endpointKey));
+            Endpoint saveEndpoint = saveEndpoint(endpoint);
             List<CmdCls> newCmdCls = newEndpoints.get(iE).getCmdClses();
             for (int iCmdCls = 0; iCmdCls < newCmdCls.size(); iCmdCls++) {
                 CmdCls cmdcls = newCmdCls.get(iCmdCls);
@@ -627,4 +653,41 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         }
     }
     
+    private String zwaveNickname(Properties properties, String key) {
+        
+        String rtnNickname = "Device";
+        if(null!=properties) {
+            if(!StringUtils.isEmpty(properties.getProperty(key))) {
+                rtnNickname = properties.getProperty(key).replace("SPECIFIC_TYPE_","").replace("_BINARY","").replace("_"," ").toLowerCase();
+            }
+        }
+        return rtnNickname;
+    }
+    private Endpoint endpointType(Endpoint endpoint) {
+        CommandClass commandClass = CommandClassFactory.createCommandClass(BinarySwitchCommandClass.ID);
+        String deviceType = "";
+        String nicknameType = "";
+        String functionType = "";
+        List<CmdCls> cmdCls  = endpoint.getCmdClses();
+            
+        commandClass = CommandClassFactory.createSCmdClass(endpoint);
+        
+        endpoint.setDeviceType(commandClass.getDeviceType());
+        endpoint.setDeviceNickname(commandClass.getNicknameType());
+        endpoint.setDeviceFunctions(commandClass.getFunctionType());
+        nicknameType = commandClass.getNicknameType();
+        functionType = commandClass.getFunctionType(); 
+        return endpoint;
+    }
+
+    private Endpoint saveEndpoint(Endpoint endpoint) {
+        endpoint = endpointType(endpoint);
+        endpointRepository.save(endpoint);
+        return null;
+    }
+    
+    private void notificationZWave(ZWaveRequest zwaveRequest) {
+        
+    }
+
 }

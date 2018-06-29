@@ -27,7 +27,7 @@ public class MultilevelSensorCommandClass extends CommandClass {
     private static final byte SENSOR_MULTILEVEL_REPORT = 0x05;
 
     public static final byte ID = 0x31;
-
+    public static final String genericKey = "21";
     private Type type;
     private Scale scale;
     private List<Double> values = new ArrayList<>();
@@ -162,5 +162,28 @@ public class MultilevelSensorCommandClass extends CommandClass {
                 ", scale=" + scale +
                 ", values=" + values +
                 '}';
+    }
+
+    @Override
+    public String getDeviceType() {
+        // TODO Auto-generated method stub
+        return "HC6";
+    }
+
+    @Override
+    public String getNicknameType() {
+        // TODO Auto-generated method stub
+        return "Multilevel Sensor";
+    }
+
+    @Override
+    public String getFunctionType() {
+        // TODO Auto-generated method stub
+        return "SENSOR_MULTILEVEL";
+    }
+    
+    @Override
+    public String getGenericKey() {
+        return genericKey;
     }
 }

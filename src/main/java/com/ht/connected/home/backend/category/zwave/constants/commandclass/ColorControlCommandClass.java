@@ -51,4 +51,27 @@ public class ColorControlCommandClass extends CommandClass {
                 ", value=" + value +
                 '}';
     }
+
+    @Override
+    public String getDeviceType() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getNicknameType() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getFunctionType() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public String getGenericKey() {
+        return "";
+    }
 }

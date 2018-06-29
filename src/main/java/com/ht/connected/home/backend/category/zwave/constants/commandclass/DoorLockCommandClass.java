@@ -10,23 +10,31 @@ package com.ht.connected.home.backend.category.zwave.constants.commandclass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Alarm Sensor Command Class.
- *
- * @author Dan Noguerol
- */
-public class AlarmSensorCommandClass extends CommandClass {
+public class DoorLockCommandClass extends CommandClass {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public static final byte SENSOR_ALARM_GET = 0x01;
-    public static final byte SENSOR_ALARM_REPORT = 0x02;
+   public static final byte DOOR_LOCK_CONFIGURATION_GET = 0x05;
+   public static final byte DOOR_LOCK_CONFIGURATION_REPORT = 0x06;
+   public static final byte DOOR_LOCK_CONFIGURATION_SET = 0x04;
+   public static final byte DOOR_LOCK_OPERATION_GET = 0x02;
+   public static final byte DOOR_LOCK_OPERATION_REPORT = 0x03;
+   public static final byte DOOR_LOCK_OPERATION_SET = 0x01;
 
-    public static final byte ID = (byte)0x9C;
-    public static final String genericKey = "A1";
+    public static final byte ID = (byte)0x062;
+    public static final String genericKey = "40";
+    private Configration configration;
+    private Operation operation;
+    private Byte value;
+
     
-    private Type type;
-    private byte level;
-
+    enum Configration{
+        configration
+    }
+    
+    enum Operation{
+        operation
+    }
+    
     @Override
     public byte getId() {
         return ID;
@@ -34,57 +42,37 @@ public class AlarmSensorCommandClass extends CommandClass {
 
     @Override
     public String getName() {
-        return "COMMAND_CLASS_SENSOR_ALARM";
+        return "COMMAND_CLASS_DOOR_LOCK";
     }
 
-    public Type getType() {
-        return type;
-    }
-
-    public byte getLevel() {
-        return level;
-    }
-
-    public enum Type {
-        GENERAL,
-        SMOKE,
-        CARBON_MONOXIDE,
-        CARBON_DIOXIDE,
-        HEAT,
-        FLOOD;
-
-        public static Type convert(byte b) {
-            return Type.values()[b];
-        }
+    public byte getValue() {
+        return value;
     }
 
     @Override
     public String toString() {
-        return "AlarmSensorCommandClass{" +
+        return "AlarmCommandClass{" +
                 "version=" + getVersion() +
-                ", type=" + type +
-                ", level=" + level +
+                "configration=" + configration +
+                "operation=" + operation +
+                ", value=" + value +
                 '}';
     }
 
     @Override
     public String getDeviceType() {
-        // TODO Auto-generated method stub
-        return null;
+        return "HC4";
     }
 
     @Override
     public String getNicknameType() {
-        // TODO Auto-generated method stub
-        return null;
+        return "Door Lock";
     }
 
     @Override
     public String getFunctionType() {
-        // TODO Auto-generated method stub
-        return null;
+        return "DOOR_LOCK";
     }
-    
     @Override
     public String getGenericKey() {
         return genericKey;

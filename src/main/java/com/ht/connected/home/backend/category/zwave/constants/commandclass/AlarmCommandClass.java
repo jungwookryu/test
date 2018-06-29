@@ -9,7 +9,11 @@ package com.ht.connected.home.backend.category.zwave.constants.commandclass;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+/**
+ * For door and window sensors, it is RECOMMENDED to use the Notification Type: “Access Control (0x06)“ with the events: “Door/Window Open” and ”Door/Window Closed” (respectively 0x16 and 0x17).
+ * @author COM
+ *
+ */
 public class AlarmCommandClass extends CommandClass {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -17,7 +21,10 @@ public class AlarmCommandClass extends CommandClass {
     public static final byte ALARM_REPORT = 0x05;
 
     public static final byte ID = (byte)0x71;
-
+    public static final int INT_ID = 0x71;
+    
+    public static final String genericKey = "07";
+    
     private byte type;
     private byte level;
 
@@ -46,5 +53,25 @@ public class AlarmCommandClass extends CommandClass {
                 ", type=" + type +
                 ", level=" + level +
                 '}';
+    }
+
+    @Override
+    public String getDeviceType() {
+        return "HC4";
+    }
+
+    @Override
+    public String getNicknameType() {
+        return "Notification Sensors";
+    }
+
+    @Override
+    public String getFunctionType() {
+        return "SENSOR_ALARM";
+    }
+
+    @Override
+    public String getGenericKey() {
+        return genericKey;
     }
 }

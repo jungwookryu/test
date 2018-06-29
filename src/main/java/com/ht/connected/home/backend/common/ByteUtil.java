@@ -49,6 +49,14 @@ public class ByteUtil {
         return new String(hexChars);
     }
 
+    static public String createString2(byte b) {
+        char[] hexChars = new char[4];
+        int v = b & 0xFF;
+        hexChars[2] = hexArray[v >>> 4];
+        hexChars[3] = hexArray[v & 0x0F];
+        return new String(hexChars);
+    }
+    
     static public int convertTwoBytesToInt(byte msb, byte lsb) {
         return (msb << 8) | (lsb);
     }

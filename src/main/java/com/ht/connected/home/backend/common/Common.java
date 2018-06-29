@@ -379,15 +379,5 @@ public class Common {
         return rtnString;
     }
     
-    
-    public static String zwaveNickname(Properties properties, String key) {
-        
-        String rtnNickname = "Device";
-        if(null!=properties) {
-            if(!StringUtils.isEmpty(properties.getProperty(key))) {
-                rtnNickname = properties.getProperty(key).replace("SPECIFIC_TYPE_","").replace("_BINARY","").replace("_"," ").toLowerCase();
-            }
-        }
-        return rtnNickname;
-    }
+
 }

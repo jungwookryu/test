@@ -2,12 +2,12 @@ package com.ht.connected.home.backend.category.ir;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.shiro.crypto.hash.Hash;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,6 +48,7 @@ public class IRController extends CommonController {
     public enum Devicetype {
         aircon, tv, fan;
     }
+    
 
     /**
      * 201, 204, 500, 406
@@ -120,8 +121,8 @@ public class IRController extends CommonController {
     public ResponseEntity getIRTypeInfo() {
         String useEmail = getAuthUserEmail();
         HashMap map = new HashMap();
-        map.put(IRTypeInfo.devicetype.name(), Arrays.asList("aircon", "tv", "fan"));
-        map.put(IRTypeInfo.devicemodel.name(), Arrays.asList("aircon", "tv", "fan"));
+        map.put(IRTypeInfo.devicetype.name(), Devicetype.values());
+        map.put(IRTypeInfo.devicemodel.name(),  Devicetype.values());
         map.put(IRTypeInfo.deviceiridx.name(), Arrays.asList(1, 2, 3));
         return new ResponseEntity(map, HttpStatus.OK);
     }

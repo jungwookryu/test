@@ -177,6 +177,7 @@ public class MqttConfig {
                             if (CategoryActive.gateway.zwave.name().equals(topicSplited[5].toString())) {
                                 ZWaveRequest zwaveRequest = new ZWaveRequest(topicSplited);
                                 if (CategoryActive.zwave.certi.name().equals(topicSplited[6].toString())) {
+                                    
                                     zwaveService.subscribe(zwaveRequest, payload);
                                 }
                                 if (CategoryActive.zwave.init.name().equals(topicSplited[6].toString())) {
