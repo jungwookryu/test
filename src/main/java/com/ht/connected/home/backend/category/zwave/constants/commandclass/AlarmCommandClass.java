@@ -21,6 +21,8 @@ public class AlarmCommandClass extends CommandClass {
     public static final byte ALARM_REPORT = 0x05;
 
     public static final byte ID = (byte)0x71;
+    public static final int INT_ID = 0x71;
+    
     public static final String genericKey = "07";
     
     private byte type;
