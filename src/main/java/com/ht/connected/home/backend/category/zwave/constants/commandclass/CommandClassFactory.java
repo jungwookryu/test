@@ -72,42 +72,42 @@ public class CommandClassFactory {
     public static CommandClass createSCmdClass(Endpoint endpoint) {
         
         if(endpoint.getGeneric().equals(AlarmCommandClass.genericKey)){
-            if(endpoint.getCmdCls().contains(ByteUtil.getHexString((int) AlarmCommandClass.ID))) {
+            if(endpoint.getCmdCls().contains(ByteUtil.getHexString2((int) AlarmCommandClass.ID))) {
                 return new AlarmCommandClass();
             }
         }
         else if(endpoint.getGeneric().equals(AlarmSensorCommandClass.genericKey)){
-            if(endpoint.getCmdCls().contains(ByteUtil.getHexString((int) AlarmSensorCommandClass.ID))) {
+            if(endpoint.getCmdCls().contains(ByteUtil.getHexString2((int) AlarmSensorCommandClass.ID))) {
                 return new AlarmSensorCommandClass();
             }
         }
         else if(endpoint.getGeneric().equals(BinarySensorCommandClass.genericKey)){
-            if(endpoint.getCmdCls().contains(ByteUtil.getHexString((int) BinarySensorCommandClass.ID))) {
+            if(endpoint.getCmdCls().contains(ByteUtil.getHexString2((int) BinarySensorCommandClass.ID))) {
                 return new BinarySensorCommandClass();
             }
         }
         else if(endpoint.getGeneric().equals(BinarySwitchCommandClass.genericKey)){
-            if(endpoint.getCmdCls().contains(ByteUtil.getHexString((int) BinarySwitchCommandClass.ID))) {
+            if(endpoint.getCmdCls().contains(ByteUtil.getHexString2((int) BinarySwitchCommandClass.ID))) {
                 return new BinarySwitchCommandClass();
             }
         }
         else if(endpoint.getGeneric().equals(DoorLockCommandClass.genericKey)){
-            if(endpoint.getCmdCls().contains(ByteUtil.getHexString((int) DoorLockCommandClass.ID))) {
+            if(endpoint.getCmdCls().contains(ByteUtil.getHexString2((int) DoorLockCommandClass.ID))) {
                 return new DoorLockCommandClass();
             }
         }
         else if(endpoint.getGeneric().equals(MeterCommandClass.genericKey)){
-            if(endpoint.getCmdCls().contains(ByteUtil.getHexString((int) MeterCommandClass.ID))) {
+            if(endpoint.getCmdCls().contains(ByteUtil.getHexString2((int) MeterCommandClass.ID))) {
                 return new MeterCommandClass();
             }
         }
         else if(endpoint.getGeneric().equals(MultilevelSensorCommandClass.genericKey)){
-            if(endpoint.getCmdCls().contains(ByteUtil.getHexString((int) MultilevelSensorCommandClass.ID))) {
+            if(endpoint.getCmdCls().contains(ByteUtil.getHexString2((int) MultilevelSensorCommandClass.ID))) {
                 return new MultilevelSensorCommandClass();
             }
         }
         else if(endpoint.getGeneric().equals(MultilevelSwitchCommandClass.genericKey)){
-            if(endpoint.getCmdCls().contains(ByteUtil.getHexString((int) MultilevelSwitchCommandClass.ID))) {
+            if(endpoint.getCmdCls().contains(ByteUtil.getHexString2((int) MultilevelSwitchCommandClass.ID))) {
                 return new MultilevelSwitchCommandClass();
             }
         }
