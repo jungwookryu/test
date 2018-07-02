@@ -682,8 +682,8 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
 
     private Endpoint saveEndpoint(Endpoint endpoint) {
         endpoint = endpointType(endpoint);
-        endpointRepository.save(endpoint);
-        return null;
+        endpoint = endpointRepository.save(endpoint);
+        return endpoint;
     }
     
     private void notificationZWave(ZWaveRequest zwaveRequest) {
