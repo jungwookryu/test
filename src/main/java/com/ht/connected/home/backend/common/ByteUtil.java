@@ -80,7 +80,10 @@ public class ByteUtil {
      * @return
      */
     static public String getHexString(Integer number) {
-        return "0x" + String.format("%2s", Integer.toHexString(number)).replace(' ', '0');
+        return "0x" + getHexString2(number);
+    }
+    static public String getHexString2(Integer number) {
+        return String.format("%2s", Integer.toHexString(number)).replace(' ', '0');
     }
     
     /**
