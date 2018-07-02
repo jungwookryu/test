@@ -126,6 +126,7 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
      */
     private Gateway updateGateway(Gateway gateway) {
         if (!isNull(gateway)) {
+            gateway.setNickname("host_"+gateway.getSerial());
             gatewayRepository.save(gateway);
         }
         return gateway;
