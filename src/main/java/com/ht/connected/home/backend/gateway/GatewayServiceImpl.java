@@ -282,12 +282,8 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
             if(Common.notEmpty(gateway.getCreatedUserId())) {
                 saveGateway.setCreatedUserId(gateway.getCreatedUserId());
             }
-            if(originGateway != saveGateway) {
-                Gateway rtnGateway = gatewayRepository.save(originGateway);
-                return rtnGateway;
-            }else {
-                return originGateway;
-            }
+            Gateway rtnGateway = gatewayRepository.save(originGateway);
+            return rtnGateway;
         }else {
             return new Gateway(); 
         }
