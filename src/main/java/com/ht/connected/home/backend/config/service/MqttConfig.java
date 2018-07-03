@@ -2,6 +2,7 @@ package com.ht.connected.home.backend.config.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -69,6 +70,9 @@ public class MqttConfig {
     @Autowired
     private IRService irService;
 
+    @Autowired
+    ConnectionFactory connectionFactory;
+    
     /**
      * MQTT 클라언트 생성
      * @return
@@ -111,6 +115,7 @@ public class MqttConfig {
      */
     @Bean
     public MessageProducer MqttInbound() {
+        
         MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(
                 springMqttClientIdPrefix + System.nanoTime(), mqttClientFactory(), springMqttChannelServer);
         adapter.setCompletionTimeout(5000);

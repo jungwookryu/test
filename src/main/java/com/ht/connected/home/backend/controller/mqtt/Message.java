@@ -1,7 +1,7 @@
 package com.ht.connected.home.backend.controller.mqtt;
 
 public class Message {
-	private String messageType;
+    private String messageType;
 
     private String messageBody;
 
