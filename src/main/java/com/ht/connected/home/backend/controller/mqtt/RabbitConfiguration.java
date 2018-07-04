@@ -5,28 +5,29 @@ import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageListener;
+import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
+import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.amqp.SimpleRabbitListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
 
 @Configuration
 @EnableRabbit
 public class RabbitConfiguration {
-    String activemqUser = "iot2";
+    String activemqUser = "iot4";
     String activemqPassword = "@iot@";
     String activemqPoolEnable = "true";
     int activemqPoolMaxConnections = 50;
@@ -34,124 +35,85 @@ public class RabbitConfiguration {
     String activemqZwaveCert = "certi";
     String activemqQueueName = "amqp";
     String activemqExchangeQueueName = "amq.topic";
-    String springMqttChannelServer = "/host/#";
+    String springMqttChannelServer = "/a/#";
+    String springActivemqQueueName = "htConnectedServerQueue1";
+    
     public static final String LOG = "rabbitmqlog";
+    
     private static final Logger logger = LoggerFactory.getLogger(RabbitConfiguration.class);
+
+    @Autowired
+    ConsumerListener consumerListener;
+    
+    public void configureRabbitTemplate(RabbitTemplate rabbitTemplate) {
+        rabbitTemplate.setExchange(activemqExchangeQueueName);      
+    }
+
     @Bean
     public Queue queue() {
-        Queue queue =new Queue (activemqQueueName, false) ;
+        Queue queue =new Queue (springActivemqQueueName, false) ;
         return queue;
     }
 
+    
     @Bean
-    public TopicExchange exchange() {
-        return new TopicExchange(activemqExchangeQueueName);
+    public AmqpTemplate rabbitTemplate() {
+        RabbitTemplate template = new RabbitTemplate(connectionFactory());
+        template.setMessageConverter(jsonMessageConverter());
+        configureRabbitTemplate(template);
+        return template;
     }
 
     @Bean
-    public Binding binding() {
-        return BindingBuilder.bind(queue()).to(exchange()).with(springMqttChannelServer);
+    SimpleMessageListenerContainer container() {
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+        container.setQueues(queue());
+        container.setConnectionFactory(connectionFactory());
+        container.setMessageListener(listenerAdapter());
+        return container;
     }
-
-    @Bean
-    public Jackson2JsonMessageConverter jsonMessageConverter() {
-        return new Jackson2JsonMessageConverter();
-    }
-
-//    @Bean
-//    public SimpleMessageListenerContainer messageListenerContainer() {
-//        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(connectionFactory());
-//        container.setQueues(queue());
-//        container.setMessageListener(exampleListener());
-//        container.setAcknowledgeMode(AcknowledgeMode.AUTO);
-//        return container;
-//    }
-
-    @Bean
-    public MessageListener exampleListener() {
-        return new MessageListener() {
-            @Override
-            public void onMessage(Message message) {
-                logger.info("received: " + message);
-            }
-        };
-
-    }
+    
     @Bean
     public ConnectionFactory connectionFactory() {
-        String springMqttActualHost = "iot.testing.htiotservice.com";
-        int springMqttActualPort = 5673;
-        ConnectionFactory connectionFactory = new ConnectionFactory();
-        connectionFactory.setHost(springMqttActualHost);
-        connectionFactory.setPort(springMqttActualPort);
-        connectionFactory.setUsername("iot3");
-        connectionFactory.setPassword("@iot@");
+        String springMqttActualHost = "iot.dev.htiotservice.com";
+        CachingConnectionFactory connectionFactory = new CachingConnectionFactory(springMqttActualHost, 5673);
+        connectionFactory.setUsername(activemqUser);
+        connectionFactory.setPassword(activemqPassword);
+//        connectionFactory.setPublisherConfirms(true);
         return connectionFactory;
     }
-//    @Bean
-//    public CachingConnectionFactory connectionFactory() {
-//        String springMqttActualHost = "iot.testing.htiotservice.com";
-//        int springMqttActualPort = 5673;
-//        CachingConnectionFactory connectionFactory = new CachingConnectionFactory(springMqttActualHost, springMqttActualPort);
-//        connectionFactory.setUsername("iot3");
-//        connectionFactory.setPassword("@iot@");
-//        connectionFactory.setPublisherConfirms(true);
-//        return connectionFactory;
-//    }
-    
-//    @Bean
-//    public ConnectionFactory connectionFactory() {
-//        String springMqttActualHost = "iot.testing.htiotservice.com";
-//        int springMqttActualPort = 5673;
-//        CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
-//        connectionFactory.setHost(springMqttActualHost);
-//        connectionFactory.setPort(springMqttActualPort);
-//        connectionFactory.setUsername("iot3");
-//        connectionFactory.setPassword("@iot@");
-//        return connectionFactory;
-//    }
+
+    @Bean
+    DirectExchange exchange() {
+        return new DirectExchange(activemqExchangeQueueName);
+    }
+
+     @Bean
+     public Jackson2JsonMessageConverter jsonMessageConverter() {
+     Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
+    // converter.setClassMapper(classMapper());
+     return converter;
+     }
+     @Bean
+     public Binding binding() throws IOException, TimeoutException {
+//         channel().queueBind(activemqExchangeQueueName, activemqQueueName, springMqttChannelServer);
+         return BindingBuilder.bind(queue()).to(exchange()).with(springMqttChannelServer);
+     }
+    // @Bean
+    // public DefaultClassMapper classMapper() {
+    // DefaultClassMapper typeMapper = new DefaultClassMapper();
+    // typeMapper.setDefaultType(Message.class);
+    // return typeMapper;
+    // }
 
 
-    
-//    @Bean
-//    Channel zwaveChannel() throws IOException, TimeoutException {
-//        Connection newConnection = connectionFactory().newConnection();
-//        Channel zwaveChannel = newConnection.createChannel();
-        
-//        zwaveChannel.queueDeclare(QUEUE_NAME, false, false, false, null);
-//        zwaveChannel.queueBind(activemqQueueName, activemqExchangeQueueName, ".server.#");
-//      
-//          zwaveChannel.basicConsume(activemqQueueName, true,  new DefaultConsumer(zwaveChannel) {
-//              @Override
-//              public void handleDelivery(String consumerTag,
-//                                         Envelope envelope,
-//                                         AMQP.BasicProperties properties,
-//                                         byte[] body)
-//                  throws IOException
-//              {
-//                  String routingKey = envelope.getRoutingKey();
-//                  String contentType = properties.getContentType();
-//                  long deliveryTag = envelope.getDeliveryTag();
-//                  // (process the message components here ...)
-//                  zwaveChannel.basicAck(deliveryTag, false);
-//              }
-//          });
-//          new MessageListener() {
-//              @Override
-//              public void onMessage(Message message) {
-//                  logger.info("received: " + message);
-//              }
-//          };
+    @Bean
+    MessageListenerAdapter listenerAdapter() {
+        MessageListenerAdapter adapter = new MessageListenerAdapter(consumerListener, "onMessage");
+        // adapter.setMessageConverter(jsonMessageConverter());
+        return adapter;
+    }
 
-//        zwaveChannel.close();
-//        newConnection.close();
-//        return zwaveChannel;
-//    }
-    
-    
-    
-    
-    
-    
+
 
 }

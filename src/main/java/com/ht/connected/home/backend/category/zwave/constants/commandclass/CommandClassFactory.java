@@ -111,13 +111,11 @@ public class CommandClassFactory {
                 return new MultilevelSwitchCommandClass();
             }
         }
-//        else {
-//            if(endpoint.getCmdCls().contains(ByteUtil.getHexString((int) NoOperationCommandClass.ID))) {
-//                return new NoOperationCommandClass();
-//            }
-//        }
+        else if(endpoint.getCmdCls().contains(ByteUtil.getHexString((int) NoOperationCommandClass.ID))) {
+                return new NoOperationCommandClass();
+        }
          else {
-            return null;
+             return new NoOperationCommandClass();
         }
         return null;
     }

@@ -671,12 +671,11 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         List<CmdCls> cmdCls  = endpoint.getCmdClses();
             
         commandClass = CommandClassFactory.createSCmdClass(endpoint);
-        
-        endpoint.setDeviceType(commandClass.getDeviceType());
-        endpoint.setDeviceNickname(commandClass.getNicknameType());
-        endpoint.setDeviceFunctions(commandClass.getFunctionType());
-        nicknameType = commandClass.getNicknameType();
-        functionType = commandClass.getFunctionType(); 
+        if(!isNull(commandClass)) {
+            endpoint.setDeviceType(commandClass.getDeviceType());
+            endpoint.setDeviceNickname(commandClass.getNicknameType());
+            endpoint.setDeviceFunctions(commandClass.getFunctionType());
+        }
         return endpoint;
     }
 
