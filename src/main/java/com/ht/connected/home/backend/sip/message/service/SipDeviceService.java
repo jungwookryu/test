@@ -34,7 +34,7 @@ public class SipDeviceService {
      */
     public boolean addDevice(SipMqttRequestMessageDto request) {
         boolean isSuccess = false;
-        SipDevice device = deviceRepository.findBySerialNumberAndUserPassword(request.getBody().get("deviceNo").toString(), request.getBody().get("devicePassword").toString());
+        SipDevice device = deviceRepository.findBySerialNumber(request.getBody().get("deviceNo").toString());
         if (!isNull(device)) {
             device.setOwnerAccount(request.getBody().get("userID").toString());
             device.setSerialNumber(request.getBody().get("deviceNo").toString());
