@@ -65,7 +65,6 @@
 	                event.getThreadName().contains("MqttConfig")
 	            </expression>
 	        </evaluator>
-			
 			<onMatch>ACCEPT</onMatch>
 			<!-- <onMismatch>DENY</onMismatch> -->
 		</filter>
@@ -83,6 +82,16 @@
                 <maxFileSize>100MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <!-- <level>INFO</level> -->
+            <evaluator name="loggingTaskMqtt">
+                <expression>
+                    event.getThreadName().contains("amqp")
+                </expression>
+            </evaluator>
+            <onMatch>ACCEPT</onMatch>
+            <!-- <onMismatch>DENY</onMismatch> -->
+        </filter>
         <encoder>
             <pattern>%d{yyyyMMdd HH:mm:ss.SSS} [%thread] %-3level %logger{5} - %msg %n</pattern>
         </encoder>

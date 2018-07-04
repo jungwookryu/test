@@ -117,7 +117,7 @@ public class CommandClassFactory {
 //            }
 //        }
          else {
-            return null;
+             return new NoOperationCommandClass();
         }
         return null;
     }

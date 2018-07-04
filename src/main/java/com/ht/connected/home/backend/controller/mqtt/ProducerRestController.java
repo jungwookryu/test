@@ -40,7 +40,7 @@ public class ProducerRestController{
     @PostMapping("/")
     public void run(@RequestBody Message message, HttpServletRequest request) throws InterruptedException {
         
-        logger.info("Sending message... Start");
+        logger.debug("Sending message... Start");
         
         org.springframework.amqp.core.Message replyMessage = this.rabbitTemplate.sendAndReceive(message.getMessageType(),
                 new org.springframework.amqp.core.Message(message.getMessageBody().getBytes(), new MessageProperties()));
@@ -50,25 +50,25 @@ public class ProducerRestController{
         // send a message to the default exchange to be routed to the queue
         
         if (this.confirmLatch.await(10, TimeUnit.SECONDS)) {
-            System.out.println("Confirm received");
+            logger.debug("Confirm received");
         }
         else {
-            System.out.println("Confirm NOT received");
+            logger.debug("Confirm NOT received");
         }
         if (this.listenLatch.await(10, TimeUnit.SECONDS)) {
-            System.out.println("Message received by listener");
+            logger.debug("Message received by listener");
         }
         else {
-            System.out.println("Message NOT received by listener");
+            logger.debug("Message NOT received by listener");
         }
         
         if (this.returnLatch.await(10, TimeUnit.SECONDS)) {
-            System.out.println("Return received");
+            logger.debug("Return received");
         }
         else {
-            System.out.println("Return NOT received");
+            logger.debug("Return NOT received");
         }
-        logger.info("Sending message..messageType::: " + message.toString());
+        logger.info("Sending message..messageBody::: " + message.getMessageBody().toString());
         
 //        return new ResponseEntity<>(message.toString(), HttpStatus.OK);
 //        return new ResponseEntity<>( HttpStatus.OK);
@@ -81,12 +81,12 @@ public class ProducerRestController{
          */
         this.rabbitTemplate.setConfirmCallback((correlation, ack, reason) -> {
             if (correlation != null) {
-                System.out.println("Received " + (ack ? " ack " : " nack ") + "for correlation: " + correlation);
+                logger.debug("Received " + (ack ? " ack " : " nack ") + "for correlation: " + correlation);
             }
             this.confirmLatch.countDown();
         });
         this.rabbitTemplate.setReturnCallback((message, replyCode, replyText, exchange, routingKey) -> {
-            System.out.println("Returned: " + message + "\nreplyCode: " + replyCode
+            logger.debug("Returned: " + message + "\nreplyCode: " + replyCode
                     + "\nreplyText: " + replyText + "\nexchange/rk: " + exchange + "/" + routingKey);
             this.returnLatch.countDown();
         });
@@ -94,13 +94,14 @@ public class ProducerRestController{
          * Replace the correlation data with one containing the converted message in case
          * we want to resend it after a nack.
          */
-        this.rabbitTemplate.setCorrelationDataPostProcessor((message, correlationData) ->
-                new CompleteMessageCorrelationData(correlationData != null ? correlationData.getId() : null, message));
+        this.rabbitTemplate.convertAndSend("amq.topic", activemqQueueName, "a.aa", new CorrelationData("Correlation for message 1"));
+//        this.rabbitTemplate.setCorrelationDataPostProcessor((message, correlationData) ->
+//                new CompleteMessageCorrelationData(correlationData != null ? correlationData.getId() : null, message));
     }
     
     @RabbitListener
     public void listen(String in) {
-        System.out.println("Listener received: " + in);
+        logger.debug("Listener received: " + in);
         this.listenLatch.countDown();
     }
 
