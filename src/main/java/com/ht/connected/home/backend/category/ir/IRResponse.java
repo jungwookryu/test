@@ -1,5 +1,7 @@
 package com.ht.connected.home.backend.category.ir;
 
+import static java.util.Objects.isNull;
+
 import org.eclipse.jetty.util.StringUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,11 +55,11 @@ public class IRResponse extends RequestBase{
             jsonObj = new JSONObject(payload);
         }
         Object type = jsonObj.get("type");
-        if(type!=null) {
+        if(!isNull(type)) {
             this.type = jsonObj.getString("type");
         }
         Object response = jsonObj.get("response");
-        if(response!=null) {
+        if(!isNull(type)) {
 //            this.response = jsonObj.getJSONObject("response");
         }
     }
