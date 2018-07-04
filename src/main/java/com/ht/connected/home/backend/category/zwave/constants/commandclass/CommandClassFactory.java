@@ -111,6 +111,9 @@ public class CommandClassFactory {
                 return new MultilevelSwitchCommandClass();
             }
         }
+        else if(endpoint.getGeneric().equals(GatewayCommandClass.genericKey)&&endpoint.getSpecific().equals(GatewayCommandClass.specificKey)){
+            return new GatewayCommandClass();
+        }
         else if(endpoint.getCmdCls().contains(ByteUtil.getHexString((int) NoOperationCommandClass.ID))) {
                 return new NoOperationCommandClass();
         }
