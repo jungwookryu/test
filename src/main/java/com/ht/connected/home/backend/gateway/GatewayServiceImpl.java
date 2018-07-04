@@ -126,7 +126,6 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
      */
     private Gateway updateGateway(Gateway gateway) {
         if (!isNull(gateway)) {
-            gateway.setNickname("host_"+gateway.getSerial());
             gatewayRepository.save(gateway);
         }
         return gateway;
@@ -172,6 +171,7 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
             gateway.setSerial(topicSplited[4]);
             gateway.setModel(topicSplited[3]);
             gateway.setStatus(gateway.getType());
+            gateway.setCreatedUserId(gateway.getUserEmail());
             if (type.register.name().equals(gateway.getType())) {
                 Gateway exangeGateway = gatewayRepository.findBySerial(gateway.getSerial());
                 if(null != exangeGateway && (!exangeGateway.getCreatedUserId().equals(gateway.getCreatedUserId()))) {
@@ -193,7 +193,7 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
                         exangeGateway.setCreatedTime(new Date());
                         exangeGateway.setBssid(gateway.getBssid());
                         exangeGateway.setSsid(gateway.getSsid());
-                        exangeGateway.setNickname((String) Common.isNullrtnByobj(gateway.getNickname(), "host_"+gateway.getSerial()));
+                        exangeGateway.setNickname((String) Common.isNullrtnByobj(gateway.getNickname(), topicSplited[1]+"_"+gateway.getSerial()));
                         updateGateway(exangeGateway);
                         updateUserGateway(exangeGateway, user.getNo());
                         String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/manager/product/registration", gateway.getModel(),
@@ -282,12 +282,8 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
             if(Common.notEmpty(gateway.getCreatedUserId())) {
                 saveGateway.setCreatedUserId(gateway.getCreatedUserId());
             }
-            if(originGateway != saveGateway) {
-                Gateway rtnGateway = gatewayRepository.save(originGateway);
-                return rtnGateway;
-            }else {
-                return originGateway;
-            }
+            Gateway rtnGateway = gatewayRepository.save(originGateway);
+            return rtnGateway;
         }else {
             return new Gateway(); 
         }
