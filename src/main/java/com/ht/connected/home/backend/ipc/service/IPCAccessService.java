@@ -73,7 +73,7 @@ public class IPCAccessService {
      */
     public ResponseEntity<String> createSubAccount(String iotAccount) {
         String profile = env.getRequiredProperty("spring.profiles.active");
-        if (profile.equals("staging")) {
+        if (profile.equals("develop") == false) {
             testAccountTail = "";
         }
         String accountName = subAccountPrefix + iotAccount.replace("@", "_").replaceAll("[^A-Za-z0-9_]", "")
