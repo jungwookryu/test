@@ -132,6 +132,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     @Override
     public void subscribe(String[] topicSplited, String payload) throws JsonParseException, JsonMappingException, IOException, JSONException {
         if (topicSplited.length > 4) {
+            String targetType = topicSplited[1];
             String model = topicSplited[3];
             String serial = topicSplited[4];
             if (Common.notEmpty(payload)) {

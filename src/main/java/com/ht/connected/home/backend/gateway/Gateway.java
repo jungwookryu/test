@@ -77,6 +77,10 @@ public class Gateway {
     @JsonProperty("lastmodified_time")
     private Date lastModifiedTime;
 
+    @Column(name = "target_type")
+    @JsonProperty("target_type")
+    private String targetType;
+
     @Transient
     @JsonProperty("user_nick_name")
     private String userNickname;
@@ -231,14 +235,29 @@ public class Gateway {
         this.type = type;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+
+
+    public String getHomeid() {
+        return homeid;
+    }
+
+    public void setHomeid(String homeid) {
+        this.homeid = homeid;
+    }
+
+    public String getTargetType() {
+        return targetType;
+    }
+
+    public void setTargetType(String targetType) {
+        this.targetType = targetType;
+    }
+
     @Override
     public String toString() {
         return "Gateway [no=" + no + ", nickname=" + nickname + ", id=" + id + ", ip=" + ip + ", ssid=" + ssid + ", bssid=" + bssid + ", serial=" + serial + ", version=" + version + ", model=" + model
-                + ", status=" + status + ", createdUserId=" + createdUserId + ", createdTime=" + createdTime + ", lastModifiedTime=" + lastModifiedTime + ", userNickname=" + userNickname
-                + ", userEmail=" + userEmail + ", type=" + type + "]";
+                + ", status=" + status + ", homeid=" + homeid + ", createdUserId=" + createdUserId + ", createdTime=" + createdTime + ", lastModifiedTime=" + lastModifiedTime + ", targetType="
+                + targetType + ", userNickname=" + userNickname + ", userEmail=" + userEmail + ", type=" + type + "]";
     }
 
 }

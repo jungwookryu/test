@@ -57,8 +57,7 @@ public class MqttConfig {
     String springMqttPassword;
     @Value("${spring.mqtt.client-id-prefix}")
     String springMqttClientIdPrefix;
-    @Value("${spring.mqtt.channel.server}")
-    String springMqttChannelServer;
+    
     @Value("${mqtt.topic.manager.noti}")
     String mqttTopicManagerNoti;
 
@@ -115,7 +114,17 @@ public class MqttConfig {
      */
     @Bean
     public MessageProducer MqttInbound() {
-        
+        String springMqttChannelServer;
+        String sActive = env.getRequiredProperty("spring.profiles.active");
+        if (StringUtils.isEmpty(sActive)) {
+            sActive = "dev";
+        }
+        if("local".equals(sActive)) {
+            springMqttChannelServer = env.getRequiredProperty("spring.mqtt." + sActive + ".broker-url");
+        }else {
+            springMqttChannelServer = env.getRequiredProperty("spring.mqtt.channel.server");
+        }
+
         MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(
                 springMqttClientIdPrefix + System.nanoTime(), mqttClientFactory(), springMqttChannelServer);
         adapter.setCompletionTimeout(5000);
@@ -171,6 +180,7 @@ public class MqttConfig {
                         Gateway gateway = new Gateway();
                         if (4 <= topicSplited.length) {
                             gateway = new Gateway(topicSplited[3].toString(), topicSplited[4].toString());
+                            gateway.setTargetType(topicSplited[1]);
                         }
                         // 서버에서 보낸것이 아닐경우만 subscribe함.
                         if (!Target.server.name().equals(topicSplited[1].toString())) {
