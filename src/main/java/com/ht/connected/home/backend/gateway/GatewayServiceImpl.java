@@ -168,19 +168,19 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
         String[] topicSplited = topic.split("/");
         if (topic.contains("noti")) {
             Gateway gateway = objectMapper.readValue(payload, Gateway.class);
-            gateway.setSerial(topicSplited[4]);
+            gateway.setTargetType(topicSplited[1]);
             gateway.setModel(topicSplited[3]);
+            gateway.setSerial(topicSplited[4]);
             gateway.setStatus(gateway.getType());
             gateway.setCreatedUserId(gateway.getUserEmail());
             if (type.register.name().equals(gateway.getType())) {
                 Gateway exangeGateway = gatewayRepository.findBySerial(gateway.getSerial());
+                exangeGateway.setLastModifiedTime(new Date());
                 if(null != exangeGateway && (!exangeGateway.getCreatedUserId().equals(gateway.getCreatedUserId()))) {
                     exangeGateway.setStatus("failAp");
-                    exangeGateway.setLastModifiedTime(new Date());
                     updateGateway(exangeGateway);
                 }else {
                     List<User> users = userRepository.findByUserEmail(gateway.getUserEmail());
-                    gateway.setLastModifiedTime(new Date());
                     if (users.size() > 0) {
                         User user = users.get(0);
                         if (exangeGateway == null) {
@@ -243,7 +243,7 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
         updateDeleteDB(no);
         // host 삭제 모드 요청 publish
         Gateway gateway = findOne(no);
-        String exeTopic = String.format("/" + Target.server.name() + "/" + Target.host.name() + "/%s/%s/manager/reset", gateway.getModel(), gateway.getSerial());
+        String exeTopic = String.format("/" + Target.server.name() + "/" + gateway.getTargetType() + "/%s/%s/manager/reset", gateway.getModel(), gateway.getSerial());
         publish(exeTopic, null);
     }
 

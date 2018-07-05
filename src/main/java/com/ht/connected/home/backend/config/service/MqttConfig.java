@@ -180,6 +180,7 @@ public class MqttConfig {
                         Gateway gateway = new Gateway();
                         if (4 <= topicSplited.length) {
                             gateway = new Gateway(topicSplited[3].toString(), topicSplited[4].toString());
+                            gateway.setTargetType(topicSplited[1]);
                         }
                         // 서버에서 보낸것이 아닐경우만 subscribe함.
                         if (!Target.server.name().equals(topicSplited[1].toString())) {

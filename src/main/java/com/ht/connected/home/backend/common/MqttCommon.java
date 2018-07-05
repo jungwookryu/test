@@ -74,7 +74,7 @@ public class MqttCommon {
         return topic;
     }
     public static String getMqttPublishTopic(MqttRequest mqttRequest) {
-        String topic = getMqttPublishTopic(mqttRequest, Target.host.name());
+        String topic = getMqttPublishTopic(mqttRequest, mqttRequest.getTarget());
         return topic;
     }
 }

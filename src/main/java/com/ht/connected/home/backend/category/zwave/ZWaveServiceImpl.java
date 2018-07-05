@@ -130,6 +130,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     @Override
     public ResponseEntity execute(HashMap<String, Object> req, ZWaveRequest zwaveRequest, boolean isCert) throws JsonProcessingException {
         logging.info("zwaveRequest.getClassKey()::::" + zwaveRequest.getClassKey());
+        zwaveRequest.setTarget(Target.host.name());
         return publish(req, zwaveRequest);
     }
 
@@ -264,6 +265,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     @Override
     public void execute(Map map, boolean isCert) throws JsonProcessingException {
         String topic = getZwaveTopic(map);
+        map.put("target", "host");
         HashMap map1 = getPublishPayload((HashMap) map);
         publish(topic, map1);
     }
@@ -314,6 +316,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     public String getZwaveTopic(Map map) {
         String topic = "";
         String nodeId = ByteUtil.getHexString((Integer) map.getOrDefault("nodeId", 0));;
+        String target = (String) map.getOrDefault("target", "host");
         String endPointId = ByteUtil.getHexString((Integer) map.getOrDefault("endpointId", 0));
         String serial = (String) map.getOrDefault("serial", "01234567");
         String commandKey = (String) map.getOrDefault("cmdkey", "0x00");
@@ -321,7 +324,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         String version = (String) map.getOrDefault("version", "v1");
         String option = Integer.toString((int) map.getOrDefault("option", 0));
         String model = (String) map.getOrDefault("model", "");
-        String[] segments = new String[] { "/server", Target.host.name(), model, serial, "zwave", "certi",
+        String[] segments = new String[] { "/server", target, model, serial, "zwave", "certi",
                 classkey, commandKey, version, nodeId, endPointId, option };
         topic = String.join("/", segments);
         logging.info("====================== ZWAVE PROTO MQTT PUBLISH TOPIC ======================");
@@ -407,11 +410,12 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         Gateway gateway = gatewayRepository.getOne(zwave.getGatewayNo());
         int iRtn = zwaveRepository.setFixedStatusForNo(status.delete.name(), no);
         MqttRequest mqttRequest = new MqttRequest();
+        mqttRequest.setTarget(gateway.getTargetType());
         mqttRequest.setSerialNo(gateway.getSerial());
         mqttRequest.setModel(gateway.getModel());
         mqttRequest.setClassKey(NetworkManagementInclusionCommandClass.INT_ID);
         mqttRequest.setCommandKey(NetworkManagementInclusionCommandClass.INT_NODE_REMOVE);
-        mqttRequest.setTarget(Target.host.name());
+        mqttRequest.setTarget(gateway.getTargetType());
         // TODO Gateway host version
         // mqttRequest.setVersion(gateway.getVersion());
         HashMap map = new HashMap<>();
@@ -466,7 +470,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         mqttRequest.setVersion("v1");
         mqttRequest.setNodeId(00);
         mqttRequest.setEndpointId(00);
-        String requestTopic = MqttCommon.getMqttPublishTopic(mqttRequest, Target.host.name());
+        String requestTopic = MqttCommon.getMqttPublishTopic(mqttRequest, gateway.getTargetType());
         publish(requestTopic);
         // TODO 기기 상태정보 가져오기
     }
@@ -531,7 +535,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
      * @return
      */
     public String getMqttPublishTopic(ZWaveRequest zwaveRequest) {
-        return getMqttPublishTopic(zwaveRequest, Target.host.name());
+        return getMqttPublishTopic(zwaveRequest, zwaveRequest.getTarget());
     }
 
     /**
