@@ -16,6 +16,12 @@ import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ZWaveRequest extends ZWave{
 
+    @JsonProperty("target")
+    private String target;
+
+    @JsonProperty("source")
+    private String source;
+    
     @JsonProperty("model")
     private String model;
 
@@ -47,6 +53,7 @@ public class ZWaveRequest extends ZWave{
      */
     public ZWaveRequest(String[] topic) {
         if (topic.length > 2) {
+            this.source = topic[1];
             this.model = topic[3];
             this.serialNo = topic[4];
             if (CategoryActive.zwave.certi.name().equals(topic[6].toString())) {
