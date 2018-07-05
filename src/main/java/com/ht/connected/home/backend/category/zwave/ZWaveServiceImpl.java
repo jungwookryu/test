@@ -280,8 +280,8 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     public void zwaveControl(ZWaveControl zWaveControl) throws JsonProcessingException {
 
         Gateway gateway = gatewayRepository.findOne(zWaveControl.getGateway_no());
-        ZWave zwave = zwaveRepository.findOne(zWaveControl.getZwave_no());
         Endpoint endpoint = endpointRepository.findOne(zWaveControl.getEndpoint_no());
+        ZWave zwave = zwaveRepository.findOne(endpoint.getZwaveNo());
 
         MqttRequest mqttRequest = new MqttRequest();
         mqttRequest.setNodeId(zwave.getNodeId());
@@ -294,7 +294,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         mqttRequest.setCommandKey(BasicCommandClass.INT_BASIC_SET);
         mqttRequest.setVersion("v1");
         mqttRequest.setSecurityOption("0");
-
+        mqttRequest.setTarget(gateway.getTargetType());
         HashMap map = new HashMap<>();
         map.put("value", zWaveControl.getValue());
         // map.put("currentValue", zWaveControl.getCurrentValue());
@@ -410,7 +410,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         Gateway gateway = gatewayRepository.getOne(zwave.getGatewayNo());
         int iRtn = zwaveRepository.setFixedStatusForNo(status.delete.name(), no);
         MqttRequest mqttRequest = new MqttRequest();
-        mqttRequest.setTarget(gateway.getTargetType());
+        
         mqttRequest.setSerialNo(gateway.getSerial());
         mqttRequest.setModel(gateway.getModel());
         mqttRequest.setClassKey(NetworkManagementInclusionCommandClass.INT_ID);
@@ -470,6 +470,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         mqttRequest.setVersion("v1");
         mqttRequest.setNodeId(00);
         mqttRequest.setEndpointId(00);
+        mqttRequest.setTarget(gateway.getTargetType());;
         String requestTopic = MqttCommon.getMqttPublishTopic(mqttRequest, gateway.getTargetType());
         publish(requestTopic);
         // TODO 기기 상태정보 가져오기
