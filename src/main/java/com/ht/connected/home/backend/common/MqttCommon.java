@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ht.connected.home.backend.service.mqtt.MqttRequest;
-import com.ht.connected.home.backend.service.mqtt.Target;
 
 /**
  * @author ijlee
@@ -73,8 +72,24 @@ public class MqttCommon {
         logger.info(topic);
         return topic;
     }
+    
     public static String getMqttPublishTopic(MqttRequest mqttRequest) {
         String topic = getMqttPublishTopic(mqttRequest, mqttRequest.getTarget());
         return topic;
     }
+    
+    public static String rtnCallbackAck(String ack, String target, String model, String serial) {
+        
+        ack = (String) Common.isNullrtnByobj(ack, "topic is null");
+        
+        if(Objects.nonNull(ack)) {
+            ack = ack.replace("{target}",(String) Common.isNullrtnByobj(target, "app"));
+            ack = ack.replace("{model}",(String) Common.isNullrtnByobj(target, "model"));
+            ack = ack.replace("{serial}",(String) Common.isNullrtnByobj(target, "serial"));
+            return ack;
+        }
+        return ack;
+    }
+
+    
 }

@@ -24,6 +24,7 @@ public class AlarmCommandClass extends CommandClass {
     public static final int INT_ID = 0x71;
     
     public static final String genericKey = "07";
+    public static final String specificKey ="01";
     
     private byte type;
     private byte level;
