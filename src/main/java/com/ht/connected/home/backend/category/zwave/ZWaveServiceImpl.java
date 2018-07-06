@@ -214,7 +214,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             }
         }
         // 기기삭제 모드 0x34/0x04 결과
-        if (zwaveRequest.getClassKey() == NetworkManagementInclusionCommandClass.INT_ID) {
+         if (zwaveRequest.getClassKey() == NetworkManagementInclusionCommandClass.INT_ID) {
             // 기기삭제 상태값 받은 경우
             if (zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_REMOVE_STATUS ||
                     zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_FAILED_NODE_STATUS) {
@@ -253,9 +253,10 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         if (zwaveRequest.getClassKey() == AlarmCommandClass.INT_ID) {
             // 기기상태값모드 받은 경우
             if (zwaveRequest.getCommandKey() == AlarmCommandClass.ALARM_REPORT) {
-                // 해당기기의 정보를 모두 삭제한다.
+                // 기기 상태값을 update 한다.
                 notificationZWave(zwaveRequest);
-                String topic = callbackAckProperties.getProperty("manager.product.remove");
+                HashMap map = new HashMap();
+                String topic = callbackAckProperties.getProperty("zwave.device.status");
                 String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), zwaveRequest.getModel(),  zwaveRequest.getSerialNo());
                 publish(exeTopic);
                 

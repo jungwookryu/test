@@ -179,8 +179,8 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
             gateway.setCreatedUserId(gateway.getUserEmail());
             if (type.register.name().equals(gateway.getType())) {
                 Gateway exangeGateway = gatewayRepository.findBySerial(gateway.getSerial());
-                exangeGateway.setLastModifiedTime(new Date());
                 if(null != exangeGateway && (!exangeGateway.getCreatedUserId().equals(gateway.getCreatedUserId()))) {
+                    exangeGateway.setLastModifiedTime(new Date());
                     exangeGateway.setStatus("failAp");
                     updateGateway(exangeGateway);
                 }else {
