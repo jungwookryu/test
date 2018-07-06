@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * Created by ijlee on 2018-02-05.
  */
 @Configuration
-public class ZWaveConfig {
+public class HTPropertiesConfig {
 	
     @Bean(name="zWaveProperties")
     public Properties zWaveProperties() throws IOException {
@@ -30,5 +30,13 @@ public class ZWaveConfig {
         zwaveNicknames.load(filePath);
         return zwaveNicknames;
     }
-
+    
+    @Bean(name="callbackAckProperties")
+    public Properties callbackAckProperties() throws IOException {
+        Properties callbackAckProperties =new Properties();
+        String propFile = "callbackAckMessage.properties";
+        InputStream filePath =getClass().getClassLoader().getResourceAsStream(propFile);
+        callbackAckProperties.load(filePath);
+        return callbackAckProperties;
+    }
 }
