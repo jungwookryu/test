@@ -68,7 +68,11 @@ import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
 public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements ZWaveService {
 
     private ZWaveRepository zwaveRepository;
-
+    
+    @Autowired
+    @Qualifier(value = "callbackAckProperties")
+    Properties callbackAckProperties;
+    
     enum event {
         delete, active, failed
     }
@@ -195,9 +199,8 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                                     for (int i = 0; i < nodeListItem.size(); i++) {
                                         ZWave nodeItem = nodeListItem.get(i);
                                         saveZWaveList(zwaveRequest, nodeItem, gateway);
-                                        // syncZWaveList(zwaveRequest, nodeItem, gateway);
-                                        String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/device/registration", gateway.getModel(),
-                                                gateway.getSerial());
+                                        String topic = callbackAckProperties.getProperty("ir.device.registration");
+                                        String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), gateway.getModel(),  gateway.getSerial());
                                         publish(exeTopic);
                                     }
                                 }
@@ -226,8 +229,8 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                 if (nodeId != -1) {
                     Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
                     deleteZwave(gateway.getNo(),nodeId);
-                    String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/device/remove", zwaveRequest.getModel(),
-                            zwaveRequest.getSerialNo());
+                    String topic = callbackAckProperties.getProperty("zwave.device.remove");
+                    String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), gateway.getModel(),  gateway.getSerial());
                     publish(exeTopic);
                 }
 
@@ -240,8 +243,8 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             if (zwaveRequest.getCommandKey() == NetworkManagementBasicCommandClass.DEFAULT_SET_COMPLETE) {
                 // 해당기기의 정보를 모두 삭제한다.
                 hostReset(zwaveRequest);
-                String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/manager/product/remove", zwaveRequest.getModel(),
-                        zwaveRequest.getSerialNo());
+                String topic = callbackAckProperties.getProperty("manager.product.remove");
+                String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), zwaveRequest.getModel(),  zwaveRequest.getSerialNo());
                 publish(exeTopic);
                 
             }
@@ -252,8 +255,8 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             if (zwaveRequest.getCommandKey() == AlarmCommandClass.ALARM_REPORT) {
                 // 해당기기의 정보를 모두 삭제한다.
                 notificationZWave(zwaveRequest);
-                String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/manager/product/remove", zwaveRequest.getModel(),
-                        zwaveRequest.getSerialNo());
+                String topic = callbackAckProperties.getProperty("manager.product.remove");
+                String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), zwaveRequest.getModel(),  zwaveRequest.getSerialNo());
                 publish(exeTopic);
                 
             }
@@ -365,8 +368,8 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                     if (!bInsert) {
                         // zwave nodeId Category 별 저장함.
                         saveZWaveList(zwaveRequest, nodeItem, gateway);
-                        String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/zwave/device/registration", gateway.getModel(),
-                                gateway.getSerial());
+                        String topic = callbackAckProperties.getProperty("zwave.device.registration");
+                        String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), gateway.getModel(),  gateway.getSerial());
                         publish(exeTopic);
                     }
                 }

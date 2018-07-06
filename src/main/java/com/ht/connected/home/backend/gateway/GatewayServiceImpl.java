@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import javax.transaction.Transactional;
 
@@ -26,6 +27,7 @@ import com.ht.connected.home.backend.category.zwave.ZWaveService;
 import com.ht.connected.home.backend.category.zwave.ZWaveServiceImpl;
 import com.ht.connected.home.backend.category.zwave.certification.CertificationRepository;
 import com.ht.connected.home.backend.common.Common;
+import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.config.service.MqttConfig;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategory;
@@ -74,7 +76,9 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     @Autowired
     @Qualifier(value = "MqttOutbound")
     MqttPahoMessageHandler messageHandler;
-
+    @Autowired
+    @Qualifier(value = "callbackAckProperties")
+    Properties callbackAckProperties;
     @Autowired
     ZWaveRepository zwaveRepository;
 
@@ -196,9 +200,9 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
                         exangeGateway.setNickname((String) Common.isNullrtnByobj(gateway.getNickname(), topicSplited[1]+"_"+gateway.getSerial()));
                         updateGateway(exangeGateway);
                         updateUserGateway(exangeGateway, user.getNo());
-                        String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/manager/product/registration", gateway.getModel(),
-                                gateway.getSerial());
-                        publish(exeTopic, null);
+                        String appTopic = callbackAckProperties.getProperty("manager.product.registration");
+                        String exeTopic = MqttCommon.rtnCallbackAck(appTopic, Target.app.name(), gateway.getModel(),  gateway.getSerial());
+                        publish(exeTopic);
                     }
                 }
                 

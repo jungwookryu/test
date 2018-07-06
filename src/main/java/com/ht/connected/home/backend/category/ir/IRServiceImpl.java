@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Properties;
 
 import javax.transaction.Transactional;
 
@@ -25,6 +26,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.app.AppController;
 import com.ht.connected.home.backend.common.Common;
+import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.config.service.MqttConfig;
 import com.ht.connected.home.backend.gateway.GatewayRepository;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
@@ -56,7 +58,11 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     @Autowired
     @Qualifier(value = "MqttOutbound")
     MqttPahoMessageHandler messageHandler;
-
+    
+    @Autowired
+    @Qualifier(value = "callbackAckProperties")
+    Properties callbackAckProperties;
+    
     public IRServiceImpl(IRRepository irRepository) {
         super(irRepository);
         this.irRepository = irRepository;
@@ -154,8 +160,8 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
                         ir.setRptcnt(rptcnt);
                         ir.setLastmodifiedTime(new Date());
                         irRepository.save(ir);
-                        String exeTopic = String.format("/" + Target.server.name() + "/" + Target.app.name() + "/%s/%s/ir/study/complete", model,
-                                serial);
+                        String topic = callbackAckProperties.getProperty("ir.study.complete");
+                        String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), model, serial);
                         publish(exeTopic, new HashMap<>());
                     }
                 }
