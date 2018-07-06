@@ -120,7 +120,7 @@ public class MqttConfig {
             sActive = "dev";
         }
         if("local".equals(sActive)) {
-            springMqttChannelServer = env.getRequiredProperty("spring.mqtt." + sActive + ".broker-url");
+            springMqttChannelServer = env.getRequiredProperty("spring.mqtt.channel." + sActive + ".server");
         }else {
             springMqttChannelServer = env.getRequiredProperty("spring.mqtt.channel.server");
         }
