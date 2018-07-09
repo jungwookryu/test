@@ -129,9 +129,8 @@ public class ZWaveController extends CommonController {
     
     
     /**
-     * 
      * @param no
-     * @return
+     * @return 
      * @throws JsonProcessingException
      */
     @DeleteMapping(value = "/remove/{no}")

@@ -59,9 +59,9 @@ public class ZWaveRequest extends ZWave{
             if (CategoryActive.zwave.certi.name().equals(topic[6].toString())) {
                 if (7 < topic.length) {
                     this.classKey = ByteUtil.getStringtoInt(topic[7]);
-                    this.sCommandKey = topic[7].toString();
+                    this.sClassKey = topic[7].toString();
                     if (8 < topic.length) {
-                        this.sClassKey = topic[8].toString();
+                        this.sCommandKey = topic[8].toString();
                         this.commandKey = ByteUtil.getStringtoInt(topic[8]);
                         if (9 < topic.length) {
                             this.version = topic[9].toString();

@@ -25,7 +25,7 @@ public class MockUtil
      * service excute end then
      * return List
      */
-	public static final  int userNo = 0 ;
+	public static final  int userNo = 1 ;
 	public static final  String username = "username" ;
 	public static final  String userId = "userId" ;
 	public static final  String userEmail =  "userEmail" ;
@@ -35,7 +35,33 @@ public class MockUtil
 	public static final  String resetPasswordFile =  "resetPassword.html";
 	public static final  String contextUrl =  "test/authPassword";
 	
-//	public static Class anyClass = mock(Class.class);
+	
+	public final static int gatewayNo = 11;
+	public final static String model = "model";
+	public final static String serial = "serial";
+	public final static String targetType = "test";
+
+	public final static String topic = "topic";
+	public final static String payload = "payload";
+	
+	
+	public final static int zwaveNo = 21;
+	public final static int irNo = 31;
+
+    
+	public final static int nodeId = 1;
+	public final static int epId0 = 0;
+	public final static int epId1 = 0;
+	
+	
+	/**
+	 * result 
+	 */
+	public final static int rtnInt1 = 1;
+	
+	
+	
+    //	public static Class anyClass = mock(Class.class);
 	public static User users = UsersEntityTestData.createUser();
     public static List<User> lstUsers = UsersEntityTestData.getLstUsers();
 

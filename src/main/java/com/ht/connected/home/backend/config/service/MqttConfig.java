@@ -173,7 +173,7 @@ public class MqttConfig {
                 String topic = String.valueOf(message.getHeaders().get("mqtt_topic"));
                 String payload = String.valueOf(message.getPayload());
                 LOGGER.info("messageArrived: Topic=" + topic + ", Payload=" + payload);
-                String[] topicSplited = topic.split("/");
+                String[] topicSplited = topic.trim().split("/");
                 try {
                     //message topic 4개이상이어야 gateway관련 메세지임.
                     if (topicSplited.length > 4) {
