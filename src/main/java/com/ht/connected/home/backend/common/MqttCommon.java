@@ -84,8 +84,8 @@ public class MqttCommon {
         
         if(Objects.nonNull(ack)) {
             ack = ack.replace("{target}",(String) Common.isNullrtnByobj(target, "app"));
-            ack = ack.replace("{model}",(String) Common.isNullrtnByobj(target, "model"));
-            ack = ack.replace("{serial}",(String) Common.isNullrtnByobj(target, "serial"));
+            ack = ack.replace("{model}",(String) Common.isNullrtnByobj(model, "model"));
+            ack = ack.replace("{serial}",(String) Common.isNullrtnByobj(serial, "serial"));
             return ack;
         }
         return ack;
