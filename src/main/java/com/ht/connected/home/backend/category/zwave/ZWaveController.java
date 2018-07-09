@@ -129,7 +129,9 @@ public class ZWaveController extends CommonController {
     
     
     /**
-     * 
+     * result 404 : 사용자가 가지고 있는 기기가 없음
+     * result 204 : 기기 삭제할 데이터가 없음.
+     * result 202 : 기기 삭제에 대한 메세지를 보냄
      * @param no
      * @return
      * @throws JsonProcessingException
