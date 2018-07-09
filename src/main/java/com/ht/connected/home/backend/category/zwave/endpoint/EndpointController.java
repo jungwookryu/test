@@ -1,5 +1,7 @@
 package com.ht.connected.home.backend.category.zwave.endpoint;
 
+import java.util.Objects;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +27,7 @@ public class EndpointController extends CommonController {
     @PutMapping("/{endpoint_no}")
     public ResponseEntity modifyEndpointInfo(@PathVariable int endpoint_no, @RequestBody Endpoint endpoint) throws JsonProcessingException {
         ZWave rtnZwave = endpointService.modify(endpoint_no, endpoint);
-        if(rtnZwave.getEndpoint()!=null) {
+        if(Objects.isNull(rtnZwave)) {
             return new ResponseEntity<>(rtnZwave,HttpStatus.OK);
         }
         else {
