@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ht.connected.home.backend.service.mqtt.MqttRequest;
+import com.ht.connected.home.backend.service.mqtt.Target;
 
 /**
  * @author ijlee
@@ -15,7 +16,9 @@ import com.ht.connected.home.backend.service.mqtt.MqttRequest;
 public class MqttCommon {
 
     private static Logger logger = LoggerFactory.getLogger(MqttCommon.class);
-
+    private static String STATIC_TARGET ="{target}";
+    private static String STATIC_MODEL ="{model}";
+    private static String STATIC_SERIAL ="{serial}";
     /**
      * mqtt publish 토픽 생성
      * @param topicLeadingPath
@@ -83,9 +86,9 @@ public class MqttCommon {
         ack = (String) Common.isNullrtnByobj(ack, "topic is null");
         
         if(Objects.nonNull(ack)) {
-            ack = ack.replace("{target}",(String) Common.isNullrtnByobj(target, "app"));
-            ack = ack.replace("{model}",(String) Common.isNullrtnByobj(model, "model"));
-            ack = ack.replace("{serial}",(String) Common.isNullrtnByobj(serial, "serial"));
+            ack = ack.replace(STATIC_TARGET, target);
+            ack = ack.replace(STATIC_MODEL, model);
+            ack = ack.replace(STATIC_SERIAL, model);
             return ack;
         }
         return ack;
