@@ -200,7 +200,7 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
                         exangeGateway.setNickname((String) Common.isNullrtnByobj(gateway.getNickname(), topicSplited[1]+"_"+gateway.getSerial()));
                         updateGateway(exangeGateway);
                         updateUserGateway(exangeGateway, user.getNo());
-                        String appTopic = callbackAckProperties.getProperty("manager.product.registration");
+                        String appTopic = callbackAckProperties.getProperty("zwave.product.registration");
                         String exeTopic = MqttCommon.rtnCallbackAck(appTopic, Target.app.name(), gateway.getModel(),  gateway.getSerial());
                         publish(exeTopic);
                     }
