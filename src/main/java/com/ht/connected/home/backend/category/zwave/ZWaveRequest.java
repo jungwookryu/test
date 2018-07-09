@@ -53,22 +53,22 @@ public class ZWaveRequest extends ZWave{
      */
     public ZWaveRequest(String[] topic) {
         if (topic.length > 2) {
-            this.source = topic[1];
-            this.model = topic[3];
-            this.serialNo = topic[4];
-            if (CategoryActive.zwave.certi.name().equals(topic[6].toString())) {
+            this.source = topic[1].trim();
+            this.model = topic[3].trim();
+            this.serialNo = topic[4].trim();
+            if (CategoryActive.zwave.certi.name().equals(topic[6].trim().toString())) {
                 if (7 < topic.length) {
-                    this.classKey = ByteUtil.getStringtoInt(topic[7]);
-                    this.sCommandKey = topic[7].toString();
+                    this.classKey = ByteUtil.getStringtoInt(topic[7].trim());
+                    this.sClassKey = topic[7].trim().toString();
                     if (8 < topic.length) {
-                        this.sClassKey = topic[8].toString();
-                        this.commandKey = ByteUtil.getStringtoInt(topic[8]);
+                        this.sCommandKey = topic[8].trim().toString();
+                        this.commandKey = ByteUtil.getStringtoInt(topic[8].trim());
                         if (9 < topic.length) {
-                            this.version = topic[9].toString();
+                            this.version = topic[9].trim().toString();
                             if (10 < topic.length) {
-                                this.nodeId = ByteUtil.getStringtoInt(topic[10].toString());
+                                this.nodeId = ByteUtil.getStringtoInt(topic[10].trim().toString());
                                 if (11 < topic.length) {
-                                    this.endpointId = ByteUtil.getStringtoInt(topic[11].toString());
+                                    this.endpointId = ByteUtil.getStringtoInt(topic[11].trim().toString());
                                 }
                             }
                         }
