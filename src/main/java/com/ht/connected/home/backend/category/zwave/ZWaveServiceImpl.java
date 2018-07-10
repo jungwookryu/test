@@ -31,8 +31,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.category.ir.IRService;
-import com.ht.connected.home.backend.category.zwave.certification.CertificationRepository;
-import com.ht.connected.home.backend.category.zwave.certification.CertificationService;
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdCls;
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdClsRepository;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.AlarmCommandClass;
@@ -97,9 +95,6 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     GatewayRepository gatewayRepository;
 
     @Autowired
-    CertificationRepository certificationRepository;
-
-    @Autowired
     UserGatewayRepository userGatewayRepository;
 
     @Autowired
@@ -114,8 +109,6 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     @Autowired
     GatewayCategoryRepository gatewayCategoryRepository;
 
-    @Autowired
-    CertificationService certificationService;
     @Autowired
     MqttConfig.MqttGateway mqttGateway;
 
@@ -167,9 +160,9 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             mqttPayload = objectMapper.readValue(payload, MqttPayload.class);
             resultData = mqttPayload.getResultData();
         }
+        //기기제어
         if (zwaveRequest.getClassKey() == BasicCommandClass.INT_ID) {
             if (zwaveRequest.getCommandKey() == BasicCommandClass.INT_BASIC_REPORT) {
-                certificationService.updateCertification(zwaveRequest, payload);
             }
         }
         // 0X52
@@ -209,7 +202,6 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                         }
 
                     }
-                    certificationService.updateCertification(zwaveRequest, data);
                 }
 
             }

@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ht.connected.home.backend.category.zwave.certification.CertificationRepository;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementInclusionCommandClass;
 import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.category.zwave.endpoint.EndpointRepository;
@@ -47,9 +46,6 @@ public class ZWaveController extends CommonController {
     
     @Autowired
     UserRepository userRepository;
-
-    @Autowired
-    CertificationRepository certificationRepository;
 
     @Autowired
     ZWaveRepository zWaveRepository;

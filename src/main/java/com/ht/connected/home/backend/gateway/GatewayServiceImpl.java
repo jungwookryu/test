@@ -25,7 +25,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.category.zwave.ZWaveRepository;
 import com.ht.connected.home.backend.category.zwave.ZWaveService;
 import com.ht.connected.home.backend.category.zwave.ZWaveServiceImpl;
-import com.ht.connected.home.backend.category.zwave.certification.CertificationRepository;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.config.service.MqttConfig;
@@ -81,9 +80,6 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     Properties callbackAckProperties;
     @Autowired
     ZWaveRepository zwaveRepository;
-
-    @Autowired
-    CertificationRepository certificationRepository;
 
     @Autowired
     GatewayCategoryRepository gatewayCategoryRepository;
