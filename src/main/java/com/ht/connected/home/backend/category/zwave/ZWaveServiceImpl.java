@@ -202,7 +202,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                                         saveZWaveList(zwaveRequest, nodeItem, gateway);
                                     }
                                 }
-                                String topic = callbackAckProperties.getProperty("zwave.product.registration");
+                                String topic = callbackAckProperties.getProperty("zwave.device.registration");
                                 String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), gateway.getModel(),  gateway.getSerial());
                                 publish(exeTopic);
                             }
