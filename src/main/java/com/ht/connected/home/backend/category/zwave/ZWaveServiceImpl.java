@@ -162,8 +162,10 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     public void subscribe(ZWaveRequest zwaveRequest, String payload) throws JsonParseException, JsonMappingException, IOException, Exception {
 
         MqttPayload mqttPayload = new MqttPayload();
+        Object resultData = null;
         if (!Common.empty(payload)) {
             mqttPayload = objectMapper.readValue(payload, MqttPayload.class);
+            resultData = mqttPayload.getResultData();
         }
         if (zwaveRequest.getClassKey() == BasicCommandClass.INT_ID) {
             if (zwaveRequest.getCommandKey() == BasicCommandClass.INT_BASIC_REPORT) {
@@ -172,7 +174,6 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         }
         // 0X52
         if (zwaveRequest.getClassKey() == NetworkManagementProxyCommandClass.INT_ID) {
-            Object resultData = mqttPayload.getResultData();
             String data = "";
             if (!isNull(resultData)) {
                 data = objectMapper.writeValueAsString(resultData);
@@ -201,7 +202,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                                         saveZWaveList(zwaveRequest, nodeItem, gateway);
                                     }
                                 }
-                                String topic = callbackAckProperties.getProperty("zwave.prodecuct.registration");
+                                String topic = callbackAckProperties.getProperty("zwave.device.registration");
                                 String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), gateway.getModel(),  gateway.getSerial());
                                 publish(exeTopic);
                             }
@@ -254,11 +255,8 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             // 기기상태값모드 받은 경우
             if (zwaveRequest.getCommandKey() == AlarmCommandClass.ALARM_REPORT) {
                 // 기기 상태값을 update 한다.
-                notificationZWave(zwaveRequest);
-                HashMap map = new HashMap();
-                String topic = callbackAckProperties.getProperty("zwave.device.status");
-                String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), zwaveRequest.getModel(),  zwaveRequest.getSerialNo());
-                publish(exeTopic);
+                notificationZWave(zwaveRequest, resultData);
+               
                 
             }
         }
@@ -694,8 +692,12 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         return endpoint;
     }
     
-    private void notificationZWave(ZWaveRequest zwaveRequest) {
+    private void notificationZWave(ZWaveRequest zwaveRequest, Object notiData) throws JsonProcessingException {
+        HashMap map = new HashMap();
         
+        String topic = callbackAckProperties.getProperty("zwave.device.status");
+        String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), zwaveRequest.getModel(),  zwaveRequest.getSerialNo());
+        publish(exeTopic);
     }
 
 }

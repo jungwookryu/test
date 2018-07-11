@@ -88,7 +88,7 @@ public class MqttCommon {
         if(Objects.nonNull(ack)) {
             ack = ack.replace(STATIC_TARGET, target);
             ack = ack.replace(STATIC_MODEL, model);
-            ack = ack.replace(STATIC_SERIAL, model);
+            ack = ack.replace(STATIC_SERIAL, serial);
             return ack;
         }
         return ack;
