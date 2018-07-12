@@ -1,47 +1,89 @@
 package com.ht.connected.home.backend.controller.mqtt;
 
-import java.util.List;
+import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.rabbit.annotation.RabbitHandler;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.ht.connected.home.backend.category.ir.IRService;
+import com.ht.connected.home.backend.category.zwave.ZWaveRequest;
+import com.ht.connected.home.backend.category.zwave.ZWaveService;
+import com.ht.connected.home.backend.gateway.Gateway;
+import com.ht.connected.home.backend.gateway.GatewayService;
+import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
+import com.ht.connected.home.backend.service.mqtt.Target;
 
 @Component
 public class ConsumerListener {
 
+    @Autowired
+    private ZWaveService zwaveService;
+    @Autowired
+    private GatewayService gateWayService;
+
+    @Autowired
+    private IRService irService;
+
     private static final Logger logger = LoggerFactory.getLogger(ConsumerListener.class);
     private CountDownLatch latch = new CountDownLatch(1);
-    
-    
-    public <T> void receiveMessage(T message) {
-        if (message instanceof String) {
-            logger.info("onMessageReceived < " + message + " >");
+
+    /**
+     * mqtt received component
+     * @param message
+     * @throws JsonParseException
+     * @throws JsonMappingException
+     * @throws IOException
+     * @throws Exception
+     */
+    public void receiveMessage(Message message) throws JsonParseException, JsonMappingException, IOException, Exception {
+        String topic = String.valueOf(message.getMessageType());
+        String payload = String.valueOf(message.getMessageBody());
+
+        logger.info("messageArrived: Topic=" + topic + ", Payload=" + payload);
+        String[] topicSplited = topic.trim().split("/");
+        // message topic 4개이상이어야 gateway관련 메세지임.
+        if (topicSplited.length > 4) {
+            Gateway gateway = new Gateway();
+            if (4 <= topicSplited.length) {
+                gateway = new Gateway(topicSplited[3].toString(), topicSplited[4].toString());
+                gateway.setTargetType(topicSplited[1]);
+            }
+            // 서버에서 보낸것이 아닐경우만 subscribe함.
+            if (!Target.server.name().equals(topicSplited[1].toString())) {
+                logger.info(topicSplited[5].toString() + " subStart");
+                if (CategoryActive.gateway.manager.name().equals(topicSplited[5].toString())) {
+                    gateWayService.subscribe(topic, payload);
+                }
+                // zwave service
+                if (CategoryActive.gateway.zwave.name().equals(topicSplited[5].toString())) {
+                    ZWaveRequest zwaveRequest = new ZWaveRequest(topicSplited);
+                    if (CategoryActive.zwave.certi.name().equals(topicSplited[6].toString())) {
+
+                        zwaveService.subscribe(zwaveRequest, payload);
+                    }
+                    if (CategoryActive.zwave.init.name().equals(topicSplited[6].toString())) {
+                        zwaveService.subscribeInit(gateway);
+                    }
+                }
+                if (CategoryActive.gateway.ir.name().equals(topicSplited[5].toString().trim())) {
+                    irService.subscribe(topicSplited, payload);
+                }
+            }
+            String mqttLog = "host :: category ::";
+            if (topicSplited.length > 5) {
+                mqttLog += topicSplited[5].toString();
+            }
+            if (topicSplited.length > 6) {
+                mqttLog += "active ::" + topicSplited[6].toString() + " subEnd";
+            }
+            // TODO category가 정해지지 않은 mqtt에대한 로직이 생길경우 .else에 대한 로직을 넣을 예정
+            logger.info(mqttLog);
         }
-        else if (message instanceof Message) {
-            logger.info("onMessageReceived < " + message.toString() + " >");
-        }
-        else if (message instanceof List) {
-            logger.info("onMessageReceived < " + ((List) message).size() + " >");
-        }
-        if (message instanceof JSONObject) {
-            logger.info("onMessageReceived < " + ((JSONObject) message).toString() + " >");
-        }
-        else if (message instanceof byte[]) {
-            logger.info("onMessageReceived < " + ((byte[]) message).toString() + " >");
-        }
-        else if (message instanceof Object) {
-            logger.info("onMessageReceived < " + message.toString() + " >");
-        }
-        latch.countDown();
     }
 
-    public CountDownLatch getLatch() {
-        return latch;
-    }
 }
