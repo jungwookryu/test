@@ -11,6 +11,9 @@ import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * 마스터 계정 관리
  * 
@@ -28,6 +31,7 @@ import javax.persistence.Transient;
         + "where d.device_serial=:deviceSerial and a.iot_account=:iotAccount", resultSetMapping = "AccountDevicePresetMapping")
 @Entity
 @Table(name = "ipc_device_preset")
+@JsonIgnoreProperties({ "seq", "iotAccount" })
 public class IPCDevicePreset {
 
     @Id
@@ -35,15 +39,19 @@ public class IPCDevicePreset {
     @GeneratedValue
     private int seq;
 
+    @JsonProperty(value = "deviceSerial")
     @Column(name = "device_serial")
     private String deviceSerial;
 
+    @JsonProperty(value = "channel")
     @Column(name = "channel_no")
     private String channelNo;
 
+    @JsonProperty(value = "preset")
     @Column(name = "preset_id")
     private String presetId;
 
+    @JsonProperty(value = "nickname")
     @Column(name = "nickname")
     private String nickname;
 
@@ -99,6 +107,14 @@ public class IPCDevicePreset {
 
     public void setChannelNo(String channelNo) {
         this.channelNo = channelNo;
+    }
+
+    public String getIotAccount() {
+        return iotAccount;
+    }
+
+    public void setIotAccount(String iotAccount) {
+        this.iotAccount = iotAccount;
     }
 
 }

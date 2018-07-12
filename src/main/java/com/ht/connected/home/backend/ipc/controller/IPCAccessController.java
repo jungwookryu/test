@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.connected.home.backend.controller.rest.CommonController;
+import com.ht.connected.home.backend.ipc.model.entity.IPCDevicePreset;
 import com.ht.connected.home.backend.ipc.service.IPCAccessService;
 
 @RestController
@@ -98,8 +99,8 @@ public class IPCAccessController extends CommonController {
      * @return
      */
     @PostMapping("/preset/register")
-    public ResponseEntity<String> updateDevicePreset(@RequestBody HashMap<String, String> request) {
-        request.put("iotAccount", getIotAccountName());
+    public ResponseEntity<String> updateDevicePreset(@RequestBody IPCDevicePreset request) {
+        request.setIotAccount(getIotAccountName());        
         return accessService.updateDevicePreset(request);
     }
 
@@ -122,8 +123,8 @@ public class IPCAccessController extends CommonController {
      * @return
      */
     @PostMapping("/preset/remove")
-    public ResponseEntity<String> deleteDevicePreset(@RequestBody HashMap<String, String> request) {
-        request.put("iotAccount", getIotAccountName());
+    public ResponseEntity<String> deleteDevicePreset(@RequestBody IPCDevicePreset request) {
+        request.setIotAccount(getIotAccountName());        
         return accessService.deleteDevicePreset(request);
     }
 

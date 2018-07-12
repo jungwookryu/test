@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.ht.connected.home.backend.ipc.controller.IPCAccessController;
 import com.ht.connected.home.backend.ipc.model.entity.IPCAccount;
+import com.ht.connected.home.backend.ipc.model.entity.IPCDevicePreset;
 
 /**
  * HIK server 요청
@@ -178,10 +179,10 @@ public class IPCRemoteRequestService {
      * @param request
      * @return
      */
-    public ResponseEntity<String> deleteDevicePreset(IPCAccount account, HashMap<String, String> request) {
+    public ResponseEntity<String> deleteDevicePreset(IPCAccount account, IPCDevicePreset request) {
         HttpEntity<String> entity = new HttpEntity<String>(
                 String.format("accessToken=%s&deviceSerial=%s&channelNo=%s&index=%s", account.getAccessToken(),
-                        request.get("deviceSerial"), request.get("channel"), request.get("preset")),
+                        request.getDeviceSerial(), request.getChannelNo(), request.getPresetId()),
                 httpHeaders);
         ResponseEntity<String> response = request(
                 getRequestURL(account.getAreaDomain(), "/api/lapp/device/preset/clear"), entity);
@@ -195,10 +196,10 @@ public class IPCRemoteRequestService {
      * @param request
      * @return
      */
-    public ResponseEntity<String> addDevicePreset(IPCAccount account, HashMap<String, String> request) {
+    public ResponseEntity<String> addDevicePreset(IPCAccount account, IPCDevicePreset request) {
         HttpEntity<String> entity = new HttpEntity<String>(
                 String.format("accessToken=%s&deviceSerial=%s&channelNo=%s", account.getAccessToken(),
-                        request.get("deviceSerial"), request.get("channel")),
+                        request.getDeviceSerial(), request.getChannelNo()),
                 httpHeaders);
         ResponseEntity<String> response = request(
                 getRequestURL(account.getAreaDomain(), "/api/lapp/device/preset/add"), entity);
