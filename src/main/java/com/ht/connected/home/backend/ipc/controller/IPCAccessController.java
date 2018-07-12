@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.connected.home.backend.controller.rest.CommonController;
+import com.ht.connected.home.backend.ipc.model.entity.IPCDevicePreset;
 import com.ht.connected.home.backend.ipc.service.IPCAccessService;
 
 @RestController
@@ -99,9 +99,9 @@ public class IPCAccessController extends CommonController {
      * @return
      */
     @PostMapping("/preset/register")
-    public ResponseEntity<String> updateDevicePreset(@RequestBody HashMap<String, String> request) {
-        request.put("iotAccount", getIotAccountName());
-        return accessService.updateDevicePreset(request, getIotAccountName());
+    public ResponseEntity<String> updateDevicePreset(@RequestBody IPCDevicePreset request) {
+        request.setIotAccount(getIotAccountName());        
+        return accessService.updateDevicePreset(request);
     }
 
     /**
@@ -114,6 +114,18 @@ public class IPCAccessController extends CommonController {
     public ResponseEntity<String> getDevicePresets(@RequestBody HashMap<String, String> request) {
         String deviceSerial = request.get("deviceSerial");               
         return accessService.getDevicePresets(deviceSerial, getIotAccountName());
+    }
+    
+    /**
+     * 프리셋 삭제
+     * 
+     * @param request
+     * @return
+     */
+    @PostMapping("/preset/remove")
+    public ResponseEntity<String> deleteDevicePreset(@RequestBody IPCDevicePreset request) {
+        request.setIotAccount(getIotAccountName());        
+        return accessService.deleteDevicePreset(request);
     }
 
 }
