@@ -25,4 +25,7 @@ public interface IPCDevicePresetRepository extends JpaRepository<IPCDevicePreset
     @Transactional
     void deleteByDeviceSerial(String string);
 
+    @Transactional
+    void deleteByDeviceSerialAndChannelNoAndPresetId(String string, String string2, String string3);
+
 }

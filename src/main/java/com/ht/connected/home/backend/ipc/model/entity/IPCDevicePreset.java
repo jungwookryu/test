@@ -11,8 +11,6 @@ import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-
-
 /**
  * 마스터 계정 관리
  * 
@@ -26,7 +24,7 @@ import javax.persistence.Transient;
                 @ColumnResult(name = "preset_id", type = String.class),
                 @ColumnResult(name = "nickname", type = String.class) }) })
 @NamedNativeQuery(name = "IPCDevicePreset.getAccountDevicePreset", query = "select a.iot_account, p.device_serial, p.preset_id, p.nickname "
-        + "from ipc_account a left join ipc_device d on a.seq=d.account_seq left join ipc_device_preset p on d.device_serial=p.device_serial "
+        + "from ipc_account a left join ipc_device d on a.seq=d.account_seq inner join ipc_device_preset p on d.device_serial=p.device_serial "
         + "where d.device_serial=:deviceSerial and a.iot_account=:iotAccount", resultSetMapping = "AccountDevicePresetMapping")
 @Entity
 @Table(name = "ipc_device_preset")
@@ -39,6 +37,9 @@ public class IPCDevicePreset {
 
     @Column(name = "device_serial")
     private String deviceSerial;
+
+    @Column(name = "channel_no")
+    private String channelNo;
 
     @Column(name = "preset_id")
     private String presetId;
@@ -90,6 +91,14 @@ public class IPCDevicePreset {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public String getChannelNo() {
+        return channelNo;
+    }
+
+    public void setChannelNo(String channelNo) {
+        this.channelNo = channelNo;
     }
 
 }

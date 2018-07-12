@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.ToDoubleBiFunction;
 
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.json.JSONArray;
@@ -19,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -323,23 +325,84 @@ public class IPCAccessService {
      * @param iotAccountName
      * @return
      */
-    public ResponseEntity<String> updateDevicePreset(HashMap<String, String> request, String iotAccountName) {
+    public ResponseEntity<String> updateDevicePreset(HashMap<String, String> request) {
+        ResponseEntity<String> result = null;
         List<IPCDevicePreset> devicePresets = devicePresetRepository.getAccountDevicePreset(request.get("deviceSerial"),
                 request.get("iotAccount"));
-        IPCDevicePreset devicePreset = new IPCDevicePreset();
-        for (IPCDevicePreset dp : devicePresets) {
-            if (dp.getPresetId().equals(request.get("preset"))) {
-                devicePreset = dp;
-            }
+        boolean presetFound = false;
+        if (devicePresets.size() > 0) {             
+            for (IPCDevicePreset dp : devicePresets) {
+                if (dp.getPresetId().equals(request.get("preset"))
+                        && dp.getChannelNo().equals(request.get("channel"))) {                    
+                    result = getDevicePresetUpdateResponse(updateDevicePreset(dp, request));
+                    presetFound = true;
+                    break;
+                }
+            }            
         }
+        
+        if(!presetFound){
+            ResponseEntity<String> preset = addDevicePreset(request);
+            if(isSuccessResponseStatus(preset)) {
+                IPCDevicePreset dp = new IPCDevicePreset();
+                request.put("preset", getResponseDataValue(preset.getBody(), "index").toString());
+                result = getDevicePresetUpdateResponse(updateDevicePreset(dp, request));
+            }else {
+                result = preset;
+            }
+        }        
+        return result;
+    }
+    
+    /**
+     * 프리셋 디비 업데이트 
+     * 
+     * @param devicePreset
+     * @param request
+     * @return
+     */
+    private IPCDevicePreset updateDevicePreset(IPCDevicePreset devicePreset, HashMap<String, String> request) {
         devicePreset.setDeviceSerial(request.get("deviceSerial"));
         devicePreset.setPresetId(request.get("preset"));
         devicePreset.setNickname(request.get("nickname"));
+        devicePreset.setChannelNo(request.get("channel"));
         devicePresetRepository.save(devicePreset);
+        return devicePreset;        
+    }
+    
+    /**
+     * 프리셋 저장 후 응답 데이터넷 생성
+     * 
+     * @param devicePreset
+     * @return
+     */
+    private ResponseEntity<String> getDevicePresetUpdateResponse(IPCDevicePreset devicePreset) {
         HashMap<String, Object> tmp = new HashMap<>();
+        JSONObject tmp2 = new JSONObject();
+        try {
+            tmp2.put("nickname", devicePreset.getNickname());
+            tmp2.put("preset", devicePreset.getPresetId());
+            tmp2.put("deviceSerial", devicePreset.getDeviceSerial());
+            tmp2.put("channel", devicePreset.getChannelNo());
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         tmp.put("code", "200");
         tmp.put("msg", "Operation succeed !");
+        tmp.put("data", tmp2);
         return new ResponseEntity<String>(new JSONObject(tmp).toString(), HttpStatus.OK);
+    }
+
+    /**
+     * 프리셋 저장 요청
+     * 
+     * @param request
+     * @return
+     */
+    private ResponseEntity<String> addDevicePreset(HashMap<String, String> request) {
+        IPCAccount account = accountRepository.findByIotAccount(request.get("iotAccount"));
+        return remoteRequestService.addDevicePreset(account, request);
     }
 
     /**
@@ -357,12 +420,27 @@ public class IPCAccessService {
             try {
                 jsonObject.put("preset", preset.getPresetId());
                 jsonObject.put("nickname", preset.getNickname());
+                jsonObject.put("channel", preset.getChannelNo());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             json.put(jsonObject);
         });
         return new ResponseEntity<String>(json.toString(), HttpStatus.OK);
+    }
+
+    /**
+     * 프리셋 삭제
+     * 
+     * @param request
+     * @return
+     */
+    public ResponseEntity<String> deleteDevicePreset(HashMap<String, String> request) {
+        IPCAccount account = accountRepository.findByIotAccount(request.get("iotAccount"));
+        devicePresetRepository.deleteByDeviceSerialAndChannelNoAndPresetId(request.get("deviceSerial"),
+                request.get("channel"), request.get("preset"));
+        ResponseEntity<String> response = remoteRequestService.deleteDevicePreset(account, request);
+        return response;
     }
 
 }
