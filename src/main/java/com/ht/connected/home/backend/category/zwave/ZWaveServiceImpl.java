@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -47,7 +46,8 @@ import com.ht.connected.home.backend.category.zwave.endpoint.EndpointRepository;
 import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
-import com.ht.connected.home.backend.config.service.MqttConfig;
+import com.ht.connected.home.backend.controller.mqtt.Message;
+import com.ht.connected.home.backend.controller.mqtt.ProducerComponent;
 import com.ht.connected.home.backend.gateway.Gateway;
 import com.ht.connected.home.backend.gateway.GatewayRepository;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
@@ -71,6 +71,9 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     @Qualifier(value = "callbackAckProperties")
     Properties callbackAckProperties;
     
+    @Autowired
+    ProducerComponent producerRestController;
+    
     enum event {
         delete, active, failed
     }
@@ -87,6 +90,8 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
 
     private static final Log logging = LogFactory.getLog(ZWaveServiceImpl.class);
 
+    
+    
     Logger logger = LoggerFactory.getLogger(ZWaveServiceImpl.class);
     @Autowired
     UserRepository userRepository;
@@ -110,13 +115,6 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     GatewayCategoryRepository gatewayCategoryRepository;
 
     @Autowired
-    MqttConfig.MqttGateway mqttGateway;
-
-    @Autowired
-    @Qualifier(value = "MqttOutbound")
-    MqttPahoMessageHandler messageHandler;
-
-    @Autowired
     Properties zWaveProperties;
     
     @Autowired
@@ -125,14 +123,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ResponseEntity execute(HashMap<String, Object> req, ZWaveRequest zwaveRequest, boolean isCert) throws JsonProcessingException {
-        logging.info("zwaveRequest.getClassKey()::::" + zwaveRequest.getClassKey());
-        zwaveRequest.setTarget(Target.host.name());
-        return publish(req, zwaveRequest);
-    }
-
-    @Override
-    public ResponseEntity publish(HashMap<String, Object> req, ZWaveRequest zwaveRequest) throws JsonProcessingException {
+    public ResponseEntity publish(HashMap<String, Object> req, ZWaveRequest zwaveRequest) throws JsonProcessingException, InterruptedException {
 
         ResponseEntity response = new ResponseEntity(HttpStatus.BAD_REQUEST);;
         String topic = getMqttPublishTopic(zwaveRequest);
@@ -141,14 +132,6 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             response = new ResponseEntity(HttpStatus.OK);
         }
         return response;
-    }
-
-    @Override
-    public void subscribe(Object zwaveRequest, Object payload) throws Exception {
-        if (zwaveRequest instanceof ZWaveRequest && payload instanceof String) {
-            ZWaveRequest reqZwaveRequest = (ZWaveRequest) zwaveRequest;
-            subscribe(reqZwaveRequest, (String) payload);
-        }
     }
 
     @Transactional
@@ -195,6 +178,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
                                         saveZWaveList(zwaveRequest, nodeItem, gateway);
                                     }
                                 }
+
                                 String topic = callbackAckProperties.getProperty("zwave.device.registration");
                                 String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), gateway.getModel(),  gateway.getSerial());
                                 publish(exeTopic);
@@ -247,7 +231,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
             // 기기상태값모드 받은 경우
             if (zwaveRequest.getCommandKey() == AlarmCommandClass.ALARM_REPORT) {
                 // 기기 상태값을 update 한다.
-                notificationZWave(zwaveRequest, resultData);
+//                publish(zwaveRequest, resultData);
                
                 
             }
@@ -257,7 +241,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
 
     // 제어
     @Override
-    public void execute(Map map, boolean isCert) throws JsonProcessingException {
+    public void execute(Map map, boolean isCert) throws JsonProcessingException, InterruptedException {
         String topic = getZwaveTopic(map);
         map.put("target", "host");
         HashMap map1 = getPublishPayload((HashMap) map);
@@ -268,10 +252,11 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
      * Zwave 기기제어
      * @author lij
      * @throws JsonProcessingException
+     * @throws InterruptedException 
      */
     // 제어
     @Override
-    public void zwaveControl(ZWaveControl zWaveControl) throws JsonProcessingException {
+    public void zwaveControl(ZWaveControl zWaveControl) throws JsonProcessingException, InterruptedException {
 
         Gateway gateway = gatewayRepository.findOne(zWaveControl.getGateway_no());
         Endpoint endpoint = endpointRepository.findOne(zWaveControl.getEndpoint_no());
@@ -327,7 +312,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
 
     }
 
-    private void reportZWaveList(ZWaveRequest zwaveRequest, String data) throws JsonParseException, JsonMappingException, IOException, JSONException {
+    private void reportZWaveList(ZWaveRequest zwaveRequest, String data) throws JsonParseException, JsonMappingException, IOException, JSONException, InterruptedException {
 
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
         zwaveRequest.setGatewayNo(gateway.getNo());
@@ -390,15 +375,10 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         }
     }
 
-    @Override
-    public void publish(Object req, Object zwaveRequest) {
-        // TODO Auto-generated method stub
-    }
-
     // 삭제 토픽
     @Override
     @Transactional
-    public int deleteByNo(int no) throws JsonProcessingException {
+    public int deleteByNo(int no) throws JsonProcessingException, InterruptedException {
         // TODO DB 에서 기기삭제 status 로 update
         ZWave zwave = zwaveRepository.getOne(no);
         Gateway gateway = gatewayRepository.getOne(zwave.getGatewayNo());
@@ -422,24 +402,23 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
 
     }
 
-    public void publish(MqttRequest mqttRequest) throws JsonProcessingException {
+    public void publish(MqttRequest mqttRequest) throws JsonProcessingException, InterruptedException {
 
         publish(MqttCommon.getMqttPublishTopic(mqttRequest), mqttRequest.getSetData());
     }
 
-    public void publish(String topic) throws JsonProcessingException {
+    public void publish(String topic) throws JsonProcessingException, InterruptedException {
         publish(topic, new HashMap());
     }
 
-    public void publish(String topic, HashMap<String, Object> publishPayload) throws JsonProcessingException {
+    public void publish(String topic, HashMap<String, Object> publishPayload) throws JsonProcessingException, InterruptedException {
         String payload = objectMapper.writeValueAsString(publishPayload);
         publish(topic, payload);
     }
 
-    public void publish(String topic, String payload) {
-        messageHandler.setDefaultTopic(topic);
-        logger.info("publish topic:::::::::::" + topic);
-        mqttGateway.sendToMqtt(payload);
+    public void publish(String topic, String payload) throws InterruptedException {
+        Message message =  new Message(topic, payload);
+        MqttCommon.publish(producerRestController, message);
     }
 
     @Override
@@ -456,7 +435,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
     }
 
     @Override
-    public void subscribeInit(Gateway gateway) throws JsonProcessingException {
+    public void subscribeInit(Gateway gateway) throws JsonProcessingException, InterruptedException {
         // TODO 기기리스트 가져오기 topic
         MqttRequest mqttRequest = new MqttRequest(gateway);
         mqttRequest.setClassKey(NetworkManagementProxyCommandClass.INT_ID);
@@ -470,8 +449,7 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         // TODO 기기 상태정보 가져오기
     }
 
-    @Override
-    public int deleteByGatewayNo(int gatewayNo) {
+    @Override    public int deleteByGatewayNo(int gatewayNo) {
         // int zwaveUpdateCnt =zwaveRepository.setFixedStatusForGatewayNo(status.delete.name(), gatewayNo);
         // return zwaveUpdateCnt;
         return 0;
@@ -683,13 +661,6 @@ public class ZWaveServiceImpl extends CrudServiceImpl<ZWave, Integer> implements
         endpoint = endpointRepository.save(endpoint);
         return endpoint;
     }
-    
-    private void notificationZWave(ZWaveRequest zwaveRequest, Object notiData) throws JsonProcessingException {
-        HashMap map = new HashMap();
-        
-        String topic = callbackAckProperties.getProperty("zwave.device.status");
-        String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), zwaveRequest.getModel(),  zwaveRequest.getSerialNo());
-        publish(exeTopic);
-    }
+
 
 }

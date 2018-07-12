@@ -30,13 +30,7 @@ public class ZWaveServiceImplTest  extends MockUtil{
     
     @InjectMocks
     ZWaveServiceImpl zWaveService;
-    
-    @MockBean
-    MqttPahoMessageHandler messageHandler;
 
-    @MockBean
-    MqttGateway mqttGateway;
-    
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -47,13 +41,13 @@ public class ZWaveServiceImplTest  extends MockUtil{
         Mockito.when(zwaveRepository.getOne(zwaveNo)).thenReturn(ZWaveEntityTestData.getOneZwave());
         Mockito.when(gatewayRepository.getOne(gatewayNo)).thenReturn(GatewayEntityTestData.getOne());
         Mockito.when(zwaveRepository.setFixedStatusForNo(status.delete.name(), zwaveNo)).thenReturn(rtnInt1);
-        Mockito.doNothing().when(messageHandler).setDefaultTopic(topic);
-        Mockito.doNothing().when(mqttGateway).sendToMqtt(payload);
+//        Mockito.doNothing().when(messageHandler).setDefaultTopic(topic);
+//        Mockito.doNothing().when(mqttGateway).sendToMqtt(payload);
 //        Mockito.when(zwaveServiceImpl.deleteByNo(zwaveNo)).thenReturn(rtnInt1);
     }
 
     @Test
-    public void deleteByNo() throws JsonProcessingException {
+    public void deleteByNo() throws JsonProcessingException, InterruptedException {
         int expectedResult = 1;
         int result = zWaveService.deleteByNo(zwaveNo);
         Assert.assertEquals(expectedResult, result);

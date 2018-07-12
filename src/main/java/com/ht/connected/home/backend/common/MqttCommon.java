@@ -1,12 +1,26 @@
 package com.ht.connected.home.backend.common;
 
+import java.io.IOException;
 import java.util.Objects;
+import java.util.Properties;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.ht.connected.home.backend.controller.mqtt.Message;
+import com.ht.connected.home.backend.controller.mqtt.ProducerComponent;
 import com.ht.connected.home.backend.service.mqtt.MqttRequest;
-import com.ht.connected.home.backend.service.mqtt.Target;
 
 /**
  * @author ijlee
@@ -19,6 +33,7 @@ public class MqttCommon {
     private static String STATIC_TARGET ="{target}";
     private static String STATIC_MODEL ="{model}";
     private static String STATIC_SERIAL ="{serial}";
+    
     /**
      * mqtt publish 토픽 생성
      * @param topicLeadingPath
@@ -93,6 +108,23 @@ public class MqttCommon {
         }
         return ack;
     }
-
+    
+    public static void publish(ProducerComponent producerRestController, Message message) throws InterruptedException {
+        
+        producerRestController.run(message);
+        
+    }
+    
+    public static void publishNotificationData(ProducerComponent producerRestController, Properties callbackAckProperties,String sAckPropertyName, String target, String model, String serial, Object notiData)
+            throws InterruptedException, JsonGenerationException, JsonMappingException, IOException {
+        
+        ObjectMapper objectMapper = new ObjectMapper();
+        
+        String topic = callbackAckProperties.getProperty(sAckPropertyName);
+        String exeTopic = MqttCommon.rtnCallbackAck(topic,target, model,  serial);
+        Message message = new Message(exeTopic, objectMapper.writeValueAsString(notiData));
+        MqttCommon.publish(producerRestController, message);
+    }
     
 }
+

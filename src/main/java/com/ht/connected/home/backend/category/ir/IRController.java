@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -48,7 +49,6 @@ public class IRController extends CommonController {
     public enum Devicetype {
         aircon, tv, fan;
     }
-    
 
     /**
      * 201, 204, 500, 406
@@ -77,13 +77,14 @@ public class IRController extends CommonController {
      * @param IR
      * @return
      * @throws JsonProcessingException
+     * @throws InterruptedException 
      * @throws UnsupportedEncodingException
      * @throws IllegalArgumentException
      * @throws NoSuchAlgorithmException
      */
     // 신규 학습 모드 신청
     @PostMapping("/ir")
-    public ResponseEntity createStudyIR(@RequestBody IR ir) throws JsonProcessingException {
+    public ResponseEntity createStudyIR(@RequestBody IR ir) throws JsonProcessingException, InterruptedException {
         ir.setUserEmail(getAuthUserEmail());
         if (ir.getGatewayNo()>0) {
             ir = modifyIRForGateway(ir, ir.getGatewayNo());
@@ -142,7 +143,7 @@ public class IRController extends CommonController {
     // 기기 제어
     @SuppressWarnings("rawtypes")
     @PutMapping("/ir/{no}")
-    public ResponseEntity controlIR(@PathVariable("no") int no, @RequestBody IR ir) throws JsonProcessingException, ParseException {
+    public ResponseEntity controlIR(@PathVariable("no") int no, @RequestBody IR ir) throws JsonProcessingException, ParseException, InterruptedException {
         ir.setNo(no);
         ir.setUserEmail(getAuthUserEmail());
         iRService.controlIR(ir);

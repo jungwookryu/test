@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -27,7 +26,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.app.AppController;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
-import com.ht.connected.home.backend.config.service.MqttConfig;
+import com.ht.connected.home.backend.controller.mqtt.Message;
+import com.ht.connected.home.backend.controller.mqtt.ProducerComponent;
 import com.ht.connected.home.backend.gateway.GatewayRepository;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategoryRepository;
@@ -53,12 +53,8 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     GatewayCategoryRepository gatewayCategoryRepository;
 
     @Autowired
-    MqttConfig.MqttGateway mqttGateway;
+    ProducerComponent producerRestController;
 
-    @Autowired
-    @Qualifier(value = "MqttOutbound")
-    MqttPahoMessageHandler messageHandler;
-    
     @Autowired
     @Qualifier(value = "callbackAckProperties")
     Properties callbackAckProperties;
@@ -107,7 +103,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
 
     @Override
     @Transactional
-    public void studyIR(IR ir) throws JsonProcessingException {
+    public void studyIR(IR ir) throws JsonProcessingException, InterruptedException {
 
         if (AppController.Command.start.name().equals(ir.getStatus()) || AppController.Command.stop.name().equals(ir.getStatus())) {
             // publish
@@ -136,7 +132,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     }
 
     @Override
-    public void subscribe(String[] topicSplited, String payload) throws JsonParseException, JsonMappingException, IOException, JSONException {
+    public void subscribe(String[] topicSplited, String payload) throws JsonParseException, JsonMappingException, IOException, JSONException, InterruptedException {
         if (topicSplited.length > 4) {
             String targetType = topicSplited[1];
             String model = topicSplited[3];
@@ -170,7 +166,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     }
 
     @Override
-    public void controlIR(IR reqIr) throws JsonProcessingException, ParseException {
+    public void controlIR(IR reqIr) throws JsonProcessingException, ParseException, InterruptedException {
         HashMap<String, Object> publishPayload = new HashMap<String, Object>();
         List<IR> irs  = new ArrayList<>();
         if(reqIr.getNo()!=0) {
@@ -214,24 +210,10 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
         return topic;
     }
 
-    public void publish(String topic, HashMap<String, Object> publishPayload) throws JsonProcessingException {
-
-        messageHandler.setDefaultTopic(topic);
+    public void publish(String topic, HashMap<String, Object> publishPayload) throws JsonProcessingException, InterruptedException {
         String payload = objectMapper.writeValueAsString(publishPayload);
-        logger.info("publish topic:::::::::::" + topic);
-        mqttGateway.sendToMqtt(payload);
-    }
-
-    @Override
-    public void subscribe(Object request, Object payload) throws JsonParseException, JsonMappingException, IOException, Exception {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void publish(Object req, Object zwaveRequest) {
-        // TODO Auto-generated method stub
-
+        Message message =  new Message(topic, payload);
+        MqttCommon.publish(producerRestController, message);
     }
 
 }

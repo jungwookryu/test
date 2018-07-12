@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.App;
+package com.ht.connected.home.backend.app;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;

@@ -11,7 +11,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.ht.connected.home.backend.gateway.Gateway;
 import com.ht.connected.home.backend.service.base.CrudService;
-import com.ht.connected.home.backend.service.base.MqttBase;
 
 /**
  * zwave 서비스 인터페이스
@@ -19,27 +18,25 @@ import com.ht.connected.home.backend.service.base.MqttBase;
  * @author 구정화
  *
  */
-public interface ZWaveService extends CrudService<ZWave, Integer>, MqttBase<Object, Object>{
+public interface ZWaveService extends CrudService<ZWave, Integer>{
     
-    ResponseEntity execute(HashMap<String, Object> req, ZWaveRequest zwaveRequest, boolean isCert) throws JsonProcessingException;
-
     void subscribe(ZWaveRequest zwaveRequest, String payload) throws JsonParseException, JsonMappingException, IOException, Exception;
     
-    ResponseEntity publish(HashMap<String, Object> req, ZWaveRequest zwaveRequest) throws JsonProcessingException;
+    ResponseEntity publish(HashMap<String, Object> req, ZWaveRequest zwaveRequest) throws JsonProcessingException, InterruptedException;
 
-    void execute(Map map, boolean isCert) throws JsonProcessingException;
+    void execute(Map map, boolean isCert) throws JsonProcessingException, InterruptedException;
     
-    public int deleteByNo(int no) throws JsonProcessingException ;
+    public int deleteByNo(int no) throws JsonProcessingException, InterruptedException ;
     
     public int getByUserEmailAndNo(String userEmail, int no);
 
-    void subscribeInit(Gateway gateway) throws JsonProcessingException;
+    void subscribeInit(Gateway gateway) throws JsonProcessingException, InterruptedException;
 
     int deleteByGatewayNo(int gatewayNo);
     
     ZWaveReport getZWaveList(int gatewayNo);
 
-    void zwaveControl(ZWaveControl zWaveControl) throws JsonProcessingException;
+    void zwaveControl(ZWaveControl zWaveControl) throws JsonProcessingException, InterruptedException;
 
     Map getZWaveListApp(int gatewayNo);
 }
