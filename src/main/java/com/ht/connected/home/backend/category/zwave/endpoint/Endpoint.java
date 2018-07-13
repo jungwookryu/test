@@ -8,19 +8,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.springframework.context.annotation.DependsOn;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ht.connected.home.backend.category.zwave.ZWave;
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdCls;
 
 @Entity
@@ -222,4 +215,14 @@ public class Endpoint {
         this.outputStatus = outputStatus;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Endpoint [no=" + no + ", epid=" + epid + ", generic=" + generic + ", specific=" + specific + ", nickname=" + nickname + ", zwaveNo=" + zwaveNo + ", cmdCls=" + cmdCls + ", status="
+                + status + ", deviceFunctions=" + deviceFunctions + ", deviceType=" + deviceType + ", deviceNickname=" + deviceNickname + ", inputStatus=" + inputStatus + ", outputStatus="
+                + outputStatus + ", cmdClses=" + cmdClses + "]";
+    }
+    
 }
