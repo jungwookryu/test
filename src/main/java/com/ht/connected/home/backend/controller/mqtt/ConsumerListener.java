@@ -1,7 +1,6 @@
 package com.ht.connected.home.backend.controller.mqtt;
 
 import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +12,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.ht.connected.home.backend.category.ir.IRService;
 import com.ht.connected.home.backend.category.zwave.ZWaveRequest;
 import com.ht.connected.home.backend.category.zwave.ZWaveService;
+import com.ht.connected.home.backend.category.zwave.ZWaveStatusService;
+import com.ht.connected.home.backend.category.zwave.constants.commandclass.AlarmCommandClass;
 import com.ht.connected.home.backend.gateway.Gateway;
 import com.ht.connected.home.backend.gateway.GatewayService;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
@@ -23,6 +24,11 @@ public class ConsumerListener {
 
     @Autowired
     private ZWaveService zwaveService;
+    
+    @Autowired
+    private ZWaveStatusService zWaveStatusService;
+    
+    
     @Autowired
     private GatewayService gateWayService;
 
@@ -30,7 +36,6 @@ public class ConsumerListener {
     private IRService irService;
 
     private static final Logger logger = LoggerFactory.getLogger(ConsumerListener.class);
-    private CountDownLatch latch = new CountDownLatch(1);
 
     /**
      * mqtt received component
@@ -63,8 +68,15 @@ public class ConsumerListener {
                 if (CategoryActive.gateway.zwave.name().equals(topicSplited[5].toString())) {
                     ZWaveRequest zwaveRequest = new ZWaveRequest(topicSplited);
                     if (CategoryActive.zwave.certi.name().equals(topicSplited[6].toString())) {
-
-                        zwaveService.subscribe(zwaveRequest, payload);
+                        if(AlarmCommandClass.INT_ID == zwaveRequest.getClassKey()) {
+                            if(AlarmCommandClass.INT_ALARM_REPORT == zwaveRequest.getClassKey()) {
+                                zWaveStatusService.subscribe(zwaveRequest, payload);
+                            }
+                        }else {
+                            zwaveService.subscribe(zwaveRequest, payload);
+                        }
+                        
+                        
                     }
                     if (CategoryActive.zwave.init.name().equals(topicSplited[6].toString())) {
                         zwaveService.subscribeInit(gateway);
