@@ -34,7 +34,7 @@ public class HTPropertiesConfig {
     @Bean(name="callbackAckProperties")
     public Properties callbackAckProperties() throws IOException {
         Properties callbackAckProperties =new Properties();
-        String propFile = "callbackAckMessage.properties";
+        String propFile = "callback_ack_message.properties";
         InputStream filePath =getClass().getClassLoader().getResourceAsStream(propFile);
         callbackAckProperties.load(filePath);
         return callbackAckProperties;
