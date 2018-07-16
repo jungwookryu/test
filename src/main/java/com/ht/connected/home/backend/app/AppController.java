@@ -26,7 +26,6 @@ import com.mysql.fabric.xmlrpc.base.Array;
 
 @RestController
 @RequestMapping("/app")
-@DependsOn("MqttInbound")   
 public class AppController extends CommonController {
 
     IRController iRController;
@@ -193,10 +192,11 @@ public class AppController extends CommonController {
      * @param requestDto
      * @return
      * @throws JsonProcessingException
+     * @throws InterruptedException 
      * @throws Exception
      */
     @PostMapping(value = { "/irMode" })
-    public ResponseEntity startOrEndLearnRemoteControl(@RequestBody HashMap hashMap) throws JsonProcessingException {
+    public ResponseEntity startOrEndLearnRemoteControl(@RequestBody HashMap hashMap) throws JsonProcessingException, InterruptedException {
         HashMap<String, Object> rtnMap = new HashMap();
         rtnMap.put("result_code", "200");
         rtnMap.put("result_msg", "Success");
@@ -220,9 +220,10 @@ public class AppController extends CommonController {
      * @param requestDto
      * @return
      * @throws JsonProcessingException
+     * @throws InterruptedException 
      */
     @PostMapping("/irStudy")
-    public ResponseEntity learnRemoteControl(@RequestBody HashMap hashMap) throws JsonProcessingException {
+    public ResponseEntity learnRemoteControl(@RequestBody HashMap hashMap) throws JsonProcessingException, InterruptedException {
  
         HashMap<String, Object> rtnMap = new HashMap();
         rtnMap.put("result_code", "200");
@@ -248,10 +249,11 @@ public class AppController extends CommonController {
      * @return
      * @throws JsonProcessingException
      * @throws ParseException 
+     * @throws InterruptedException 
      * @throws Exception
      */
     @PostMapping("/irControl")
-    public ResponseEntity irControl(@RequestBody HashMap hashMap, HttpServletRequest request) throws JsonProcessingException, ParseException {
+    public ResponseEntity irControl(@RequestBody HashMap hashMap, HttpServletRequest request) throws JsonProcessingException, ParseException, InterruptedException {
         HashMap<String, Object> rtnMap = new HashMap();
         HashMap<String, Object> rtnDataMap = new HashMap();
         List rtnIrbuttonList = new ArrayList();

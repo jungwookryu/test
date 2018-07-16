@@ -62,7 +62,7 @@
 		    <!-- <level>INFO</level> -->
 		    <evaluator name="loggingTaskMqtt">
 			    <expression>
-	                event.getThreadName().contains("MqttConfig")
+	                event.getThreadName().contains("")
 	            </expression>
 	        </evaluator>
 			<onMatch>ACCEPT</onMatch>
@@ -86,7 +86,7 @@
             <!-- <level>INFO</level> -->
             <evaluator name="loggingTaskMqtt">
                 <expression>
-                    event.getThreadName().contains("amqp")
+                    event.getThreadName().contains("ConsumerListener")
                 </expression>
             </evaluator>
             <onMatch>ACCEPT</onMatch>

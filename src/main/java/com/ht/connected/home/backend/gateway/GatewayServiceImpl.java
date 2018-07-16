@@ -5,6 +5,7 @@ import static java.util.Objects.isNull;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -14,21 +15,18 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.category.zwave.ZWaveRepository;
 import com.ht.connected.home.backend.category.zwave.ZWaveService;
-import com.ht.connected.home.backend.category.zwave.ZWaveServiceImpl;
-import com.ht.connected.home.backend.category.zwave.certification.CertificationRepository;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
-import com.ht.connected.home.backend.config.service.MqttConfig;
+import com.ht.connected.home.backend.controller.mqtt.Message;
+import com.ht.connected.home.backend.controller.mqtt.ProducerComponent;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategory;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategoryRepository;
@@ -60,41 +58,33 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
         master, share, general
     }
 
-    Logger logger = LoggerFactory.getLogger(ZWaveServiceImpl.class);
+    Logger logger = LoggerFactory.getLogger(GatewayServiceImpl.class);
 
     @Autowired
     UserGatewayRepository userGatewayRepository;
+    
+    @Autowired
+    ProducerComponent producerRestController;
 
     @Autowired
     UserRepository userRepository;
 
     @Autowired
     GatewayRepository gatewayRepository;
-    @Autowired
-    MqttConfig.MqttGateway mqttGateway;
-
-    @Autowired
-    @Qualifier(value = "MqttOutbound")
-    MqttPahoMessageHandler messageHandler;
+   
     @Autowired
     @Qualifier(value = "callbackAckProperties")
     Properties callbackAckProperties;
+    
     @Autowired
     ZWaveRepository zwaveRepository;
-
-    @Autowired
-    CertificationRepository certificationRepository;
 
     @Autowired
     GatewayCategoryRepository gatewayCategoryRepository;
 
     @Autowired
     ZWaveService zwaveService;
-
     
-    @Autowired
-    AmqpTemplate rabbitTemplate;
-
     private ObjectMapper objectMapper = new ObjectMapper();
 
     /**
@@ -167,8 +157,9 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
      * @throws JsonParseException
      * @throws JsonMappingException
      * @throws IOException
+     * @throws InterruptedException 
      */
-    public void subscribe(String topic, String payload) throws JsonParseException, JsonMappingException, IOException {
+    public void subscribe(String topic, String payload) throws JsonParseException, JsonMappingException, IOException, InterruptedException {
         String[] topicSplited = topic.split("/");
         if (topic.contains("noti")) {
             Gateway gateway = objectMapper.readValue(payload, Gateway.class);
@@ -200,11 +191,10 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
                         exangeGateway.setNickname((String) Common.isNullrtnByobj(gateway.getNickname(), topicSplited[1]+"_"+gateway.getSerial()));
                         updateGateway(exangeGateway);
                         updateUserGateway(exangeGateway, user.getNo());
-                        String appTopic = callbackAckProperties.getProperty("zwave.product.registration");
-                        String exeTopic = MqttCommon.rtnCallbackAck(appTopic, Target.app.name(), gateway.getModel(),  gateway.getSerial());
-                        publish(exeTopic);
+                        MqttCommon.publishNotificationData(producerRestController,callbackAckProperties,"zwave.product.registration", Target.app.name(), gateway.getModel(),  gateway.getSerial(), new HashMap());
                     }
                 }
+                MqttCommon.publishNotificationData(producerRestController,callbackAckProperties,"zwave.product.registration", Target.app.name(), gateway.getModel(),  gateway.getSerial(), new HashMap());
                 
             }
 
@@ -218,31 +208,24 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     /**
      * 서비스앱 지원 메세지 없는 publish
      * @param topic
+     * @throws InterruptedException 
      */
-    public void publish(String topic) {
-        messageHandler.setDefaultTopic(topic);
-        mqttGateway.sendToMqtt("");
+    public void publish(String topic) throws InterruptedException {
+        Message message =  new Message(topic, "");
+        MqttCommon.publish(producerRestController, message);
     }
 
-    @Override
-    public void subscribe(Object t, Object p) throws com.fasterxml.jackson.core.JsonParseException, com.fasterxml.jackson.databind.JsonMappingException, IOException, Exception {
-        if (t instanceof String && p instanceof String) {
-            subscribe((String) t, (String) p);
-        }
-
-    }
-
-    @Override
-    public void publish(Object t, Object t2) {
+    public void publish(Object t, Object t2) throws InterruptedException {
         if (t instanceof String && t2 == null) {
-            publish((String) t);
+            Message message =  new Message((String) t, "");
+            MqttCommon.publish(producerRestController, message);
         }
 
     }
 
     @Override
     @Transactional
-    public void delete(int no) {
+    public void delete(int no) throws InterruptedException {
         // db 삭제모드 업데이트
         updateDeleteDB(no);
         // host 삭제 모드 요청 publish

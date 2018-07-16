@@ -23,7 +23,7 @@ public class GovController {
     GovService govService;
     
     @PutMapping("/{device_type}")
-    public ResponseEntity controlGovDevice(@PathVariable("device_type") String deviceType, @RequestBody GovDeviceRequest govDeviceRequest) throws JsonProcessingException {
+    public ResponseEntity controlGovDevice(@PathVariable("device_type") String deviceType, @RequestBody GovDeviceRequest govDeviceRequest) throws JsonProcessingException, InterruptedException {
         govDeviceRequest.setDevice(deviceType);
         govService.publish(govDeviceRequest);
         return new ResponseEntity(HttpStatus.OK);

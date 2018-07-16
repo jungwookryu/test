@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ht.connected.home.backend.category.zwave.certification.CertificationRepository;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementInclusionCommandClass;
 import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.category.zwave.endpoint.EndpointRepository;
@@ -49,41 +48,20 @@ public class ZWaveController extends CommonController {
     UserRepository userRepository;
 
     @Autowired
-    CertificationRepository certificationRepository;
-
-    @Autowired
     ZWaveRepository zWaveRepository;
     
     @Autowired
     EndpointRepository endpointRepository;
     
     /**
-     * 모든 요청에 version 이 있다 모든 요청을 처리가능 인증프로토몰과 실서비스 프로토몰 공통 사용 (execute 인자값 확인)
-     * @param classKey
-     * @param commandKey
-     * @param version
-     * @param req
-     * @return
-     * @throws JsonProcessingException
-     */
-    @PostMapping(value = "/{classKey}/{commandKey}/{version}")
-    public ResponseEntity getRequestVersion(@PathVariable("classKey") String classKey,
-            @PathVariable("commandKey") String commandKey, @PathVariable("version") String version,
-            @RequestBody HashMap<String, Object> req) throws JsonProcessingException {
-        logger.info("commandKey:" + commandKey + " :::classKey:" + classKey + "version:::" + version);
-
-        ZWaveRequest zwaveRequest = new ZWaveRequest(req, Integer.parseInt(classKey), Integer.parseInt(commandKey), version);
-        return zwaveService.execute(req, zwaveRequest, true);
-    }
-
-    /**
      * 기기등록 취소
      * @param req
      * @return
      * @throws JsonProcessingException
+     * @throws InterruptedException 
      */
     @PostMapping
-    public ResponseEntity regist(@RequestBody HashMap<String, Object> req) throws JsonProcessingException {
+    public ResponseEntity regist(@RequestBody HashMap<String, Object> req) throws JsonProcessingException, InterruptedException {
         String userEmail = getAuthUserEmail();
         HashMap map = new HashMap<>();
         int classKey = NetworkManagementInclusionCommandClass.INT_ID;
@@ -132,9 +110,10 @@ public class ZWaveController extends CommonController {
      * @param no
      * @return 
      * @throws JsonProcessingException
+     * @throws InterruptedException 
      */
     @DeleteMapping(value = "/remove/{no}")
-    public ResponseEntity delete(@PathVariable int no) throws JsonProcessingException{
+    public ResponseEntity delete(@PathVariable int no) throws JsonProcessingException, InterruptedException{
         String userEmail = getAuthUserEmail();
         List<User> lstUser = userRepository.findByUserEmail(userEmail);
         if(lstUser.size()>0) {
@@ -155,7 +134,7 @@ public class ZWaveController extends CommonController {
     }
 
     @PutMapping("/{zwave_no}")
-    public ResponseEntity control(@PathVariable int zwave_no, @RequestBody ZWaveControl zWaveControl) throws JsonProcessingException {
+    public ResponseEntity control(@PathVariable int zwave_no, @RequestBody ZWaveControl zWaveControl) throws JsonProcessingException, InterruptedException {
         zWaveControl.setZwave_no(zwave_no);
         zwaveService.zwaveControl(zWaveControl);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);

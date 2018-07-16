@@ -1,15 +1,11 @@
 package com.ht.connected.home.backend.category.zwave.endpoint;
 
-import java.io.IOException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.category.zwave.ZWave;
 import com.ht.connected.home.backend.category.zwave.ZWaveRepository;
@@ -32,18 +28,6 @@ public class EndpointServiceImpl extends CrudServiceImpl<Endpoint, Integer> impl
     private static final Log logging = LogFactory.getLog(EndpointServiceImpl.class);
 
     private ObjectMapper objectMapper = new ObjectMapper();
-
-    @Override
-    public void subscribe(Object t, Object p) throws JsonParseException, JsonMappingException, IOException, Exception {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void publish(Object t, Object t2) {
-        // TODO Auto-generated method stub
-        
-    }
 
     @Transactional
     @Override

@@ -9,12 +9,6 @@ import org.springframework.boot.Banner;
 public class HtConnectedHomeServerApplication {
 
 	public static void main(String[] args) {
-//	    System.out.println(args[0]);
-//	    String[] appArgs = {"--debug"};
-//	    SpringApplication app = new SpringApplication(HtConnectedHomeServerApplication.class);
-//        app.setBannerMode(Banner.Mode.OFF);
-//        app.setLogStartupInfo(false);
-//        ConfigurableApplicationContext c = app.run(appArgs);
 		SpringApplication.run(HtConnectedHomeServerApplication.class, args);
 	}
 }
