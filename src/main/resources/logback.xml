@@ -53,7 +53,7 @@
 	
 	<appender name="File_mqtt" class="ch.qos.logback.core.rolling.RollingFileAppender">
 	   <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-           <fileNamePattern>${LOG_DIR}_amqp/iot_connected_home_amqp.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+           <fileNamePattern>${LOG_DIR}_mqtt/iot_connected_home_mqtt.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>100MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
