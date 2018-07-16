@@ -160,7 +160,7 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
      * @throws InterruptedException 
      */
     public void subscribe(String topic, String payload) throws JsonParseException, JsonMappingException, IOException, InterruptedException {
-        String[] topicSplited = topic.split("/");
+        String[] topicSplited = topic.trim().replace(".", ";").split(";");
         if (topic.contains("noti")) {
             Gateway gateway = objectMapper.readValue(payload, Gateway.class);
             gateway.setTargetType(topicSplited[1]);

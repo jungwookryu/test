@@ -1,5 +1,8 @@
 package com.ht.connected.home.backend.config.service;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,8 +73,13 @@ public class RabbitConfiguration {
 
 
     @Bean
-    public Queue queue(AmqpAdmin amqpAdmin) {
-        Queue queue = new Queue(activemqQueueName, false);
+    public Queue queue(AmqpAdmin amqpAdmin) throws UnknownHostException {
+        String hostname = InetAddress.getLocalHost().getHostName();
+        logger.info("hostname ::: "+hostname);
+
+        String sActive = env.getRequiredProperty("spring.profiles.active");
+        Queue queue = new Queue(activemqQueueName+"_"+hostname+"_"+sActive, false);
+        amqpAdmin.declareQueue(queue);
         return queue;
     }
 
@@ -168,16 +176,13 @@ public class RabbitConfiguration {
                     logger.info(message.toString());
                     MessageHeaders messageHeaders = message.getHeaders();
                     String topic = (String) messageHeaders.getOrDefault(AmqpHeaders.RECEIVED_ROUTING_KEY,"");
-                    ObjectMapper opjectMapper = new ObjectMapper();
                     if (Common.notEmpty(topic)) {
-                        Object payload = message.getPayload();
-                        String sPayLoad;
-                        sPayLoad = opjectMapper.writeValueAsString(payload);
+                        byte[] payload = (byte[]) message.getPayload();
+                        String sPayLoad = new String(payload);
                         com.ht.connected.home.backend.controller.mqtt.Message returnMessage = new com.ht.connected.home.backend.controller.mqtt.Message(topic, sPayLoad);
                         consumerListener.receiveMessage(returnMessage);
                     }
                 } catch (Exception e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
 
