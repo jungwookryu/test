@@ -87,14 +87,6 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    /**
-     * 호스트 등록/부팅 메세지 executor type 이 register 일 경우만 처리 type 이 boot 일 경우에 대한 디비 저정은 추가될수 있음
-     * @param mqttTopicHandler
-     * @param mqttGateway
-     * @return
-     * @throws Exception
-     */
-
     public List<Gateway> getGatewayList(String status,String authUserEmail) {
         List<User> users = userRepository.findByUserEmail(authUserEmail);
         User user = users.get(0);

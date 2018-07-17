@@ -3,7 +3,6 @@ package com.ht.connected.home.backend.config.service;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AcknowledgeMode;
@@ -19,12 +18,12 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
-import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -36,6 +35,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessageHeaders;
+import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
 import org.springframework.util.StringUtils;
 
 import com.ht.connected.home.backend.common.Common;
@@ -71,15 +71,13 @@ public class RabbitConfiguration {
     public static final String LOG = "rabbitmqlog";
     private static final Logger logger = LoggerFactory.getLogger(RabbitConfiguration.class);
 
-
     @Bean
     public Queue queue(AmqpAdmin amqpAdmin) throws UnknownHostException {
         String hostname = InetAddress.getLocalHost().getHostName();
         logger.info("hostname ::: "+hostname);
-
         String sActive = env.getRequiredProperty("spring.profiles.active");
         Queue queue = new Queue(activemqQueueName+"_"+hostname+"_"+sActive, false);
-        amqpAdmin.declareQueue(queue);
+//        amqpAdmin.declareQueue(queue);
         return queue;
     }
 
@@ -103,10 +101,13 @@ public class RabbitConfiguration {
     }
 
     @Bean
-    public SimpleMessageListenerContainer messageListenerContainer(ConnectionFactory connectionFactory, MessageListenerAdapter exampleListener) {
+    public SimpleMessageListenerContainer messageListenerContainer(ConnectionFactory connectionFactory) throws UnknownHostException {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        container.setQueueNames(activemqQueueName);
+        String hostname = InetAddress.getLocalHost().getHostName();
+        logger.info("hostname ::: "+hostname);
+        String sActive = env.getRequiredProperty("spring.profiles.active");
+        container.setQueueNames(activemqQueueName+"_"+hostname+"_"+sActive);
         container.setAcknowledgeMode(AcknowledgeMode.AUTO);
         return container;
     }
@@ -131,11 +132,6 @@ public class RabbitConfiguration {
     }
 
     @Bean
-    public MessageListenerAdapter exampleListener(ConsumerListener consumerListener) {
-        return new MessageListenerAdapter(consumerListener, "receiveMessage");
-    }
-
-    @Bean
     public ConnectionFactory connectionFactory() {
         String sActive = env.getRequiredProperty("spring.profiles.active");
         if (StringUtils.isEmpty(sActive)) {
@@ -149,8 +145,8 @@ public class RabbitConfiguration {
     }
 
     @Bean
-    AmqpAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
-        return new RabbitAdmin(connectionFactory);
+    AmqpAdmin amqpAdmin() {
+        return new RabbitAdmin(connectionFactory());
     }
 
     @Bean
@@ -159,12 +155,12 @@ public class RabbitConfiguration {
     }
 
     @Bean
-    public AmqpTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setMessageConverter(producerJackson2MessageConverter());
+    public AmqpTemplate amqpTemplate(ConnectionFactory connectionFactory) {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory());
         return rabbitTemplate;
     }
 
+    
     @Bean
     @ServiceActivator(inputChannel = "amqpInputChannel")
     public MessageHandler handler() {
