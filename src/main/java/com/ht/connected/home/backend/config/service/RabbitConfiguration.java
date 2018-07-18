@@ -2,6 +2,7 @@ package com.ht.connected.home.backend.config.service;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,7 @@ import com.ht.connected.home.backend.controller.mqtt.ConsumerListener;
 @EnableRabbit
 public class RabbitConfiguration {
     
-    @Value("${spring.activemq.channel.local.server}")
+    @Value("${spring.activemq.channel.server}")
     String springMqttChannelServer;
     
     @Value("${spring.activemq.queueName}")
@@ -70,27 +71,29 @@ public class RabbitConfiguration {
     
     public static final String LOG = "rabbitmqlog";
     private static final Logger logger = LoggerFactory.getLogger(RabbitConfiguration.class);
-
     @Bean
     public Queue queue(AmqpAdmin amqpAdmin) throws UnknownHostException {
         String hostname = InetAddress.getLocalHost().getHostName();
         logger.info("hostname ::: "+hostname);
         String sActive = env.getRequiredProperty("spring.profiles.active");
         Queue queue = new Queue(activemqQueueName+"_"+hostname+"_"+sActive, false);
-//        amqpAdmin.declareQueue(queue);
         return queue;
     }
 
     @Bean
     public TopicExchange exchange(AmqpAdmin amqpAdmin) {
         TopicExchange topicExchange = new TopicExchange(activemqExchangeQueueName);
-        amqpAdmin.declareExchange(topicExchange);
         return topicExchange;
     }
 
     @Bean
     Binding binding(AmqpAdmin amqpAdmin, Queue queue, TopicExchange exchange) {
-        Binding binding = BindingBuilder.bind(queue).to(exchange).with(springMqttChannelServer);
+        String sActive = env.getRequiredProperty("spring.profiles.active");
+        if(Objects.isNull(sActive)) {
+            sActive = "dev";
+        }
+        String channelServer = env.getRequiredProperty("spring.activemq.channel."+sActive+".server");
+        Binding binding = BindingBuilder.bind(queue).to(exchange).with(channelServer);
         amqpAdmin.declareBinding(binding);
         return binding;
     }
