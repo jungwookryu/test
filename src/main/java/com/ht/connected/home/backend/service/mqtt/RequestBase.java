@@ -31,7 +31,7 @@ abstract public class RequestBase{
     
     //  /{source}/{target}/{model}/{serial}/{category}
     public RequestBase(String topic) {
-        String[] splitTopic = topic.split("/");
+        String[] splitTopic = topic.split(".");
         this.source= splitTopic[1];
         this.target= splitTopic[2];
         this.model= splitTopic[3];

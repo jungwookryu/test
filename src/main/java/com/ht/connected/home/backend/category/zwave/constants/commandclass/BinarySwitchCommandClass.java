@@ -22,7 +22,8 @@ public class BinarySwitchCommandClass extends CommandClass {
     public static final byte SWITCH_BINARY_GET = 0x02;
     public static final byte SWITCH_BINARY_REPORT = 0x03;
 
-    public static final byte ID = 0x25;
+    public static final byte ID = (byte)0x25;
+    public static final int INT_ID = (byte)0x25;
     public static final String genericKey = "10";
     
     private Boolean isOn;

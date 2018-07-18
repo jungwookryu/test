@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -17,7 +18,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdCls;
 
 @Entity
-@Table(name = "endpoint")
+@Table(name = "endpoint",
+uniqueConstraints={
+    @UniqueConstraint(
+        columnNames={"zwave_no","epid"}
+    )
+})
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Endpoint {

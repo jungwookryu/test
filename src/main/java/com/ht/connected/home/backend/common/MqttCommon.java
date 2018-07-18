@@ -30,10 +30,12 @@ import com.ht.connected.home.backend.service.mqtt.MqttRequest;
 public class MqttCommon {
 
     private static Logger logger = LoggerFactory.getLogger(MqttCommon.class);
-    private static String STATIC_TARGET ="{target}";
-    private static String STATIC_MODEL ="{model}";
-    private static String STATIC_SERIAL ="{serial}";
-    
+    public static String STATIC_TARGET = "{target}";
+    public static String STATIC_MODEL = "{model}";
+    public static String STATIC_SERIAL = "{serial}";
+    public static String STATIC_ENDPOINT_NO = "{endpoint_no}";
+    public static String STATIC_SEQUENCE = "{sequence}";
+
     /**
      * mqtt publish 토픽 생성
      * @param topicLeadingPath
@@ -68,39 +70,39 @@ public class MqttCommon {
                 +"/"+ ByteUtil.getHexString(mqttRequest.getCommandKey());
                 if(!Common.empty(mqttRequest.getVersion())){
                     topic += "/"+ mqttRequest.getVersion();
-                    if(!Common.empty(mqttRequest.getNodeId())){
-                        topic += "/"+ ByteUtil.getHexString(nodeId);
-                        if(!Common.empty(mqttRequest.getEndpointId())){
-                            topic += "/"+ ByteUtil.getHexString(endPointId);
-                            if(!Common.empty(mqttRequest.getSecurityOption())){
-                                topic += "/"+ mqttRequest.getSecurityOption();
-                            } else {
-                                topic += "/s0";
-                            }
-                        } else {
-                            topic += "/0x00";
-                        }
-                    } else {
-                        topic += "0x00";
-                    }
                 }else {
-                    topic += "/v1";
+                        topic += "/v1";
+                }
+                if(!Common.empty(mqttRequest.getNodeId())){
+                    topic += "/"+ ByteUtil.getHexString(nodeId);
+                } else {
+                    topic += "0x00";
+                }
+                if(!Common.empty(mqttRequest.getEndpointId())){
+                    topic += "/"+ ByteUtil.getHexString(endPointId);
+                } else {
+                    topic += "/0x00";
+                }
+                if(!Common.empty(mqttRequest.getSecurityOption())){
+                    topic += "/"+ mqttRequest.getSecurityOption();
+                } else {
+                    topic += "/s0";
                 }
         logger.info("====================== ZWAVE PROTO MQTT PUBLISH TOPIC ======================");
         logger.info(topic);
         return topic;
     }
-    
+
     public static String getMqttPublishTopic(MqttRequest mqttRequest) {
         String topic = getMqttPublishTopic(mqttRequest, mqttRequest.getTarget());
         return topic;
     }
-    
+
     public static String rtnCallbackAck(String ack, String target, String model, String serial) {
-        
+
         ack = (String) Common.isNullrtnByobj(ack, "topic is null");
-        
-        if(Objects.nonNull(ack)) {
+
+        if (Objects.nonNull(ack)) {
             ack = ack.replace(STATIC_TARGET, target);
             ack = ack.replace(STATIC_MODEL, model);
             ack = ack.replace(STATIC_SERIAL, serial);
@@ -108,20 +110,21 @@ public class MqttCommon {
         }
         return ack;
     }
-    
+
     public static void publish(ProducerComponent producerRestController, Message message) throws InterruptedException {
-        
+
         producerRestController.run(message);
-        
+
     }
-    
-    public static void publishNotificationData(ProducerComponent producerRestController, Properties callbackAckProperties,String sAckPropertyName, String target, String model, String serial, Object notiData)
+
+    public static void publishNotificationData(ProducerComponent producerRestController, Properties callbackAckProperties, String sAckPropertyName, String target, String model, String serial,
+            Object notiData)
             throws InterruptedException, JsonGenerationException, JsonMappingException, IOException {
-        
+
         ObjectMapper objectMapper = new ObjectMapper();
-        
+
         String topic = callbackAckProperties.getProperty(sAckPropertyName);
-        String exeTopic = MqttCommon.rtnCallbackAck(topic,target, model,  serial);
+        String exeTopic = MqttCommon.rtnCallbackAck(topic, target, model, serial);
         Message message = new Message(exeTopic, objectMapper.writeValueAsString(notiData));
         MqttCommon.publish(producerRestController, message);
     }

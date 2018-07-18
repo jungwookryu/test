@@ -26,6 +26,7 @@ import com.mysql.fabric.xmlrpc.base.Array;
 
 @RestController
 @RequestMapping("/app")
+@DependsOn("mqttConfig")
 public class AppController extends CommonController {
 
     IRController iRController;

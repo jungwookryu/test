@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -22,7 +23,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
 
 @Entity
-@Table(name = "zwave")
+@Table(name = "zwave",
+        uniqueConstraints={
+            @UniqueConstraint(
+                columnNames={"gateway_no","node_id"}
+            )
+        })
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ZWave {

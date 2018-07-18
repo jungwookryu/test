@@ -48,11 +48,11 @@ public class ConsumerListener {
     public void receiveMessage(Message message) throws JsonParseException, JsonMappingException, IOException, Exception {
         String topic = String.valueOf(message.getMessageType());
         String payload = String.valueOf(message.getMessageBody());
-
+        
         logger.info("messageArrived: Topic=" + topic + ", Payload=" + payload);
-        String[] topicSplited = topic.trim().split("/");
+        String[] topicSplited = topic.trim().replace(".", ";").split(";");
         // message topic 4개이상이어야 gateway관련 메세지임.
-        if (topicSplited.length > 4) {
+                                                                                                                                        if (topicSplited.length > 4) {
             Gateway gateway = new Gateway();
             if (4 <= topicSplited.length) {
                 gateway = new Gateway(topicSplited[3].toString(), topicSplited[4].toString());
