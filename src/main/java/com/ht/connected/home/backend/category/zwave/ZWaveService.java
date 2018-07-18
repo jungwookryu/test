@@ -18,7 +18,7 @@ import com.ht.connected.home.backend.service.base.CrudService;
  * @author 구정화
  *
  */
-public interface ZWaveService extends CrudService<ZWave, Integer>{
+public interface ZWaveService {
     
     void subscribe(ZWaveRequest zwaveRequest, String payload) throws JsonParseException, JsonMappingException, IOException, Exception;
     
