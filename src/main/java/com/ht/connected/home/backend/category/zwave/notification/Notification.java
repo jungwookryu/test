@@ -51,16 +51,28 @@ public class Notification {
     @Column(name = "device_type_name")
     @JsonProperty("device_type_name")
     String deviceTypeName;
+    
+    @Column(name = "endpoint_no")
+    @JsonProperty("endpoint_no")
+    int endpointNo;
+    
+    @Column(name = "zwave_no")
+    @JsonProperty("zwave_no")
+    int zwaveNo;
   
     public Notification() {
         super();
     };
     
-    public Notification(int notificationCode, int eventCode, int sequence, String deviceTypeCode) {
+    public Notification(int notificationCode, int eventCode, int sequence, String deviceTypeCode, int zwaveNo, int endpointNo) {
         this.deviceTypeCode = deviceTypeCode;
         this.notificationCode = notificationCode;
         this.eventCode = eventCode;
         this.sequence = sequence;
+        this.zwaveNo = zwaveNo;
+        this.endpointNo = endpointNo;
+        setEventNameByCode();
+        setNotificationTypeByCode();
 
     }
 
@@ -189,17 +201,44 @@ public class Notification {
     }
 
 
-    public void setEventNameByCode(int eventCode) {
-        
-        this.eventName = "";
+    public void setEventNameByCode() {
+        this.eventName = NotificationEvent.getEventName(this.getNotificationCode(),this.getEventCode());
     }
     
-    public void setNotificationTypeByCode(int notificationCode) {
-        this.notificationType = "";
+    public void setNotificationTypeByCode() {
+        this.notificationType = NotificationType.getZwaveNotificationName(this.notificationCode);
     }
     
     public void setDeviceTypeNameByCode(String deviceTypeCode) {
         this.deviceTypeName = "";
+    }
+
+    /**
+     * @return the endpointNo
+     */
+    public int getEndpointNo() {
+        return endpointNo;
+    }
+
+    /**
+     * @param endpointNo the endpointNo to set
+     */
+    public void setEndpointNo(int endpointNo) {
+        this.endpointNo = endpointNo;
+    }
+
+    /**
+     * @return the zwaveNo
+     */
+    public int getZwaveNo() {
+        return zwaveNo;
+    }
+
+    /**
+     * @param zwaveNo the zwaveNo to set
+     */
+    public void setZwaveNo(int zwaveNo) {
+        this.zwaveNo = zwaveNo;
     }
 
 }
