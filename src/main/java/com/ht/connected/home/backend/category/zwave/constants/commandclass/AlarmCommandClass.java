@@ -19,10 +19,12 @@ public class AlarmCommandClass extends CommandClass {
 
     public static final byte ALARM_GET = 0x04;
     public static final byte ALARM_REPORT = 0x05;
+    public static final byte ALARM_SET = 0x06;
 
     public static final byte ID = (byte)0x71;
     public static final int INT_ID = (byte)0x71;
     public static final int INT_ALARM_REPORT = (byte)0x05;
+    public static final int INT_ALARM_SET = (byte)0x06;
     
     public static final String genericKey = "07";
     public static final String specificKey ="01";
