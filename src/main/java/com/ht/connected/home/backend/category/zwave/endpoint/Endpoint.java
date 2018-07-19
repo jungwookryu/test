@@ -81,6 +81,10 @@ public class Endpoint {
     @Column(name = "output_status")
     String outputStatus;
     
+    @JsonProperty("device_type_name")
+    @Column(name = "device_type_name")
+    String deviceTypeName;
+    
     @JsonProperty("cmd_cls")
     @Transient
     List<CmdCls> cmdClses;
@@ -229,6 +233,20 @@ public class Endpoint {
         return "Endpoint [no=" + no + ", epid=" + epid + ", generic=" + generic + ", specific=" + specific + ", nickname=" + nickname + ", zwaveNo=" + zwaveNo + ", cmdCls=" + cmdCls + ", status="
                 + status + ", deviceFunctions=" + deviceFunctions + ", deviceType=" + deviceType + ", deviceNickname=" + deviceNickname + ", inputStatus=" + inputStatus + ", outputStatus="
                 + outputStatus + ", cmdClses=" + cmdClses + "]";
+    }
+
+    /**
+     * @return the deviceTypeName
+     */
+    public String getDeviceTypeName() {
+        return deviceTypeName;
+    }
+
+    /**
+     * @param deviceTypeName the deviceTypeName to set
+     */
+    public void setDeviceTypeName(String deviceTypeName) {
+        this.deviceTypeName = deviceTypeName;
     }
     
 }
