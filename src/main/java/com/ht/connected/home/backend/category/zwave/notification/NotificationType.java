@@ -1,8 +1,10 @@
 package com.ht.connected.home.backend.category.zwave.notification;
 
+import com.ht.connected.home.backend.category.zwave.constants.commandclass.BinarySwitchCommandClass;
+
 public class NotificationType {
     
-    enum ZwaveNotification{
+    public enum ZwaveNotification{
         not_notification
         , Smoke_Alarm
         , CO_Alarm
@@ -156,5 +158,5 @@ public class NotificationType {
             return ZwaveNotification.Water_Valve.name();
         }
     }
-    
+
 }

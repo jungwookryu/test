@@ -99,7 +99,7 @@ public class GatewayController extends CommonController {
     }
     
     @DeleteMapping(value = "/{no}")
-    public ResponseEntity deleteGateway(@PathVariable("no") int no) throws InterruptedException {
+    public ResponseEntity deleteGateway(@PathVariable("no") int no) throws Exception {
         gateWayService.delete(no);
         return new ResponseEntity<>(HttpStatus.OK);
     }

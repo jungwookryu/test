@@ -6,17 +6,22 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
-@Table(name = "zwave_endpoint_notification")
+@Table(name = "zwave_endpoint_notification",
+uniqueConstraints={
+    @UniqueConstraint(
+        columnNames={"notification_code","endpoint_no"}
+    )
+})
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Notification {
-
 
     @Id
     @Column(name = "no")
@@ -31,6 +36,14 @@ public class Notification {
     @Column(name = "notification_code")
     @JsonProperty("notification_code")
     int notificationCode;
+ 
+    @Column(name = "function_code")
+    @JsonProperty("function_code")
+    String functionCode;
+
+    @Column(name = "function_name")
+    @JsonProperty("function_name")
+    int functionName;
     
     @Column(name = "event_code")
     @JsonProperty("event_code")
@@ -239,6 +252,34 @@ public class Notification {
      */
     public void setZwaveNo(int zwaveNo) {
         this.zwaveNo = zwaveNo;
+    }
+
+    /**
+     * @return the functionCode
+     */
+    public String getFunctionCode() {
+        return functionCode;
+    }
+
+    /**
+     * @param functionCode the functionCode to set
+     */
+    public void setFunctionCode(String functionCode) {
+        this.functionCode = functionCode;
+    }
+
+    /**
+     * @return the functionName
+     */
+    public int getFunctionName() {
+        return functionName;
+    }
+
+    /**
+     * @param functionName the functionName to set
+     */
+    public void setFunctionName(int functionName) {
+        this.functionName = functionName;
     }
 
 }

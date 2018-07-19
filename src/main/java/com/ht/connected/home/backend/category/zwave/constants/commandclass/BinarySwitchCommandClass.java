@@ -7,12 +7,17 @@
  *******************************************************************************/
 package com.ht.connected.home.backend.category.zwave.constants.commandclass;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ht.connected.home.backend.category.zwave.notification.NotificationEvent;
+
 /**
  * Binary Switch Command Class
- *
  * @author Dan Noguerol
  */
 public class BinarySwitchCommandClass extends CommandClass {
@@ -22,12 +27,24 @@ public class BinarySwitchCommandClass extends CommandClass {
     public static final byte SWITCH_BINARY_GET = 0x02;
     public static final byte SWITCH_BINARY_REPORT = 0x03;
 
-    public static final byte ID = (byte)0x25;
-    public static final int INT_ID = (byte)0x25;
+    public static final byte ID = (byte) 0x25;
+    public static final int INT_ID = (byte) 0x25;
+    
+    public static final int INT_SWITCH_BINARY_REPORT = 0x03;
+    
+    
     public static final String genericKey = "10";
+    public static final String specificKey = "01";
+    
+    public static final int on = 255;
+    public static final int off = 0;
+    public static final int notSigned = -1;
+    public static final int MEVENT =8;
+    
+    public static final int DEFAULT_SEQUENCE =0;
     
     private Boolean isOn;
-
+    
     @Override
     public byte getId() {
         return ID;
@@ -38,10 +55,30 @@ public class BinarySwitchCommandClass extends CommandClass {
         return "COMMAND_CLASS_SWITCH_BINARY";
     }
 
-    public Boolean isOn() {
-        return isOn;
+    public static Boolean getIsOn(int iIsOn) {
+        switch(iIsOn) {
+            case on:
+                return true;
+            case off:
+                return false;
+            default:
+                return false;
+        }
+    }
+    
+    public static int getNotificationCode(int iIsOn) {
+        switch(iIsOn) {
+        case on:
+            return NotificationEvent.intOn;
+        case off:
+            return NotificationEvent.intOff;
+        default:
+            return -1;
+        }
     }
 
+    
+    
     @Override
     public String toString() {
         return "BinarySwitchCommandClass{" +
@@ -65,9 +102,10 @@ public class BinarySwitchCommandClass extends CommandClass {
     public String getFunctionType() {
         return "SWITCH_BINARY";
     }
-    
+
     @Override
     public String getGenericKey() {
         return genericKey;
     }
+
 }

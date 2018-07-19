@@ -17,4 +17,5 @@ public interface GatewayService{
     Gateway findOne(int no);
     boolean shareGateway(String mode , Gateway originGateway, User user);
     void subscribe(String topic, String payload) throws JsonParseException, JsonMappingException, IOException, InterruptedException;
+    void hostReset(String serial);
 }

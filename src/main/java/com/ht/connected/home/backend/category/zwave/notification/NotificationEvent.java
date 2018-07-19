@@ -7,7 +7,9 @@ public class NotificationEvent {
     private static String Open ="Open"; 
     private static String Close ="Close"; 
     private static String On ="On"; 
-    private static String Off ="Off"; 
+    private static String Off ="Off";
+    public static final int intOn =3;
+    public static final int intOff =2;
     private static String NoAccessCotrol ="NoAccessCotrol"; 
     private static String Fire_Detector ="fire detector"; 
     private static String Medical_Detector ="medical detector"; 
@@ -26,6 +28,8 @@ public class NotificationEvent {
             return homeSecurityEventName(eventCode);
         }else if(notificationCode == ZwaveNotification.Emergency_Alarm.ordinal()) {
             return emergencyAlarmEventName(eventCode);
+        }else if(notificationCode == ZwaveNotification.Power_Management.ordinal()) {
+            return powerManagementEventName(eventCode);
         }else
             return null;
         }
@@ -62,9 +66,9 @@ public class NotificationEvent {
         }
     }
     private static String powerManagementEventName(int eventCode) {
-        if(eventCode == 2) {
+        if(eventCode == intOn) {
             return On;
-        }else if(eventCode == 3) {
+        }else if(eventCode == intOff) {
             return Off;
         }else{
             return "No Power Management";
