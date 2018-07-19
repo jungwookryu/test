@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 
 import javax.transaction.Transactional;
@@ -18,11 +19,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ht.connected.home.backend.category.ir.IRService;
+import com.ht.connected.home.backend.category.zwave.ZWave;
 import com.ht.connected.home.backend.category.zwave.ZWaveRepository;
+import com.ht.connected.home.backend.category.zwave.ZWaveRequest;
 import com.ht.connected.home.backend.category.zwave.ZWaveService;
+import com.ht.connected.home.backend.category.zwave.cmdcls.CmdClsRepository;
+import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
+import com.ht.connected.home.backend.category.zwave.endpoint.EndpointRepository;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.controller.mqtt.Message;
@@ -78,6 +86,15 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
     
     @Autowired
     ZWaveRepository zwaveRepository;
+    
+    @Autowired
+    EndpointRepository endpointRepository;
+    
+    @Autowired
+    CmdClsRepository cmdClsRepository;
+    
+    @Autowired
+    IRService irService;
 
     @Autowired
     GatewayCategoryRepository gatewayCategoryRepository;
@@ -222,6 +239,11 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
         updateDeleteDB(no);
         // host 삭제 모드 요청 publish
         Gateway gateway = findOne(no);
+        if(Objects.isNull(gateway)) {
+            throw new BadCredentialsException("not found gateway");
+        }
+        //데이터 삭제
+        hostReset(gateway.getSerial());
         String exeTopic = String.format("/" + Target.server.name() + "/" + gateway.getTargetType() + "/%s/%s/manager/reset", gateway.getModel(), gateway.getSerial());
         publish(exeTopic, null);
     }
@@ -315,5 +337,27 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
         }
         return bShare;
     }
+    @Override
+    public void hostReset(String serial) {
+        // host 정보삭제
+        Gateway gateway = gatewayRepository.findBySerial(serial);
+        gatewayRepository.delete(gateway.getNo());
+        userGatewayRepository.deleteByGatewayNo(gateway.getNo());
+        // zwaveNo
+        gatewayCategoryRepository.deleteByGatewayNo(gateway.getNo());
+        List<ZWave> lstZWave = zwaveRepository.findByGatewayNo(gateway.getNo());
+        for (ZWave zWave : lstZWave) {
+            List<Endpoint> lstEndpoint = endpointRepository.findByZwaveNo(zWave.getNo());
+            for (Endpoint endpoint : lstEndpoint) {
+                cmdClsRepository.deleteByEndpointNo(endpoint.getNo());
+            }
+            endpointRepository.deleteByZwaveNo(zWave.getNo());
+        }
+        zwaveRepository.deleteByGatewayNo(gateway.getNo());
+        irService.deleteIrs(gateway.getNo(), "");
 
+    }
+
+    
 }
+

@@ -3,7 +3,7 @@
 	<property name="LOG_DIR" value="logs" />
 	<property name="LOG_PATH_NAME" value="${LOG_DIR}/iot_connected_home.log" />
 	<property name="LOG_PATH_NAME_SIP" value="${LOG_DIR}/iot_connected_home_sip.log" />
-	<property name="LOG_MQTT_PATH_NAME" value="${LOG_DIR}/iot_connected_home_mqtt.log" />
+	<property name="LOG_AMQP_PATH_NAME" value="iot_connected_home_amqp" />
 	<timestamp key="bySecond" datePattern="yyyy-MM-dd HH:mm:ss" />
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<!-- By default, encoders are assigned the hubType ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
@@ -62,7 +62,7 @@
 		    <!-- <level>INFO</level> -->
 		    <evaluator name="loggingTaskMqtt">
 			    <expression>
-	                event.getThreadName().contains("")
+	                event.getThreadName().contains("Mqtt")
 	            </expression>
 	        </evaluator>
 			<onMatch>ACCEPT</onMatch>
@@ -77,16 +77,16 @@
     <appender name="File_amqp" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 파일이 하루에 한개씩 생성된다 -->
-            <fileNamePattern>${LOG_DIR}_amqp/iot_connected_home_amqp.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${LOG_DIR}_amqp/${LOG_AMQP_PATH_NAME}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>100MB</maxFileSize>
+                <maxFileSize>300MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
             <!-- <level>INFO</level> -->
-            <evaluator name="loggingTaskMqtt">
+            <evaluator name="loggingTaskAmqp">
                 <expression>
-                    event.getThreadName().contains("ConsumerListener")
+                    event.getThreadName().contains("messageListenerContainer")
                 </expression>
             </evaluator>
             <onMatch>ACCEPT</onMatch>
@@ -118,19 +118,12 @@
 	<logger name="jdbc.sqltiming" level="DEBUG">
 		<appender-ref ref="console" />
 	</logger>
-	<logger name="com.ht.connected.home.backend.sip" additivity="false" level="debug">
+	<logger name="com.ht.connected.home.backend.sip" additivity="false" level="DEBUG">
   	<appender-ref ref="FileSip" />
 	</logger>
-	<logger name=" com.ht.connected.home.backend.controller.mqtt" additivity="false" level="debug">
+	<logger name=" com.ht.connected.home.backend.controller.mqtt.ConsumerListener" level="DEBUG">
   	<appender-ref ref="File_amqp" />
 	</logger>
-	<!-- ResultSet을 제외한 모든 JDBC 호출 정보를 로그로 남긴다. 많은 양의 로그가 생성되므로 특별히 JDBC 문제를 
-		추적해야 할 필요가 있는 경우를 제외하고는 사용을 권장하지 않는다. -->
-	<!-- <logger name="jdbc.audit" level="DEBUG"> <appender-ref ref="console" 
-		/> </logger> -->
-	<!-- ResultSet을 포함한 모든 JDBC 호출 정보를 로그로 남기므로 매우 방대한 양의 로그가 생성된다. -->
-	<!-- <logger name="jdbc.resultset" level="DEBUG"> <appender-ref ref="console" 
-		/> </logger> -->
 	<logger name="jdbc.connection" level="DEBUG">
 		<appender-ref ref="console" />
 		<appender-ref ref="File_db" />

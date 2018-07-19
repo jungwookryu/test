@@ -12,5 +12,7 @@ import com.ht.connected.home.backend.service.base.CrudService;
 public interface EndpointService extends CrudService<Endpoint, Integer>{
 
     ZWave modify(int no, Endpoint endpoint);
+
+    void deleteEndpoint(ZWave zwave);
     
 }

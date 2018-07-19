@@ -1,5 +1,7 @@
 package com.ht.connected.home.backend.category.zwave.endpoint;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +11,21 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.category.zwave.ZWave;
 import com.ht.connected.home.backend.category.zwave.ZWaveRepository;
+import com.ht.connected.home.backend.category.zwave.cmdcls.CmdClsRepository;
+import com.ht.connected.home.backend.category.zwave.notification.NotificationRepository;
+import com.ht.connected.home.backend.category.zwave.notification.NotificationService;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 
 @Service
 public class EndpointServiceImpl extends CrudServiceImpl<Endpoint, Integer> implements EndpointService {
 
     private EndpointRepository endpointRepository;
+
+    @Autowired
+    CmdClsRepository cmdClsRepository;
+    
+    @Autowired
+    NotificationRepository notificationRepository;
     
     @Autowired
     public EndpointServiceImpl(EndpointRepository endpointRepository) {
@@ -24,6 +35,9 @@ public class EndpointServiceImpl extends CrudServiceImpl<Endpoint, Integer> impl
 
     @Autowired
     ZWaveRepository zWaveRepository;
+    
+    @Autowired
+    NotificationService notificationService;
     
     private static final Log logging = LogFactory.getLog(EndpointServiceImpl.class);
 
@@ -44,7 +58,15 @@ public class EndpointServiceImpl extends CrudServiceImpl<Endpoint, Integer> impl
             return new ZWave();
         }
     }
-
-
+    @Transactional
+    @Override
+    public void deleteEndpoint(ZWave zWave) {
+        List<Endpoint> lstEndpoint = endpointRepository.findByZwaveNo(zWave.getNo());
+        for (Endpoint endpoint : lstEndpoint) {
+            cmdClsRepository.deleteByEndpointNo(endpoint.getNo());
+            notificationService.delete(zWave);
+        }
+        endpointRepository.deleteByZwaveNo(zWave.getNo());
+    }
     
 }

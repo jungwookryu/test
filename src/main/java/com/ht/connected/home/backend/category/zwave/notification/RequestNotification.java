@@ -5,37 +5,50 @@ package com.ht.connected.home.backend.category.zwave.notification;
  *
  */
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RequestNotification {
     
     @JsonProperty("v1AlarmType")
-    int v1AlarmType;
+    private int v1AlarmType;
     
     @JsonProperty("v1AlarmLevel")
-    int v1AlarmLevel;
+    private int v1AlarmLevel;
     
     @JsonProperty("notificationStatus")
-    int notificationStatus;
+    private int notificationStatus;
     
     @JsonProperty("notificationType")
-    int notificationType;
+    private int notificationType;
     
     @JsonProperty("mevent")
-    int mevent;
+    private int mevent;
     
     @JsonProperty("eventParamLen")
-    int eventParamLen;
+    private int eventParamLen;
     
     @JsonProperty("sequence")
-    int sequence;
+    private int sequence;
     
     @JsonProperty("eventParameter")
-    int eventParameter;
+    private int eventParameter;
     
     @JsonProperty("sequenceNumber")
-    int sequenceNumber;
-
+    private int sequenceNumber;
+    
+//    {"result_data": {"value": 0}}
+    @JsonProperty(value = "result_data")
+    private HashMap<String, Object> resultData;
+    
+    public RequestNotification() {}
+    
     /**
      * @return the v1AlarmType
      */
@@ -169,6 +182,20 @@ public class RequestNotification {
     public String toString() {
         return "RequestNotification [v1AlarmType=" + v1AlarmType + ", v1AlarmLevel=" + v1AlarmLevel + ", notificationStatus=" + notificationStatus + ", notificationType=" + notificationType
                 + ", mevent=" + mevent + ", eventParamLen=" + eventParamLen + ", sequence=" + sequence + ", eventParameter=" + eventParameter + ", sequenceNumber=" + sequenceNumber + "]";
+    }
+
+    /**
+     * @return the result_data
+     */
+    public HashMap<String, Object> getResult_data() {
+        return resultData;
+    }
+
+    /**
+     * @param result_data the result_data to set
+     */
+    public void setResult_data(HashMap<String, Object> resultData) {
+        this.resultData = resultData;
     }
     
 }
