@@ -12,8 +12,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.ht.connected.home.backend.category.ir.IRService;
 import com.ht.connected.home.backend.category.zwave.ZWaveRequest;
 import com.ht.connected.home.backend.category.zwave.ZWaveService;
-import com.ht.connected.home.backend.category.zwave.ZWaveStatusService;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.AlarmCommandClass;
+import com.ht.connected.home.backend.category.zwave.constants.commandclass.BinarySwitchCommandClass;
+import com.ht.connected.home.backend.category.zwave.notification.NotificationService;
 import com.ht.connected.home.backend.gateway.Gateway;
 import com.ht.connected.home.backend.gateway.GatewayService;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
@@ -26,7 +27,7 @@ public class ConsumerListener {
     private ZWaveService zwaveService;
     
     @Autowired
-    private ZWaveStatusService zWaveStatusService;
+    private NotificationService zWaveStatusService;
     
     
     @Autowired
@@ -45,6 +46,7 @@ public class ConsumerListener {
      * @throws IOException
      * @throws Exception
      */
+    
     public void receiveMessage(Message message) throws JsonParseException, JsonMappingException, IOException, Exception {
         String topic = String.valueOf(message.getMessageType());
         String payload = String.valueOf(message.getMessageBody());
@@ -52,7 +54,7 @@ public class ConsumerListener {
         logger.info("messageArrived: Topic=" + topic + ", Payload=" + payload);
         String[] topicSplited = topic.trim().replace(".", ";").split(";");
         // message topic 4개이상이어야 gateway관련 메세지임.
-                                                                                                                                        if (topicSplited.length > 4) {
+        if (topicSplited.length > 4) {
             Gateway gateway = new Gateway();
             if (4 <= topicSplited.length) {
                 gateway = new Gateway(topicSplited[3].toString(), topicSplited[4].toString());
@@ -68,10 +70,9 @@ public class ConsumerListener {
                 if (CategoryActive.gateway.zwave.name().equals(topicSplited[5].toString())) {
                     ZWaveRequest zwaveRequest = new ZWaveRequest(topicSplited);
                     if (CategoryActive.zwave.certi.name().equals(topicSplited[6].toString())) {
-                        if(AlarmCommandClass.INT_ID == zwaveRequest.getClassKey()) {
-                            if(AlarmCommandClass.INT_ALARM_REPORT == zwaveRequest.getClassKey()) {
+                        if((AlarmCommandClass.INT_ID == zwaveRequest.getClassKey() && AlarmCommandClass.INT_ALARM_REPORT == zwaveRequest.getCommandKey())
+                         ||(BinarySwitchCommandClass.INT_ID == zwaveRequest.getClassKey() &&  (BinarySwitchCommandClass.INT_SWITCH_BINARY_REPORT == zwaveRequest.getCommandKey()))){
                                 zWaveStatusService.subscribe(zwaveRequest, payload);
-                            }
                         }else {
                             zwaveService.subscribe(zwaveRequest, payload);
                         }
