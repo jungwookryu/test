@@ -30,10 +30,9 @@
 				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
 				<maxFileSize>400MB</maxFileSize>
 			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>30</maxHistory> 
 		</rollingPolicy>
-
 	</appender>
-	
 	<appender name="FileSip" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>${LOG_PATH_NAME_SIP}</file>
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -47,33 +46,10 @@
 				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
 				<maxFileSize>100MB</maxFileSize>
 			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>30</maxHistory> 
 		</rollingPolicy>
 
 	</appender>
-	
-	<appender name="File_mqtt" class="ch.qos.logback.core.rolling.RollingFileAppender">
-	   <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-           <fileNamePattern>${LOG_DIR}_mqtt/iot_connected_home_mqtt.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-           <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>100MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-        </rollingPolicy>
-		<filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-		    <!-- <level>INFO</level> -->
-		    <evaluator name="loggingTaskMqtt">
-			    <expression>
-	                event.getThreadName().contains("Mqtt")
-	            </expression>
-	        </evaluator>
-			<onMatch>ACCEPT</onMatch>
-			<!-- <onMismatch>DENY</onMismatch> -->
-		</filter>
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-             <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-3level %logger{5} %msg%n
-             </Pattern>
-        </encoder>
-       
-    </appender>
     <appender name="File_amqp" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 파일이 하루에 한개씩 생성된다 -->
@@ -81,15 +57,16 @@
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>300MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory> 
         </rollingPolicy>
         <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
             <!-- <level>INFO</level> -->
             <evaluator name="loggingTaskAmqp">
                 <expression>
-                    event.getThreadName().contains("messageListenerContainer")
+                    logger.contains("messageArrived:")
                 </expression>
             </evaluator>
-            <onMatch>ACCEPT</onMatch>
+            <onMatch>DENY</onMatch>
             <!-- <onMismatch>DENY</onMismatch> -->
         </filter>
         <encoder>
@@ -122,7 +99,8 @@
   	<appender-ref ref="FileSip" />
 	</logger>
 	<logger name=" com.ht.connected.home.backend.controller.mqtt.ConsumerListener" level="DEBUG">
-  	<appender-ref ref="File_amqp" />
+        <appender-ref ref="console" />
+  	    <appender-ref ref="File_amqp" />
 	</logger>
 	<logger name="jdbc.connection" level="DEBUG">
 		<appender-ref ref="console" />
@@ -133,15 +111,10 @@
 		<appender-ref ref="console" />
 		<appender-ref ref="File_db" />
 	</logger>
-	<logger name="com.ht.connected.home.backend.config.service.MqttConfig" level="DEBUG" >
-        <!-- <appender-ref ref="LogstashAppender" /> -->
-        <appender-ref ref="File_mqtt" />
-    </logger>
 	<root level="DEBUG">
 		<!-- <appender-ref ref="LogstashAppender" /> -->
 		<appender-ref ref="console" />
 	</root>
-   
 	<root level="INFO">
 		<!-- <appender-ref ref="LogstashAppender" /> -->
 		<appender-ref ref="File" />

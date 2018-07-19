@@ -52,11 +52,11 @@ public class ZWaveReportByApp {
         this.nodeId = nodeId;
     }
 
-    public String getNicname() {
+    public String getNickname() {
         return nickname;
     }
 
-    public void setNicname(String nickname) {
+    public void setNickname(String nickname) {
         this.nickname = nickname;
     }
 
@@ -78,7 +78,7 @@ public class ZWaveReportByApp {
 
     @Override
     public String toString() {
-        return "ZWaveReportByApp [zwaveNo=" + zwaveNo + ", nodeId=" + nodeId + ", nicname=" + nickname + ", status=" + status + ", endpoints=" + endpoints + "]";
+        return "ZWaveReportByApp [zwaveNo=" + zwaveNo + ", nodeId=" + nodeId + ", nickname=" + nickname + ", status=" + status + ", endpoints=" + endpoints + "]";
     }
 
   }

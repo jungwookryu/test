@@ -43,7 +43,7 @@ public class Notification {
 
     @Column(name = "function_name")
     @JsonProperty("function_name")
-    int functionName;
+    String functionName;
     
     @Column(name = "event_code")
     @JsonProperty("event_code")
@@ -201,17 +201,6 @@ public class Notification {
         this.deviceTypeName = deviceTypeName;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "Endpoint [no=" + no + ", notificationType=" + notificationType + ", notificationCode=" + notificationCode + ", eventCode=" + eventCode + ", eventName=" + eventName + ", sequence="
-                + sequence + ", deviceTypeCode=" + deviceTypeCode + ", deviceTypeName=" + deviceTypeName + ", getNo()=" + getNo() + ", getNotificationType()=" + getNotificationType()
-                + ", getNotificationCode()=" + getNotificationCode() + ", getEventCode()=" + getEventCode() + ", getEventName()=" + getEventName() + ", getSequence()=" + getSequence()
-                + ", getDeviceTypeCode()=" + getDeviceTypeCode() + ", getDeviceTypeName()=" + getDeviceTypeName() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()="
-                + super.toString() + "]";
-    }
 
 
     public void setEventNameByCode() {
@@ -271,15 +260,25 @@ public class Notification {
     /**
      * @return the functionName
      */
-    public int getFunctionName() {
+    public String getFunctionName() {
         return functionName;
     }
 
     /**
      * @param functionName the functionName to set
      */
-    public void setFunctionName(int functionName) {
+    public void setFunctionName(String functionName) {
         this.functionName = functionName;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Notification [no=" + no + ", notificationType=" + notificationType + ", notificationCode=" + notificationCode + ", functionCode=" + functionCode + ", functionName=" + functionName
+                + ", eventCode=" + eventCode + ", eventName=" + eventName + ", sequence=" + sequence + ", deviceTypeCode=" + deviceTypeCode + ", deviceTypeName=" + deviceTypeName + ", endpointNo="
+                + endpointNo + ", zwaveNo=" + zwaveNo + "]";
     }
 
 }

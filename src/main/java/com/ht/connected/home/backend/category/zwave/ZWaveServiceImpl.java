@@ -459,7 +459,7 @@ public class ZWaveServiceImpl implements ZWaveService {
         if (zwave.getNodeId() != 1) {
             zWaveReportByApp.setZwaveNo(zwave.getNo());
             zWaveReportByApp.setNodeId(zwave.getNodeId());
-            zWaveReportByApp.setNicname(zwave.getNickname());
+            zWaveReportByApp.setNickname(zwave.getNickname());
             zWaveReportByApp.setStatus(zwave.getStatus());
 
             List<EndpointReportByApp> lstEndpointReportByApp = new ArrayList<>();

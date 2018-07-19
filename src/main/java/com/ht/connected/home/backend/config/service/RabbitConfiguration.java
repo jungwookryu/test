@@ -4,8 +4,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.AmqpTemplate;
@@ -24,7 +24,6 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -36,7 +35,6 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessageHeaders;
-import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
 import org.springframework.util.StringUtils;
 
 import com.ht.connected.home.backend.common.Common;
@@ -70,7 +68,7 @@ public class RabbitConfiguration {
     private Environment env;
     
     public static final String LOG = "rabbitmqlog";
-    private static final Logger logger = LoggerFactory.getLogger(RabbitConfiguration.class);
+    private static final Log logger = LogFactory.getLog(RabbitConfiguration.class);
     @Bean
     public Queue queue(AmqpAdmin amqpAdmin) throws UnknownHostException {
         String hostname = InetAddress.getLocalHost().getHostName();
