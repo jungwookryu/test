@@ -285,9 +285,9 @@ public class Notification {
      */
     @Override
     public String toString() {
-        return "Notification [no=" + no + ", notification_type=" + notificationType + ", notification_code=" + notificationCode + ", function_code=" + functionCode + ", function_name=" + functionName
+        return "{no=" + no + ", notification_type=" + notificationType + ", notification_code=" + notificationCode + ", function_code=" + functionCode + ", function_name=" + functionName
                 + ", event_code=" + eventCode + ", event_name=" + eventName + ", sequence=" + sequence + ", device_type_code=" + deviceTypeCode + ", device_type_name=" + deviceTypeName + ", endpoint_no="
-                + endpointNo + ", zwave_no=" + zwaveNo + "]";
+                + endpointNo + ", zwave_no=" + zwaveNo + "}";
     }
 
 }
