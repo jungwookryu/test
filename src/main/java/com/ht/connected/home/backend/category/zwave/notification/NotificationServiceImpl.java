@@ -23,7 +23,6 @@ import com.ht.connected.home.backend.category.zwave.constants.commandclass.Alarm
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.BinarySwitchCommandClass;
 import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.category.zwave.endpoint.EndpointRepository;
-import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.controller.mqtt.Message;
@@ -138,10 +137,8 @@ public class NotificationServiceImpl implements NotificationService {
 
     private void publishAppStatus(ZWaveRequest zwaveRequest, int no, Notification rtnNotification) throws JsonGenerationException, JsonMappingException, IOException, InterruptedException {
 //        zwave.device.status=/server/{target}/{model}/{serial}/zwave/device/
-        String topic = callbackAckProperties.getProperty("zwave.device.status");
-        String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), zwaveRequest.getModel(),  zwaveRequest.getSerialNo());
-        String messgeBody = objectMapper.writeValueAsString(rtnNotification);
-        producerRestController.run(new Message(exeTopic, messgeBody));
+        MqttCommon.publishNotificationData(producerRestController, callbackAckProperties, "zwave.device.status", Target.app.name()
+                , zwaveRequest.getModel(), zwaveRequest.getSerialNo(), rtnNotification.toString());
     }
 
     @Override

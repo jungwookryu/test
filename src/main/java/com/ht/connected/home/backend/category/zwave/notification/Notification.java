@@ -272,13 +272,22 @@ public class Notification {
     }
 
     /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        // TODO Auto-generated method stub
+        return super.equals(obj);
+    }
+
+    /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "Notification [no=" + no + ", notificationType=" + notificationType + ", notificationCode=" + notificationCode + ", functionCode=" + functionCode + ", functionName=" + functionName
-                + ", eventCode=" + eventCode + ", eventName=" + eventName + ", sequence=" + sequence + ", deviceTypeCode=" + deviceTypeCode + ", deviceTypeName=" + deviceTypeName + ", endpointNo="
-                + endpointNo + ", zwaveNo=" + zwaveNo + "]";
+        return "Notification [no=" + no + ", notification_type=" + notificationType + ", notification_code=" + notificationCode + ", function_code=" + functionCode + ", function_name=" + functionName
+                + ", event_code=" + eventCode + ", event_name=" + eventName + ", sequence=" + sequence + ", device_type_code=" + deviceTypeCode + ", device_type_name=" + deviceTypeName + ", endpoint_no="
+                + endpointNo + ", zwave_no=" + zwaveNo + "]";
     }
 
 }
