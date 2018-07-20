@@ -38,4 +38,5 @@ public interface GatewayRepository extends JpaRepository<Gateway, Integer> {
 	int setModifyStatusForNo(String status, int no);
 	
 	void deleteBySerial(String serial);
+    List<Gateway> findByModel(String modelName);
 }
