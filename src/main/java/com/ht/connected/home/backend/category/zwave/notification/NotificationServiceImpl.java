@@ -77,7 +77,9 @@ public class NotificationServiceImpl implements NotificationService {
     private void notificationReport(ZWaveRequest zwaveRequest, String payload) throws JsonParseException, JsonMappingException, IOException, InterruptedException {
         
         Endpoint endpoint = getEndpointInfo(zwaveRequest);
-        RequestNotification requestNotification = objectMapper.readValue(payload, RequestNotification.class);
+        RequestNotification result_data = objectMapper.readValue(payload, RequestNotification.class);
+        
+        RequestNotification requestNotification = objectMapper.convertValue(result_data, RequestNotification.class);;
         String deviceTypeCode = endpoint.getGeneric() +"."+ endpoint.getSpecific();
         String functionCode = AlarmCommandClass.functionCode;
         functionCode = String.format("%2s", Integer.toString(AlarmCommandClass.INT_ID));
