@@ -73,11 +73,7 @@ public class GatewayController extends CommonController {
             } else {
                 UserGateway userGateway = userGatewayRepository.findByUserNoAndGatewayNo(user.getNo(), gateway.getNo());
                 if (!isNull(userGateway)) {
-                    HashMap map = new HashMap();
-                    List list = new ArrayList<>();
-                    list.add(gateway);
-                    map.put("list", list);
-                    responseEntity = new ResponseEntity(map,HttpStatus.OK);
+                    responseEntity = new ResponseEntity(gateway,HttpStatus.OK);
                 } else {
                     responseEntity = new ResponseEntity(HttpStatus.NOT_FOUND);
                 }
