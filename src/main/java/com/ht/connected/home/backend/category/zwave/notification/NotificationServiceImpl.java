@@ -149,4 +149,9 @@ public class NotificationServiceImpl implements NotificationService {
         notificationRepository.deleteByZwaveNo(zwave.getNo());
     }
     
+    @Override
+    public List<Notification> getNotification(Endpoint endpoint) {
+        return notificationRepository.findByEndpointNo(endpoint.getNo());
+    }
+    
 }

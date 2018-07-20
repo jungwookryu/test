@@ -461,24 +461,11 @@ public class ZWaveServiceImpl implements ZWaveService {
             zWaveReportByApp.setNodeId(zwave.getNodeId());
             zWaveReportByApp.setNickname(zwave.getNickname());
             zWaveReportByApp.setStatus(zwave.getStatus());
-
-            List<EndpointReportByApp> lstEndpointReportByApp = new ArrayList<>();
-            List<Endpoint> lstEndpoint = endpointRepository.findByZwaveNo(zwave.getNo());
-            for (int j = 0; j < lstEndpoint.size(); j++) {
-                Endpoint endpoint = lstEndpoint.get(j);
-                EndpointReportByApp endpointReportByApp = new EndpointReportByApp();
-                endpointReportByApp.setEndpointNo(endpoint.getNo());
-                endpointReportByApp.setEpStatus(endpoint.getStatus());
-                endpointReportByApp.setEpid(endpoint.getEpid());
-                endpointReportByApp.setNickname(endpoint.getNickname());
-                lstEndpointReportByApp.add(endpointReportByApp);
-            }
+            
+            List<EndpointReportByApp> lstEndpointReportByApp = endpointService.getEndpoint(zwave);
             zWaveReportByApp.setEndpoints(lstEndpointReportByApp);
         }
         return zWaveReportByApp;
-    }
-    private String getDefaultNickName(String basic, String generic, String specific) {
-        return "";
     }
 
     /**
@@ -624,7 +611,9 @@ public class ZWaveServiceImpl implements ZWaveService {
             endpoint.setDeviceType(commandClass.getDeviceType());
             endpoint.setDeviceNickname(commandClass.getNicknameType());
             endpoint.setDeviceTypeName(zWaveProperties.getProperty(endpoint.getGeneric()+"."+endpoint.getSpecific()));
+            //TODO 삭제
             endpoint.setDeviceFunctions(commandClass.getFunctionType());
+            endpoint.setFunctionCode(BinarySwitchCommandClass.functionCode);
         }
         return endpoint;
     }
