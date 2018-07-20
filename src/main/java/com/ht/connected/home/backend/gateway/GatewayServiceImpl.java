@@ -200,10 +200,14 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
                         exangeGateway.setNickname((String) Common.isNullrtnByobj(gateway.getNickname(), topicSplited[1]+"_"+gateway.getSerial()));
                         updateGateway(exangeGateway);
                         updateUserGateway(exangeGateway, user.getNo());
-                        MqttCommon.publishNotificationData(producerRestController,callbackAckProperties,"zwave.product.registration", Target.app.name(), gateway.getModel(),  gateway.getSerial(), new HashMap());
+                        HashMap map = new HashMap();
+                        List list = new ArrayList<>();
+                        Gateway rtnGateway = gatewayRepository.findBySerial(gateway.getSerial());
+                        list.add(rtnGateway);
+                        map.put("list", list);
+                        MqttCommon.publishNotificationData(producerRestController,callbackAckProperties,"zwave.product.registration", Target.app.name(), gateway.getModel(), gateway.getSerial(), map);
                     }
                 }
-                MqttCommon.publishNotificationData(producerRestController,callbackAckProperties,"zwave.product.registration", Target.app.name(), gateway.getModel(),  gateway.getSerial(), new HashMap());
                 
             }
 

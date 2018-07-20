@@ -135,11 +135,9 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private void publishAppStatus(ZWaveRequest zwaveRequest, int no, Notification rtnNotification) throws JsonGenerationException, JsonMappingException, IOException, InterruptedException {
-//        zwave.device.status=/server/{target}/{model}/{serial}/zwave/device/{endpoint_no}/{sequence}
+//        zwave.device.status=/server/{target}/{model}/{serial}/zwave/device/
         String topic = callbackAckProperties.getProperty("zwave.device.status");
         String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), zwaveRequest.getModel(),  zwaveRequest.getSerialNo());
-        exeTopic = exeTopic.replace("{endpoint_no}",ByteUtil.getHexString(rtnNotification.getEndpointNo()));
-        exeTopic = exeTopic.replace("{sequence}",ByteUtil.getHexString(rtnNotification.getSequence()));
         String messgeBody = objectMapper.writeValueAsString(rtnNotification);
         producerRestController.run(new Message(exeTopic, messgeBody));
     }
