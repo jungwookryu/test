@@ -69,4 +69,10 @@ public class BatteryCommandClass extends CommandClass {
     public String getGenericKey() {
         return "";
     }
+
+    @Override
+    public String getFunctionCode() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

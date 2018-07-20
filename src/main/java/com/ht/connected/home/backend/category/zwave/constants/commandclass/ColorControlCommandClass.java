@@ -22,6 +22,8 @@ public class ColorControlCommandClass extends CommandClass {
     public static final byte CAPABILITY_ID_GREEN = 0x03;
     public static final byte CAPABILITY_ID_BLUE = 0x04;
 
+    public static final String functionCode ="33";
+    
     private Byte capabilityId;
     private Byte value;
 
@@ -72,6 +74,10 @@ public class ColorControlCommandClass extends CommandClass {
     
     @Override
     public String getGenericKey() {
+        return "";
+    }
+    @Override
+    public String getFunctionCode() {
         return "";
     }
 }

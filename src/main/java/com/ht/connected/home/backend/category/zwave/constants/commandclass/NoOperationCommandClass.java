@@ -51,4 +51,10 @@ public class NoOperationCommandClass extends CommandClass {
     public String getGenericKey() {
         return "";
     }
+
+    @Override
+    public String getFunctionCode() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

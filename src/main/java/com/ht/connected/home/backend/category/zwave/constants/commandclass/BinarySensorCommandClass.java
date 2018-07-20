@@ -71,4 +71,10 @@ public class BinarySensorCommandClass extends CommandClass {
     public String getGenericKey() {
         return genericKey;
     }
+
+    @Override
+    public String getFunctionCode() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

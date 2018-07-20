@@ -23,6 +23,7 @@ public class AlarmSensorCommandClass extends CommandClass {
 
     public static final byte ID = (byte)0x9C;
     public static final String genericKey = "A1";
+    public static final String functionCode ="9C";
     
     private Type type;
     private byte level;
@@ -89,4 +90,10 @@ public class AlarmSensorCommandClass extends CommandClass {
     public String getGenericKey() {
         return genericKey;
     }
+    
+    @Override
+    public String getFunctionCode() {
+        return functionCode;
+    }
+
 }

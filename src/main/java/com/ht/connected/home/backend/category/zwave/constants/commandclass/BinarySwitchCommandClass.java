@@ -109,4 +109,10 @@ public class BinarySwitchCommandClass extends CommandClass {
         return genericKey;
     }
 
+    @Override
+    public String getFunctionCode() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

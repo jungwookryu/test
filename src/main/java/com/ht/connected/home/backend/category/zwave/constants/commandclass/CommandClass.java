@@ -95,6 +95,8 @@ abstract public class CommandClass {
     
     abstract public String getGenericKey();
     
+    abstract public String getFunctionCode();
+    
     @Override
     public String toString() {
         return "CommandClass{" +

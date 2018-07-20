@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -422,12 +421,6 @@ public class ZWaveServiceImpl implements ZWaveService {
         // TODO 기기 상태정보 가져오기
     }
 
-    @Override    public int deleteByGatewayNo(int gatewayNo) {
-        // int zwaveUpdateCnt =zwaveRepository.setFixedStatusForGatewayNo(status.delete.name(), gatewayNo);
-        // return zwaveUpdateCnt;
-        return 0;
-    }
-
     @Override
     public ZWaveReport getZWaveList(int gatewayNo) {
         ZWaveReport zWaveReport = new ZWaveReport();
@@ -552,7 +545,7 @@ public class ZWaveServiceImpl implements ZWaveService {
         nodeItem.setGatewayNo(gateway.getNo());
         nodeItem.setCreratedTime(new Date());
         String nodeKey = nodeItem.getGeneric() + "." + nodeItem.getSpecific();
-        nodeItem.setNickname(zwaveNickname(zWaveProperties, nodeKey));
+        nodeItem.setNickname(Common.zwaveNickname(zWaveProperties, nodeKey));
         ZWave saveZwave = zwaveRepository.save(nodeItem);
         List<Endpoint> newEndpoints = nodeItem.getEndpoint();
         for (int iE = 0; iE < newEndpoints.size(); iE++) {
@@ -560,7 +553,7 @@ public class ZWaveServiceImpl implements ZWaveService {
             endpoint.setZwaveNo(saveZwave.getNo());
             endpoint.setCmdCls(endpoint.getScmdClses(endpoint.getCmdClses()));
             String endpointKey = endpoint.getGeneric() + "." + endpoint.getSpecific();
-            endpoint.setNickname(zwaveNickname(zWaveProperties, endpointKey));
+            endpoint.setNickname(Common.zwaveNickname(zWaveProperties, endpointKey));
             Endpoint saveEndpoint = saveEndpoint(endpoint);
             List<CmdCls> newCmdCls = newEndpoints.get(iE).getCmdClses();
             for (int iCmdCls = 0; iCmdCls < newCmdCls.size(); iCmdCls++) {
@@ -594,26 +587,16 @@ public class ZWaveServiceImpl implements ZWaveService {
         }
     }
     
-    private String zwaveNickname(Properties properties, String key) {
-        
-        String rtnNickname = "Device";
-        if(null!=properties) {
-            if(!StringUtils.isEmpty(properties.getProperty(key))) {
-                rtnNickname = properties.getProperty(key).replace("SPECIFIC_TYPE_","").replace("_BINARY","").replace("_"," ").toLowerCase();
-            }
-        }
-        return rtnNickname;
-    }
     private Endpoint endpointType(Endpoint endpoint) {
         CommandClass commandClass = CommandClassFactory.createCommandClass(BinarySwitchCommandClass.ID);
         commandClass = CommandClassFactory.createSCmdClass(endpoint);
         if(!isNull(commandClass)) {
             endpoint.setDeviceType(commandClass.getDeviceType());
             endpoint.setDeviceNickname(commandClass.getNicknameType());
-            endpoint.setDeviceTypeName(zWaveProperties.getProperty(endpoint.getGeneric()+"."+endpoint.getSpecific()));
+            endpoint.setDeviceTypeName(Common.zwaveNickname(zWaveProperties, endpoint.getGeneric()+"."+endpoint.getSpecific()));
             //TODO 삭제
             endpoint.setDeviceFunctions(commandClass.getFunctionType());
-            endpoint.setFunctionCode(BinarySwitchCommandClass.functionCode);
+            endpoint.setFunctionCode(commandClass.getFunctionCode());
         }
         return endpoint;
     }
@@ -651,5 +634,6 @@ public class ZWaveServiceImpl implements ZWaveService {
                 }
             }
     }
+
 
 }

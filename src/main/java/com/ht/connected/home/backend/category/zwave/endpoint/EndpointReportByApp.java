@@ -25,6 +25,12 @@ public class EndpointReportByApp {
 
     @JsonProperty("function_code")
     String functionCode;
+    
+    @JsonProperty("device_type_code")
+    String deviceTypeCode;
+    
+    @JsonProperty("device_type_name")
+    String deviceTypeName;
    
     @JsonProperty("notifications")
     List<Notification> notifications;
@@ -64,10 +70,6 @@ public class EndpointReportByApp {
         this.epStatus = epStatus;
     }
 
-    @Override
-    public String toString() {
-        return "ZWaveReportByApp [endpointNo=" + endpointNo + "epid=" + epid + ", nickname=" + nickname + ", ep_status=" + epStatus + "]";
-    }
     /**
      * @return the functionCode
      */
@@ -91,5 +93,37 @@ public class EndpointReportByApp {
      */
     public void setNotifications(List<Notification> notifications) {
         this.notifications = notifications;
+    }
+    /**
+     * @return the device_type_code
+     */
+    public String getDeviceTypeCode() {
+        return deviceTypeCode;
+    }
+    /**
+     * @param device_type_code the device_type_code to set
+     */
+    public void setDeviceTypeCode(String deviceTypeCode) {
+        this.deviceTypeCode = deviceTypeCode;
+    }
+    /**
+     * @return the deviceTypeName
+     */
+    public String getDeviceTypeName() {
+        return deviceTypeName;
+    }
+    /**
+     * @param deviceTypeName the deviceTypeName to set
+     */
+    public void setDeviceTypeName(String deviceTypeName) {
+        this.deviceTypeName = deviceTypeName;
+    }
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "EndpointReportByApp [endpointNo=" + endpointNo + ", epid=" + epid + ", nickname=" + nickname + ", epStatus=" + epStatus + ", functionCode=" + functionCode + ", device_type_code="
+                + deviceTypeCode + ", deviceTypeName=" + deviceTypeName + ", notifications=" + notifications + "]";
     }
   }
