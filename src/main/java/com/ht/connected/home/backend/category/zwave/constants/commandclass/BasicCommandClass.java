@@ -30,6 +30,7 @@ public class BasicCommandClass extends CommandClass {
     
     public static final byte ID = (byte)0x20;
     public static final int INT_ID = (byte)0x20;
+    public static final String functionCode ="20";
 
     private Byte value;
 
@@ -76,5 +77,10 @@ public class BasicCommandClass extends CommandClass {
     @Override
     public String getGenericKey() {
         return "";
+    }
+    
+    @Override
+    public String getFunctionCode() {
+        return functionCode;
     }
 }

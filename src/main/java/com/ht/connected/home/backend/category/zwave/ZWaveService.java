@@ -26,17 +26,15 @@ public interface ZWaveService {
 
     void execute(Map map, boolean isCert) throws JsonProcessingException, InterruptedException;
     
-    public int deleteByNo(int no) throws JsonProcessingException, InterruptedException ;
-    
     public int getByUserEmailAndNo(String userEmail, int no);
 
     void subscribeInit(Gateway gateway) throws JsonProcessingException, InterruptedException;
 
-    int deleteByGatewayNo(int gatewayNo);
-    
     ZWaveReport getZWaveList(int gatewayNo);
 
     void zwaveControl(ZWaveControl zWaveControl) throws JsonProcessingException, InterruptedException;
 
     Map getZWaveListApp(int gatewayNo);
+
+    int deleteByNo(int no) throws JsonProcessingException, InterruptedException;
 }

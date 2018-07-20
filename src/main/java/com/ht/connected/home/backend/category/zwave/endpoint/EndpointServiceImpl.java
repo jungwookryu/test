@@ -83,6 +83,8 @@ public class EndpointServiceImpl extends CrudServiceImpl<Endpoint, Integer> impl
             endpointReportByApp.setEpid(endpoint.getEpid());
             endpointReportByApp.setNickname(endpoint.getNickname());
             endpointReportByApp.setFunctionCode(endpoint.getFunctionCode());
+            endpointReportByApp.setDeviceTypeCode(endpoint.getGeneric()+"."+endpoint.getSpecific());
+            endpointReportByApp.setDeviceTypeName(endpoint.getDeviceTypeName());
             endpointReportByApp.setNotifications(notificationService.getNotification(endpoint));
             
             lstEndpointReportByApp.add(endpointReportByApp);

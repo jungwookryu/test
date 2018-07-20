@@ -79,4 +79,9 @@ public class AlarmCommandClass extends CommandClass {
     public String getGenericKey() {
         return genericKey;
     }
+
+    @Override
+    public String getFunctionCode() {
+        return functionCode;
+    }
 }

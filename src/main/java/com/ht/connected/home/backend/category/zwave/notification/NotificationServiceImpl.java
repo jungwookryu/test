@@ -24,6 +24,7 @@ import com.ht.connected.home.backend.category.zwave.constants.commandclass.Binar
 import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.category.zwave.endpoint.EndpointRepository;
 import com.ht.connected.home.backend.common.ByteUtil;
+import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.controller.mqtt.Message;
 import com.ht.connected.home.backend.controller.mqtt.ProducerComponent;
@@ -79,10 +80,9 @@ public class NotificationServiceImpl implements NotificationService {
         Endpoint endpoint = getEndpointInfo(zwaveRequest);
         RequestNotification result_data = objectMapper.readValue(payload, RequestNotification.class);
         
-        RequestNotification requestNotification = objectMapper.convertValue(result_data, RequestNotification.class);;
+        RequestNotification requestNotification = objectMapper.convertValue(result_data.getResult_data(), RequestNotification.class);;
         String deviceTypeCode = endpoint.getGeneric() +"."+ endpoint.getSpecific();
         String functionCode = AlarmCommandClass.functionCode;
-        functionCode = String.format("%2s", Integer.toString(AlarmCommandClass.INT_ID));
         Notification notification = new Notification(requestNotification.getNotificationType(), requestNotification.getMevent(), requestNotification.getSequence(), deviceTypeCode,
                 endpoint.getZwaveNo(), endpoint.getNo());
         notification.setFunctionCode(functionCode);
@@ -117,7 +117,7 @@ public class NotificationServiceImpl implements NotificationService {
      * @return
      */
     public Notification saveNotification(Notification notification) {
-        String deviceType = zWaveProperties.getProperty(notification.getDeviceTypeCode());
+        String deviceType = Common.zwaveNickname(zWaveProperties, notification.getDeviceTypeCode());
         String functionName = zWaveFunctionProperties.getProperty(notification.getFunctionCode());
         notification.setDeviceTypeName(deviceType);
         notification.setFunctionName(functionName);

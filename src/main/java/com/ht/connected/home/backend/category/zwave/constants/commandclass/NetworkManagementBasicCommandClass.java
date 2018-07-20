@@ -13,9 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Basic Command Class
+ * NetworkManagementBasic Command Class
  *
- * @author Dan Noguerol
+ * @author ijlee
  */
 public class NetworkManagementBasicCommandClass extends CommandClass {
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -83,5 +83,11 @@ public class NetworkManagementBasicCommandClass extends CommandClass {
     @Override
     public String getGenericKey() {
         return "";
+    }
+
+    @Override
+    public String getFunctionCode() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
