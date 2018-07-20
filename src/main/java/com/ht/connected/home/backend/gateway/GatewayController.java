@@ -2,6 +2,7 @@ package com.ht.connected.home.backend.gateway;
 
 import static java.util.Objects.isNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -66,12 +67,17 @@ public class GatewayController extends CommonController {
         } else {
             User user = users.get(0);
             Gateway gateway = gatewayRepository.findBySerial(req.get("serial"));
+
             if (isNull(gateway)) {
                 responseEntity = new ResponseEntity(HttpStatus.NOT_FOUND);
             } else {
                 UserGateway userGateway = userGatewayRepository.findByUserNoAndGatewayNo(user.getNo(), gateway.getNo());
                 if (!isNull(userGateway)) {
-                    responseEntity = new ResponseEntity(HttpStatus.OK);
+                    HashMap map = new HashMap();
+                    List list = new ArrayList<>();
+                    list.add(gateway);
+                    map.put("list", list);
+                    responseEntity = new ResponseEntity(map,HttpStatus.OK);
                 } else {
                     responseEntity = new ResponseEntity(HttpStatus.NOT_FOUND);
                 }

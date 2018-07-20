@@ -85,6 +85,10 @@ public class Endpoint {
     @Column(name = "device_type_name")
     String deviceTypeName;
     
+    @JsonProperty("function_code")
+    @Column(name = "function_code")
+    String functionCode;
+    
     @JsonProperty("cmd_cls")
     @Transient
     List<CmdCls> cmdClses;
@@ -225,15 +229,7 @@ public class Endpoint {
         this.outputStatus = outputStatus;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "Endpoint [no=" + no + ", epid=" + epid + ", generic=" + generic + ", specific=" + specific + ", nickname=" + nickname + ", zwaveNo=" + zwaveNo + ", cmdCls=" + cmdCls + ", status="
-                + status + ", deviceFunctions=" + deviceFunctions + ", deviceType=" + deviceType + ", deviceNickname=" + deviceNickname + ", inputStatus=" + inputStatus + ", outputStatus="
-                + outputStatus + ", cmdClses=" + cmdClses + "]";
-    }
+
 
     /**
      * @return the deviceTypeName
@@ -247,6 +243,30 @@ public class Endpoint {
      */
     public void setDeviceTypeName(String deviceTypeName) {
         this.deviceTypeName = deviceTypeName;
+    }
+
+    /**
+     * @return the functionCode
+     */
+    public String getFunctionCode() {
+        return functionCode;
+    }
+
+    /**
+     * @param functionCode the functionCode to set
+     */
+    public void setFunctionCode(String functionCode) {
+        this.functionCode = functionCode;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Endpoint [no=" + no + ", epid=" + epid + ", generic=" + generic + ", specific=" + specific + ", nickname=" + nickname + ", zwaveNo=" + zwaveNo + ", cmdCls=" + cmdCls + ", status="
+                + status + ", deviceFunctions=" + deviceFunctions + ", deviceType=" + deviceType + ", deviceNickname=" + deviceNickname + ", inputStatus=" + inputStatus + ", outputStatus="
+                + outputStatus + ", deviceTypeName=" + deviceTypeName + ", functionCode=" + functionCode + ", cmdClses=" + cmdClses + "]";
     }
     
 }

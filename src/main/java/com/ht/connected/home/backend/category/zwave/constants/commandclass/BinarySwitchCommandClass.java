@@ -35,6 +35,7 @@ public class BinarySwitchCommandClass extends CommandClass {
     
     public static final String genericKey = "10";
     public static final String specificKey = "01";
+    public static final String functionCode = "25";
     
     public static final int on = 255;
     public static final int off = 0;

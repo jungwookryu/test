@@ -1,5 +1,6 @@
 package com.ht.connected.home.backend.category.zwave.endpoint;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -12,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.category.zwave.ZWave;
 import com.ht.connected.home.backend.category.zwave.ZWaveRepository;
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdClsRepository;
+import com.ht.connected.home.backend.category.zwave.notification.Notification;
 import com.ht.connected.home.backend.category.zwave.notification.NotificationRepository;
 import com.ht.connected.home.backend.category.zwave.notification.NotificationService;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
@@ -67,6 +69,25 @@ public class EndpointServiceImpl extends CrudServiceImpl<Endpoint, Integer> impl
             notificationService.delete(zWave);
         }
         endpointRepository.deleteByZwaveNo(zWave.getNo());
+    }
+    
+    @Override
+    public List<EndpointReportByApp> getEndpoint(ZWave zwave) {
+        List<EndpointReportByApp> lstEndpointReportByApp = new ArrayList<>();
+        List<Endpoint> lstEndpoint = endpointRepository.findByZwaveNo(zwave.getNo());
+        for (int j = 0; j < lstEndpoint.size(); j++) {
+            Endpoint endpoint = lstEndpoint.get(j);
+            EndpointReportByApp endpointReportByApp = new EndpointReportByApp();
+            endpointReportByApp.setEndpointNo(endpoint.getNo());
+            endpointReportByApp.setEpStatus(endpoint.getStatus());
+            endpointReportByApp.setEpid(endpoint.getEpid());
+            endpointReportByApp.setNickname(endpoint.getNickname());
+            endpointReportByApp.setFunctionCode(endpoint.getFunctionCode());
+            endpointReportByApp.setNotifications(notificationService.getNotification(endpoint));
+            
+            lstEndpointReportByApp.add(endpointReportByApp);
+        }
+        return lstEndpointReportByApp;
     }
     
 }

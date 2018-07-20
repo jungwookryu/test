@@ -28,6 +28,7 @@ public class AlarmCommandClass extends CommandClass {
     
     public static final String genericKey = "07";
     public static final String specificKey ="01";
+    public static final String functionCode ="71";
     
     private byte type;
     private byte level;
