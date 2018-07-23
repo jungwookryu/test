@@ -126,7 +126,7 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setFunctionName(functionName);
         Notification selectNotificaiton = notificationRepository.findByNotificationCodeAndEndpointNo(notification.getNotification_code(), notification.getEndpoint_no());
         if(!Objects.isNull(selectNotificaiton)) {
-            notification.setNo(selectNotificaiton.get_no());
+            notification.setNo(selectNotificaiton.getNo());
         }
         return notificationRepository.save(notification);
     }
@@ -142,11 +142,8 @@ public class NotificationServiceImpl implements NotificationService {
     private void publishAppStatus(ZWaveRequest zwaveRequest, int no, Notification rtnNotification) throws JsonGenerationException, JsonMappingException, IOException, InterruptedException {
 //        zwave.device.status=/server/{target}/{model}/{serial}/zwave/device/
         
-        ObjectMapper objectMapper1 = new ObjectMapper(); 
-        String stnNotification = objectMapper1.writerWithDefaultPrettyPrinter().writeValueAsString(rtnNotification);
-//        String stnNotification =         gson.toJson(rtnNotification);
         MqttCommon.publishNotificationData(producerRestController, callbackAckProperties, "zwave.device.status", Target.app.name()
-                , zwaveRequest.getModel(), zwaveRequest.getSerialNo(), stnNotification);
+                , zwaveRequest.getModel(), zwaveRequest.getSerialNo(), rtnNotification);
     }
 
     @Override

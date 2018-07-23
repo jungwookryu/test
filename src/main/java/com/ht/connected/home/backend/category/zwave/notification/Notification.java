@@ -92,7 +92,7 @@ public class Notification {
     /**
      * @return the no
      */
-    public int get_no() {
+    public int getNo() {
         return no;
     }
 
