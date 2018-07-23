@@ -30,27 +30,27 @@ public class Notification {
     int no;
 
     @Column(name = "notification_type")
-    @JsonProperty("notificationType")
+    @JsonProperty("notification_type")
     String notificationType;
 
     @Column(name = "notification_code")
-    @JsonProperty("notificationCode")
+    @JsonProperty("notification_code")
     int notificationCode;
  
     @Column(name = "function_code")
-    @JsonProperty("functionCode")
+    @JsonProperty("function_code")
     String functionCode;
 
     @Column(name = "function_name")
-    @JsonProperty("functionName")
+    @JsonProperty("function_name")
     String functionName;
     
     @Column(name = "event_code")
-    @JsonProperty("eventCode")
+    @JsonProperty("event_code")
     int eventCode;
     
     @Column(name = "event_name")
-    @JsonProperty("eventName")
+    @JsonProperty("event_name")
     String eventName;
     
     @Column(name = "sequence")
@@ -58,19 +58,19 @@ public class Notification {
     int sequence;
     
     @Column(name = "device_type_code")
-    @JsonProperty("deviceTypeCode")
+    @JsonProperty("device_type_code")
     String deviceTypeCode;
     
     @Column(name = "device_type_name")
-    @JsonProperty("deviceTypeName")
+    @JsonProperty("device_type_name")
     String deviceTypeName;
     
     @Column(name = "endpoint_no")
-    @JsonProperty("endpointNo")
+    @JsonProperty("endpoint_no")
     int endpointNo;
     
     @Column(name = "zwave_no")
-    @JsonProperty("zwaveNo")
+    @JsonProperty("zwave_no")
     int zwaveNo;
   
     public Notification() {
@@ -92,7 +92,7 @@ public class Notification {
     /**
      * @return the no
      */
-    public int getNo() {
+    public int get_no() {
         return no;
     }
 
@@ -106,7 +106,7 @@ public class Notification {
     /**
      * @return the notificationType
      */
-    public String getNotificationType() {
+    public String getNotification_type() {
         return notificationType;
     }
 
@@ -120,7 +120,7 @@ public class Notification {
     /**
      * @return the notificationCode
      */
-    public int getNotificationCode() {
+    public int getNotification_code() {
         return notificationCode;
     }
 
@@ -134,7 +134,7 @@ public class Notification {
     /**
      * @return the eventCode
      */
-    public int getEventCode() {
+    public int getEvent_code() {
         return eventCode;
     }
 
@@ -148,7 +148,7 @@ public class Notification {
     /**
      * @return the eventName
      */
-    public String getEventName() {
+    public String getEvent_name() {
         return eventName;
     }
 
@@ -176,7 +176,7 @@ public class Notification {
     /**
      * @return the deviceTypeCode
      */
-    public String getDeviceTypeCode() {
+    public String getDevice_type_code() {
         return deviceTypeCode;
     }
 
@@ -190,7 +190,7 @@ public class Notification {
     /**
      * @return the deviceTypeName
      */
-    public String getDeviceTypeName() {
+    public String getDevice_type_name() {
         return deviceTypeName;
     }
 
@@ -204,7 +204,7 @@ public class Notification {
 
 
     public void setEventNameByCode() {
-        this.eventName = NotificationEvent.getEventName(this.getNotificationCode(),this.getEventCode());
+        this.eventName = NotificationEvent.getEventName(this.getNotification_code(),this.getEvent_code());
     }
     
     public void setNotificationTypeByCode() {
@@ -218,7 +218,7 @@ public class Notification {
     /**
      * @return the endpointNo
      */
-    public int getEndpointNo() {
+    public int getEndpoint_no() {
         return endpointNo;
     }
 
@@ -232,7 +232,7 @@ public class Notification {
     /**
      * @return the zwaveNo
      */
-    public int getZwaveNo() {
+    public int getZwave_no() {
         return zwaveNo;
     }
 
@@ -246,7 +246,7 @@ public class Notification {
     /**
      * @return the functionCode
      */
-    public String getFunctionCode() {
+    public String getFunction_code() {
         return functionCode;
     }
 
@@ -260,7 +260,7 @@ public class Notification {
     /**
      * @return the functionName
      */
-    public String getFunctionName() {
+    public String getFunction_name() {
         return functionName;
     }
 
@@ -269,16 +269,6 @@ public class Notification {
      */
     public void setFunctionName(String functionName) {
         this.functionName = functionName;
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "Notification [no=" + no + ", notificationType=" + notificationType + ", notificationCode=" + notificationCode + ", functionCode=" + functionCode + ", functionName=" + functionName
-                + ", eventCode=" + eventCode + ", eventName=" + eventName + ", sequence=" + sequence + ", deviceTypeCode=" + deviceTypeCode + ", deviceTypeName=" + deviceTypeName + ", endpointNo="
-                + endpointNo + ", zwaveNo=" + zwaveNo + "]";
     }
 
 }
