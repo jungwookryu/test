@@ -31,6 +31,9 @@ import com.ht.connected.home.backend.gateway.Gateway;
 import com.ht.connected.home.backend.gateway.GatewayRepository;
 import com.ht.connected.home.backend.service.mqtt.Target;
 
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
+
 @Service
 public class NotificationServiceImpl implements NotificationService {
 
@@ -137,8 +140,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     private void publishAppStatus(ZWaveRequest zwaveRequest, int no, Notification rtnNotification) throws JsonGenerationException, JsonMappingException, IOException, InterruptedException {
 //        zwave.device.status=/server/{target}/{model}/{serial}/zwave/device/
+        String stnNotification = objectMapper.writeValueAsString(rtnNotification);
         MqttCommon.publishNotificationData(producerRestController, callbackAckProperties, "zwave.device.status", Target.app.name()
-                , zwaveRequest.getModel(), zwaveRequest.getSerialNo(), rtnNotification.toString());
+                , zwaveRequest.getModel(), zwaveRequest.getSerialNo(), stnNotification);
     }
 
     @Override

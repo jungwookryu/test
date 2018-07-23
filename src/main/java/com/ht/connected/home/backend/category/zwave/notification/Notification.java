@@ -30,27 +30,27 @@ public class Notification {
     int no;
 
     @Column(name = "notification_type")
-    @JsonProperty("notification_type")
+    @JsonProperty("notificationType")
     String notificationType;
 
     @Column(name = "notification_code")
-    @JsonProperty("notification_code")
+    @JsonProperty("notificationCode")
     int notificationCode;
  
     @Column(name = "function_code")
-    @JsonProperty("function_code")
+    @JsonProperty("functionCode")
     String functionCode;
 
     @Column(name = "function_name")
-    @JsonProperty("function_name")
+    @JsonProperty("functionName")
     String functionName;
     
     @Column(name = "event_code")
-    @JsonProperty("event_code")
+    @JsonProperty("eventCode")
     int eventCode;
     
     @Column(name = "event_name")
-    @JsonProperty("event_name")
+    @JsonProperty("eventName")
     String eventName;
     
     @Column(name = "sequence")
@@ -58,19 +58,19 @@ public class Notification {
     int sequence;
     
     @Column(name = "device_type_code")
-    @JsonProperty("device_type_code")
+    @JsonProperty("deviceTypeCode")
     String deviceTypeCode;
     
     @Column(name = "device_type_name")
-    @JsonProperty("device_type_name")
+    @JsonProperty("deviceTypeName")
     String deviceTypeName;
     
     @Column(name = "endpoint_no")
-    @JsonProperty("endpoint_no")
+    @JsonProperty("endpointNo")
     int endpointNo;
     
     @Column(name = "zwave_no")
-    @JsonProperty("zwave_no")
+    @JsonProperty("zwaveNo")
     int zwaveNo;
   
     public Notification() {
@@ -272,22 +272,13 @@ public class Notification {
     }
 
     /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj) {
-        // TODO Auto-generated method stub
-        return super.equals(obj);
-    }
-
-    /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "{no=" + no + ", notification_type=" + notificationType + ", notification_code=" + notificationCode + ", function_code=" + functionCode + ", function_name=" + functionName
-                + ", event_code=" + eventCode + ", event_name=" + eventName + ", sequence=" + sequence + ", device_type_code=" + deviceTypeCode + ", device_type_name=" + deviceTypeName + ", endpoint_no="
-                + endpointNo + ", zwave_no=" + zwaveNo + "}";
+        return "Notification [no=" + no + ", notificationType=" + notificationType + ", notificationCode=" + notificationCode + ", functionCode=" + functionCode + ", functionName=" + functionName
+                + ", eventCode=" + eventCode + ", eventName=" + eventName + ", sequence=" + sequence + ", deviceTypeCode=" + deviceTypeCode + ", deviceTypeName=" + deviceTypeName + ", endpointNo="
+                + endpointNo + ", zwaveNo=" + zwaveNo + "]";
     }
 
 }
