@@ -63,6 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
             .antMatchers("/adduser*").permitAll()
             .antMatchers("/gov/**").permitAll()
             .antMatchers("/mqtt/**").permitAll()
+            .antMatchers("/update/**").permitAll()
             .antMatchers("/zwave*").permitAll()
             .antMatchers("/zwave/**").permitAll()
             .antMatchers("/app*").permitAll()
