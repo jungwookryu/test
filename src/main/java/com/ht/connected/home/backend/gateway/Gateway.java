@@ -66,15 +66,15 @@ public class Gateway {
     private String homeid;
 
     @Column(name = "created_user_id")
-    @JsonProperty("createdUserId")
+    @JsonProperty("created_user_id")
     private String createdUserId;
 
     @Column(name = "created_time")
-    @JsonProperty("createdTime")
+    @JsonProperty("created_time")
     private Date createdTime;
 
     @Column(name = "lastmodified_time")
-    @JsonProperty("lastModifiedTime")
+    @JsonProperty("lastmodified_time")
     private Date lastModifiedTime;
 
     @Column(name = "target_type")
@@ -82,11 +82,11 @@ public class Gateway {
     private String targetType;
 
     @Transient
-    @JsonProperty("userNickname")
+    @JsonProperty("user_nick_name")
     private String userNickname;
 
     @Transient
-    @JsonProperty("userEmail")
+    @JsonProperty("user_email")
     private String userEmail;
 
     @Transient
