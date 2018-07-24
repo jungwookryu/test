@@ -106,7 +106,7 @@ public class Notification {
     /**
      * @return the notificationType
      */
-    public String getNotificationType() {
+    public String getNotification_type() {
         return notificationType;
     }
 
@@ -120,7 +120,7 @@ public class Notification {
     /**
      * @return the notificationCode
      */
-    public int getNotificationCode() {
+    public int getNotification_code() {
         return notificationCode;
     }
 
@@ -134,7 +134,7 @@ public class Notification {
     /**
      * @return the eventCode
      */
-    public int getEventCode() {
+    public int getEvent_code() {
         return eventCode;
     }
 
@@ -148,7 +148,7 @@ public class Notification {
     /**
      * @return the eventName
      */
-    public String getEventName() {
+    public String getEvent_name() {
         return eventName;
     }
 
@@ -176,7 +176,7 @@ public class Notification {
     /**
      * @return the deviceTypeCode
      */
-    public String getDeviceTypeCode() {
+    public String getDevice_type_code() {
         return deviceTypeCode;
     }
 
@@ -190,7 +190,7 @@ public class Notification {
     /**
      * @return the deviceTypeName
      */
-    public String getDeviceTypeName() {
+    public String getDevice_type_name() {
         return deviceTypeName;
     }
 
@@ -204,7 +204,7 @@ public class Notification {
 
 
     public void setEventNameByCode() {
-        this.eventName = NotificationEvent.getEventName(this.getNotificationCode(),this.getEventCode());
+        this.eventName = NotificationEvent.getEventName(this.getNotification_code(),this.getEvent_code());
     }
     
     public void setNotificationTypeByCode() {
@@ -218,7 +218,7 @@ public class Notification {
     /**
      * @return the endpointNo
      */
-    public int getEndpointNo() {
+    public int getEndpoint_no() {
         return endpointNo;
     }
 
@@ -232,7 +232,7 @@ public class Notification {
     /**
      * @return the zwaveNo
      */
-    public int getZwaveNo() {
+    public int getZwave_no() {
         return zwaveNo;
     }
 
@@ -246,7 +246,7 @@ public class Notification {
     /**
      * @return the functionCode
      */
-    public String getFunctionCode() {
+    public String getFunction_code() {
         return functionCode;
     }
 
@@ -260,7 +260,7 @@ public class Notification {
     /**
      * @return the functionName
      */
-    public String getFunctionName() {
+    public String getFunction_name() {
         return functionName;
     }
 
@@ -269,25 +269,6 @@ public class Notification {
      */
     public void setFunctionName(String functionName) {
         this.functionName = functionName;
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj) {
-        // TODO Auto-generated method stub
-        return super.equals(obj);
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "Notification [no=" + no + ", notification_type=" + notificationType + ", notification_code=" + notificationCode + ", function_code=" + functionCode + ", function_name=" + functionName
-                + ", event_code=" + eventCode + ", event_name=" + eventName + ", sequence=" + sequence + ", device_type_code=" + deviceTypeCode + ", device_type_name=" + deviceTypeName + ", endpoint_no="
-                + endpointNo + ", zwave_no=" + zwaveNo + "]";
     }
 
 }

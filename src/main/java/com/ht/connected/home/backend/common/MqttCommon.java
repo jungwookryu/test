@@ -112,7 +112,7 @@ public class MqttCommon {
     }
 
     public static void publish(ProducerComponent producerRestController, Message message) throws InterruptedException {
-
+        logger.info("amqp publish -t "+ message.getMessageType()+"-m "+message.getMessageBody());
         producerRestController.run(message);
 
     }
@@ -125,7 +125,7 @@ public class MqttCommon {
 
         String topic = callbackAckProperties.getProperty(sAckPropertyName);
         String exeTopic = MqttCommon.rtnCallbackAck(topic, target, model, serial);
-        Message message = new Message(exeTopic, objectMapper.writeValueAsString(notiData));
+        Message message = new Message(exeTopic, objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(notiData));
         MqttCommon.publish(producerRestController, message);
     }
     

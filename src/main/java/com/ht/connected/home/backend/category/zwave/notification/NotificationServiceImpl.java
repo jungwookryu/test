@@ -1,6 +1,7 @@
 package com.ht.connected.home.backend.category.zwave.notification;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
@@ -11,10 +12,13 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.ht.connected.home.backend.category.zwave.ZWave;
 import com.ht.connected.home.backend.category.zwave.ZWaveRepository;
 import com.ht.connected.home.backend.category.zwave.ZWaveRequest;
@@ -25,11 +29,11 @@ import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.category.zwave.endpoint.EndpointRepository;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
-import com.ht.connected.home.backend.controller.mqtt.Message;
 import com.ht.connected.home.backend.controller.mqtt.ProducerComponent;
 import com.ht.connected.home.backend.gateway.Gateway;
 import com.ht.connected.home.backend.gateway.GatewayRepository;
 import com.ht.connected.home.backend.service.mqtt.Target;
+import com.rabbitmq.tools.json.JSONWriter;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
@@ -116,11 +120,11 @@ public class NotificationServiceImpl implements NotificationService {
      * @return
      */
     public Notification saveNotification(Notification notification) {
-        String deviceType = Common.zwaveNickname(zWaveProperties, notification.getDeviceTypeCode());
-        String functionName = zWaveFunctionProperties.getProperty(notification.getFunctionCode());
+        String deviceType = Common.zwaveNickname(zWaveProperties, notification.getDevice_type_code());
+        String functionName = zWaveFunctionProperties.getProperty(notification.getFunction_code());
         notification.setDeviceTypeName(deviceType);
         notification.setFunctionName(functionName);
-        Notification selectNotificaiton = notificationRepository.findByNotificationCodeAndEndpointNo(notification.getNotificationCode(), notification.getEndpointNo());
+        Notification selectNotificaiton = notificationRepository.findByNotificationCodeAndEndpointNo(notification.getNotification_code(), notification.getEndpoint_no());
         if(!Objects.isNull(selectNotificaiton)) {
             notification.setNo(selectNotificaiton.getNo());
         }
@@ -137,8 +141,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     private void publishAppStatus(ZWaveRequest zwaveRequest, int no, Notification rtnNotification) throws JsonGenerationException, JsonMappingException, IOException, InterruptedException {
 //        zwave.device.status=/server/{target}/{model}/{serial}/zwave/device/
+        
         MqttCommon.publishNotificationData(producerRestController, callbackAckProperties, "zwave.device.status", Target.app.name()
-                , zwaveRequest.getModel(), zwaveRequest.getSerialNo(), rtnNotification.toString());
+                , zwaveRequest.getModel(), zwaveRequest.getSerialNo(), rtnNotification);
     }
 
     @Override
