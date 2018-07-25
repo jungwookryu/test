@@ -39,4 +39,12 @@ public class HTPropertiesConfig {
         callbackAckProperties.load(filePath);
         return callbackAckProperties;
     }
+    @Bean(name="multilebelProperties")
+    public Properties multilebelProperties() throws IOException {
+        Properties multilebelProperties =new Properties();
+        String propFile = "zwave/multilevel.properties";
+        InputStream filePath =getClass().getClassLoader().getResourceAsStream(propFile);
+        multilebelProperties.load(filePath);
+        return multilebelProperties;
+    }
 }

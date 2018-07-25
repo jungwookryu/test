@@ -2,6 +2,7 @@ package com.ht.connected.home.backend.category.zwave.constants.commandclass;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,13 +15,23 @@ import org.slf4j.LoggerFactory;
 public class MultilevelSensorCommandClass extends CommandClass {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static final byte SENSOR_MULTILEVEL_GET = 0x04;
-    private static final byte SENSOR_MULTILEVEL_REPORT = 0x05;
+    public static final byte SENSOR_MULTILEVEL_GET = 0x04;
+    public static final byte SENSOR_MULTILEVEL_REPORT = 0x05;
 
     public static final byte ID = 0x31;
+    public static final int INT_ID = (byte)0x31;
+    
+    public static final int INT_SENSOR_MULTILEVEL_GET = (byte)0x04;
+    public static final int INT_SENSOR_MULTILEVEL_REPORT = (byte)0x05;
+    
     public static final String genericKey = "21";
-    private Type type;
-    private Scale scale;
+    public static final String functionCode ="31";
+    public int type;
+    public String typeName;
+    public int scaleCode;
+    public String label;
+    public int labelCode;
+    public String labelName;
     private List<Double> values = new ArrayList<>();
 
     @Override
@@ -33,154 +44,108 @@ public class MultilevelSensorCommandClass extends CommandClass {
         return "COMMAND_CLASS_SENSOR_MULTILEVEL";
     }
 
-    public Type getType() {
-        return type;
-    }
-
-    public Scale getScale() {
-        return scale;
-    }
-
+   
     public List<Double> getValues() {
         return values;
     }
 
-    private void setTypeAndScale(byte t, int s) {
-        switch (t) {
-            case 0x00:
-                type = Type.Reserved;
-                scale = Scale.Reserved;
-                break;
-            case 0x01:
-                type = Type.AirTemperature;
-                switch (s) {
-                    case 0x00:
-                        scale = Scale.Celsius;
-                        break;
-                    case 0x01:
-                        scale = Scale.Fahrenheit;
-                        break;
-                    default:
-                        scale = Scale.Reserved;
-                        break;
-                }
-                break;
-            case 0x02:
-                type = Type.GeneralPurpose;
-                switch (s) {
-                    case 0x00:
-                        scale = Scale.PercentageValue;
-                        break;
-                    case 0x01:
-                        scale = Scale.DimensionlessValue;
-                        break;
-                    default:
-                        scale = Scale.Reserved;
-                        break;
-                }
-                break;
-            case 0x03:
-                type = Type.Luminance;
-                switch (s) {
-                    case 0x00:
-                        scale = Scale.PercentageValue;
-                        break;
-                    case 0x01:
-                        scale = Scale.Lux;
-                        break;
-                    default:
-                        scale = Scale.Reserved;
-                        break;
-                }
-                break;
-            case 0x04:
-                type = Type.Power;
-                switch (s) {
-                    case 0x00:
-                        scale = Scale.Watt;
-                        break;
-                    case 0x01:
-                        scale = Scale.BtuPerHour;
-                        break;
-                    default:
-                        scale = Scale.Reserved;
-                        break;
-                }
-                break;
-            case 0x05:
-                type = Type.Humidity;
-                switch (s) {
-                    case 0x00:
-                        scale = Scale.PercentageValue;
-                        break;
-                    case 0x01:
-                        scale = Scale.AbsoluteHumidity;
-                        break;
-                    default:
-                        scale = Scale.Reserved;
-                        break;
-                }
-                break;
-        }
+    public void setTypeAndScale(Properties p, int t, int s) {
+        type = Type.values()[t].ordinal();
+        typeName = p.getProperty(Integer.toString(t), "no signed type");
+        labelCode = s; 
+        label = p.getProperty(Integer.toString(t)+"."+Integer.toString(s), "no signed label");
     }
 
     public enum Type {
-        AirTemperature,
-        GeneralPurpose,
-        Humidity,
-        Luminance,
-        Power,
-        Reserved
-    }
-
-    public enum Scale {
-        AbsoluteHumidity,
-        BtuPerHour,
-        Celsius,
-        DimensionlessValue,
-        Fahrenheit,
-        Lux,
-        PercentageValue,
-        Reserved,
-        Watt
-    }
-
-    @Override
-    public String toString() {
-        return "MultilevelSensorCommandClass{" +
-                "version=" + getVersion() +
-                ", type=" + type +
-                ", scale=" + scale +
-                ", values=" + values +
-                '}';
+            Reserved,
+            Air_Temperature,
+            General_Purpose,
+            Luminance,
+            Power,
+            Humidity,
+            Velocity,
+            Direction,
+            Atmospheric_Pressure,
+            Barometric_Pressure,
+            Solar,
+            Dew_point,
+            Rain_rate,
+            Tide_level,
+            Weight,
+            Voltage,
+            Current,
+            Carbon_Dioxide_CO2_level,
+            Air_flow,
+            Tank_capacity,
+            Distance,
+            Rotation,
+            Water_Temperature,
+            Soil_Temperature,
+            Seismic_Intensity,
+            Seismic_Magnitude,
+            Ultraviolet,
+            Electrical_Resistivity,
+            Electrical_Conductivity,
+            Loudness,
+            Moisture,
+            Frequency,
+            Time,
+            Target_Temperature,
+            Particulate_Matter_2_5,
+            Formaldehyde_CH2O_level,
+            Radon_Concentration,
+            Methane_Density_CH4,
+            Volatile_Organic_Compound,
+            Carbon_Monoxide_CO_level,
+            Soil_Humidity,
+            Soil_Reactivity,
+            Soil_Salinity,
+            Heart_Rate,
+            Blood_Pressure,
+            Muscle_Mass,
+            Fat_Mass,
+            Bone_Mass,
+            Total_Body_Water,_TBW,
+            Basic_Metabolic_Rate,_BMR,
+            Body_Mass_Index,_BMI,
+            Acceleration_X_axis,
+            Acceleration_Y_axis,
+            Acceleration_Z_axis,
+            Smoke_Density,
+            Water_Flow,
+            Water_Pressure,
+            RF_Signal_Strength,
+            Particulate_Matter,
+            Respiratory_Rate
     }
 
     @Override
     public String getDeviceType() {
         // TODO Auto-generated method stub
-        return "HC6";
+        return null;
     }
 
     @Override
     public String getNicknameType() {
-        // TODO Auto-generated method stub
-        return "Multilevel Sensor";
+
+        return null;
     }
 
     @Override
     public String getFunctionType() {
-        // TODO Auto-generated method stub
-        return "SENSOR_MULTILEVEL";
+        return functionCode;
     }
-    
+
     @Override
     public String getGenericKey() {
+        
         return genericKey;
     }
 
     @Override
     public String getFunctionCode() {
         // TODO Auto-generated method stub
-        return null;
+        return functionCode;
     }
+
 }

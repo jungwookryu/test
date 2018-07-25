@@ -175,7 +175,7 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
             gateway.setModel(topicSplited[3]);
             gateway.setSerial(topicSplited[4]);
             gateway.setStatus(gateway.getType());
-            gateway.setCreatedUserId(gateway.getUserEmail());
+            gateway.setCreated_user_id(gateway.getUser_email());
             if (type.register.name().equals(gateway.getType())) {
                 Gateway exangeGateway = gatewayRepository.findBySerial(gateway.getSerial());
                 if(null != exangeGateway && (!exangeGateway.getCreatedUserId().equals(gateway.getCreatedUserId()))) {
@@ -183,12 +183,12 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
                     exangeGateway.setStatus("failAp");
                     updateGateway(exangeGateway);
                 }else {
-                    List<User> users = userRepository.findByUserEmail(gateway.getUserEmail());
+                    List<User> users = userRepository.findByUserEmail(gateway.getUser_email());
                     if (users.size() > 0) {
                         User user = users.get(0);
                         if (exangeGateway == null) {
                             exangeGateway = gateway;
-                            exangeGateway.setCreatedUserId(gateway.getUserEmail());
+                            exangeGateway.setCreated_user_id(gateway.getUser_email());
                         } else {
                             exangeGateway.setLastModifiedTime(new Date());
                         }
@@ -280,7 +280,7 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
                 saveGateway.setStatus(gateway.getStatus());
             }
             if(Common.notEmpty(gateway.getCreatedUserId())) {
-                saveGateway.setCreatedUserId(gateway.getCreatedUserId());
+                saveGateway.setCreated_user_id(gateway.getCreatedUserId());
             }
             Gateway rtnGateway = gatewayRepository.save(originGateway);
             return rtnGateway;
@@ -321,7 +321,7 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
                 originUser = users.get(0);
                 
                 //Gateway 정보의 마스터 이메일 변경
-                originGateway.setCreatedUserId(user.getUserEmail());
+                originGateway.setCreated_user_id(user.getUserEmail());
                 gatewayRepository.save(originGateway);
                 //master를 share로 변경
                 UserGateway originUserGateway = userGatewayRepository.findByUserNoAndGatewayNo(originGateway.getNo(), originUser.getNo());

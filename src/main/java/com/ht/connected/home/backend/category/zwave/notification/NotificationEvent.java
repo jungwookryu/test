@@ -46,9 +46,9 @@ public class NotificationEvent {
     
     private static String homeSecurityEventName(int eventCode) {
         if(eventCode == 0) {
-            return Home_Security_detection;
+            return No_Motion_Detection;
         }else if(eventCode == 7) {
-            return Motion_Detection;
+            return No_Motion_Detection;
         }else if(eventCode == 8) {
             return Motion_Detection_Unknown_Location;
         }else {

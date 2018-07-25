@@ -1,7 +1,7 @@
 package com.ht.connected.home.backend.category.zwave.notification;
 
 import java.io.IOException;
-import java.io.Writer;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
@@ -12,19 +12,17 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.ht.connected.home.backend.category.zwave.ZWave;
 import com.ht.connected.home.backend.category.zwave.ZWaveRepository;
 import com.ht.connected.home.backend.category.zwave.ZWaveRequest;
 import com.ht.connected.home.backend.category.zwave.ZWaveServiceImpl;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.AlarmCommandClass;
 import com.ht.connected.home.backend.category.zwave.constants.commandclass.BinarySwitchCommandClass;
+import com.ht.connected.home.backend.category.zwave.constants.commandclass.MultilevelSensorCommandClass;
 import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.category.zwave.endpoint.EndpointRepository;
 import com.ht.connected.home.backend.common.Common;
@@ -33,7 +31,6 @@ import com.ht.connected.home.backend.controller.mqtt.ProducerComponent;
 import com.ht.connected.home.backend.gateway.Gateway;
 import com.ht.connected.home.backend.gateway.GatewayRepository;
 import com.ht.connected.home.backend.service.mqtt.Target;
-import com.rabbitmq.tools.json.JSONWriter;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
@@ -53,10 +50,14 @@ public class NotificationServiceImpl implements NotificationService {
     @Autowired
     @Qualifier("zWaveFunctionProperties")
     Properties zWaveFunctionProperties;
-    
+
     @Autowired
     @Qualifier("zWaveProperties")
     Properties zWaveProperties;
+    
+    @Autowired
+    @Qualifier("multilebelProperties")
+    Properties multilebelProperties;
 
     @Autowired
     ProducerComponent producerRestController;
@@ -75,16 +76,18 @@ public class NotificationServiceImpl implements NotificationService {
             binaryReport(zwaveRequest, payload);
         } else if ((zwaveRequest.getClassKey() == AlarmCommandClass.INT_ID) && (zwaveRequest.getCommandKey() == AlarmCommandClass.INT_ALARM_REPORT)) {
             notificationReport(zwaveRequest, payload);
+        } else if ((zwaveRequest.getClassKey() == MultilevelSensorCommandClass.INT_ID) && (zwaveRequest.getCommandKey() == AlarmCommandClass.INT_ALARM_REPORT)) {
+            multilevelSensorReport(zwaveRequest, payload);
         }
     }
 
     private void notificationReport(ZWaveRequest zwaveRequest, String payload) throws JsonParseException, JsonMappingException, IOException, InterruptedException {
-        
+
         Endpoint endpoint = getEndpointInfo(zwaveRequest);
         RequestNotification result_data = objectMapper.readValue(payload, RequestNotification.class);
-        
+
         RequestNotification requestNotification = objectMapper.convertValue(result_data.getResult_data(), RequestNotification.class);;
-        String deviceTypeCode = endpoint.getGeneric() +"."+ endpoint.getSpecific();
+        String deviceTypeCode = endpoint.getGeneric() + "." + endpoint.getSpecific();
         String functionCode = AlarmCommandClass.functionCode;
         Notification notification = new Notification(requestNotification.getNotificationType(), requestNotification.getMevent(), requestNotification.getSequence(), deviceTypeCode,
                 endpoint.getZwaveNo(), endpoint.getNo());
@@ -95,25 +98,50 @@ public class NotificationServiceImpl implements NotificationService {
 
     }
 
+    private void multilevelSensorReport(ZWaveRequest zwaveRequest, String payload) throws JsonGenerationException, JsonMappingException, IOException, InterruptedException {
+
+        Endpoint endpoint = getEndpointInfo(zwaveRequest);
+        Notification notification = new Notification();
+        RequestNotification requestNotification = objectMapper.readValue(payload, RequestNotification.class);
+        HashMap map = requestNotification.getResult_data();
+        if(!map.isEmpty()) {
+            int sensorType =(int) map.getOrDefault("sensorType", 0);
+            int level =(int) map.getOrDefault("level", 0);
+            List sensorvalue =(List) map.getOrDefault("sensorvalue", 0);
+            MultilevelSensorCommandClass multilevelSensorCommandClass = new MultilevelSensorCommandClass();
+            multilevelSensorCommandClass.setTypeAndScale(multilebelProperties, sensorType, level);
+            int value = (int) requestNotification.getResult_data().getOrDefault("value", -1);
+            String deviceTypeCode = endpoint.getGeneric() + "." + endpoint.getSpecific();
+            String functionCode = multilevelSensorCommandClass.functionCode;
+            notification = new Notification(BinarySwitchCommandClass.MEVENT, BinarySwitchCommandClass.getNotificationCode(value), BinarySwitchCommandClass.DEFAULT_SEQUENCE, deviceTypeCode,
+                    endpoint.getZwaveNo(), endpoint.getNo());
+            notification.setFunctionCode(functionCode);
+            Notification rtnNotification = saveNotification(notification);
+            publishAppStatus(zwaveRequest, endpoint.getNo(), rtnNotification);
+            logger.debug("multilevel notification::" + rtnNotification.toString());
+        }
+     
+    }
+
     private void binaryReport(ZWaveRequest zwaveRequest, String payload) throws JsonGenerationException, JsonMappingException, IOException, InterruptedException {
-        
+
         Endpoint endpoint = getEndpointInfo(zwaveRequest);
         Notification notification = new Notification();
         // binary Switch report
         RequestNotification requestNotification = objectMapper.readValue(payload, RequestNotification.class);
-        int value = (int)requestNotification.getResult_data().getOrDefault("value", -1);
-        String deviceTypeCode = endpoint.getGeneric() +"."+ endpoint.getSpecific();
+        int value = (int) requestNotification.getResult_data().getOrDefault("value", -1);
+        String deviceTypeCode = endpoint.getGeneric() + "." + endpoint.getSpecific();
         String functionCode = BinarySwitchCommandClass.functionCode;
-        notification = new Notification(BinarySwitchCommandClass.MEVENT, BinarySwitchCommandClass.getNotificationCode(value), BinarySwitchCommandClass.DEFAULT_SEQUENCE, deviceTypeCode, endpoint.getZwaveNo(), endpoint.getNo());
+        notification = new Notification(BinarySwitchCommandClass.MEVENT, BinarySwitchCommandClass.getNotificationCode(value), BinarySwitchCommandClass.DEFAULT_SEQUENCE, deviceTypeCode,
+                endpoint.getZwaveNo(), endpoint.getNo());
         notification.setFunctionCode(functionCode);
         Notification rtnNotification = saveNotification(notification);
         publishAppStatus(zwaveRequest, endpoint.getNo(), rtnNotification);
-        logger.debug("notification::" + rtnNotification.toString());
+        logger.debug("binaryswitch notification::" + rtnNotification.toString());
     }
 
     /**
-     * save notification info
-     * entity index unique : endpoint_no, notification_type
+     * save notification info entity index unique : endpoint_no, notification_type
      * @param notification
      * @author ijlee
      * @since 07 19 2018
@@ -125,7 +153,7 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setDeviceTypeName(deviceType);
         notification.setFunctionName(functionName);
         Notification selectNotificaiton = notificationRepository.findByNotificationCodeAndEndpointNo(notification.getNotification_code(), notification.getEndpoint_no());
-        if(!Objects.isNull(selectNotificaiton)) {
+        if (!Objects.isNull(selectNotificaiton)) {
             notification.setNo(selectNotificaiton.getNo());
         }
         return notificationRepository.save(notification);
@@ -135,25 +163,25 @@ public class NotificationServiceImpl implements NotificationService {
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
         List<ZWave> zwaves = zWaveRepository.findByGatewayNoAndNodeId(gateway.getNo(), zwaveRequest.getNodeId());
         int endpointId = zwaveRequest.getEndpointId();
-        Endpoint endpoint = endpointRepository.findByZwaveNoAndEpid(zwaves.get(0).getNo(),endpointId);
+        Endpoint endpoint = endpointRepository.findByZwaveNoAndEpid(zwaves.get(0).getNo(), endpointId);
         return endpoint;
     }
 
     private void publishAppStatus(ZWaveRequest zwaveRequest, int no, Notification rtnNotification) throws JsonGenerationException, JsonMappingException, IOException, InterruptedException {
-//        zwave.device.status=/server/{target}/{model}/{serial}/zwave/device/
-        
-        MqttCommon.publishNotificationData(producerRestController, callbackAckProperties, "zwave.device.status", Target.app.name()
-                , zwaveRequest.getModel(), zwaveRequest.getSerialNo(), rtnNotification);
+        // zwave.device.status=/server/{target}/{model}/{serial}/zwave/device/
+
+        MqttCommon.publishNotificationData(producerRestController, callbackAckProperties, "zwave.device.status", Target.app.name(), zwaveRequest.getModel(), zwaveRequest.getSerialNo(),
+                rtnNotification);
     }
 
     @Override
     public void delete(ZWave zwave) {
         notificationRepository.deleteByZwaveNo(zwave.getNo());
     }
-    
+
     @Override
     public List<Notification> getNotification(Endpoint endpoint) {
         return notificationRepository.findByEndpointNo(endpoint.getNo());
     }
-    
+
 }
