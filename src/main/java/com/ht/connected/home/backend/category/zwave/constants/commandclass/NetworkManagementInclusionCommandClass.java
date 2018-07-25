@@ -39,6 +39,7 @@ public class NetworkManagementInclusionCommandClass extends CommandClass {
     
     public static final byte ID = (byte)0x34;
     public static final int INT_ID = (byte)0x34;
+    public static final String functionCode ="34";
     
     private Byte value;
 
@@ -78,8 +79,7 @@ public class NetworkManagementInclusionCommandClass extends CommandClass {
 
     @Override
     public String getFunctionType() {
-        // TODO Auto-generated method stub
-        return null;
+        return functionCode;
     }
     
     @Override

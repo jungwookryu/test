@@ -177,11 +177,11 @@ public class Gateway {
         return createdUserId;
     }
 
-    public void setCreatedUserId(String createdUserId) {
+    public void setCreated_user_id(String createdUserId) {
         this.createdUserId = createdUserId;
     }
 
-    public Date getCreatedTime() {
+    public Date getCreated_time() {
         return createdTime;
     }
 
@@ -189,7 +189,7 @@ public class Gateway {
         this.createdTime = createdTime;
     }
 
-    public Date getLastModifiedTime() {
+    public Date getLastModified_time() {
         return lastModifiedTime;
     }
 
@@ -213,7 +213,7 @@ public class Gateway {
         this.userNickname = userNickname;
     }
 
-    public String getUserEmail() {
+    public String getUser_email() {
         return userEmail;
     }
 

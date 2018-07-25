@@ -23,7 +23,6 @@ public class DoorLockCommandClass extends CommandClass {
     public static final byte ID = (byte)0x62;
     public static final String genericKey = "40";
     
-    public static final String specificKey ="01";
     public static final String functionCode ="62";
     
     private Configration configration;

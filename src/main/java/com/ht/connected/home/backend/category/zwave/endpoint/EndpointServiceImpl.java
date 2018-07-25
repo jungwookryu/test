@@ -9,11 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.category.zwave.ZWave;
 import com.ht.connected.home.backend.category.zwave.ZWaveRepository;
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdClsRepository;
-import com.ht.connected.home.backend.category.zwave.notification.Notification;
 import com.ht.connected.home.backend.category.zwave.notification.NotificationRepository;
 import com.ht.connected.home.backend.category.zwave.notification.NotificationService;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
@@ -41,10 +39,12 @@ public class EndpointServiceImpl extends CrudServiceImpl<Endpoint, Integer> impl
     @Autowired
     NotificationService notificationService;
     
-    private static final Log logging = LogFactory.getLog(EndpointServiceImpl.class);
+    private static final Log logger = LogFactory.getLog(EndpointServiceImpl.class);
 
-    private ObjectMapper objectMapper = new ObjectMapper();
-
+    /**
+     * @zwave 기기  endpoint 정보수정
+     * @author ijlee
+     */
     @Transactional
     @Override
     public ZWave modify(int no , Endpoint endpoint) {
