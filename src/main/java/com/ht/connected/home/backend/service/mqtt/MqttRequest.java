@@ -30,10 +30,10 @@ public class MqttRequest {
     private String model;
     
     @JsonProperty("nodeId")
-    private int nodeId;
+    private Integer nodeId;
 
     @JsonProperty("endpointId")
-    private int endpointId;
+    private Integer endpointId;
 
     @JsonProperty("option")
     private String securityOption;

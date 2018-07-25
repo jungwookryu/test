@@ -18,6 +18,9 @@ public class MqttPayload {
 
 	@JsonProperty(value = "result_data")
 	private HashMap<String, Object> resultData;
+	
+	@JsonProperty(value = "set_data")
+    private HashMap<String, Object> setData;
 
 	public int getResultCode() {
 		return resultCode;
@@ -42,5 +45,19 @@ public class MqttPayload {
 	public void setResultData(HashMap<String, Object> resultData) {
 		this.resultData = resultData;
 	}
+
+    /**
+     * @return the setData
+     */
+    public HashMap<String, Object> getSetData() {
+        return setData;
+    }
+
+    /**
+     * @param setData the setData to set
+     */
+    public void setSetData(HashMap<String, Object> setData) {
+        this.setData = setData;
+    }
 
 }

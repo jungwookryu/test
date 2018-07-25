@@ -201,16 +201,23 @@ public class ZWaveServiceImpl implements ZWaveService {
                  
              }
              // 기기등록 상태값 받은 경우 기기 등록 모드 0x34/0x02 결과, 기기등록 상태값 받은 경우 기기 등록 모드 0x34/0x01 결과
-             else if (zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_ADD_STATUS ||
-                     zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_ADD) {
-                 HashMap resultMapData = mqttPayload.getResultData();
-                 if (resultMapData != null) {
+             else if ((zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_ADD_STATUS ||
+                     zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_ADD) &&
+                     (!Objects.isNull(mqttPayload.getResultData())))
+             {
                      String topic = callbackAckProperties.getProperty("zwave.device.registration");
                      String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), zwaveRequest.getModel(),  zwaveRequest.getSerialNo());
-                     publish(exeTopic, objectMapper.writeValueAsString(resultMapData));
-                 }
-             }
-            
+                     publish(exeTopic, objectMapper.writeValueAsString(mqttPayload));
+              }
+             // 기기등록 상태값 받은 경우 기기 등록 모드 0x34/0x02 결과, 기기등록 상태값 받은 경우 기기 등록 모드 0x34/0x01 결과 s2spin
+             else if ((zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_ADD_STATUS ||
+                     zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_ADD) &&
+                     (!Objects.isNull(mqttPayload.getSetData())))
+             {
+                     String topic = callbackAckProperties.getProperty("zwave.device.registrationS2");
+                     String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), zwaveRequest.getModel(),  zwaveRequest.getSerialNo());
+                     publish(exeTopic, objectMapper.writeValueAsString(mqttPayload));
+              }            
         }
         // 기기 초기화 결과 0x4D/0x07
         if (zwaveRequest.getClassKey() == NetworkManagementBasicCommandClass.INT_ID) {
@@ -220,7 +227,7 @@ public class ZWaveServiceImpl implements ZWaveService {
                 zwaveReset(zwaveRequest);
                 String topic = callbackAckProperties.getProperty("manager.product.remove");
                 String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), zwaveRequest.getModel(),  zwaveRequest.getSerialNo());
-                publish(exeTopic);
+                publish(exeTopic, new HashMap());
                 
             }
         }
@@ -395,10 +402,6 @@ public class ZWaveServiceImpl implements ZWaveService {
         publish(MqttCommon.getMqttPublishTopic(mqttRequest), mqttRequest.getSetData());
     }
 
-    private void publish(String topic) throws JsonProcessingException, InterruptedException {
-        publish(topic, new HashMap());
-    }
-
     private void publish(String topic, HashMap<String, Object> publishPayload) throws JsonProcessingException, InterruptedException {
         String payload = objectMapper.writeValueAsString(publishPayload);
         publish(topic, payload);
@@ -430,11 +433,10 @@ public class ZWaveServiceImpl implements ZWaveService {
         mqttRequest.setCommandKey(NetworkManagementProxyCommandClass.INT_NODE_LIST_GET);
         mqttRequest.setVersion("v1");
         mqttRequest.setNodeId(00);
-        mqttRequest.setEndpointId(00);
-        mqttRequest.setTarget(gateway.getTargetType());;
+//        mqttRequest.setEndpointId(00);
+        mqttRequest.setTarget(gateway.getTargetType());
         String requestTopic = MqttCommon.getMqttPublishTopic(mqttRequest, gateway.getTargetType());
-        publish(requestTopic);
-        // TODO 기기 상태정보 가져오기
+        publish(requestTopic, new HashMap());
     }
 
     @Override
