@@ -69,7 +69,11 @@ public class UPFileAdviseService {
             if (md5.length() > 10) {
                 fileVersion.setMd5(md5);
                 fileVersion.setUrl(fileURL);
-                fileVersion.setForce("false");
+                if(fileVersion.getForce().equals("Y")) {
+                    fileVersion.setForce("true");    
+                }else {
+                    fileVersion.setForce("false");
+                }                
                 fileVersion.setUpdateType(updateType);
                 try {
                     payload = objectMapper.writeValueAsString(fileVersion);
@@ -88,8 +92,8 @@ public class UPFileAdviseService {
 
     private String getRemoteFileURL(UPFileVersion request, UPDeviceVersion device) {
         // String url = "http://class.brandstock.me/README.md";
-        String url = String.format("%s/iot-module/%s_%s.tar.gz", fileServerHttp, getUpdateType(request, device),
-                request.getVersion());
+        String url = String.format("%s/%s/%s/%s_%s.tar.gz", fileServerHttp, request.getDeviceType(), request.getVersion(),
+                getUpdateType(request, device), request.getVersion());
         return url;
     }
 
