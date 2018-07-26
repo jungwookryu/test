@@ -10,13 +10,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MqttPayload {
 
-	@JsonProperty(value = "result_code")
+	@JsonProperty("result_code")
 	private int resultCode;
 
-	@JsonProperty(value = "result_msg")
+	@JsonProperty("result_msg")
 	private String resultMessage;
 
-	@JsonProperty(value = "result_data")
+	@JsonProperty("result_data")
 	private HashMap<String, Object> resultData;
 	
 	@JsonProperty(value = "set_data")
