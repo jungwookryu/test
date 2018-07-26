@@ -137,7 +137,7 @@ public class ZWaveController extends CommonController {
     @PutMapping("/{zwave_no}")
     public ResponseEntity basicControl(@PathVariable int zwave_no, @RequestBody ZWaveControl zWaveControl) throws JsonProcessingException, InterruptedException {
         zWaveControl.setZwave_no(zwave_no);
-        zwaveService.zwaveControl(zWaveControl);
+        zwaveService.zwaveBasicControl(zWaveControl);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
     @PutMapping("/function/{zwave_no}")
