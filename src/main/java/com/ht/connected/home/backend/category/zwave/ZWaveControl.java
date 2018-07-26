@@ -1,6 +1,7 @@
 package com.ht.connected.home.backend.category.zwave;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -84,9 +85,11 @@ public class ZWaveControl {
     }
 
     public void setFunctionCode(String sfunctionCode) {
-        
+        if(Objects.isNull(sfunctionCode)) {
+            sfunctionCode = "20";
+        }
         this.functionCode = ByteUtil.getStringtoInt(sfunctionCode);
-        
+    
         switch(sfunctionCode) {
             case "20": 
             case "25": 
