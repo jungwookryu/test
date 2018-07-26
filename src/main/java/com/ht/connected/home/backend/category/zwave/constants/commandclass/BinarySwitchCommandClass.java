@@ -111,8 +111,7 @@ public class BinarySwitchCommandClass extends CommandClass {
 
     @Override
     public String getFunctionCode() {
-        // TODO Auto-generated method stub
-        return null;
+        return functionCode;
     }
 
 }

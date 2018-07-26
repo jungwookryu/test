@@ -10,14 +10,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MqttPayload {
 
-	@JsonProperty(value = "result_code")
+	@JsonProperty("result_code")
 	private int resultCode;
 
-	@JsonProperty(value = "result_msg")
+	@JsonProperty("result_msg")
 	private String resultMessage;
 
-	@JsonProperty(value = "result_data")
+	@JsonProperty("result_data")
 	private HashMap<String, Object> resultData;
+	
+	@JsonProperty(value = "set_data")
+    private HashMap<String, Object> setData;
 
 	public int getResultCode() {
 		return resultCode;
@@ -42,5 +45,19 @@ public class MqttPayload {
 	public void setResultData(HashMap<String, Object> resultData) {
 		this.resultData = resultData;
 	}
+
+    /**
+     * @return the setData
+     */
+    public HashMap<String, Object> getSetData() {
+        return setData;
+    }
+
+    /**
+     * @param setData the setData to set
+     */
+    public void setSetData(HashMap<String, Object> setData) {
+        this.setData = setData;
+    }
 
 }

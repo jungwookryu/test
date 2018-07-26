@@ -71,24 +71,18 @@ public class MqttCommon {
                 if(!Common.empty(mqttRequest.getVersion())){
                     topic += "/"+ mqttRequest.getVersion();
                 }else {
-                        topic += "/v1";
+                        topic += "/v0";
                 }
                 if(!Common.empty(mqttRequest.getNodeId())){
                     topic += "/"+ ByteUtil.getHexString(nodeId);
-                } else {
-                    topic += "0x00";
+                    if(!Common.empty(mqttRequest.getEndpointId())){
+                        topic += "/"+ ByteUtil.getHexString(endPointId);
+                        if(!Common.empty(mqttRequest.getSecurityOption())){
+                            topic += "/"+ mqttRequest.getSecurityOption();
+                        }
+                    }
                 }
-                if(!Common.empty(mqttRequest.getEndpointId())){
-                    topic += "/"+ ByteUtil.getHexString(endPointId);
-                } else {
-                    topic += "/0x00";
-                }
-                if(!Common.empty(mqttRequest.getSecurityOption())){
-                    topic += "/"+ mqttRequest.getSecurityOption();
-                } else {
-                    topic += "/s0";
-                }
-        logger.info("====================== ZWAVE PROTO MQTT PUBLISH TOPIC ======================");
+        logger.info("====================== ZWAVE PUBLISH TOPIC ======================");
         logger.info(topic);
         return topic;
     }
