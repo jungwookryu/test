@@ -34,7 +34,8 @@ public class MultiInstanceCommandClass extends CommandClass {
     public static final byte MULTI_CHANNEL_CMD_ENCAP = 0x0D;
 
     public static final byte IDENTICAL_ENDPOINTS = 0x40;
-
+    public static final String functionCode ="60";
+    
     private Map<Byte, ZWaveMultiChannelEndpoint> endpointMap = new HashMap<Byte, ZWaveMultiChannelEndpoint>();
     private int instanceCount;
     private int endpointCount;
@@ -120,7 +121,6 @@ public class MultiInstanceCommandClass extends CommandClass {
 
     @Override
     public String getFunctionCode() {
-        // TODO Auto-generated method stub
-        return null;
+        return functionCode;
     }
 }

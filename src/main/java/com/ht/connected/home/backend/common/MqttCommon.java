@@ -105,13 +105,13 @@ public class MqttCommon {
         return ack;
     }
 
-    public static void publish(ProducerComponent producerRestController, Message message) throws InterruptedException {
+    public static void publish(ProducerComponent producerComponent, Message message) throws InterruptedException {
         logger.info("amqp publish -t "+ message.getMessageType()+"-m "+message.getMessageBody());
-        producerRestController.run(message);
+        producerComponent.run(message);
 
     }
 
-    public static void publishNotificationData(ProducerComponent producerRestController, Properties callbackAckProperties, String sAckPropertyName, String target, String model, String serial,
+    public static void publishNotificationData(ProducerComponent producerComponent, Properties callbackAckProperties, String sAckPropertyName, String target, String model, String serial,
             Object notiData)
             throws InterruptedException, JsonGenerationException, JsonMappingException, IOException {
 
@@ -120,7 +120,7 @@ public class MqttCommon {
         String topic = callbackAckProperties.getProperty(sAckPropertyName);
         String exeTopic = MqttCommon.rtnCallbackAck(topic, target, model, serial);
         Message message = new Message(exeTopic, objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(notiData));
-        MqttCommon.publish(producerRestController, message);
+        MqttCommon.publish(producerComponent, message);
     }
     
 }

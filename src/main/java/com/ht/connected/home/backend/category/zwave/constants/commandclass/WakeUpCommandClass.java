@@ -27,6 +27,7 @@ public class WakeUpCommandClass extends CommandClass {
     private static final byte WAKE_UP_NO_MORE_INFORMATION = 0x08;
 
     public static final byte ID = (byte)0x84;
+    public static final String functionCode ="84";
 
     @Override
     public byte getId() {
@@ -70,7 +71,6 @@ public class WakeUpCommandClass extends CommandClass {
 
     @Override
     public String getFunctionCode() {
-        // TODO Auto-generated method stub
-        return null;
+        return functionCode;
     }
 }

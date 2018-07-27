@@ -78,6 +78,6 @@ public class ColorControlCommandClass extends CommandClass {
     }
     @Override
     public String getFunctionCode() {
-        return "";
+        return functionCode;
     }
 }

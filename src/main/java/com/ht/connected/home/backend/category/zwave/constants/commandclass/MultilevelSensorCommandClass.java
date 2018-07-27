@@ -34,8 +34,7 @@ public class MultilevelSensorCommandClass extends CommandClass {
     public String labelName;
     private List<Double> values = new ArrayList<>();
 
-    @Override
-    public byte getId() {
+    @Override    public byte getId() {
         return ID;
     }
 

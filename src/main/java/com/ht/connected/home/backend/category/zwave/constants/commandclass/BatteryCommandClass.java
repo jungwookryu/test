@@ -22,7 +22,7 @@ public class BatteryCommandClass extends CommandClass {
     private static final byte BATTERY_REPORT = 0x03;
 
     public static final byte ID = (byte)0x80;
-
+    public static final String functionCode ="80";
     private Byte level;
 
     @Override
@@ -72,7 +72,6 @@ public class BatteryCommandClass extends CommandClass {
 
     @Override
     public String getFunctionCode() {
-        // TODO Auto-generated method stub
-        return null;
+        return functionCode;
     }
 }

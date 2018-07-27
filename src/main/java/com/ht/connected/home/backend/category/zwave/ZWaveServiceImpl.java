@@ -253,39 +253,6 @@ public class ZWaveServiceImpl implements ZWaveService {
      */
     // 제어
     @Override
-    public void zwaveControl(ZWaveControl zWaveControl) throws JsonProcessingException, InterruptedException {
-
-        Gateway gateway = gatewayRepository.findOne(zWaveControl.getGateway_no());
-        Endpoint endpoint = endpointRepository.findOne(zWaveControl.getEndpoint_no());
-        ZWave zwave = zwaveRepository.findOne(endpoint.getZwaveNo());
-
-        MqttRequest mqttRequest = new MqttRequest();
-        mqttRequest.setNodeId(zwave.getNodeId());
-        if(!Objects.isNull(endpoint)) {
-            mqttRequest.setEndpointId(endpoint.getEpid());
-        }
-        mqttRequest.setSerialNo(gateway.getSerial());
-        mqttRequest.setModel(gateway.getModel());
-        zWaveControl.setFunctionCode("0x"+endpoint.getFunctionCode());
-        mqttRequest.setClassKey(zWaveControl.getFunctionCode());
-        mqttRequest.setCommandKey(zWaveControl.getControlCode());
-        mqttRequest.setVersion("v1");
-        mqttRequest.setSecurityOption("0");
-        mqttRequest.setTarget(gateway.getTargetType());
-        HashMap map = new HashMap<>();
-        map.put("set_data", zWaveControl.getSetData());
-        mqttRequest.setSetData(map);
-        publish(mqttRequest);
-    }
-
-    /**
-     * Zwave 기기제어
-     * @author lij
-     * @throws JsonProcessingException
-     * @throws InterruptedException 
-     */
-    // 제어
-    @Override
     public void zwaveBasicControl(ZWaveControl zWaveControl) throws JsonProcessingException, InterruptedException {
 
         Gateway gateway = gatewayRepository.findOne(zWaveControl.getGateway_no());

@@ -28,6 +28,7 @@ public class NetworkManagementProxyCommandClass extends CommandClass {
     
     public static final byte ID = (byte)0x52;
     public static final int INT_ID = (byte)0x52;
+    public static final String functionCode ="52";
     
     private Byte value;
 
@@ -78,7 +79,6 @@ public class NetworkManagementProxyCommandClass extends CommandClass {
 
     @Override
     public String getFunctionCode() {
-        // TODO Auto-generated method stub
-        return null;
+        return functionCode;
     }
 }

@@ -1,10 +1,13 @@
 package com.ht.connected.home.backend.category.zwave;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -140,10 +143,10 @@ public class ZWaveController extends CommonController {
         zwaveService.zwaveBasicControl(zWaveControl);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
-    @PutMapping("/function/{zwave_no}")
-    public ResponseEntity control(@PathVariable int zwave_no, @RequestBody ZWaveControl zWaveControl) throws JsonProcessingException, InterruptedException {
-        zWaveControl.setZwave_no(zwave_no);
-        zwaveService.zwaveControl(zWaveControl);
+    @PutMapping("/function/{endpoint_no}")
+    public ResponseEntity control(@PathVariable int endpoint_no, @RequestBody ZWaveControl zWaveControl) throws InterruptedException, JsonGenerationException, JsonMappingException, IOException {
+        zWaveControl.setEndpoint_no(endpoint_no);
+        endpointService.zwaveControl(zWaveControl);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 }
