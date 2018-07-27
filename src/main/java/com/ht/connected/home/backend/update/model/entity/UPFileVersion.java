@@ -12,9 +12,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "up_file_version")
-@JsonIgnoreProperties({ "seq", "updatedAt", "versionOS", "versionAPI", "versionAPP"})
+@JsonIgnoreProperties({ "seq", "updatedAt", "versionOS", "versionAPI", "versionAPP" })
 public class UPFileVersion {
-    
+
     public static String UPDATE_TYPE_OS = "os";
     public static String UPDATE_TYPE_API = "api";
     public static String UPDATE_TYPE_APP = "app";
@@ -59,6 +59,10 @@ public class UPFileVersion {
     @Transient
     @JsonProperty(value = "force")
     private String force;
+
+    @Transient
+    @JsonProperty(value = "device_type")
+    private String deviceType;
 
     public int getSeq() {
         return seq;
@@ -146,6 +150,14 @@ public class UPFileVersion {
 
     public void setForce(String force) {
         this.force = force;
+    }
+
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
     }
 
 }
