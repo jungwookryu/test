@@ -11,6 +11,8 @@ import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import static java.util.Objects.isNull;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -21,8 +23,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
                 @ColumnResult(name = "version_api", type = String.class),
                 @ColumnResult(name = "version_app", type = String.class),
                 @ColumnResult(name = "version_fw", type = String.class) }) })
-@NamedNativeQuery(name = "getByModelName", query = "select g.serial, d.version_os, d.version_os, d.version_os, d.version_os "
-        + "from gateway g " + "left join up_device_version on g.serial=d.serial_no "
+@NamedNativeQuery(name = "UPDeviceVersion.getByModelName", query = "select g.serial, d.version_os, d.version_api, d.version_app, d.version_fw "
+        + "from gateway g " + "left join up_device_version d on g.serial=d.serial_no "
         + "where g.model = :modelName", resultSetMapping = "ResultDeviceVersionByModel")
 
 @Entity
@@ -71,11 +73,15 @@ public class UPDeviceVersion {
     }
 
     public UPDeviceVersion(String serialNo, String versionOS, String versionAPI, String versionAPP, String versionFW) {
-        super();
+        super();        
         this.serialNo = serialNo;
+        if(isNull(versionOS)) versionOS = "0";
         this.versionOS = versionOS;
+        if(isNull(versionAPI)) versionAPI = "0";
         this.versionAPI = versionAPI;
+        if(isNull(versionAPP)) versionAPP = "0";
         this.versionAPP = versionAPP;
+        if(isNull(versionFW)) versionFW = "0";
         this.versionFW = versionFW;
     }
 
