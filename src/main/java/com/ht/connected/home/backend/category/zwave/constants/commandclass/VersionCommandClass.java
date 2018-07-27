@@ -26,7 +26,8 @@ public class VersionCommandClass extends CommandClass {
     private static final byte VERSION_REPORT = 0x12;
     private static final byte VERSION_COMMAND_CLASS_GET = 0x13;
     private static final byte VERSION_COMMAND_CLASS_REPORT = 0x14;
-
+    public static final String functionCode ="86";
+    
     private String library;
     private String protocol;
     private String application;
@@ -88,7 +89,6 @@ public class VersionCommandClass extends CommandClass {
 
     @Override
     public String getFunctionCode() {
-        // TODO Auto-generated method stub
-        return null;
+        return functionCode;
     }
 }

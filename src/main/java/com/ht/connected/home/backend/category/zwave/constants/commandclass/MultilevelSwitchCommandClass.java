@@ -18,6 +18,7 @@ public class MultilevelSwitchCommandClass extends CommandClass {
     public static final byte ID = 0x26;
     
     public static final String genericKey = "11";
+    public static final String functionCode ="26";
     
     private Byte level;
 

@@ -20,6 +20,7 @@ public class GatewayCommandClass extends CommandClass {
     
     public static final String genericKey = "02";
     public static final String specificKey = "07";
+    public static final String functionCode ="70";
     
     private byte type;
     private byte level;
@@ -80,7 +81,7 @@ public class GatewayCommandClass extends CommandClass {
 
     @Override
     public String getFunctionCode() {
-        // TODO Auto-generated method stub
-        return null;
+
+        return functionCode;
     }
 }

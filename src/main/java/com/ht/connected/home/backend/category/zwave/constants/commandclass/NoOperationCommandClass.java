@@ -11,7 +11,7 @@ package com.ht.connected.home.backend.category.zwave.constants.commandclass;
 
 public class NoOperationCommandClass extends CommandClass {
     public static final byte ID = 0x00;
-
+    public static final String functionCode ="00";
     @Override
     public byte getId() {
         return ID;
@@ -54,7 +54,6 @@ public class NoOperationCommandClass extends CommandClass {
 
     @Override
     public String getFunctionCode() {
-        // TODO Auto-generated method stub
-        return null;
+        return functionCode;
     }
 }

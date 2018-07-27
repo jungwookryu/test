@@ -32,8 +32,6 @@ public interface ZWaveService {
 
     ZWaveReport getZWaveList(int gatewayNo);
 
-    void zwaveControl(ZWaveControl zWaveControl) throws JsonProcessingException, InterruptedException;
-
     Map getZWaveListApp(int gatewayNo);
 
     int deleteByNo(int no) throws JsonProcessingException, InterruptedException;

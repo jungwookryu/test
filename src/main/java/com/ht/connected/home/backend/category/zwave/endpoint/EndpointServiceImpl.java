@@ -1,26 +1,48 @@
 package com.ht.connected.home.backend.category.zwave.endpoint;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.category.zwave.ZWave;
+import com.ht.connected.home.backend.category.zwave.ZWaveControl;
 import com.ht.connected.home.backend.category.zwave.ZWaveRepository;
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdClsRepository;
 import com.ht.connected.home.backend.category.zwave.notification.NotificationRepository;
 import com.ht.connected.home.backend.category.zwave.notification.NotificationService;
-import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
+import com.ht.connected.home.backend.common.MqttCommon;
+import com.ht.connected.home.backend.controller.mqtt.Message;
+import com.ht.connected.home.backend.controller.mqtt.ProducerComponent;
+import com.ht.connected.home.backend.gateway.Gateway;
+import com.ht.connected.home.backend.gateway.GatewayRepository;
+import com.ht.connected.home.backend.service.mqtt.MqttRequest;
 
 @Service
-public class EndpointServiceImpl extends CrudServiceImpl<Endpoint, Integer> implements EndpointService {
+public class EndpointServiceImpl implements EndpointService {
 
     private EndpointRepository endpointRepository;
 
+    @Autowired
+    ZWaveRepository zwaveRepository;
+    
+    @Autowired
+    ProducerComponent producerComponent;
+    
+    @Autowired
+    GatewayRepository gatewayRepository;
+    
     @Autowired
     CmdClsRepository cmdClsRepository;
     
@@ -29,7 +51,6 @@ public class EndpointServiceImpl extends CrudServiceImpl<Endpoint, Integer> impl
     
     @Autowired
     public EndpointServiceImpl(EndpointRepository endpointRepository) {
-        super(endpointRepository);
         this.endpointRepository = endpointRepository;
     }
 
@@ -39,6 +60,7 @@ public class EndpointServiceImpl extends CrudServiceImpl<Endpoint, Integer> impl
     @Autowired
     NotificationService notificationService;
     
+    ObjectMapper objectMapper = new ObjectMapper();
     private static final Log logger = LogFactory.getLog(EndpointServiceImpl.class);
 
     /**
@@ -91,5 +113,41 @@ public class EndpointServiceImpl extends CrudServiceImpl<Endpoint, Integer> impl
         }
         return lstEndpointReportByApp;
     }
-    
+    /**
+     * Zwave 기기제어
+     * @author lij
+     * @throws InterruptedException 
+     * @throws IOException 
+     * @throws JsonMappingException 
+     * @throws JsonGenerationException 
+     */
+    // 제어
+    @Override
+    public void zwaveControl(ZWaveControl zWaveControl) throws InterruptedException, JsonGenerationException, JsonMappingException, IOException {
+
+        Endpoint endpoint = endpointRepository.findOne(zWaveControl.getEndpoint_no());
+        ZWave zwave = zwaveRepository.findOne(endpoint.getZwaveNo());
+        Gateway gateway = gatewayRepository.findOne(zwave.getGatewayNo());
+
+        MqttRequest mqttRequest = new MqttRequest();
+        mqttRequest.setNodeId(zwave.getNodeId());
+        if(!Objects.isNull(endpoint)) {
+            mqttRequest.setEndpointId(endpoint.getEpid());
+        }
+        mqttRequest.setSerialNo(gateway.getSerial());
+        mqttRequest.setModel(gateway.getModel());
+        zWaveControl.setFunctionCode("0x"+endpoint.getFunctionCode());
+        mqttRequest.setClassKey(zWaveControl.getFunctionCode());
+        mqttRequest.setCommandKey(zWaveControl.getControlCode());
+        mqttRequest.setVersion("v1");
+        mqttRequest.setSecurityOption("0");
+        mqttRequest.setTarget(gateway.getTargetType());
+        HashMap map = new HashMap<>();
+        map.put("set_data", zWaveControl.getSetData());
+        mqttRequest.setSetData(map);
+        String topic = MqttCommon.getMqttPublishTopic(mqttRequest);
+        String payload = objectMapper.writeValueAsString(map);
+        Message message = new Message(topic, payload);
+        MqttCommon.publish(producerComponent, message);
+    }
 }

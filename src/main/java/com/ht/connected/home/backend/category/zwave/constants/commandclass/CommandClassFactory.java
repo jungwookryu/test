@@ -1,12 +1,3 @@
-/*
- *******************************************************************************
- * Copyright (c) 2013 Whizzo Software, LLC.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************
-*/
 package com.ht.connected.home.backend.category.zwave.constants.commandclass;
 
 import java.util.Properties;
@@ -16,11 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.common.ByteUtil;
 
-/**
- * Convenience factory class that creates CommandClass instances from a command class ID byte.
- *
- * @author Dan Noguerol
- */
 public class CommandClassFactory {
 
     @Autowired
