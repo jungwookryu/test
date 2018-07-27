@@ -180,9 +180,9 @@
   <target name="clean" depends="set.param" description="request the maven clean cmd">
    
 	<delete dir="maven.build.result" />
-	<!--<which command="mvn" property="mvn.home" />
-	<property name="MAVEN_HOME" value="${mvn.home}"/>-->
-  	<property name="MAVEN_HOME" value="/usr/share/maven"/>
+	<which command="mvn" property="mvn.home" />
+	<property name="MAVEN_HOME" value="${mvn.home}"/>
+	<!--<property name="MAVEN_HOME" value="/usr/share/maven"/> -->
 	<mkdir dir="maven.build.result" /> 
 	<maven basedir="../"             
 		 resultproperty="maven.build.result">
@@ -194,9 +194,9 @@
      - package process.
      ===================================================================== -->
   <target name="package" depends="set.param" description="request the maven package cmd">
-  	<!--<which command="mvn" property="mvn.home" />
-  	<property name="MAVEN_HOME" value="${mvn.home}"/>-->
-  	<property name="MAVEN_HOME" value="/usr/share/maven"/>		
+  	<which command="mvn" property="mvn.home" />
+  	<property name="MAVEN_HOME" value="${mvn.home}"/>
+	<!-- <property name="MAVEN_HOME" value="/usr/share/maven"/> -->
 	<mkdir dir="maven.build.result" /> 
 	<maven basedir="../"             
 		 resultproperty="maven.build.result">
