@@ -5,11 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package com.ht.connected.home.backend.category.zwave.constants.commandclass;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+package com.ht.connected.home.backend.category.zwave.certi.commandclass;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

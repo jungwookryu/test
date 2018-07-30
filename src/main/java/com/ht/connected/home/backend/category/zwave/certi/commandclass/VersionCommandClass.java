@@ -7,30 +7,30 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************
 */
-package com.ht.connected.home.backend.category.zwave.constants.commandclass;
+package com.ht.connected.home.backend.category.zwave.certi.commandclass;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * NetworkManagementProxyCommandClass
+ * Version Command Class
  *
- * @author ijlee
+ * @author Dan Noguerol
  */
-public class NetworkManagementProxyCommandClass extends CommandClass {
+public class VersionCommandClass extends CommandClass {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public static final byte NODE_LIST_GET = 0x01;
-    public static final byte NODE_LIST_REPORT = 0x02;
+    public static final byte ID = (byte)0x86;
 
-    public static final int INT_NODE_LIST_GET = 0x01;
-    public static final int INT_NODE_LIST_REPORT = 0x02;
+    private static final byte VERSION_GET = 0x11;
+    private static final byte VERSION_REPORT = 0x12;
+    private static final byte VERSION_COMMAND_CLASS_GET = 0x13;
+    private static final byte VERSION_COMMAND_CLASS_REPORT = 0x14;
+    public static final String functionCode ="86";
     
-    public static final byte ID = (byte)0x52;
-    public static final int INT_ID = (byte)0x52;
-    public static final String functionCode ="52";
-    
-    private Byte value;
+    private String library;
+    private String protocol;
+    private String application;
 
     @Override
     public byte getId() {
@@ -39,18 +39,28 @@ public class NetworkManagementProxyCommandClass extends CommandClass {
 
     @Override
     public String getName() {
-        return "COMMAND_CLASS_NETWORK_MANAGEMENT_PROXY";
+        return "COMMAND_CLASS_VERSION";
     }
 
-    public Byte getValue() {
-        return value;
+    public String getLibrary() {
+        return library;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public String getApplication() {
+        return application;
     }
 
     @Override
     public String toString() {
-        return "NetworkManagementCommandClass{" +
+        return "VersionCommandClass{" +
                 "version=" + getVersion() +
-                ", value=" + value +
+                ", library='" + library + '\'' +
+                ", protocol='" + protocol + '\'' +
+                ", application='" + application + '\'' +
                 '}';
     }
 

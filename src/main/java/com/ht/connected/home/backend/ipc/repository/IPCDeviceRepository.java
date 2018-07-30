@@ -1,7 +1,5 @@
 package com.ht.connected.home.backend.ipc.repository;
 
-import java.util.List;
-
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -16,7 +16,7 @@ import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
  * @author 구정화
  *
  */
-public interface NotificationService {
+public interface ZwaveCertiNotificationService {
 
     void subscribe(ZWaveRequest zwaveRequest, String payload) throws JsonGenerationException, JsonMappingException, IOException, InterruptedException;
     void delete(ZWave zwave);

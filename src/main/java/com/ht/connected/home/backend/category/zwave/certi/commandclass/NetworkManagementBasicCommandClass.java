@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************
 */
-package com.ht.connected.home.backend.category.zwave.constants.commandclass;
+package com.ht.connected.home.backend.category.zwave.certi.commandclass;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,6 @@ public class NetworkManagementBasicCommandClass extends CommandClass {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public static final byte LEARN_MODE_SET = 0x02;
-    public static final byte LEARN_MODE_SET_STATUS = 0x05;
     public static final byte NETWORK_UPDATE_REQUEST = 0x03;
     public static final byte NETWORK_UPDATE_REQUEST_STATUS = 0x04;
     public static final byte DEFAULT_SET = 0x06;

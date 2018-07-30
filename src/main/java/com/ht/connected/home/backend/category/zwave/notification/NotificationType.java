@@ -1,7 +1,5 @@
 package com.ht.connected.home.backend.category.zwave.notification;
 
-import com.ht.connected.home.backend.category.zwave.constants.commandclass.BinarySwitchCommandClass;
-
 public class NotificationType {
     
     public enum ZwaveNotification{

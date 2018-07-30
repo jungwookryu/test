@@ -18,31 +18,20 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ht.connected.home.backend.category.ir.IRService;
+import com.ht.connected.home.backend.category.zwave.certi.ZWaveCertiService;
+import com.ht.connected.home.backend.category.zwave.certi.commandclass.BasicCommandClass;
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdCls;
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdClsRepository;
-import com.ht.connected.home.backend.category.zwave.constants.commandclass.AlarmCommandClass;
-import com.ht.connected.home.backend.category.zwave.constants.commandclass.BasicCommandClass;
-import com.ht.connected.home.backend.category.zwave.constants.commandclass.BinarySwitchCommandClass;
-import com.ht.connected.home.backend.category.zwave.constants.commandclass.CommandClass;
-import com.ht.connected.home.backend.category.zwave.constants.commandclass.CommandClassFactory;
-import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementBasicCommandClass;
-import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementInclusionCommandClass;
-import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementProxyCommandClass;
 import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.category.zwave.endpoint.EndpointReportByApp;
 import com.ht.connected.home.backend.category.zwave.endpoint.EndpointRepository;
 import com.ht.connected.home.backend.category.zwave.endpoint.EndpointService;
-import com.ht.connected.home.backend.category.zwave.notification.NotificationService;
-import com.ht.connected.home.backend.common.ByteUtil;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.controller.mqtt.Message;
@@ -54,7 +43,6 @@ import com.ht.connected.home.backend.gatewayCategory.GatewayCategory;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategoryRepository;
 import com.ht.connected.home.backend.service.mqtt.MqttPayload;
 import com.ht.connected.home.backend.service.mqtt.MqttRequest;
-import com.ht.connected.home.backend.service.mqtt.Target;
 import com.ht.connected.home.backend.user.User;
 import com.ht.connected.home.backend.user.UserRepository;
 import com.ht.connected.home.backend.userGateway.UserGateway;
@@ -64,67 +52,63 @@ import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
 public class ZWaveServiceImpl implements ZWaveService {
 
     private ZWaveRepository zwaveRepository;
+    private UserRepository userRepository;
+    private GatewayRepository gatewayRepository;
+    private UserGatewayRepository userGatewayRepository;
+    private EndpointRepository endpointRepository;
+    private CmdClsRepository cmdClsRepository;
+    private EndpointService endpointService;
+    private ZWaveCertiService zWaveCertiService;
+    private GatewayCategoryRepository gatewayCategoryRepository;
+    private Properties zWaveProperties;
     
+    private static final Log logging = LogFactory.getLog(ZWaveServiceImpl.class);
+
     @Autowired
     @Qualifier(value = "callbackAckProperties")
     Properties callbackAckProperties;
-    
+
     @Autowired
-    ProducerComponent producerRestController;
-    
-    enum event {
-        delete, active, failed
-    }
+    ProducerComponent producerComponent;
 
     enum status {
         add, delete, active, failed
     }
 
     @Autowired
-    public ZWaveServiceImpl(ZWaveRepository zwaveRepository) {
+    public ZWaveServiceImpl(
+            ZWaveRepository zwaveRepository,
+            UserRepository userRepository,
+            GatewayRepository gatewayRepository,
+            UserGatewayRepository userGatewayRepository,
+            EndpointRepository endpointRepository,
+            CmdClsRepository cmdClsRepository,
+            EndpointService endpointService,
+            ZWaveCertiService zWaveCertiService,
+            GatewayCategoryRepository gatewayCategoryRepository,
+            Properties zWaveProperties
+     ) {
         this.zwaveRepository = zwaveRepository;
+        this.userRepository = userRepository;
+        this.gatewayRepository = gatewayRepository;
+        this.userGatewayRepository = userGatewayRepository;
+        this.endpointRepository = endpointRepository;
+        this.cmdClsRepository = cmdClsRepository;
+        this.endpointService = endpointService;
+        this.zWaveCertiService = zWaveCertiService;
+        this.gatewayCategoryRepository = gatewayCategoryRepository;
+        this.zWaveProperties = zWaveProperties;
     }
 
-    private static final Log logging = LogFactory.getLog(ZWaveServiceImpl.class);
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    GatewayRepository gatewayRepository;
-
-    @Autowired
-    UserGatewayRepository userGatewayRepository;
-
-    @Autowired
-    EndpointRepository endpointRepository;
-
-    @Autowired
-    CmdClsRepository cmdClsRepository;
-
-    @Autowired
-    IRService irService;
-
-    @Autowired
-    NotificationService notificationService;
     
-    @Autowired
-    EndpointService endpointService;
-    
-    @Autowired
-    GatewayCategoryRepository gatewayCategoryRepository;
 
-    @Autowired
-    Properties zWaveProperties;
-    
     @Autowired
     @Qualifier("zWaveFunctionProperties")
     Properties zWaveFunctionProperties;
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ResponseEntity publish(HashMap<String, Object> req, ZWaveRequest zwaveRequest) throws JsonProcessingException, InterruptedException {
-        ResponseEntity response = new ResponseEntity(HttpStatus.ACCEPTED);;
+    public void publish(HashMap<String, Object> req, ZWaveRequest zwaveRequest) throws JsonProcessingException, InterruptedException {
         MqttRequest mqttRequest = new MqttRequest();
         mqttRequest.setSerialNo(zwaveRequest.getSerialNo());
         mqttRequest.setModel(zwaveRequest.getModel());
@@ -133,179 +117,26 @@ public class ZWaveServiceImpl implements ZWaveService {
         mqttRequest.setTarget(zwaveRequest.getTarget());
         mqttRequest.setSetData(req);
         publish(mqttRequest);
-        return response;
     }
 
     @Transactional
-    public void subscribe(ZWaveRequest zwaveRequest, String payload) throws JsonParseException, JsonMappingException, IOException, Exception {
+    public void subscribe(ZWaveRequest zwaveRequest, String payload) throws Exception {
 
-        MqttPayload mqttPayload = new MqttPayload();
         Object resultData = null;
+
         if (!Common.empty(payload)) {
-            mqttPayload = objectMapper.readValue(payload, MqttPayload.class);
+            MqttPayload mqttPayload = objectMapper.readValue(payload, MqttPayload.class);
             resultData = mqttPayload.getResultData();
         }
-        
-        //binary switch report
-        if (zwaveRequest.getClassKey() == BasicCommandClass.INT_ID) {
-            if (zwaveRequest.getCommandKey() == BasicCommandClass.INT_BASIC_REPORT) {
-                notificationService.subscribe(zwaveRequest, payload);
-            }
+
+        if (CategoryActive.zwave.init.name().equals(zwaveRequest.getCategoryActive())) {
+            reportZWaveList(zwaveRequest, (String) resultData);
         }
 
-        //기기정보
-        if ((zwaveRequest.getClassKey() == NetworkManagementProxyCommandClass.INT_ID &&
-                (zwaveRequest.getCommandKey() == NetworkManagementProxyCommandClass.INT_NODE_LIST_REPORT)
-                && (!isNull(resultData)))) {
-            String data = objectMapper.writeValueAsString(resultData);
-            // OX02
-            /**
-             * 기기 리스트 수신시 새로 등록한 기기가 있을경우는 새로 등록 없을 경우는 업데이트함.0x52 0x02 모드일경우
-             */
-            if (-1 == zwaveRequest.getNodeId() || 0 == zwaveRequest.getNodeId()) {
-                reportZWaveList(zwaveRequest, data);
-            }
-            // 신규 등록 기기 정보
-            else {
-                Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
-                zwaveRequest.setGatewayNo(gateway.getNo());
-                ZWaveReport zwaveReport = objectMapper.readValue(data, ZWaveReport.class);
-                List<ZWave> lstOriginalZwave = zwaveRepository.findByGatewayNoAndNodeId(zwaveRequest.getGatewayNo(), zwaveRequest.getNodeId());
-                if(lstOriginalZwave.size()==0 && (!isNull(gateway)) && (zwaveReport.getNodelist() != null)) {
-                    saveGatewayCategory(zwaveRequest, zwaveRequest.getNodeId());
-                        // 기기 리스트에 대한 정보일 경우
-                    List<ZWave> nodeListItem = (List<ZWave>) zwaveReport.getNodelist();
-                    for (int i = 0; i < nodeListItem.size(); i++) {
-                        ZWave nodeItem = nodeListItem.get(i);
-                        ZWave zwave = saveZWaveList(zwaveRequest, nodeItem, gateway);
-                        String topic = callbackAckProperties.getProperty("zwave.device.registration");
-                        String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), gateway.getModel(),  gateway.getSerial());
-                        ZWaveReportByApp zWaveReportByApp = getZwaveReportApp(zwave);
-                        String exePayload = objectMapper.writeValueAsString(zWaveReportByApp);
-                        publish(exeTopic, exePayload);
-                    }
-                }
-            }
-    
-        }
-        // 기기 모드 0x34결과
-         if (zwaveRequest.getClassKey() == NetworkManagementInclusionCommandClass.INT_ID) {
-            // 기기삭제 상태값 받은 경우 기기삭제 모드 0x34/0x04 결과
-             if (zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_REMOVE_STATUS ||
-                     zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_FAILED_NODE_STATUS||
-                     zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_FAILED_NODE_REPLACE) {
-                 deleteZwaveSubscribe(zwaveRequest, mqttPayload);
-                 
-             }
-             // 기기등록 상태값 받은 경우 기기 등록 모드 0x34/0x02 결과, 기기등록 상태값 받은 경우 기기 등록 모드 0x34/0x01 결과
-             else if ((zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_ADD_STATUS ||
-                     zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_ADD) &&
-                     (!Objects.isNull(mqttPayload.getResultData())))
-             {
-                     String topic = callbackAckProperties.getProperty("zwave.device.registration");
-                     String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), zwaveRequest.getModel(),  zwaveRequest.getSerialNo());
-                     publish(exeTopic, objectMapper.writeValueAsString(mqttPayload));
-              }
-             // 기기등록 상태값 받은 경우 기기 등록 모드 0x34/0x02 결과, 기기등록 상태값 받은 경우 기기 등록 모드 0x34/0x01 결과 s2spin
-             else if ((zwaveRequest.getCommandKey() == NetworkManagementInclusionCommandClass.INT_NODE_ADD) &&
-                     (!Objects.isNull(mqttPayload.getSetData())))
-             {
-                     Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
-                     Map map = new HashMap();
-                     map.put("set_data", mqttPayload.getSetData());
-                     map.put("no", gateway.getNo());
-                     String topic = callbackAckProperties.getProperty("zwave.device.registrationS2");
-                     String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), zwaveRequest.getModel(),  zwaveRequest.getSerialNo());
-                     publish(exeTopic, objectMapper.writeValueAsString(map));
-              }            
-        }
-        // 기기 초기화 결과 0x4D/0x07 기기상태값모드 받은 경우
-        if (zwaveRequest.getClassKey() == NetworkManagementBasicCommandClass.INT_ID &&
-            zwaveRequest.getCommandKey() == NetworkManagementBasicCommandClass.DEFAULT_SET_COMPLETE) 
-        {
-            // 해당기기의 정보를 모두 삭제한다.
-            zwaveReset(zwaveRequest);
-            String topic = callbackAckProperties.getProperty("manager.product.remove");
-            String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), zwaveRequest.getModel(),  zwaveRequest.getSerialNo());
-            publish(exeTopic, new HashMap());
-            
-        }
-        // 기기 상태 결과
-        if (zwaveRequest.getClassKey() == AlarmCommandClass.INT_ID) {
-            notificationService.subscribe(zwaveRequest, payload);
-        }
     }
 
-    // 제어
     @Override
-    public void execute(Map map, boolean isCert) throws JsonProcessingException, InterruptedException {
-        String topic = getZwaveTopic(map);
-        map.put("target", "host");
-        HashMap map1 = getPublishPayload((HashMap) map);
-        publish(topic, map1);
-    }
-
-    /**
-     * Zwave 기기제어
-     * @author lij
-     * @throws JsonProcessingException
-     * @throws InterruptedException 
-     */
-    // 제어
-    @Override
-    public void zwaveBasicControl(ZWaveControl zWaveControl) throws JsonProcessingException, InterruptedException {
-
-        Gateway gateway = gatewayRepository.findOne(zWaveControl.getGateway_no());
-        Endpoint endpoint = endpointRepository.findOne(zWaveControl.getEndpoint_no());
-        ZWave zwave = zwaveRepository.findOne(endpoint.getZwaveNo());
-
-        MqttRequest mqttRequest = new MqttRequest();
-        mqttRequest.setNodeId(zwave.getNodeId());
-        if(!Objects.isNull(endpoint)) {
-            mqttRequest.setEndpointId(endpoint.getEpid());
-        }
-        mqttRequest.setSerialNo(gateway.getSerial());
-        mqttRequest.setModel(gateway.getModel());
-        zWaveControl.setFunctionCode(BasicCommandClass.functionCode);
-        mqttRequest.setClassKey(zWaveControl.getFunctionCode());
-        mqttRequest.setCommandKey(zWaveControl.getControlCode());
-        mqttRequest.setVersion("v1");
-        mqttRequest.setSecurityOption("0");
-        mqttRequest.setTarget(gateway.getTargetType());
-        HashMap map = new HashMap<>();
-        map.put("value", zWaveControl.getValue());
-        HashMap map1 = new HashMap<>();
-        map1.put("set_data", map);
-        mqttRequest.setSetData(map1);
-        publish(mqttRequest);
-    }
-    
-    /**
-     * mqtt publish 토픽 생성
-     * @param topicLeadingPath //0 none, 1 crc
-     * @return
-     */
-    public String getZwaveTopic(Map map) {
-        String topic = "";
-        String nodeId = ByteUtil.getHexString((Integer) map.getOrDefault("nodeId", 0));;
-        String target = (String) map.getOrDefault("target", "host");
-        String endPointId = ByteUtil.getHexString((Integer) map.getOrDefault("endpointId", 0));
-        String serial = (String) map.getOrDefault("serial", "01234567");
-        String commandKey = (String) map.getOrDefault("cmdkey", "0x00");
-        String classkey = (String) map.getOrDefault("classkey", "0x00");
-        String version = (String) map.getOrDefault("version", "v1");
-        String option = Integer.toString((int) map.getOrDefault("option", 0));
-        String model = (String) map.getOrDefault("model", "");
-        String[] segments = new String[] { "/server", target, model, serial, "zwave", "certi",
-                classkey, commandKey, version, nodeId, endPointId, option };
-        topic = String.join("/", segments);
-        logging.info("====================== ZWAVE PROTO MQTT PUBLISH TOPIC ======================");
-        logging.info(topic);
-        return topic;
-
-    }
-
-    private void reportZWaveList(ZWaveRequest zwaveRequest, String data) throws JsonParseException, JsonMappingException, IOException, JSONException, InterruptedException {
+    public void reportZWaveList(ZWaveRequest zwaveRequest, String data) throws JsonParseException, JsonMappingException, IOException, JSONException, InterruptedException {
 
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
         zwaveRequest.setGatewayNo(gateway.getNo());
@@ -345,34 +176,6 @@ public class ZWaveServiceImpl implements ZWaveService {
         }
     }
 
-    // 삭제 토픽
-    @Override
-    @Transactional
-    public int deleteByNo(int no) throws JsonProcessingException, InterruptedException {
-        // TODO DB 에서 기기삭제 status 로 update
-        ZWave zwave = zwaveRepository.getOne(no);
-        Gateway gateway = gatewayRepository.getOne(zwave.getGatewayNo());
-        int iRtn = zwaveRepository.setFixedStatusForNo(status.delete.name(), no);
-        MqttRequest mqttRequest = new MqttRequest();
-        
-        mqttRequest.setSerialNo(gateway.getSerial());
-        mqttRequest.setModel(gateway.getModel());
-        mqttRequest.setNodeId(zwave.getNodeId());
-        mqttRequest.setClassKey(NetworkManagementInclusionCommandClass.INT_ID);
-        mqttRequest.setCommandKey(NetworkManagementInclusionCommandClass.INT_NODE_REMOVE);
-        mqttRequest.setTarget(gateway.getTargetType());
-        // TODO Gateway host version
-        // mqttRequest.setVersion(gateway.getVersion());
-        HashMap map = new HashMap<>();
-        map.put("mode", 1);
-        HashMap map1 = new HashMap<>();
-        map1.put("set_data", map);
-        mqttRequest.setSetData(map1);
-        publish(mqttRequest);
-        return iRtn;
-
-    }
-
     private void publish(MqttRequest mqttRequest) throws JsonProcessingException, InterruptedException {
 
         publish(MqttCommon.getMqttPublishTopic(mqttRequest), mqttRequest.getSetData());
@@ -384,8 +187,8 @@ public class ZWaveServiceImpl implements ZWaveService {
     }
 
     private void publish(String topic, String payload) throws InterruptedException {
-        Message message =  new Message(topic, payload);
-        MqttCommon.publish(producerRestController, message);
+        Message message = new Message(topic, payload);
+        MqttCommon.publish(producerComponent, message);
     }
 
     @Override
@@ -398,19 +201,6 @@ public class ZWaveServiceImpl implements ZWaveService {
         });
         List<ZWave> lstZwave = zwaveRepository.findByNoAndGatewayNoIn(no, lstGatewayNos);
         return lstZwave.size();
-    }
-
-    @Override
-    public void subscribeInit(Gateway gateway) throws JsonProcessingException, InterruptedException {
-        // TODO 기기리스트 가져오기 topic
-        MqttRequest mqttRequest = new MqttRequest(gateway);
-        mqttRequest.setClassKey(NetworkManagementProxyCommandClass.INT_ID);
-        mqttRequest.setCommandKey(NetworkManagementProxyCommandClass.INT_NODE_LIST_GET);
-        mqttRequest.setVersion("v1");
-        mqttRequest.setNodeId(00);
-        mqttRequest.setTarget(gateway.getTargetType());
-        String requestTopic = MqttCommon.getMqttPublishTopic(mqttRequest, gateway.getTargetType());
-        publish(requestTopic, new HashMap());
     }
 
     @Override
@@ -439,6 +229,53 @@ public class ZWaveServiceImpl implements ZWaveService {
         return map;
     }
 
+    // 삭제 토픽
+    @Override
+    @Transactional
+    public int deleteByNo(int no) throws JsonProcessingException, InterruptedException {
+
+        ZWave zwave = zwaveRepository.getOne(no);
+        Gateway gateway = gatewayRepository.getOne(zwave.getGatewayNo());
+        int iRtn = zwaveRepository.setFixedStatusForNo(status.delete.name(), no);
+        MqttRequest mqttRequest = new MqttRequest();
+
+        mqttRequest.setSerialNo(gateway.getSerial());
+        mqttRequest.setModel(gateway.getModel());
+        mqttRequest.setNodeId(zwave.getNodeId());
+        mqttRequest.setTarget(gateway.getTargetType());
+        zWaveCertiService.publishDelete(mqttRequest);
+        return iRtn;
+
+    }
+
+    /**
+     * Zwave 기기제어
+     * @author lij
+     * @throws JsonProcessingException
+     * @throws InterruptedException
+     */
+    // 제어
+    @Override
+    public void zwaveBasicControl(ZWaveControl zWaveControl) throws JsonProcessingException, InterruptedException {
+
+        Gateway gateway = gatewayRepository.findOne(zWaveControl.getGateway_no());
+        Endpoint endpoint = endpointRepository.findOne(zWaveControl.getEndpoint_no());
+        ZWave zwave = zwaveRepository.findOne(endpoint.getZwaveNo());
+
+        MqttRequest mqttRequest = new MqttRequest();
+        mqttRequest.setNodeId(zwave.getNodeId());
+        if (!Objects.isNull(endpoint)) {
+            mqttRequest.setEndpointId(endpoint.getEpid());
+        }
+        mqttRequest.setSerialNo(gateway.getSerial());
+        mqttRequest.setModel(gateway.getModel());
+        zWaveControl.setFunctionCode(BasicCommandClass.functionCode);
+        mqttRequest.setClassKey(zWaveControl.getFunctionCode());
+        mqttRequest.setCommandKey(zWaveControl.getControlCode());
+        mqttRequest.setTarget(gateway.getTargetType());
+        zWaveCertiService.zwaveBasicControl(mqttRequest);
+    }
+
     private ZWaveReportByApp getZwaveReportApp(ZWave zwave) {
         ZWaveReportByApp zWaveReportByApp = new ZWaveReportByApp();
         if (zwave.getNodeId() != 1) {
@@ -446,57 +283,15 @@ public class ZWaveServiceImpl implements ZWaveService {
             zWaveReportByApp.setNodeId(zwave.getNodeId());
             zWaveReportByApp.setNickname(zwave.getNickname());
             zWaveReportByApp.setStatus(zwave.getStatus());
-            
+
             List<EndpointReportByApp> lstEndpointReportByApp = endpointService.getEndpoint(zwave);
             zWaveReportByApp.setEndpoints(lstEndpointReportByApp);
         }
         return zWaveReportByApp;
     }
 
-    private HashMap<String, Object> getPublishPayload(HashMap<String, Object> req) {
-        HashMap<String, Object> payload = new HashMap<>();
-        Object payloadData = req.get("get_data");
-        if (!isNull(payloadData)) {
-            payload.put("get_data", payloadData);
-        }
-        payloadData = req.get("set_data");
-        if (!isNull(payloadData)) {
-            payload.put("set_data", payloadData);
-        }
-        return payload;
-    }
-
-    private List deleteZwave(int gatewayNo, int nodeId) {
-        // zwave 정보삭제
-        gatewayCategoryRepository.deleteByGatewayNoAndNodeId(gatewayNo, nodeId);
-        List rtnList = new ArrayList();
-        List<ZWave> lstZWave = zwaveRepository.findByGatewayNoAndNodeId(gatewayNo, nodeId);
-        for (ZWave zWave : lstZWave) {
-            
-            endpointService.deleteEndpoint(zWave);
-            rtnList.add(zWave.getNo());
-        }
-        zwaveRepository.deleteByGatewayNoAndNodeId(gatewayNo, nodeId);
-        return rtnList;
-    }
-
-    private void zwaveReset(ZWaveRequest zwaveRequest) {
-        // host 정보삭제
-        Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
-
-        List<ZWave> lstZWave = zwaveRepository.findByGatewayNo(gateway.getNo());
-        for (ZWave zWave : lstZWave) {
-            List<Endpoint> lstEndpoint = endpointRepository.findByZwaveNo(zWave.getNo());
-            for (Endpoint endpoint : lstEndpoint) {
-                cmdClsRepository.deleteByEndpointNo(endpoint.getNo());
-            }
-            endpointRepository.deleteByZwaveNo(zWave.getNo());
-        }
-        zwaveRepository.deleteByGatewayNo(gateway.getNo());
-
-    }
-    
-    private ZWave saveZWaveList(ZWaveRequest zwaveRequest, ZWave nodeItem, Gateway gateway) {
+    @Override
+    public ZWave saveZWaveList(ZWaveRequest zwaveRequest, ZWave nodeItem, Gateway gateway) {
         saveGatewayCategory(zwaveRequest, nodeItem.getNodeId());
 
         nodeItem.setGatewayNo(gateway.getNo());
@@ -511,7 +306,7 @@ public class ZWaveServiceImpl implements ZWaveService {
             endpoint.setCmdCls(endpoint.getScmdClses(endpoint.getCmdClses()));
             String endpointKey = endpoint.getGeneric() + "." + endpoint.getSpecific();
             endpoint.setNickname(Common.zwaveNickname(zWaveProperties, endpointKey));
-            Endpoint saveEndpoint = saveEndpoint(endpoint);
+            Endpoint saveEndpoint = endpointService.saveEndpoint(endpoint);
             List<CmdCls> newCmdCls = newEndpoints.get(iE).getCmdClses();
             for (int iCmdCls = 0; iCmdCls < newCmdCls.size(); iCmdCls++) {
                 CmdCls cmdcls = newCmdCls.get(iCmdCls);
@@ -528,7 +323,7 @@ public class ZWaveServiceImpl implements ZWaveService {
      * @param zwaveRequest
      * @param mqttPayload
      */
-    private void saveGatewayCategory(ZWaveRequest zwaveRequest, int nodeId) {
+    public void saveGatewayCategory(ZWaveRequest zwaveRequest, int nodeId) {
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
         List<GatewayCategory> gatewayCategorys = gatewayCategoryRepository.findByGatewayNoAndNodeIdAndCategory(gateway.getNo(), nodeId, CategoryActive.gateway.zwave.name());
         if (gatewayCategorys.size() == 0) {
@@ -543,42 +338,20 @@ public class ZWaveServiceImpl implements ZWaveService {
             gatewayCategoryRepository.save(gatewayCategory);
         }
     }
-    
-    private Endpoint endpointType(Endpoint endpoint) {
-        CommandClass commandClass = CommandClassFactory.createCommandClass(BinarySwitchCommandClass.ID);
-        commandClass = CommandClassFactory.createSCmdClass(endpoint);
-        if(!isNull(commandClass)) {
-            endpoint.setDeviceType(commandClass.getDeviceType());
-            endpoint.setDeviceNickname(commandClass.getNicknameType());
-            endpoint.setDeviceTypeName(Common.zwaveNickname(zWaveProperties, endpoint.getGeneric()+"."+endpoint.getSpecific()));
-            endpoint.setDeviceFunctions(commandClass.getFunctionType());
-            endpoint.setFunctionCode(commandClass.getFunctionCode());
+
+    @Override
+    public List deleteZwave(int gatewayNo, int nodeId) {
+        // zwave 정보삭제
+        gatewayCategoryRepository.deleteByGatewayNoAndNodeId(gatewayNo, nodeId);
+        List rtnList = new ArrayList();
+        List<ZWave> lstZWave = zwaveRepository.findByGatewayNoAndNodeId(gatewayNo, nodeId);
+        for (ZWave zWave : lstZWave) {
+
+            endpointService.deleteEndpoint(zWave);
+            rtnList.add(zWave.getNo());
         }
-        return endpoint;
+        zwaveRepository.deleteByGatewayNoAndNodeId(gatewayNo, nodeId);
+        return rtnList;
     }
-
-    private Endpoint saveEndpoint(Endpoint endpoint) {
-        endpoint = endpointType(endpoint);
-        endpoint = endpointRepository.save(endpoint);
-        return endpoint;
-    }
-    private void deleteZwaveSubscribe(ZWaveRequest zwaveRequest , MqttPayload mqttPayload) throws JsonProcessingException, InterruptedException {
-        Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
-        List lst = new ArrayList();
-        HashMap resultMapData = mqttPayload.getResultData();
-        int nodeId = (int) resultMapData.getOrDefault("newNodeId", zwaveRequest.getNodeId());
-        if (nodeId == 0) {
-            subscribeInit(gateway);
-        }else {
-            lst = deleteZwave(gateway.getNo(),nodeId);
-            resultMapData.put("zwave_nos", lst);
-        }
-        String topic = callbackAckProperties.getProperty("zwave.device.remove");
-        String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), zwaveRequest.getModel(),  zwaveRequest.getSerialNo());
-        String pushPayload = objectMapper.writeValueAsString(resultMapData);
-        publish(exeTopic, pushPayload);
-
-    }
-
 
 }

@@ -20,9 +20,9 @@ import com.ht.connected.home.backend.category.zwave.ZWave;
 import com.ht.connected.home.backend.category.zwave.ZWaveRepository;
 import com.ht.connected.home.backend.category.zwave.ZWaveRequest;
 import com.ht.connected.home.backend.category.zwave.ZWaveServiceImpl;
-import com.ht.connected.home.backend.category.zwave.constants.commandclass.AlarmCommandClass;
-import com.ht.connected.home.backend.category.zwave.constants.commandclass.BinarySwitchCommandClass;
-import com.ht.connected.home.backend.category.zwave.constants.commandclass.MultilevelSensorCommandClass;
+import com.ht.connected.home.backend.category.zwave.certi.commandclass.AlarmCommandClass;
+import com.ht.connected.home.backend.category.zwave.certi.commandclass.BinarySwitchCommandClass;
+import com.ht.connected.home.backend.category.zwave.certi.commandclass.MultilevelSensorCommandClass;
 import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.category.zwave.endpoint.EndpointRepository;
 import com.ht.connected.home.backend.common.Common;
@@ -33,7 +33,7 @@ import com.ht.connected.home.backend.gateway.GatewayRepository;
 import com.ht.connected.home.backend.service.mqtt.Target;
 
 @Service
-public class NotificationServiceImpl implements NotificationService {
+public class ZwaveCertiNotificationServiceImpl implements ZwaveCertiNotificationService {
 
     ObjectMapper objectMapper = new ObjectMapper();
 

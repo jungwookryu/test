@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.category.zwave.constants.commandclass;
+package com.ht.connected.home.backend.category.zwave.certi.commandclass;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -260,4 +260,5 @@ public class MeterCommandClass extends CommandClass {
     public String getFunctionCode() {
         return functionCode;
     }
+
 }

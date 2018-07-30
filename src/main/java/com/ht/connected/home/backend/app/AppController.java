@@ -22,7 +22,6 @@ import com.ht.connected.home.backend.category.ir.IR;
 import com.ht.connected.home.backend.category.ir.IRController;
 import com.ht.connected.home.backend.category.ir.IRRepository;
 import com.ht.connected.home.backend.controller.rest.CommonController;
-import com.mysql.fabric.xmlrpc.base.Array;
 
 @RestController
 @RequestMapping("/app")

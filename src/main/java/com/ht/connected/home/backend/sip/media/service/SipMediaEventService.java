@@ -1,8 +1,9 @@
 package com.ht.connected.home.backend.sip.media.service;
 
+import static java.util.Objects.isNull;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import static java.util.Objects.isNull;
 
 import com.ht.connected.home.backend.sip.media.model.dto.SipMediaMqttRequestMessageDto;
 import com.ht.connected.home.backend.sip.media.model.entity.SipMediaEvent;

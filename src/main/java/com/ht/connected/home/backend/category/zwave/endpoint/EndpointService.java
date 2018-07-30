@@ -25,5 +25,7 @@ public interface EndpointService{
     List<EndpointReportByApp> getEndpoint(ZWave zwave);
 
     void zwaveControl(ZWaveControl zWaveControl) throws JsonProcessingException, InterruptedException, JsonGenerationException, JsonMappingException, IOException;
+
+    Endpoint saveEndpoint(Endpoint endpoint);
     
 }

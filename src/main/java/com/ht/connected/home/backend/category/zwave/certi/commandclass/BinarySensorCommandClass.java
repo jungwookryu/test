@@ -1,36 +1,32 @@
-/*
- *******************************************************************************
+/*******************************************************************************
  * Copyright (c) 2013 Whizzo Software, LLC.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************
-*/
-package com.ht.connected.home.backend.category.zwave.constants.commandclass;
+ *******************************************************************************/
+package com.ht.connected.home.backend.category.zwave.certi.commandclass;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Version Command Class
+ * Binary Switch Command Class
  *
  * @author Dan Noguerol
  */
-public class VersionCommandClass extends CommandClass {
+public class BinarySensorCommandClass extends CommandClass {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public static final byte ID = (byte)0x86;
+    private static final byte SENSOR_BINARY_SET = 0x01;
+    private static final byte SENSOR_BINARY_GET = 0x02;
+    private static final byte SENSOR_BINARY_REPORT = 0x03;
 
-    private static final byte VERSION_GET = 0x11;
-    private static final byte VERSION_REPORT = 0x12;
-    private static final byte VERSION_COMMAND_CLASS_GET = 0x13;
-    private static final byte VERSION_COMMAND_CLASS_REPORT = 0x14;
-    public static final String functionCode ="86";
+    public static final byte ID = 0x30;
+    public static final String genericKey = "20";
+    public static final String functionCode ="30";
     
-    private String library;
-    private String protocol;
-    private String application;
+    public Boolean isIdle;
 
     @Override
     public byte getId() {
@@ -39,28 +35,18 @@ public class VersionCommandClass extends CommandClass {
 
     @Override
     public String getName() {
-        return "COMMAND_CLASS_VERSION";
+        return "COMMAND_CLASS_SENSOR_BINARY";
     }
 
-    public String getLibrary() {
-        return library;
-    }
-
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public String getApplication() {
-        return application;
+    public Boolean isIdle() {
+        return isIdle;
     }
 
     @Override
     public String toString() {
-        return "VersionCommandClass{" +
+        return "BinarySensorCommandClass{" +
                 "version=" + getVersion() +
-                ", library='" + library + '\'' +
-                ", protocol='" + protocol + '\'' +
-                ", application='" + application + '\'' +
+                ", isIdle=" + isIdle +
                 '}';
     }
 
@@ -84,7 +70,7 @@ public class VersionCommandClass extends CommandClass {
     
     @Override
     public String getGenericKey() {
-        return "";
+        return genericKey;
     }
 
     @Override

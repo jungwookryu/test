@@ -1,5 +1,5 @@
 
-package com.ht.connected.home.backend.category.zwave.constants.commandclass;
+package com.ht.connected.home.backend.category.zwave.certi.commandclass;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,5 +1,5 @@
 
-package com.ht.connected.home.backend.category.zwave.constants.commandclass;
+package com.ht.connected.home.backend.category.zwave.certi.commandclass;
 
 
 public class CommandClassParseException extends Exception {

@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.category.zwave.constants.commandclass;
+package com.ht.connected.home.backend.category.zwave.certi.commandclass;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,5 +146,4 @@ public class MultilevelSensorCommandClass extends CommandClass {
         // TODO Auto-generated method stub
         return functionCode;
     }
-
 }

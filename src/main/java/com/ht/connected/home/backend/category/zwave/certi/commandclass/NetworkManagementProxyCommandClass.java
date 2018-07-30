@@ -7,31 +7,29 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************
 */
-package com.ht.connected.home.backend.category.zwave.constants.commandclass;
+package com.ht.connected.home.backend.category.zwave.certi.commandclass;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Basic Command Class
+ * NetworkManagementProxyCommandClass
  *
- * @author Dan Noguerol
+ * @author ijlee
  */
-public class BasicCommandClass extends CommandClass {
+public class NetworkManagementProxyCommandClass extends CommandClass {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public static final byte BASIC_SET = 0x01;
-    public static final byte BASIC_GET = 0x02;
-    public static final byte BASIC_REPORT = 0x03;
+    public static final byte NODE_LIST_GET = 0x01;
+    public static final byte NODE_LIST_REPORT = 0x02;
 
-    public static final int INT_BASIC_SET = 0x01;
-    public static final int INT_BASIC_GET = 0x02;
-    public static final int INT_BASIC_REPORT = 0x03;
+    public static final int INT_NODE_LIST_GET = 0x01;
+    public static final int INT_NODE_LIST_REPORT = 0x02;
     
-    public static final byte ID = (byte)0x20;
-    public static final int INT_ID = (byte)0x20;
-    public static final String functionCode ="20";
-
+    public static final byte ID = (byte)0x52;
+    public static final int INT_ID = (byte)0x52;
+    public static final String functionCode ="52";
+    
     private Byte value;
 
     @Override
@@ -41,7 +39,7 @@ public class BasicCommandClass extends CommandClass {
 
     @Override
     public String getName() {
-        return "COMMAND_CLASS_BASIC";
+        return "COMMAND_CLASS_NETWORK_MANAGEMENT_PROXY";
     }
 
     public Byte getValue() {
@@ -50,7 +48,7 @@ public class BasicCommandClass extends CommandClass {
 
     @Override
     public String toString() {
-        return "BasicCommandClass{" +
+        return "NetworkManagementCommandClass{" +
                 "version=" + getVersion() +
                 ", value=" + value +
                 '}';
@@ -78,7 +76,7 @@ public class BasicCommandClass extends CommandClass {
     public String getGenericKey() {
         return "";
     }
-    
+
     @Override
     public String getFunctionCode() {
         return functionCode;

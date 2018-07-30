@@ -1,32 +1,32 @@
 /*******************************************************************************
- * Copyright (c) 2013 Whizzo Software, LLC.
+ * Copyright (c) 2016 Whizzo Software, LLC.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package com.ht.connected.home.backend.category.zwave.constants.commandclass;
+package com.ht.connected.home.backend.category.zwave.certi.commandclass;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Binary Switch Command Class
+ * Alarm Sensor Command Class.
  *
  * @author Dan Noguerol
  */
-public class BinarySensorCommandClass extends CommandClass {
+public class AlarmSensorCommandClass extends CommandClass {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static final byte SENSOR_BINARY_SET = 0x01;
-    private static final byte SENSOR_BINARY_GET = 0x02;
-    private static final byte SENSOR_BINARY_REPORT = 0x03;
+    public static final byte SENSOR_ALARM_GET = 0x01;
+    public static final byte SENSOR_ALARM_REPORT = 0x02;
 
-    public static final byte ID = 0x30;
-    public static final String genericKey = "20";
-    public static final String functionCode ="30";
+    public static final byte ID = (byte)0x9C;
+    public static final String genericKey = "A1";
+    public static final String functionCode ="9C";
     
-    public Boolean isIdle;
+    private Type type;
+    private byte level;
 
     @Override
     public byte getId() {
@@ -35,18 +35,36 @@ public class BinarySensorCommandClass extends CommandClass {
 
     @Override
     public String getName() {
-        return "COMMAND_CLASS_SENSOR_BINARY";
+        return "COMMAND_CLASS_SENSOR_ALARM";
     }
 
-    public Boolean isIdle() {
-        return isIdle;
+    public Type getType() {
+        return type;
+    }
+
+    public byte getLevel() {
+        return level;
+    }
+
+    public enum Type {
+        GENERAL,
+        SMOKE,
+        CARBON_MONOXIDE,
+        CARBON_DIOXIDE,
+        HEAT,
+        FLOOD;
+
+        public static Type convert(byte b) {
+            return Type.values()[b];
+        }
     }
 
     @Override
     public String toString() {
-        return "BinarySensorCommandClass{" +
+        return "AlarmSensorCommandClass{" +
                 "version=" + getVersion() +
-                ", isIdle=" + isIdle +
+                ", type=" + type +
+                ", level=" + level +
                 '}';
     }
 
@@ -72,9 +90,10 @@ public class BinarySensorCommandClass extends CommandClass {
     public String getGenericKey() {
         return genericKey;
     }
-
+    
     @Override
     public String getFunctionCode() {
         return functionCode;
     }
+
 }

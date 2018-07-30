@@ -32,5 +32,4 @@ public interface ZWaveRepository extends JpaRepository<ZWave, Integer>{
     @Query("update ZWave z set z.status = ?1  where z.gatewayNo = ?2")
     int updateStatusByGatewayNo(String status, int gatewayNo);
 
-
 }
