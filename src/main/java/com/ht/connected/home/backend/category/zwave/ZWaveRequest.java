@@ -47,6 +47,7 @@ public class ZWaveRequest extends ZWave{
     @JsonProperty("set_data")
     private HashMap<String, Object> setData;
 
+    private String categoryActive;
     /**
      * 경로를 배열로 받을경우 생성자
      * @param topic
@@ -56,7 +57,8 @@ public class ZWaveRequest extends ZWave{
             this.source = topic[1];
             this.model = topic[3];
             this.serialNo = topic[4];
-            if (CategoryActive.zwave.certi.name().equals(topic[6].toString())) {
+            this.categoryActive = topic[6];
+            if (CategoryActive.zwave.certi.name().equals(categoryActive)) {
                 if (7 < topic.length) {
                     this.classKey = ByteUtil.getStringtoInt(topic[7]);
                     this.sClassKey = topic[7].toString();
@@ -209,6 +211,20 @@ public class ZWaveRequest extends ZWave{
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    /**
+     * @return the categoryActive
+     */
+    public String getCategoryActive() {
+        return categoryActive;
+    }
+
+    /**
+     * @param categoryActive the categoryActive to set
+     */
+    public void setCategoryActive(String categoryActive) {
+        this.categoryActive = categoryActive;
     }
 
 }

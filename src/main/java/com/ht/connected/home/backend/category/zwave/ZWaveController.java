@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ht.connected.home.backend.category.zwave.constants.commandclass.NetworkManagementInclusionCommandClass;
+import com.ht.connected.home.backend.category.zwave.certi.commandclass.NetworkManagementInclusionCommandClass;
 import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.category.zwave.endpoint.EndpointRepository;
 import com.ht.connected.home.backend.category.zwave.endpoint.EndpointService;
@@ -39,12 +39,16 @@ public class ZWaveController extends CommonController {
 
     @Autowired
     ZWaveService zwaveService;
-
+    
+    @Autowired
+    ZWaveCommonService zWaveCommonService;
+    
     @Autowired
     EndpointService endpointService;
 
     @Autowired
     UserGatewayRepository userGatewayRepository;
+    
     @Autowired
     GatewayRepository gatewayRepository;
 
@@ -94,7 +98,7 @@ public class ZWaveController extends CommonController {
     @GetMapping(value = "/{gateway_no}")
     public ResponseEntity getList(@PathVariable("gateway_no") int gatewayNo) {
 
-        Map sRtnList = (Map) zwaveService.getZWaveListApp(gatewayNo);
+        Map sRtnList = (Map) zWaveCommonService.getZWaveListApp(gatewayNo);
         return new ResponseEntity<>(sRtnList, HttpStatus.ACCEPTED);
     }
 
@@ -125,9 +129,9 @@ public class ZWaveController extends CommonController {
             if (lstUserGateway.size() <= 0) {
                 return new ResponseEntity<>(lstUserGateway.size(), HttpStatus.NOT_FOUND);
             } else {
-                int iZwave = zwaveService.getByUserEmailAndNo(userEmail, no);
+                int iZwave = zWaveCommonService.getByUserEmailAndNo(userEmail, no);
                 if (iZwave > 0) {
-                    int deleteInt = zwaveService.deleteByNo(no);
+                    int deleteInt = zWaveCommonService.deleteByNo(no);
                     return new ResponseEntity<>(deleteInt, HttpStatus.ACCEPTED);
                 } else {
                     return new ResponseEntity<>(0, HttpStatus.NO_CONTENT);
@@ -140,7 +144,7 @@ public class ZWaveController extends CommonController {
     @PutMapping("/{zwave_no}")
     public ResponseEntity basicControl(@PathVariable int zwave_no, @RequestBody ZWaveControl zWaveControl) throws JsonProcessingException, InterruptedException {
         zWaveControl.setZwave_no(zwave_no);
-        zwaveService.zwaveBasicControl(zWaveControl);
+        zWaveCommonService.zwaveBasicControl(zWaveControl);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
     @PutMapping("/function/{endpoint_no}")

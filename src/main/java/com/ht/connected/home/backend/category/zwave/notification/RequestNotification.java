@@ -6,7 +6,6 @@ package com.ht.connected.home.backend.category.zwave.notification;
  */
 
 import java.util.HashMap;
-import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;

@@ -2,7 +2,6 @@ package com.ht.connected.home.backend.gateway;
 
 import static java.util.Objects.isNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 

@@ -1,25 +1,16 @@
 package com.ht.connected.home.backend.user;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ht.connected.home.backend.gateway.Gateway;
-import com.ht.connected.home.backend.userGateway.UserGateway;
 
 /**
  * Project : HT-CONNECTED-HOME-SERVER Package :
@@ -93,6 +84,10 @@ public class User {
 	@Column(name = "push_type")
 	@JsonProperty("push_type")
 	private int pushType;
+	
+	@Column(name = "user_aor")
+	@JsonProperty("userAor")
+	private String userAor;
 	
 
 /*    @OneToMany(fetch = FetchType.LAZY,cascade=CascadeType.ALL )
@@ -360,12 +355,7 @@ public class User {
 		this.pushToken = pushToken;
 	}
 
-    @Override
-    public String toString() {
-        return "User [no=" + no + ", userEmail=" + userEmail + ", password=" + "dummypassword" + ", nickName=" + nickName + ", pushToken=" + pushToken + ", status=" + status + ", createdTime=" + createdTime
-                + ", lastmodifiedTime=" + lastmodifiedTime + ", active=" + active + ", authority=" + authority + ", locale=" + locale + ", redirectiedCode=" + redirectiedCode + ", connectedType="
-                + connectedType + ", pushType=" + pushType + "]";
-    }
+
 /*
 
     public List<UserGateway> getGateways() {
@@ -377,4 +367,18 @@ public class User {
         this.userGateways = userGateways;
     }
 */
+
+    /**
+     * @return the userAor
+     */
+    public String getUserAor() {
+        return userAor;
+    }
+
+    /**
+     * @param userAor the userAor to set
+     */
+    public void setUserAor(String userAor) {
+        this.userAor = userAor;
+    }
 }

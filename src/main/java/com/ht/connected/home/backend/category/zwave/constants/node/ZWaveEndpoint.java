@@ -16,7 +16,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ht.connected.home.backend.category.zwave.constants.commandclass.CommandClass;
+import com.ht.connected.home.backend.category.zwave.certi.commandclass.CommandClass;
 
 /**
  * An abstract base class for Z-Wave nodes. This allows common handling of "top-level" nodes as well as

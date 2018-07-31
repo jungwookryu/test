@@ -10,7 +10,8 @@ public class CategoryActive {
     public enum zwave{
         alive,
         certi,
-        init
+        init,
+        status
     }
     public enum manager{
         alive,

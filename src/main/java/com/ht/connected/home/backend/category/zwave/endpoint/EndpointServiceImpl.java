@@ -1,10 +1,13 @@
 package com.ht.connected.home.backend.category.zwave.endpoint;
 
+import static java.util.Objects.isNull;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,13 +18,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.category.zwave.ZWave;
 import com.ht.connected.home.backend.category.zwave.ZWaveControl;
 import com.ht.connected.home.backend.category.zwave.ZWaveRepository;
+import com.ht.connected.home.backend.category.zwave.certi.commandclass.BinarySwitchCommandClass;
+import com.ht.connected.home.backend.category.zwave.certi.commandclass.CommandClass;
+import com.ht.connected.home.backend.category.zwave.certi.commandclass.CommandClassFactory;
 import com.ht.connected.home.backend.category.zwave.cmdcls.CmdClsRepository;
 import com.ht.connected.home.backend.category.zwave.notification.NotificationRepository;
-import com.ht.connected.home.backend.category.zwave.notification.NotificationService;
+import com.ht.connected.home.backend.category.zwave.notification.ZwaveCertiNotificationService;
+import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.controller.mqtt.Message;
 import com.ht.connected.home.backend.controller.mqtt.ProducerComponent;
@@ -50,6 +56,9 @@ public class EndpointServiceImpl implements EndpointService {
     NotificationRepository notificationRepository;
     
     @Autowired
+    Properties zWaveProperties;
+    
+    @Autowired
     public EndpointServiceImpl(EndpointRepository endpointRepository) {
         this.endpointRepository = endpointRepository;
     }
@@ -58,7 +67,7 @@ public class EndpointServiceImpl implements EndpointService {
     ZWaveRepository zWaveRepository;
     
     @Autowired
-    NotificationService notificationService;
+    ZwaveCertiNotificationService notificationService;
     
     ObjectMapper objectMapper = new ObjectMapper();
     private static final Log logger = LogFactory.getLog(EndpointServiceImpl.class);
@@ -149,5 +158,25 @@ public class EndpointServiceImpl implements EndpointService {
         String payload = objectMapper.writeValueAsString(map);
         Message message = new Message(topic, payload);
         MqttCommon.publish(producerComponent, message);
+    }
+    
+    public Endpoint endpointType(Endpoint endpoint) {
+        CommandClass commandClass = CommandClassFactory.createCommandClass(BinarySwitchCommandClass.ID);
+        commandClass = CommandClassFactory.createSCmdClass(endpoint);
+        if (!isNull(commandClass)) {
+            endpoint.setDeviceType(commandClass.getDeviceType());
+            endpoint.setDeviceNickname(commandClass.getNicknameType());
+            endpoint.setDeviceTypeName(Common.zwaveNickname(zWaveProperties, endpoint.getGeneric() + "." + endpoint.getSpecific()));
+            endpoint.setDeviceFunctions(commandClass.getFunctionType());
+            endpoint.setFunctionCode(commandClass.getFunctionCode());
+        }
+        return endpoint;
+    }
+
+    @Override
+    public Endpoint saveEndpoint(Endpoint endpoint) {
+        endpoint = endpointType(endpoint);
+        endpoint = endpointRepository.save(endpoint);
+        return endpoint;
     }
 }

@@ -81,9 +81,13 @@ public class Gateway {
     @JsonProperty("target_type")
     private String targetType;
 
-    @Transient
-    @JsonProperty("user_nick_name")
-    private String userNickname;
+    @Column(name = "loc_latitude")
+    @JsonProperty("locLatitude")
+    private String locLatitude;
+    
+    @Column(name = "loc_longitude")
+    @JsonProperty("locLongitude")
+    private String locLongitude;
 
     @Transient
     @JsonProperty("user_email")
@@ -205,14 +209,6 @@ public class Gateway {
         this.model = model;
     }
 
-    public String getUserNickname() {
-        return userNickname;
-    }
-
-    public void setUserNickname(String userNickname) {
-        this.userNickname = userNickname;
-    }
-
     public String getUser_email() {
         return userEmail;
     }
@@ -253,11 +249,71 @@ public class Gateway {
         this.targetType = targetType;
     }
 
+
+    /**
+     * @return the locLatitude
+     */
+    public String getLocLatitude() {
+        return locLatitude;
+    }
+
+    /**
+     * @param locLatitude the locLatitude to set
+     */
+    public void setLocLatitude(String locLatitude) {
+        this.locLatitude = locLatitude;
+    }
+
+    /**
+     * @return the locLongitude
+     */
+    public String getLocLongitude() {
+        return locLongitude;
+    }
+
+    /**
+     * @param locLongitude the locLongitude to set
+     */
+    public void setLocLongitude(String locLongitude) {
+        this.locLongitude = locLongitude;
+    }
+
+    /**
+     * @return the createdTime
+     */
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    /**
+     * @return the lastModifiedTime
+     */
+    public Date getLastModifiedTime() {
+        return lastModifiedTime;
+    }
+
+    /**
+     * @return the userEmail
+     */
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    /**
+     * @param createdUserId the createdUserId to set
+     */
+    public void setCreatedUserId(String createdUserId) {
+        this.createdUserId = createdUserId;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return "Gateway [no=" + no + ", nickname=" + nickname + ", id=" + id + ", ip=" + ip + ", ssid=" + ssid + ", bssid=" + bssid + ", serial=" + serial + ", version=" + version + ", model=" + model
                 + ", status=" + status + ", homeid=" + homeid + ", createdUserId=" + createdUserId + ", createdTime=" + createdTime + ", lastModifiedTime=" + lastModifiedTime + ", targetType="
-                + targetType + ", userNickname=" + userNickname + ", userEmail=" + userEmail + ", type=" + type + "]";
+                + targetType + ", locLatitude=" + locLatitude + ", locLongitude=" + locLongitude + ", userEmail=" + userEmail + ", type=" + type + "]";
     }
 
 }

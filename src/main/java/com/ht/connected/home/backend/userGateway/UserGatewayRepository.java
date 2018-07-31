@@ -7,9 +7,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.ht.connected.home.backend.gateway.Gateway;
-import com.ht.connected.home.backend.user.User;
-
 
 /**
  * user_gateway 테이블 repository
