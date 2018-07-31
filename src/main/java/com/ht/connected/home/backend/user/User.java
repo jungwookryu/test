@@ -85,6 +85,10 @@ public class User {
 	@JsonProperty("push_type")
 	private int pushType;
 	
+	@Column(name = "user_aor")
+	@JsonProperty("userAor")
+	private int userAor;
+	
 
 /*    @OneToMany(fetch = FetchType.LAZY,cascade=CascadeType.ALL )
     @JoinTable(name = "user_gateway", 
