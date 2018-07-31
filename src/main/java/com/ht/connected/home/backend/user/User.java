@@ -87,7 +87,7 @@ public class User {
 	
 	@Column(name = "user_aor")
 	@JsonProperty("userAor")
-	private int userAor;
+	private String userAor;
 	
 
 /*    @OneToMany(fetch = FetchType.LAZY,cascade=CascadeType.ALL )
@@ -355,12 +355,7 @@ public class User {
 		this.pushToken = pushToken;
 	}
 
-    @Override
-    public String toString() {
-        return "User [no=" + no + ", userEmail=" + userEmail + ", password=" + "dummypassword" + ", nickName=" + nickName + ", pushToken=" + pushToken + ", status=" + status + ", createdTime=" + createdTime
-                + ", lastmodifiedTime=" + lastmodifiedTime + ", active=" + active + ", authority=" + authority + ", locale=" + locale + ", redirectiedCode=" + redirectiedCode + ", connectedType="
-                + connectedType + ", pushType=" + pushType + "]";
-    }
+
 /*
 
     public List<UserGateway> getGateways() {
@@ -372,4 +367,18 @@ public class User {
         this.userGateways = userGateways;
     }
 */
+
+    /**
+     * @return the userAor
+     */
+    public String getUserAor() {
+        return userAor;
+    }
+
+    /**
+     * @param userAor the userAor to set
+     */
+    public void setUserAor(String userAor) {
+        this.userAor = userAor;
+    }
 }
