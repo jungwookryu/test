@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ht.connected.home.backend.category.zwave.ZWaveCommonService;
 import com.ht.connected.home.backend.category.zwave.ZWaveRequest;
 import com.ht.connected.home.backend.category.zwave.ZWaveService;
 import com.ht.connected.home.backend.category.zwave.certi.commandclass.NetworkManagementInclusionCommandClass;
@@ -44,21 +45,29 @@ public class ZWaveCertiNetworkManagementInclusionServiceImpl implements ZWaveCer
     @Autowired
     @Qualifier(value = "callbackAckProperties")
     Properties callbackAckProperties;
-
-    @Autowired
-    ProducerComponent producerRestController;
-
-    @Autowired
+    ProducerComponent producerComponent;
     GatewayRepository gatewayRepository;
-
-    @Autowired
     UserGatewayRepository userGatewayRepository;
-
-    @Autowired
     EndpointRepository endpointRepository;
-
-    @Autowired
     ZWaveService zWaveService;
+    ZWaveCommonService zWaveCommonService;
+  
+    @Autowired
+    public ZWaveCertiNetworkManagementInclusionServiceImpl(
+            ZWaveCommonService zWaveCommonService,
+            ProducerComponent producerComponent,
+            GatewayRepository gatewayRepository,
+            UserGatewayRepository userGatewayRepository,
+            EndpointRepository endpointRepository,
+            ZWaveService zWaveService
+            ) {
+        this.zWaveCommonService = zWaveCommonService;
+        this.producerComponent = producerComponent;
+        this.gatewayRepository = gatewayRepository;
+        this.userGatewayRepository = userGatewayRepository;
+        this.endpointRepository = endpointRepository;
+        this.zWaveService = zWaveService;
+    }
     
     @Autowired
     @Qualifier("zWaveFunctionProperties")
@@ -110,7 +119,7 @@ public class ZWaveCertiNetworkManagementInclusionServiceImpl implements ZWaveCer
 
     private void publish(String topic, String payload) throws InterruptedException {
         Message message = new Message(topic, payload);
-        MqttCommon.publish(producerRestController, message);
+        MqttCommon.publish(producerComponent, message);
     }
 
     private void deleteZwaveSubscribe(ZWaveRequest zwaveRequest, MqttPayload mqttPayload) throws JsonProcessingException, InterruptedException {
@@ -124,9 +133,9 @@ public class ZWaveCertiNetworkManagementInclusionServiceImpl implements ZWaveCer
             mqttRequest.setCommandKey(NetworkManagementProxyCommandClass.INT_NODE_LIST_GET);
             String exeTopic = MqttCommon.getMqttPublishTopic(mqttRequest, zwaveRequest.getSource());
             Message message = new Message(exeTopic, null);
-            producerRestController.run(message);
+            producerComponent.run(message);
         } else {
-            lst = zWaveService.deleteZwave(gateway.getNo(), nodeId);
+            lst = zWaveCommonService.deleteZwave(gateway.getNo(), nodeId);
             resultMapData.put("zwave_nos", lst);
         }
         String topic = callbackAckProperties.getProperty("zwave.device.remove");

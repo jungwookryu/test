@@ -14,6 +14,4 @@ public interface ZWaveCertiService {
 
     void publishDelete(MqttRequest mqttRequest) throws JsonProcessingException, InterruptedException;
 
-    void zwaveBasicControl(MqttRequest mqttRequest) throws JsonProcessingException, InterruptedException;
-
 }

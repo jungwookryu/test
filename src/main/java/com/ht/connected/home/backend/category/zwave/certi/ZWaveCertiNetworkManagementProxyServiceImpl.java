@@ -18,6 +18,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.category.zwave.ZWave;
+import com.ht.connected.home.backend.category.zwave.ZWaveCommonService;
 import com.ht.connected.home.backend.category.zwave.ZWaveReport;
 import com.ht.connected.home.backend.category.zwave.ZWaveReportByApp;
 import com.ht.connected.home.backend.category.zwave.ZWaveRepository;
@@ -45,6 +46,7 @@ public class ZWaveCertiNetworkManagementProxyServiceImpl implements ZWaveCertiNe
     ZWaveService zWaveService;
     EndpointService endpointService;
     GatewayRepository gatewayRepository;
+    ZWaveCommonService zWaveCommonService;
     
     @Autowired
     @Qualifier(value = "callbackAckProperties")
@@ -52,12 +54,14 @@ public class ZWaveCertiNetworkManagementProxyServiceImpl implements ZWaveCertiNe
     
     @Autowired
     public ZWaveCertiNetworkManagementProxyServiceImpl(
+            ZWaveCommonService zWaveCommonService,
             ZWaveRepository zwaveRepository,
             ProducerComponent producerComponent,
             ZWaveService zWaveService,
             EndpointService endpointService,
             GatewayRepository gatewayRepository
             ) {
+        this.zWaveCommonService = zWaveCommonService;
         this.zwaveRepository = zwaveRepository;
         this.producerComponent = producerComponent;
         this.zWaveService = zWaveService;
@@ -90,7 +94,7 @@ public class ZWaveCertiNetworkManagementProxyServiceImpl implements ZWaveCertiNe
              * 기기 리스트 수신시 새로 등록한 기기가 있을경우는 새로 등록 없을 경우는 업데이트함.0x52 0x02 모드일경우
              */
             if (-1 == zwaveRequest.getNodeId() || 0 == zwaveRequest.getNodeId()) {
-                zWaveService.reportZWaveList(zwaveRequest, data);
+                zWaveCommonService.reportZWaveList(zwaveRequest, data);
             }
             // 신규 등록 기기 정보
             else {
@@ -99,12 +103,12 @@ public class ZWaveCertiNetworkManagementProxyServiceImpl implements ZWaveCertiNe
                 ZWaveReport zwaveReport = objectMapper.readValue(data, ZWaveReport.class);
                 List<ZWave> lstOriginalZwave = zwaveRepository.findByGatewayNoAndNodeId(zwaveRequest.getGatewayNo(), zwaveRequest.getNodeId());
                 if (lstOriginalZwave.size() == 0 && (!isNull(gateway)) && (zwaveReport.getNodelist() != null)) {
-                    zWaveService.saveGatewayCategory(zwaveRequest, zwaveRequest.getNodeId());
+                    zWaveCommonService.saveGatewayCategory(zwaveRequest, zwaveRequest.getNodeId());
                     // 기기 리스트에 대한 정보일 경우
                     List<ZWave> nodeListItem = (List<ZWave>) zwaveReport.getNodelist();
                     for (int i = 0; i < nodeListItem.size(); i++) {
                         ZWave nodeItem = nodeListItem.get(i);
-                        ZWave zwave = zWaveService.saveZWaveList(zwaveRequest, nodeItem, gateway);
+                        ZWave zwave = zWaveCommonService.saveZWaveList(zwaveRequest, nodeItem, gateway);
                         String topic = callbackAckProperties.getProperty("zwave.device.registration");
                         String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), gateway.getModel(), gateway.getSerial());
                         ZWaveReportByApp zWaveReportByApp = getZwaveReportApp(zwave);

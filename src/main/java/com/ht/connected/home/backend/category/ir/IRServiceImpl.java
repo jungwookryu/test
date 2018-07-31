@@ -23,7 +23,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ht.connected.home.backend.app.AppController;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.controller.mqtt.Message;
@@ -33,6 +32,7 @@ import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategoryRepository;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 import com.ht.connected.home.backend.service.mqtt.Target;
+import com.ht.connected.home.backend.zapp.AppController;
 
 @Service
 public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRService {
@@ -53,7 +53,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     GatewayCategoryRepository gatewayCategoryRepository;
 
     @Autowired
-    ProducerComponent producerRestController;
+    ProducerComponent producerComponent;
 
     @Autowired
     @Qualifier(value = "callbackAckProperties")
@@ -213,7 +213,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
     public void publish(String topic, HashMap<String, Object> publishPayload) throws JsonProcessingException, InterruptedException {
         String payload = objectMapper.writeValueAsString(publishPayload);
         Message message =  new Message(topic, payload);
-        MqttCommon.publish(producerRestController, message);
+        MqttCommon.publish(producerComponent, message);
     }
 
 }

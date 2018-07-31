@@ -93,6 +93,13 @@ public class ZWaveCertiNetworkManagementBasicServiceImpl implements ZWaveCertiNe
             publish(exeTopic, new HashMap());
 
         }
+        
+        if (zwaveRequest.getCommandKey() == NetworkManagementBasicCommandClass.LEARN_MODE_SET) {
+            String topic = callbackAckProperties.getProperty("manager.product.remove");
+            String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), zwaveRequest.getModel(), zwaveRequest.getSerialNo());
+            publish(exeTopic, new HashMap());
+            
+        }
 
     }
 

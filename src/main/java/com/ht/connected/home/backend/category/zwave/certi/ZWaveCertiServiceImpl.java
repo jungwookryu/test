@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -99,24 +100,7 @@ public class ZWaveCertiServiceImpl implements ZWaveCertiService {
         }
     }
 
-    /**
-     * Zwave 기기제어
-     * @author lij
-     * @throws JsonProcessingException
-     * @throws InterruptedException
-     */
-    // 제어
-    @Override
-    public void zwaveBasicControl(MqttRequest mqttRequest) throws JsonProcessingException, InterruptedException {
 
-        mqttRequest.setVersion("v1");
-        mqttRequest.setSecurityOption("0");
-        HashMap map = new HashMap<>();
-        HashMap map1 = new HashMap<>();
-        map1.put("set_data", map);
-        mqttRequest.setSetData(map1);
-        publish(mqttRequest);
-    }
 
 
     // 삭제 토픽
@@ -149,6 +133,5 @@ public class ZWaveCertiServiceImpl implements ZWaveCertiService {
         Message message = new Message(topic, payload);
         MqttCommon.publish(producerRestController, message);
     }
-
 
 }

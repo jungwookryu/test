@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.app;
+package com.ht.connected.home.backend.zapp;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,11 +20,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.category.ir.IR;
 import com.ht.connected.home.backend.category.ir.IRController;
 import com.ht.connected.home.backend.category.ir.IRRepository;
+import com.ht.connected.home.backend.category.ir.IRController.Devicetype;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 
 @RestController
 @RequestMapping("/app")
-@DependsOn("mqttConfig")
 public class AppController extends CommonController {
 
     IRController iRController;
