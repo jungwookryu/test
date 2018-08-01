@@ -365,10 +365,13 @@ public class IR {
         this.value = value;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
-        return "IR [no=" + no + ", serial=" + serial + ", model=" + model + ", irName=" + irName + ", irType=" + irType + ", description=" + description + ", createdTime="
-                + createdTime + ", lastmodifiedTime=" + lastmodifiedTime + ", action=" + action + ", status=" + status + ", format=" + format + ", rptcnt=" + rptcnt + ", gap=" + gap + ", length="
-                + length + ", data=" + data + ", value=" + value + ", subNumber=" + subNumber + ", userEmail=" + userEmail + ", gatewayNo=" + gatewayNo + "]";
+        return "IR [no=" + no + ", serial=" + serial + ", model=" + model + ", irName=" + irName + ", irType=" + irType + ", description=" + description + ", createdTime=" + createdTime
+                + ", lastmodifiedTime=" + lastmodifiedTime + ", action=" + action + ", status=" + status + ", format=" + format + ", rptcnt=" + rptcnt + ", gap=" + gap + ", length=" + length
+                + ", data=" + data + ", value=" + value + ", subNumber=" + subNumber + ", userEmail=" + userEmail + ", gatewayNo=" + gatewayNo + "]";
     }
 }
