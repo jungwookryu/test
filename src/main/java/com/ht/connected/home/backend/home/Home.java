@@ -23,11 +23,11 @@ public class Home {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "no")
     @JsonProperty("no")
-    private int no;
+    private Integer no;
 
-    @Column(name = "owner_user_no")  
+    @Column(name = "owner_user_no")
     @JsonProperty("owner_user_no")
-    private String ownerUserNo;
+    private Integer ownerUserNo;
 
     @Column(name = "owner_user_email")
     @JsonProperty("owner_user_email")
@@ -49,34 +49,39 @@ public class Home {
     @JsonProperty("lastmodified_time")
     private Date lastModifiedTime;
 
-    public Home() {
+    public Home(int ownerUserNo, String ownerUserEmail, String ownerUserAor, String nickname, Date createdTime) {
+        this.ownerUserNo = ownerUserNo;
+        this.ownerUserEmail = ownerUserEmail;
+        this.ownerUserAor = ownerUserAor;
+        this.nickname = nickname;
+        this.createdTime = createdTime;
     }
 
     /**
      * @return the no
      */
-    public int getNo() {
+    public Integer getNo() {
         return no;
     }
 
     /**
      * @param no the no to set
      */
-    public void setNo(int no) {
+    public void setNo(Integer no) {
         this.no = no;
     }
 
     /**
      * @return the ownerUserNo
      */
-    public String getOwnerUserNo() {
+    public Integer getOwnerUserNo() {
         return ownerUserNo;
     }
 
     /**
      * @param ownerUserNo the ownerUserNo to set
      */
-    public void setOwnerUserNo(String ownerUserNo) {
+    public void setOwnerUserNo(Integer ownerUserNo) {
         this.ownerUserNo = ownerUserNo;
     }
 
@@ -149,5 +154,5 @@ public class Home {
     public void setLastModifiedTime(Date lastModifiedTime) {
         this.lastModifiedTime = lastModifiedTime;
     }
-    
+
 }
