@@ -14,15 +14,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 import com.ht.connected.home.backend.user.User;
 import com.ht.connected.home.backend.user.UserActive;
-import com.ht.connected.home.backend.user.UsersService;
+import com.ht.connected.home.backend.user.UserService;
 
 @Controller
 public class EmailAuthController extends CommonController {
 
-    UsersService usersService;
+    UserService usersService;
 
     @Autowired
-    public EmailAuthController(UsersService usersService) {
+    public EmailAuthController(UserService usersService) {
         this.usersService = usersService;
     }
 
