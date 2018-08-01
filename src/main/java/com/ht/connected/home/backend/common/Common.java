@@ -364,7 +364,7 @@ public class Common {
 
     }
 
-    public String randomCode() {
+    public static String randomCode() {
         String rtnRandomeCode = "";
         rtnRandomeCode = RandomStringUtils.randomAlphanumeric(12).toUpperCase() + RandomStringUtils.randomAlphanumeric(7).toUpperCase();
         return rtnRandomeCode;
