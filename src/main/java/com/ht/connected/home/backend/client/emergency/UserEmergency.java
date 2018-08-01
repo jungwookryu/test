@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.emergency;
+package com.ht.connected.home.backend.client.emergency;
 
 import java.util.Date;
 
