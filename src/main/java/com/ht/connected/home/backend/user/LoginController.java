@@ -24,7 +24,8 @@ import com.ht.connected.home.backend.controller.rest.CommonController;
 @RestController
 public class LoginController extends CommonController {
 
-    UsersService usersService;
+    UserService usersService;
+    UserRepository userRepository;
 
     @Autowired
     @Qualifier("errorMessageSource")
@@ -34,8 +35,10 @@ public class LoginController extends CommonController {
     private TokenEndpoint tokenEndpoint;
 
     @Autowired
-    public LoginController(UsersService usersService) {
+    public LoginController(UserService usersService,
+                            UserRepository userRepository) {
         this.usersService = usersService;
+        this.userRepository= userRepository;
     }
 
     @GetMapping(value = "/authentication/login")
@@ -94,7 +97,7 @@ public class LoginController extends CommonController {
             rtnUsers.setPushType(users.getPushType());
             rtnUsers.setConnectedType(users.getConnectedType());
 
-            User returnUsers = usersService.save(rtnUsers);
+            User returnUsers = userRepository.save(rtnUsers);
             logger.debug("returnUsers:::" + returnUsers.toString());
         }
         return tokenEndpoint.postAccessToken(principal, parameters);

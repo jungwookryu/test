@@ -20,7 +20,7 @@ public class UserDetailService implements UserDetailsService {
 	private UserRepository usersRepository;
 
 	@Autowired
-	private UsersService usersService;
+	private UserService usersService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(UserDetailService.class);
 

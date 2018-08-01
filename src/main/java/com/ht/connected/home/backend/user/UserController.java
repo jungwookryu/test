@@ -2,6 +2,7 @@ package com.ht.connected.home.backend.user;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,16 +23,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.connected.home.backend.controller.rest.CommonController;
+import com.ht.connected.home.backend.home.Home;
+import com.ht.connected.home.backend.home.HomeRepository;
 
 @RestController
 @RequestMapping("/users")
-public class UsersController extends CommonController {
+public class UserController extends CommonController {
 
-	UsersService usersService;
+	UserService usersService;
+	UserRepository userRepository;
+	HomeRepository homeRepository;
 
 	@Autowired
-	public UsersController(UsersService usersService) {
+	public UserController(UserService usersService,
+	                        HomeRepository homeRepository,
+	                        UserRepository userRepository ) {
 		this.usersService = usersService;
+		this.userRepository = userRepository;
+		this.homeRepository = homeRepository;
 	}
 
 	/**
@@ -53,7 +62,6 @@ public class UsersController extends CommonController {
 			return new ResponseEntity("exist userEmail", responseHeaders, HttpStatus.NOT_ACCEPTABLE);
 		}else {
 			User rtnUsers = usersService.register(users);
-	
 			logger.debug(rtnUsers.toString());
 			return new ResponseEntity(HttpStatus.CREATED);
 		}
@@ -63,7 +71,7 @@ public class UsersController extends CommonController {
 	@GetMapping
 	public ResponseEntity<HashMap<String, List>> getUsers() {
 		HashMap<String, List> map = new HashMap<>();
-		List rtnUsers = usersService.getAll();
+		List rtnUsers = userRepository.findAll();
 		map.put("users", rtnUsers);
 		return new ResponseEntity<HashMap<String, List>>(map, HttpStatus.OK);
 	}
@@ -83,8 +91,8 @@ public class UsersController extends CommonController {
 
 	@DeleteMapping("/user/{no}")
 	public ResponseEntity<HttpStatus> deleteUser(@PathVariable("no") int no) {
-		User user = usersService.getOne(no);
-		usersService.delete(no);
+		User user = userRepository.findOne(no);
+		userRepository.delete(no);
 		return new ResponseEntity<HttpStatus>(HttpStatus.OK);
 	}
 

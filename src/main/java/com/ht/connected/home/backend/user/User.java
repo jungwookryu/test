@@ -90,20 +90,6 @@ public class User {
 	private String userAor;
 	
 
-/*    @OneToMany(fetch = FetchType.LAZY,cascade=CascadeType.ALL )
-    @JoinTable(name = "user_gateway", 
-               joinColumns = @JoinColumn(name="user_no"),
-               inverseJoinColumns = @JoinColumn(name="no"))
-    private List<UserGateway> userGateways;
-    */
-    // getter and setter
-/*    public boolean addGateway(UserGateway userGateway) {
-        if(userGateways == null)
-            userGateways = new ArrayList();
-        return userGateways.add(userGateway);
-    }
-    */
-
 	public User(String userEmail, String password) {
 		this.userEmail = userEmail;
 	}

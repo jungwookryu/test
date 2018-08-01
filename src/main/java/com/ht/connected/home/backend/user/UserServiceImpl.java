@@ -10,30 +10,27 @@ import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.config.service.EmailConfig;
-import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
+import com.ht.connected.home.backend.home.Home;
+import com.ht.connected.home.backend.home.HomeRepository;
 
 @Service
-public class UsersServiceImpl extends CrudServiceImpl<User, Integer> implements UsersService{
+public class UserServiceImpl implements UserService{
 
 
 	@Autowired
 	public EmailConfig emailConfig;
 	
-	public UsersServiceImpl(JpaRepository<User, Integer> jpaRepository) {
-		super(jpaRepository);
-		// TODO Auto-generated constructor stub
-	}
-
-	Logger logger = LoggerFactory.getLogger(UsersServiceImpl.class);
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private HomeRepository homeRepository;
 	
+	Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 	
 	@Override
 	public User getUser(String userEmail) {
@@ -52,7 +49,7 @@ public class UsersServiceImpl extends CrudServiceImpl<User, Integer> implements 
 		user.setLastmodifiedTime(new Date());
 		user.setPassword(passwordUser.getRePassword());
 		user.setNo(no);
-		User modyfyUser = (User) save(user);
+		User modyfyUser = (User) userRepository.saveAndFlush(user);
 		return modyfyUser;
 	}
 
@@ -65,14 +62,17 @@ public class UsersServiceImpl extends CrudServiceImpl<User, Integer> implements 
 	}
 	
 	@Override
-	public User register(User users) {
-		users.setPassword(Common.encryptHash(MessageDigestAlgorithms.SHA_256, users.getPassword()));
-		users.setRedirectiedCode(randomCode());
-		users.setActive(UserActive.NOT_EMAIL_AUTH.ordinal());
-		users.setAuthority(UserRole.ROLE_USER.name());
-		users.setPushType(9);
-		users.setCreatedTime(new Date());
-		User rtnUsers = insert(users);
+	public User register(User user) {
+		user.setPassword(Common.encryptHash(MessageDigestAlgorithms.SHA_256, user.getPassword()));
+		user.setRedirectiedCode(Common.randomCode());
+		user.setActive(UserActive.NOT_EMAIL_AUTH.ordinal());
+		user.setAuthority(UserRole.ROLE_USER.name());
+		user.setPushType(9);
+		user.setCreatedTime(new Date());
+		user.setUserAor(user.getUserEmail().replace("@", "^"));
+		User rtnUsers = userRepository.saveAndFlush(user);
+		Home saveHome = new Home(rtnUsers.getNo(), user.getUserEmail(), user.getUserEmail().replace("@", "^"), "MyHome", new Date());
+        Home home = homeRepository.saveAndFlush(saveHome);
 		authSendEmail(rtnUsers);
 		return rtnUsers;
 
@@ -90,4 +90,5 @@ public class UsersServiceImpl extends CrudServiceImpl<User, Integer> implements 
 		}
 		return false;
 	}
+
 }
