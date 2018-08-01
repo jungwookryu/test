@@ -28,9 +28,6 @@ public class ConsumerListener {
     private ZWaveCertiService zWaveCertiService;
     
     @Autowired
-    private ZWaveService zWaveService;
-
-    @Autowired
     private GatewayService gateWayService;
 
     @Autowired
@@ -55,11 +52,6 @@ public class ConsumerListener {
         String[] topicSplited = topic.trim().replace(".", ";").split(";");
         // message topic 4개이상이어야 gateway관련 메세지임.
         if (topicSplited.length > 4) {
-            Gateway gateway = new Gateway();
-            if (4 <= topicSplited.length) {
-                gateway = new Gateway(topicSplited[3].toString(), topicSplited[4].toString());
-                gateway.setTargetType(topicSplited[1]);
-            }
             // 서버에서 보낸것이 아닐경우만 subscribe함.
             if ((!Target.server.name().equals(topicSplited[1].toString())) &&
                     (CategoryActive.gateway.manager.name().equals(topicSplited[5].toString()))) {
