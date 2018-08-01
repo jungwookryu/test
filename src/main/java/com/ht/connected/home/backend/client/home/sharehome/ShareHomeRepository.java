@@ -7,9 +7,7 @@
  * @version : 1.0
  * @since : 2018. 2. 19.
  */
-package com.ht.connected.home.backend.user;
-
-import java.util.List;
+package com.ht.connected.home.backend.client.home.sharehome;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -19,6 +17,6 @@ import org.springframework.stereotype.Repository;
  *
  */
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
-	List<User> findByUserEmail(String userEmail);
+public interface ShareHomeRepository extends JpaRepository<ShareHome, Integer> {
+    
 }

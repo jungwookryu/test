@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.user;
+package com.ht.connected.home.backend.client.user;
 
 import java.security.Principal;
 import java.util.Map;

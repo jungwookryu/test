@@ -14,6 +14,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ht.connected.home.backend.client.user.User;
+import com.ht.connected.home.backend.client.user.UserRepository;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.device.category.gateway.Gateway;
 import com.ht.connected.home.backend.device.category.gateway.GatewayRepository;
@@ -21,8 +23,6 @@ import com.ht.connected.home.backend.update.model.entity.UPDeviceVersion;
 import com.ht.connected.home.backend.update.model.entity.UPFileVersion;
 import com.ht.connected.home.backend.update.repository.UPDeviceVersionRepository;
 import com.ht.connected.home.backend.update.repository.UPFileVersionRepository;
-import com.ht.connected.home.backend.user.User;
-import com.ht.connected.home.backend.user.UserRepository;
 
 @Service
 public class UPService {

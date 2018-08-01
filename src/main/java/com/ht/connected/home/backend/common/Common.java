@@ -44,9 +44,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ht.connected.home.backend.client.user.User;
 //import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.config.service.EmailConfig;
-import com.ht.connected.home.backend.user.User;
 /**
  * @author ijlee
  *         <p>

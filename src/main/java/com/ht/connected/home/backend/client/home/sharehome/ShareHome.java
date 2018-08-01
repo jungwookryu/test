@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.home.sharehome;
+package com.ht.connected.home.backend.client.home.sharehome;
 
 import java.util.Date;
 

@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.user;
+package com.ht.connected.home.backend.client.user;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -13,10 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.ht.connected.home.backend.client.home.Home;
+import com.ht.connected.home.backend.client.home.HomeRepository;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.config.service.EmailConfig;
-import com.ht.connected.home.backend.home.Home;
-import com.ht.connected.home.backend.home.HomeRepository;
 
 @Service
 public class UserServiceImpl implements UserService{

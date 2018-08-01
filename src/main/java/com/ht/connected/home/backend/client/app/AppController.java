@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.zapp;
+package com.ht.connected.home.backend.client.app;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;

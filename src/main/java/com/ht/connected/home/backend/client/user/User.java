@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.user;
+package com.ht.connected.home.backend.client.user;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

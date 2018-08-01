@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.gov;
+package com.ht.connected.home.backend.client.gov;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;

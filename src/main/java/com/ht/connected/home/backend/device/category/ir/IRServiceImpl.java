@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ht.connected.home.backend.client.app.AppController;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.controller.mqtt.Message;
@@ -32,7 +33,6 @@ import com.ht.connected.home.backend.device.category.gateway.GatewayRepository;
 import com.ht.connected.home.backend.device.category.gateway.gatewayCategory.GatewayCategoryRepository;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
 import com.ht.connected.home.backend.service.mqtt.Target;
-import com.ht.connected.home.backend.zapp.AppController;
 
 @Service
 public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRService {

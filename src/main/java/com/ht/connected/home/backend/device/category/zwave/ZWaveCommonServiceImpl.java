@@ -26,6 +26,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ht.connected.home.backend.client.user.User;
+import com.ht.connected.home.backend.client.user.UserRepository;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.controller.mqtt.Message;
@@ -45,8 +47,6 @@ import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointRepo
 import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointService;
 import com.ht.connected.home.backend.service.mqtt.MqttPayload;
 import com.ht.connected.home.backend.service.mqtt.MqttRequest;
-import com.ht.connected.home.backend.user.User;
-import com.ht.connected.home.backend.user.UserRepository;
 import com.ht.connected.home.backend.userGateway.UserGateway;
 import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
 

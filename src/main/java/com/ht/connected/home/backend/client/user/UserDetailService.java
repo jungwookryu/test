@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.user;
+package com.ht.connected.home.backend.client.user;
 
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.slf4j.Logger;

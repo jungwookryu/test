@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.connected.home.backend.client.user.User;
+import com.ht.connected.home.backend.client.user.UserRepository;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 import com.ht.connected.home.backend.device.category.zwave.ZWaveController;
-import com.ht.connected.home.backend.user.User;
-import com.ht.connected.home.backend.user.UserRepository;
 import com.ht.connected.home.backend.userGateway.UserGateway;
 import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
 

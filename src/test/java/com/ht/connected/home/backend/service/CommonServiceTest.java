@@ -14,10 +14,10 @@ import org.mockito.Mockito;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.ht.connected.home.backend.client.user.UserRepository;
+import com.ht.connected.home.backend.client.user.UserService;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
-import com.ht.connected.home.backend.user.UserRepository;
-import com.ht.connected.home.backend.user.UserService;
 
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)

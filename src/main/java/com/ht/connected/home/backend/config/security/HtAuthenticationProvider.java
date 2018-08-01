@@ -14,8 +14,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.ht.connected.home.backend.client.user.UserDetailService;
 import com.ht.connected.home.backend.common.Common;
-import com.ht.connected.home.backend.user.UserDetailService;
 @Component
 public class HtAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider{
 

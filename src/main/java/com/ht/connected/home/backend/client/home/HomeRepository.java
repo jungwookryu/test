@@ -7,7 +7,7 @@
  * @version : 1.0
  * @since : 2018. 2. 19.
  */
-package com.ht.connected.home.backend.home;
+package com.ht.connected.home.backend.client.home;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

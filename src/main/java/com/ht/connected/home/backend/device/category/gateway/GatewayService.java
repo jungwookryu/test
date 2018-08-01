@@ -6,8 +6,8 @@ import java.util.List;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
+import com.ht.connected.home.backend.client.user.User;
 import com.ht.connected.home.backend.device.category.gateway.gatewayCategory.GatewayCategory;
-import com.ht.connected.home.backend.user.User;
 
 public interface GatewayService{
     List getGatewayList(String status,String authUserEmail);

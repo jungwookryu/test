@@ -22,6 +22,10 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ht.connected.home.backend.client.home.Home;
+import com.ht.connected.home.backend.client.home.HomeRepository;
+import com.ht.connected.home.backend.client.user.User;
+import com.ht.connected.home.backend.client.user.UserRepository;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.controller.mqtt.Message;
@@ -36,11 +40,7 @@ import com.ht.connected.home.backend.device.category.zwave.ZWaveService;
 import com.ht.connected.home.backend.device.category.zwave.cmdcls.CmdClsRepository;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointRepository;
-import com.ht.connected.home.backend.home.Home;
-import com.ht.connected.home.backend.home.HomeRepository;
 import com.ht.connected.home.backend.service.mqtt.Target;
-import com.ht.connected.home.backend.user.User;
-import com.ht.connected.home.backend.user.UserRepository;
 import com.ht.connected.home.backend.userGateway.UserGateway;
 import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
 
