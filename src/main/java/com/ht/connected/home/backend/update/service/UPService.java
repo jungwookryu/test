@@ -14,9 +14,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ht.connected.home.backend.category.gateway.Gateway;
-import com.ht.connected.home.backend.category.gateway.GatewayRepository;
 import com.ht.connected.home.backend.common.Common;
+import com.ht.connected.home.backend.device.category.gateway.Gateway;
+import com.ht.connected.home.backend.device.category.gateway.GatewayRepository;
 import com.ht.connected.home.backend.update.model.entity.UPDeviceVersion;
 import com.ht.connected.home.backend.update.model.entity.UPFileVersion;
 import com.ht.connected.home.backend.update.repository.UPDeviceVersionRepository;

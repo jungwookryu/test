@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ht.connected.home.backend.category.ir.IRValue;
+import com.ht.connected.home.backend.device.category.ir.IRValue;
 
 public class Response {
     @JsonProperty(value = "format")

@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.controller.mqtt.Message;
 import com.ht.connected.home.backend.controller.mqtt.ProducerComponent;
-import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
+import com.ht.connected.home.backend.device.category.CategoryActive;
 import com.ht.connected.home.backend.service.mqtt.Target;
 
 @Service

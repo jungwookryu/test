@@ -11,8 +11,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ht.connected.home.backend.category.gateway.GatewayRepository;
-import com.ht.connected.home.backend.category.zwave.ZWaveCommonServiceImpl.status;
+import com.ht.connected.home.backend.device.category.gateway.GatewayRepository;
+import com.ht.connected.home.backend.device.category.zwave.ZWaveCommonService;
+import com.ht.connected.home.backend.device.category.zwave.ZWaveRepository;
+import com.ht.connected.home.backend.device.category.zwave.ZWaveCommonServiceImpl.status;
 import com.ht.connected.home.backend.gateway.GatewayEntityTestData;
 import com.ht.connected.home.backend.service.MockUtil;
 

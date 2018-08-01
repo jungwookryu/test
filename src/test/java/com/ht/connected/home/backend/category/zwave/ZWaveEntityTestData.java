@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.ht.connected.home.backend.device.category.zwave.ZWave;
 import com.ht.connected.home.backend.service.MockUtil;
 
 @RunWith(SpringRunner.class)

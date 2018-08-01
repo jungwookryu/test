@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ht.connected.home.backend.category.ir.IR;
-import com.ht.connected.home.backend.category.ir.IRController;
-import com.ht.connected.home.backend.category.ir.IRRepository;
-import com.ht.connected.home.backend.category.ir.IRController.Devicetype;
 import com.ht.connected.home.backend.controller.rest.CommonController;
+import com.ht.connected.home.backend.device.category.ir.IR;
+import com.ht.connected.home.backend.device.category.ir.IRController;
+import com.ht.connected.home.backend.device.category.ir.IRRepository;
+import com.ht.connected.home.backend.device.category.ir.IRController.Devicetype;
 
 @RestController
 @RequestMapping("/app")
