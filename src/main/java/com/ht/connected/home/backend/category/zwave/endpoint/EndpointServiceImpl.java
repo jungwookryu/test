@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ht.connected.home.backend.category.gateway.Gateway;
+import com.ht.connected.home.backend.category.gateway.GatewayRepository;
 import com.ht.connected.home.backend.category.zwave.ZWave;
 import com.ht.connected.home.backend.category.zwave.ZWaveControl;
 import com.ht.connected.home.backend.category.zwave.ZWaveRepository;
@@ -31,8 +33,6 @@ import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.controller.mqtt.Message;
 import com.ht.connected.home.backend.controller.mqtt.ProducerComponent;
-import com.ht.connected.home.backend.gateway.Gateway;
-import com.ht.connected.home.backend.gateway.GatewayRepository;
 import com.ht.connected.home.backend.service.mqtt.MqttRequest;
 
 @Service

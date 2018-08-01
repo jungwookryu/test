@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.gateway;
+package com.ht.connected.home.backend.category.gateway;
 
 import java.io.IOException;
 import java.util.List;

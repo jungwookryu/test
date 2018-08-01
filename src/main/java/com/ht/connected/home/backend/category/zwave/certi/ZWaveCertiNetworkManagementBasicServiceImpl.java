@@ -17,6 +17,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ht.connected.home.backend.category.gateway.Gateway;
+import com.ht.connected.home.backend.category.gateway.GatewayRepository;
 import com.ht.connected.home.backend.category.zwave.ZWave;
 import com.ht.connected.home.backend.category.zwave.ZWaveRepository;
 import com.ht.connected.home.backend.category.zwave.ZWaveRequest;
@@ -28,8 +30,6 @@ import com.ht.connected.home.backend.category.zwave.endpoint.EndpointService;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.controller.mqtt.Message;
 import com.ht.connected.home.backend.controller.mqtt.ProducerComponent;
-import com.ht.connected.home.backend.gateway.Gateway;
-import com.ht.connected.home.backend.gateway.GatewayRepository;
 import com.ht.connected.home.backend.service.mqtt.Target;
 /**
  * 0x4D // NetworkManagementBasic Protocal Service

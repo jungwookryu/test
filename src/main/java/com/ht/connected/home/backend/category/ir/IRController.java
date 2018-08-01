@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ht.connected.home.backend.category.gateway.Gateway;
+import com.ht.connected.home.backend.category.gateway.GatewayRepository;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.controller.rest.CommonController;
-import com.ht.connected.home.backend.gateway.Gateway;
-import com.ht.connected.home.backend.gateway.GatewayRepository;
 
 @RestController
 @RequestMapping("/irs")

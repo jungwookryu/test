@@ -7,7 +7,7 @@
  * @version : 1.0
  * @since : 2018. 2. 19.
  */
-package com.ht.connected.home.backend.gateway;
+package com.ht.connected.home.backend.category.gateway;
 
 import java.util.List;
 

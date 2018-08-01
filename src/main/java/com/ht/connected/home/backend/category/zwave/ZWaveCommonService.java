@@ -10,7 +10,7 @@ import org.json.JSONException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.ht.connected.home.backend.gateway.Gateway;
+import com.ht.connected.home.backend.category.gateway.Gateway;
 import com.ht.connected.home.backend.service.mqtt.MqttRequest;
 
 /**

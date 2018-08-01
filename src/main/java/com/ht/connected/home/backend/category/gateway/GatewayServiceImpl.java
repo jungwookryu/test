@@ -1,4 +1,4 @@
-package com.ht.connected.home.backend.gateway;
+package com.ht.connected.home.backend.category.gateway;
 
 import static java.util.Objects.isNull;
 
@@ -11,13 +11,13 @@ import java.util.Properties;
 
 import javax.transaction.Transactional;
 
+import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +36,8 @@ import com.ht.connected.home.backend.controller.mqtt.ProducerComponent;
 import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategory;
 import com.ht.connected.home.backend.gatewayCategory.GatewayCategoryRepository;
-import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
+import com.ht.connected.home.backend.home.Home;
+import com.ht.connected.home.backend.home.HomeRepository;
 import com.ht.connected.home.backend.service.mqtt.Target;
 import com.ht.connected.home.backend.user.User;
 import com.ht.connected.home.backend.user.UserRepository;
@@ -44,14 +45,10 @@ import com.ht.connected.home.backend.userGateway.UserGateway;
 import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
 
 @Service
-public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implements GatewayService {
+public class GatewayServiceImpl implements GatewayService {
 
-    public GatewayServiceImpl(JpaRepository<Gateway, Integer> jpaRepository) {
-        super(jpaRepository);
-    }
-
-    enum type {
-        register, boot, manager
+    enum Type {
+        register, wifi_reset, manager
     }
 
     enum status {
@@ -77,6 +74,9 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
 
     @Autowired
     GatewayRepository gatewayRepository;
+
+    @Autowired
+    HomeRepository homeRepository;
    
     @Autowired
     @Qualifier(value = "callbackAckProperties")
@@ -99,6 +99,10 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
 
     @Autowired
     ZWaveService zwaveService;
+    
+    public GatewayServiceImpl() {
+    }
+
     
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -149,14 +153,6 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
         userGatewayRepository.save(userGateway);
     }
 
-    private User getMasterUserNicknameByGatewayNo(String createdUserId) {
-        List<User> users = userRepository.findByUserEmail(createdUserId);
-        if (users.size() > 0) {
-            return users.get(0);
-        }
-        return new User();
-    }
-
     /**
      * Host reboot category = "type": "boot" Host regist category = "type": "register" topic alive host 가 마지막으로 부팅되어있는 메세지
      * @param topic
@@ -168,46 +164,17 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
      */
     public void subscribe(String topic, String payload) throws JsonParseException, JsonMappingException, IOException, InterruptedException {
         String[] topicSplited = topic.trim().replace(".", ";").split(";");
-        if (topic.contains("noti")) {
-            Gateway gateway = objectMapper.readValue(payload, Gateway.class);
-            gateway.setTargetType(topicSplited[1]);
-            gateway.setModel(topicSplited[3]);
-            gateway.setSerial(topicSplited[4]);
-            gateway.setStatus(gateway.getType());
-            gateway.setCreated_user_id(gateway.getUser_email());
-            if (type.register.name().equals(gateway.getType())) {
-                Gateway exangeGateway = gatewayRepository.findBySerial(gateway.getSerial());
-                if(null != exangeGateway && (!exangeGateway.getCreatedUserId().equals(gateway.getCreatedUserId()))) {
-                    exangeGateway.setLastModifiedTime(new Date());
-                    exangeGateway.setStatus("failAp");
-                    updateGateway(exangeGateway);
-                }else {
-                    List<User> users = userRepository.findByUserEmail(gateway.getUser_email());
-                    if (users.size() > 0) {
-                        User user = users.get(0);
-                        if (exangeGateway == null) {
-                            exangeGateway = gateway;
-                            exangeGateway.setCreated_user_id(gateway.getUser_email());
-                        } else {
-                            exangeGateway.setLastModifiedTime(new Date());
-                        }
-                        exangeGateway.setStatus("sucessAp");
-                        exangeGateway.setCreatedTime(new Date());
-                        exangeGateway.setBssid(gateway.getBssid());
-                        exangeGateway.setSsid(gateway.getSsid());
-                        exangeGateway.setNickname((String) Common.isNullrtnByobj(gateway.getNickname(), topicSplited[1]+"_"+gateway.getSerial()));
-                        updateGateway(exangeGateway);
-                        updateUserGateway(exangeGateway, user.getNo());
-                        Gateway rtnGateway = gatewayRepository.findBySerial(gateway.getSerial());
-                        MqttCommon.publishNotificationData(producerRestController,callbackAckProperties,"zwave.product.registration", Target.app.name(), gateway.getModel(), gateway.getSerial(), rtnGateway);
-                    }
-                }
-                
-            }
-
+        Gateway gateway = objectMapper.readValue(payload, Gateway.class);
+        gateway.setTargetType(topicSplited[1]);
+        gateway.setModel(topicSplited[3]);
+        gateway.setSerial(topicSplited[4]);
+        gateway.setStatus(gateway.getType());
+        gateway.setCreated_user_id(gateway.getUser_email());
+        if (Type.register.name().equals(topicSplited[6])) {
+            registerGateway(gateway);
         }
-        if (topic.contains("alive")) {
-            // TODO Host 마지막 상태 시간 저장 하기
+        else if (Type.wifi_reset.name().equals(topicSplited[6])) {
+            registerGateway(gateway);
         }
 
     }
@@ -354,6 +321,40 @@ public class GatewayServiceImpl extends CrudServiceImpl<Gateway, Integer> implem
         zwaveRepository.deleteByGatewayNo(gateway.getNo());
         irService.deleteIrs(gateway.getNo(), "");
 
+    }
+    
+    private void registerGateway(Gateway gateway) throws JsonGenerationException, JsonMappingException, InterruptedException, IOException {
+       
+        Gateway exangeGateway = gatewayRepository.findBySerial(gateway.getSerial());
+        if(null != exangeGateway && (!exangeGateway.getCreatedUserId().equals(gateway.getCreatedUserId()))) {
+            exangeGateway.setLastModifiedTime(new Date());
+            exangeGateway.setStatus("failAp");
+            updateGateway(exangeGateway);
+        }else {
+            List<User> users = userRepository.findByUserEmail(gateway.getUser_email());
+            if (users.size() > 0) {
+                User user = users.get(0);
+                if (exangeGateway == null) {
+                    exangeGateway = gateway;
+                    exangeGateway.setCreated_user_id(gateway.getUser_email());
+                } else {
+                    exangeGateway.setLastModifiedTime(new Date());
+                }
+                exangeGateway.setStatus("sucessAp");
+                exangeGateway.setCreatedTime(new Date());
+                exangeGateway.setBssid(gateway.getBssid());
+                exangeGateway.setSsid(gateway.getSsid());
+                exangeGateway.setLocLatitude(gateway.getLocLatitude());
+                exangeGateway.setLocLongitude(gateway.getLocLongitude());
+                exangeGateway.setNickname((String) Common.isNullrtnByobj(gateway.getNickname(), 
+                        new StringBuffer().append(gateway.getTargetType()).append("_").append(gateway.getSerial())).toString());
+                updateGateway(exangeGateway);
+                updateUserGateway(exangeGateway, user.getNo());
+                Gateway rtnGateway = gatewayRepository.findBySerial(gateway.getSerial());
+                MqttCommon.publishNotificationData(producerRestController,callbackAckProperties,"zwave.product.registration", Target.app.name(), gateway.getModel(), gateway.getSerial(), rtnGateway);
+            }
+        }
+            
     }
 
     

@@ -21,13 +21,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ht.connected.home.backend.category.gateway.Gateway;
+import com.ht.connected.home.backend.category.gateway.GatewayRepository;
 import com.ht.connected.home.backend.category.zwave.certi.commandclass.NetworkManagementInclusionCommandClass;
 import com.ht.connected.home.backend.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.category.zwave.endpoint.EndpointRepository;
 import com.ht.connected.home.backend.category.zwave.endpoint.EndpointService;
 import com.ht.connected.home.backend.controller.rest.CommonController;
-import com.ht.connected.home.backend.gateway.Gateway;
-import com.ht.connected.home.backend.gateway.GatewayRepository;
 import com.ht.connected.home.backend.user.User;
 import com.ht.connected.home.backend.user.UserRepository;
 import com.ht.connected.home.backend.userGateway.UserGateway;

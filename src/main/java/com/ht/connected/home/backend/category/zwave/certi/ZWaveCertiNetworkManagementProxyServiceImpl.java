@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ht.connected.home.backend.category.gateway.Gateway;
+import com.ht.connected.home.backend.category.gateway.GatewayRepository;
 import com.ht.connected.home.backend.category.zwave.ZWave;
 import com.ht.connected.home.backend.category.zwave.ZWaveCommonService;
 import com.ht.connected.home.backend.category.zwave.ZWaveReport;
@@ -31,8 +33,6 @@ import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.controller.mqtt.Message;
 import com.ht.connected.home.backend.controller.mqtt.ProducerComponent;
-import com.ht.connected.home.backend.gateway.Gateway;
-import com.ht.connected.home.backend.gateway.GatewayRepository;
 import com.ht.connected.home.backend.service.mqtt.MqttPayload;
 import com.ht.connected.home.backend.service.mqtt.Target;
 
