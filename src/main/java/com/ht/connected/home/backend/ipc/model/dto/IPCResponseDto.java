@@ -2,12 +2,18 @@ package com.ht.connected.home.backend.ipc.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * 응답형식 변경에 대비한 클래스 정의
+ * 
+ * @author 구정화
+ *
+ */
 public class IPCResponseDto {
 
-    @JsonProperty(value = "result_code")
+    @JsonProperty(value = "code")
     private String code;
 
-    @JsonProperty(value = "result_msg")
+    @JsonProperty(value = "msg")
     private String msg;
 
     @JsonProperty(value = "data")

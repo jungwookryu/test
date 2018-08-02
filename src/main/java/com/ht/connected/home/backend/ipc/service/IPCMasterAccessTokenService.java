@@ -23,6 +23,12 @@ import org.springframework.stereotype.Service;
 import com.ht.connected.home.backend.ipc.model.entity.IPCAdministrate;
 import com.ht.connected.home.backend.ipc.repository.IPCAdministrateRepository;
 
+/**
+ * IPC 마스터 계정 관리 서비스
+ * 
+ * @author 구정화
+ *
+ */
 @Service
 public class IPCMasterAccessTokenService {
 
@@ -84,6 +90,12 @@ public class IPCMasterAccessTokenService {
         return accessToken;
     }
 
+    /**
+     * 마스터 계정 토큰 업데이트
+     * 
+     * @param accessToken
+     * @return
+     */
     private String updateMasterAccessToken(String accessToken) {
         /**
          * 엑세스 토큰이 없거나 만료 된경우 HIK 서버로 토큰 발급 요청

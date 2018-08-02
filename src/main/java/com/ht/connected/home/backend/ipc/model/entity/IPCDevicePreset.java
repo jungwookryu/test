@@ -15,20 +15,20 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * 마스터 계정 관리
+ * IPC 프리셋 엔터티
  * 
  * @author 구정화
  *
  */
-@SqlResultSetMapping(name = "AccountDevicePresetMapping", classes = {
+@SqlResultSetMapping(name = "DevicePresetMapping", classes = {
         @ConstructorResult(targetClass = IPCDevicePreset.class, columns = {
                 @ColumnResult(name = "iot_account", type = String.class),
                 @ColumnResult(name = "device_serial", type = String.class),
                 @ColumnResult(name = "preset_id", type = String.class),
                 @ColumnResult(name = "nickname", type = String.class) }) })
-@NamedNativeQuery(name = "IPCDevicePreset.getAccountDevicePreset", query = "select a.iot_account, p.device_serial, p.preset_id, p.nickname "
-        + "from ipc_account a left join gateway d on a.iot_account=d.created_user_id inner join ipc_device_preset p on d.serial=p.device_serial "
-        + "where d.serial=:deviceSerial and a.iot_account=:iotAccount", resultSetMapping = "AccountDevicePresetMapping")
+@NamedNativeQuery(name = "IPCDevicePreset.getDevicePresets", query = "select d.created_user_id as iot_account, p.device_serial, p.preset_id, p.nickname "
+        + "from gateway d inner join ipc_device_preset p on d.serial=p.device_serial "
+        + "where d.serial=:deviceSerial", resultSetMapping = "DevicePresetMapping")
 @Entity
 @Table(name = "ipc_device_preset")
 @JsonIgnoreProperties({ "seq", "iotAccount" })

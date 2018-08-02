@@ -15,6 +15,12 @@ import com.ht.connected.home.backend.controller.rest.CommonController;
 import com.ht.connected.home.backend.ipc.model.entity.IPCDevicePreset;
 import com.ht.connected.home.backend.ipc.service.IPCAccessService;
 
+/**
+ * IPC 기기 및 프리셋 등록/삭제 요청 컨트롤러
+ * 
+ * @author 구정화
+ *
+ */
 @RestController
 @RequestMapping("/ipc")
 public class IPCAccessController extends CommonController {

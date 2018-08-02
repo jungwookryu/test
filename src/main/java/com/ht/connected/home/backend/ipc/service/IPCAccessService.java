@@ -36,7 +36,6 @@ import com.ht.connected.home.backend.ipc.model.entity.IPCDevicePreset;
 import com.ht.connected.home.backend.ipc.repository.IPCAccountRepository;
 import com.ht.connected.home.backend.ipc.repository.IPCDevicePresetRepository;
 
-
 /**
  * 앱 요청 처리 비지니스 로직
  * 
@@ -45,9 +44,10 @@ import com.ht.connected.home.backend.ipc.repository.IPCDevicePresetRepository;
  */
 @Service
 public class IPCAccessService {
-    
+
     private static final String IPC_DEVICE_MODEL_NAME = "HIK-HT-IPC";
     private static final String IPC_DEVICE_STATUS = "sucessAp";
+    private static final int MAX_PRESET_ID = 16;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IPCAccessController.class);
 
@@ -123,13 +123,13 @@ public class IPCAccessService {
             if (isNull(account.getAccessToken())) {
                 masterAccessTokenService.getMasterAccessToken();
                 LOGGER.info(String.format("요청시작, 서브계정명 : %s", account.getAccountName()));
-                response = remoteRequestService.getIPCSubAccountToken(
-                        masterAccessTokenService.getMasterAccessToken(), account.getAccountId());
+                response = remoteRequestService.getIPCSubAccountToken(masterAccessTokenService.getMasterAccessToken(),
+                        account.getAccountId());
                 updateSubAccountAccessToken(response, account);
                 response = getEncodedAreaDomainReponseEntity(response);
             } else if (IPCMasterAccessTokenService.isAccessTokenExpired(account.getTokenExpireAt())) {
-                response = remoteRequestService.getIPCSubAccountToken(
-                        masterAccessTokenService.getMasterAccessToken(), account.getAccountId());
+                response = remoteRequestService.getIPCSubAccountToken(masterAccessTokenService.getMasterAccessToken(),
+                        account.getAccountId());
                 updateSubAccountAccessToken(response, account);
                 response = getEncodedAreaDomainReponseEntity(response);
             } else {
@@ -169,6 +169,12 @@ public class IPCAccessService {
         return response;
     }
 
+    /**
+     * 서브계정 토큰 업데이트
+     * 
+     * @param response
+     * @param account
+     */
     private void updateSubAccountAccessToken(ResponseEntity<String> response, IPCAccount account) {
         if (isSuccessResponseStatus(response)) {
             String accessToken = getResponseDataValue(response.getBody(), "accessToken").toString();
@@ -191,12 +197,12 @@ public class IPCAccessService {
      * @param account
      * @return
      */
-    private ResponseEntity<String> getSubAccountAccessTokenResponseEntity(IPCAccount account) {        
-        HashMap<String, Object> tmp2 = new HashMap<>();
+    private ResponseEntity<String> getSubAccountAccessTokenResponseEntity(IPCAccount account) {
+        HashMap<String, Object> tmp = new HashMap<>();
         try {
-            tmp2.put("accessToken", account.getAccessToken());
-            tmp2.put("expireTime", IPCMasterAccessTokenService.dateFormat.parse(account.getTokenExpireAt()).getTime());
-            tmp2.put("areaDomain", URLEncoder.encode(account.getAreaDomain(), StandardCharsets.UTF_8.name()));
+            tmp.put("accessToken", account.getAccessToken());
+            tmp.put("expireTime", IPCMasterAccessTokenService.dateFormat.parse(account.getTokenExpireAt()).getTime());
+            tmp.put("areaDomain", URLEncoder.encode(account.getAreaDomain(), StandardCharsets.UTF_8.name()));
         } catch (ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -207,10 +213,16 @@ public class IPCAccessService {
         IPCResponseDto response = new IPCResponseDto();
         response.setCode("200");
         response.setMsg("Operation succeed !");
-        response.setData(tmp2);
+        response.setData(tmp);
         return new ResponseEntity<String>(getJsonString(response), HttpStatus.OK);
     }
 
+    /**
+     * 응답에 보낼 JSON 반환
+     * 
+     * @param response
+     * @return
+     */
     private String getJsonString(IPCResponseDto response) {
         String jsonString = null;
         try {
@@ -273,11 +285,11 @@ public class IPCAccessService {
                 if (isNull(device)) {
                     device = new Gateway();
                 }
-                device.setCreatedUserId(account.getIotAccount());                
+                device.setCreatedUserId(account.getIotAccount());
                 device.setSerial(request.get("deviceSerial"));
                 device.setCreatedTime(new Date());
                 device.setModel(IPC_DEVICE_MODEL_NAME);
-                device.setStatus(IPC_DEVICE_STATUS);                
+                device.setStatus(IPC_DEVICE_STATUS);
                 gatewayRepository.save(device);
             }
         }
@@ -316,8 +328,8 @@ public class IPCAccessService {
             String statement = String.format(
                     "{\"Permission\": \"Get,Update,Real,Replay,DevCtrl,Video\", \"Resource\": [\"dev:%s\"]}",
                     request.get("deviceSerial"));
-            response = remoteRequestService.stateAccountPermission(
-                    masterAccessTokenService.getMasterAccessToken(), account.getAccountId(), statement);
+            response = remoteRequestService.stateAccountPermission(masterAccessTokenService.getMasterAccessToken(),
+                    account.getAccountId(), statement);
         }
         return response;
     }
@@ -346,8 +358,7 @@ public class IPCAccessService {
      */
     public ResponseEntity<String> updateDevicePreset(IPCDevicePreset request) {
         ResponseEntity<String> result = null;
-        List<IPCDevicePreset> devicePresets = devicePresetRepository.getAccountDevicePreset(request.getDeviceSerial(),
-                request.getIotAccount());
+        List<IPCDevicePreset> devicePresets = devicePresetRepository.getDevicePresets(request.getDeviceSerial());
         boolean presetFound = false;
         if (devicePresets.size() > 0) {
             for (IPCDevicePreset dp : devicePresets) {
@@ -397,20 +408,17 @@ public class IPCAccessService {
      */
     private ResponseEntity<String> getDevicePresetUpdateResponse(IPCDevicePreset devicePreset) {
         HashMap<String, Object> tmp = new HashMap<>();
-        JSONObject tmp2 = new JSONObject();
-        try {
-            tmp2.put("nickname", devicePreset.getNickname());
-            tmp2.put("preset", devicePreset.getPresetId());
-            tmp2.put("deviceSerial", devicePreset.getDeviceSerial());
-            tmp2.put("channel", devicePreset.getChannelNo());
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        tmp.put("code", "200");
-        tmp.put("msg", "Operation succeed !");
-        tmp.put("data", tmp2);
-        return new ResponseEntity<String>(new JSONObject(tmp).toString(), HttpStatus.OK);
+
+        tmp.put("nickname", devicePreset.getNickname());
+        tmp.put("preset", devicePreset.getPresetId());
+        tmp.put("deviceSerial", devicePreset.getDeviceSerial());
+        tmp.put("channel", devicePreset.getChannelNo());
+
+        IPCResponseDto response = new IPCResponseDto();
+        response.setCode("200");
+        response.setMsg("Operation succeed !");
+        response.setData(tmp);
+        return new ResponseEntity<String>(getJsonString(response), HttpStatus.OK);
     }
 
     /**
@@ -421,7 +429,37 @@ public class IPCAccessService {
      */
     private ResponseEntity<String> addDevicePreset(IPCDevicePreset request) {
         IPCAccount account = accountRepository.findByIotAccount(request.getIotAccount());
+        String availablePresetId = getAvailablePresetId(request.getDeviceSerial());
+        if (!isNull(availablePresetId)) {
+            request.setPresetId(availablePresetId);
+            remoteRequestService.deleteDevicePreset(account, request);
+        }
         return remoteRequestService.addDevicePreset(account, request);
+    }
+
+    /**
+     * 프리셋 아이디의 최대수 범위내에서 디비에 저장되지 않은 번호중 하나를 찾아
+     * 
+     * @param deviceSerial
+     * @return
+     */
+    private String getAvailablePresetId(String deviceSerial) {
+        String presetId = null;
+        List<IPCDevicePreset> devicePresets = devicePresetRepository.getDevicePresets(deviceSerial);
+        for (Integer i = 1; i <= MAX_PRESET_ID; i++) {
+            presetId = i.toString();
+            for (IPCDevicePreset devicePreset : devicePresets) {
+                if (devicePreset.getPresetId().equals(presetId)) {
+                    presetId = null;
+                    break;
+                }
+            }
+            if (!isNull(presetId)) {
+                break;
+            }
+        }
+        LOGGER.info(String.format("AVAILABLE PRESET ID FOUND : %s", presetId));
+        return presetId;
     }
 
     /**
@@ -432,7 +470,7 @@ public class IPCAccessService {
      * @return
      */
     public ResponseEntity<String> getDevicePresets(String deviceSerial, String iotAccount) {
-        List<IPCDevicePreset> devicePresets = devicePresetRepository.getAccountDevicePreset(deviceSerial, iotAccount);
+        List<IPCDevicePreset> devicePresets = devicePresetRepository.getDevicePresets(deviceSerial);
         JSONArray json = new JSONArray();
         devicePresets.stream().forEach(preset -> {
             JSONObject jsonObject = new JSONObject();
