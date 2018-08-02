@@ -14,7 +14,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.ht.connected.home.backend.client.home.Home;
-import com.ht.connected.home.backend.client.home.HomeRepository;
+import com.ht.connected.home.backend.client.home.HomeService;
+import com.ht.connected.home.backend.client.home.HomeServiceImpl;
+import com.ht.connected.home.backend.client.home.sharehome.ShareHome;
+import com.ht.connected.home.backend.client.home.sharehome.ShareHomeRepository;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.config.service.EmailConfig;
 
@@ -27,8 +30,13 @@ public class UserServiceImpl implements UserService{
 	
 	@Autowired
 	private UserRepository userRepository;
+	
 	@Autowired
-	private HomeRepository homeRepository;
+	private HomeService homeService;
+	
+	@Autowired
+	private ShareHomeRepository shareHomeRepository;
+	
 	
 	Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 	
@@ -70,12 +78,13 @@ public class UserServiceImpl implements UserService{
 		user.setPushType(9);
 		user.setCreatedTime(new Date());
 		user.setUserAor(user.getUserEmail().replace("@", "^"));
-		User rtnUsers = userRepository.saveAndFlush(user);
-		Home saveHome = new Home(rtnUsers.getNo(), user.getUserEmail(), user.getUserEmail().replace("@", "^"), "MyHome", new Date());
-        Home home = homeRepository.saveAndFlush(saveHome);
-		authSendEmail(rtnUsers);
-		return rtnUsers;
-
+		User rtnUser = userRepository.saveAndFlush(user);
+		Home saveHome = new Home(rtnUser.getNo(), user.getUserEmail(), user.getUserEmail().replace("@", "^"), "MyHome", new Date());
+        Home home = homeService.createHome(saveHome);
+        ShareHome shareHome = new ShareHome(home.getNo(), rtnUser.getNo(), HomeServiceImpl.ShareRole.master.name(),HomeServiceImpl.Status.accept.name() );
+        shareHomeRepository.saveAndFlush(shareHome);
+		authSendEmail(rtnUser);
+		return rtnUser;
 	}
  
 	public boolean authSendEmail(User rtnUsers) {

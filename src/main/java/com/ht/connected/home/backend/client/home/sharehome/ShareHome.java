@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
-@Table(name = "home")
+@Table(name = "share_home")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ShareHome {
@@ -25,29 +25,25 @@ public class ShareHome {
     @JsonProperty("no")
     private int no;
 
-    @Column(name = "home_no")  
-    @JsonProperty("home_no")
-    private int home_no;
+    @Column(name = "homeNo")  
+    @JsonProperty("homeNo")
+    private int homeNo;
     
-    @Column(name = "owner_user_no")  
-    @JsonProperty("owner_user_no")
-    private int ownerUserNo;
-
-    @Column(name = "share_user_email")
-    @JsonProperty("share_user_email")
-    private String shareUserEmail;
-
-    @Column(name = "share_user_aor")
-    @JsonProperty("share_user_aor")
-    private String shareUserAor;
-
-    @Column(name = "share_nickname")
-    @JsonProperty("share_nickname")
-    private String shareNickname;
+    @Column(name = "user_no")  
+    @JsonProperty("user_no")
+    private int userNo;
     
-    @Column(name = "shared_status")
-    @JsonProperty("shared_status")
-    private String sharedStatus;
+    @Column(name = "role")  
+    @JsonProperty("role")
+    private String role;
+
+    @Column(name = "nickname")
+    @JsonProperty("nickname")
+    private String nickname;
+    
+    @Column(name = "status")
+    @JsonProperty("status")
+    private String status;
     
     @Column(name = "accept_date")
     @JsonProperty("accept_date")
@@ -63,7 +59,22 @@ public class ShareHome {
 
     public ShareHome() {
     }
-
+/**
+ * 
+ * @param homeNo
+ * @param ownerUserNo
+ * @param shareUserNo
+ * @param ownerUserAor
+ * @param status
+ */
+    public ShareHome(int homeNo, int userNo, String role, String status) {
+        this.homeNo = homeNo;
+        this.userNo = userNo;
+        this.role = role;
+        this.status = status;
+        this.createdTime = new Date();
+    }
+    
     /**
      * @return the no
      */
@@ -79,87 +90,31 @@ public class ShareHome {
     }
 
     /**
-     * @return the home_no
-     */
-    public int getHome_no() {
-        return home_no;
-    }
-
-    /**
-     * @param home_no the home_no to set
-     */
-    public void setHome_no(int home_no) {
-        this.home_no = home_no;
-    }
-
-    /**
-     * @return the ownerUserNo
-     */
-    public int getOwnerUserNo() {
-        return ownerUserNo;
-    }
-
-    /**
-     * @param ownerUserNo the ownerUserNo to set
-     */
-    public void setOwnerUserNo(int ownerUserNo) {
-        this.ownerUserNo = ownerUserNo;
-    }
-
-    /**
-     * @return the shareUserEmail
-     */
-    public String getShareUserEmail() {
-        return shareUserEmail;
-    }
-
-    /**
-     * @param shareUserEmail the shareUserEmail to set
-     */
-    public void setShareUserEmail(String shareUserEmail) {
-        this.shareUserEmail = shareUserEmail;
-    }
-
-    /**
-     * @return the shareUserAor
-     */
-    public String getShareUserAor() {
-        return shareUserAor;
-    }
-
-    /**
-     * @param shareUserAor the shareUserAor to set
-     */
-    public void setShareUserAor(String shareUserAor) {
-        this.shareUserAor = shareUserAor;
-    }
-
-    /**
      * @return the shareNickname
      */
-    public String getShareNickname() {
-        return shareNickname;
+    public String getNickname() {
+        return nickname;
     }
 
     /**
      * @param shareNickname the shareNickname to set
      */
-    public void setShareNickname(String shareNickname) {
-        this.shareNickname = shareNickname;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     /**
-     * @return the sharedStatus
+     * @return the status
      */
-    public String getSharedStatus() {
-        return sharedStatus;
+    public String getStatus() {
+        return status;
     }
 
     /**
-     * @param sharedStatus the sharedStatus to set
+     * @param status the status to set
      */
-    public void setSharedStatus(String sharedStatus) {
-        this.sharedStatus = sharedStatus;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     /**
@@ -179,7 +134,7 @@ public class ShareHome {
     /**
      * @return the createdTime
      */
-    public Date getCreated_time() {
+    public Date getCreatedTime() {
         return createdTime;
     }
 
@@ -191,27 +146,63 @@ public class ShareHome {
     }
 
     /**
-     * @return the lastModifiedTime
+     * @return the lastmodifiedTime
      */
-    public Date getLastmodified_time() {
+    public Date getLastmodifiedTime() {
         return lastmodifiedTime;
     }
 
     /**
-     * @param lastModifiedTime the lastModifiedTime to set
+     * @param lastmodifiedTime the lastmodifiedTime to set
      */
     public void setLastmodifiedTime(Date lastmodifiedTime) {
         this.lastmodifiedTime = lastmodifiedTime;
     }
 
+    /**
+     * @return the homeNo
+     */
+    public int getHomeNo() {
+        return homeNo;
+    }
+
+    /**
+     * @param homeNo the homeNo to set
+     */
+    public void setHomeNo(int homeNo) {
+        this.homeNo = homeNo;
+    }
+    /**
+     * @return the userNo
+     */
+    public int getUserNo() {
+        return userNo;
+    }
+    /**
+     * @param userNo the userNo to set
+     */
+    public void setUserNo(int userNo) {
+        this.userNo = userNo;
+    }
+    /**
+     * @return the role
+     */
+    public String getRole() {
+        return role;
+    }
+    /**
+     * @param role the role to set
+     */
+    public void setRole(String role) {
+        this.role = role;
+    }
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "ShareHome [no=" + no + ", home_no=" + home_no + ", ownerUserNo=" + ownerUserNo + ", shareUserEmail=" + shareUserEmail + ", shareUserAor=" + shareUserAor + ", shareNickname="
-                + shareNickname + ", sharedStatus=" + sharedStatus + ", acceptDate=" + acceptDate + ", createdTime=" + createdTime + ", lastModifiedTime=" + lastmodifiedTime + "]";
+        return "ShareHome [no=" + no + ", homeNo=" + homeNo + ", userNo=" + userNo + ", role=" + role + ", nickname=" + nickname + ", status=" + status + ", acceptDate=" + acceptDate
+                + ", createdTime=" + createdTime + ", lastmodifiedTime=" + lastmodifiedTime + "]";
     }
 
-        
 }
