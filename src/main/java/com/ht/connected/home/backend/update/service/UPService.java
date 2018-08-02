@@ -3,6 +3,7 @@ package com.ht.connected.home.backend.update.service;
 import static java.util.Objects.isNull;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.ht.connected.home.backend.client.user.User;
@@ -67,12 +69,18 @@ public class UPService {
         return !isNull(session.getAttribute("username"));
     }
 
+    @Async
     public Integer addVersion(UPFileVersion request) {
         UPFileVersion fileVersion = upFileVersionRepository.findByModelName(request.getModelName());
-        fileVersion.setVersion(request.getVersion());
         if (isNull(fileVersion)) {
             fileVersion = request;
+            fileVersion.setVersionOS(request.getVersion());
+            fileVersion.setVersionAPI(request.getVersion());
+            fileVersion.setVersionAPP(request.getVersion());
         }
+        fileVersion.setVersion(request.getVersion());
+        fileVersion.setDeviceType(request.getDeviceType());
+        fileVersion.setForce(request.getForce());
         fileVersion.setUpdatedAt(LocalDateTime.now().toString());
         if (request.getUpdateType().equals(UPFileVersion.UPDATE_TYPE_OS)) {
             fileVersion.setVersionOS(request.getVersion());
@@ -83,12 +91,40 @@ public class UPService {
         }
         fileVersion = upFileVersionRepository.save(fileVersion);
         if (!isNull(fileVersion.getSeq())) {
+            HashMap<String, String> fileMD5 = new HashMap<>();
             List<UPDeviceVersion> deviceVersions = upDeviceVersionRepository.getByModelName(request.getModelName());
             for (UPDeviceVersion deviceVersion : deviceVersions) {
-                String payload = upFileAdviseService.getUpdateNotifyPayload(fileVersion, deviceVersion);
-                if (!isNull(payload)) {
-                    upMqttPublishService.publish(String.format("/server/device/update/%s/%s/get_file",
-                            request.getModelName(), deviceVersion.getSerialNo()), payload);
+                LOGGER.info(String.format("Compare version device (%s)", deviceVersion.getSerialNo()));
+                String updateType = upFileAdviseService.getUpdateType(fileVersion, deviceVersion);
+                if (!isNull(updateType)) {
+                    String md5 = null;
+                    String fileURL = upFileAdviseService.getRemoteFileURL(fileVersion, deviceVersion);
+                    String md5TmpKey = updateType + fileVersion.getVersion();
+                    if (fileMD5.containsKey(md5TmpKey)) {
+                        md5 = fileMD5.get(md5TmpKey);
+                    } else {
+                        md5 = UPFileAdviseService.getMD5Checksum(fileURL);
+                        fileMD5.put(md5TmpKey, md5);
+                    }
+                    if (!isNull(md5)) {
+                        String payload = upFileAdviseService.getUpdateNotifyPayload(fileVersion, deviceVersion,
+                                updateType, fileURL, md5);
+                        if (!isNull(payload)) {
+                            String topic = String.format("/server/device/update/%s/%s/get_file", request.getModelName(),
+                                    deviceVersion.getSerialNo());
+                            LOGGER.info("===== UPDATE INFORM TO DEVICE =====");
+                            LOGGER.info(topic);
+                            LOGGER.info(payload);
+                             upMqttPublishService.publish(topic, payload);
+                        }
+                    } else {
+                        LOGGER.info(
+                                String.format("UPDATE FILE MD5 IS NULL FOR DEVICE(%s)", deviceVersion.getSerialNo()));
+                    }
+                } else {
+                    LOGGER.info(String.format(
+                            "UPDATE TYPE IS NULL SINCE REGISTERED VERSION IS OLDER THEN DEVICE(%s) VERSION",
+                            deviceVersion.getSerialNo()));
                 }
             }
         }

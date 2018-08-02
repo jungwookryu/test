@@ -42,7 +42,7 @@ public class UPFileAdviseService {
      * @param deviceVersion
      * @return
      */
-    private String getUpdateType(UPFileVersion fileVersion, UPDeviceVersion deviceVersion) {
+    public String getUpdateType(UPFileVersion fileVersion, UPDeviceVersion deviceVersion) {
         LOGGER.info(String.format("FILE VERSION (%s), DEVICE OS VERSION (%s)", fileVersion.getVersionOS(),
                 deviceVersion.getVersionOS()));
         LOGGER.info(String.format("FILE VERSION (%s), DEVICE API VERSION (%s)", fileVersion.getVersionAPI(),
@@ -60,36 +60,34 @@ public class UPFileAdviseService {
         return updateType;
     }
 
-    public String getUpdateNotifyPayload(UPFileVersion fileVersion, UPDeviceVersion deviceVersion) {
+    public String getUpdateNotifyPayload(UPFileVersion fileVersion, UPDeviceVersion deviceVersion, String updateType,
+            String fileURL, String md5) {
         String payload = null;
-        String updateType = getUpdateType(fileVersion, deviceVersion);
-        if (!isNull(updateType)) {
-            String fileURL = getRemoteFileURL(fileVersion, deviceVersion);
-            String md5 = getMD5Checksum(fileURL);
-            if (md5.length() > 10) {
-                fileVersion.setMd5(md5);
-                fileVersion.setUrl(fileURL);
-                fileVersion.setForce("false");
-                fileVersion.setUpdateType(updateType);
-                try {
-                    payload = objectMapper.writeValueAsString(fileVersion);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        if (md5.length() > 10) {
+            fileVersion.setMd5(md5);
+            fileVersion.setUrl(fileURL);
+            if (fileVersion.getForce().equals("Y")) {
+                fileVersion.setForce("true");
             } else {
-                LOGGER.error(String.format("원격파일을 찾을수 없습니다 : %s", fileURL));
+                fileVersion.setForce("false");
+            }
+            fileVersion.setUpdateType(updateType);
+            try {
+                payload = objectMapper.writeValueAsString(fileVersion);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         } else {
-            LOGGER.info(String.format("UPDATE TYPE IS NULL SINCE REGISTERED VERSION IS OLDER THEN DEVICE(%s) VERSION",
-                    deviceVersion.getSerialNo()));
+            LOGGER.error(String.format("원격파일을 찾을수 없습니다 : %s", fileURL));
         }
+
         return payload;
     }
 
-    private String getRemoteFileURL(UPFileVersion request, UPDeviceVersion device) {
+    public String getRemoteFileURL(UPFileVersion request, UPDeviceVersion device) {
         // String url = "http://class.brandstock.me/README.md";
-        String url = String.format("%s/iot-module/%s_%s.tar.gz", fileServerHttp, getUpdateType(request, device),
-                request.getVersion());
+        String url = String.format("%s/%s/%s/update_%s.tar.gz", fileServerHttp, request.getDeviceType(),
+                request.getVersion(), getUpdateType(request, device));
         return url;
     }
 
@@ -118,7 +116,7 @@ public class UPFileAdviseService {
         return complete;
     }
 
-    private static String getMD5Checksum(String filename) {
+    public static String getMD5Checksum(String filename) {
         String result = "";
         MessageDigest messageDigest = createChecksum(filename);
         if (!isNull(messageDigest)) {
