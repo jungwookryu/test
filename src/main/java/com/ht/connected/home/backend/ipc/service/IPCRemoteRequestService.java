@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.ht.connected.home.backend.ipc.controller.IPCAccessController;
 import com.ht.connected.home.backend.ipc.model.entity.IPCAccount;
 import com.ht.connected.home.backend.ipc.model.entity.IPCDevicePreset;
 
@@ -23,7 +22,7 @@ import com.ht.connected.home.backend.ipc.model.entity.IPCDevicePreset;
 @Service
 public class IPCRemoteRequestService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(IPCAccessController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IPCRemoteRequestService.class);
 
     private String HOST = "https://open.ezvizlife.com";
     private String CONTENT_TYPE = "application/x-www-form-urlencoded";

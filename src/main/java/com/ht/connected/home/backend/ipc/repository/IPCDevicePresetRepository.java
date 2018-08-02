@@ -11,6 +11,12 @@ import org.springframework.stereotype.Repository;
 
 import com.ht.connected.home.backend.ipc.model.entity.IPCDevicePreset;
 
+/**
+ * IPC 프리셋 리파지토리
+ * 
+ * @author 구정화
+ *
+ */
 @Repository
 public interface IPCDevicePresetRepository extends JpaRepository<IPCDevicePreset, Integer> {
 
@@ -19,8 +25,7 @@ public interface IPCDevicePresetRepository extends JpaRepository<IPCDevicePreset
     IPCDevicePreset findByDeviceSerialAndPresetId(String string, String presetId);
 
     @Query(nativeQuery = true)
-    List<IPCDevicePreset> getAccountDevicePreset(@Param(value = "deviceSerial") String deviceSerial,
-            @Param(value = "iotAccount") String iotAccount);
+    List<IPCDevicePreset> getDevicePresets(@Param(value = "deviceSerial") String deviceSerial);
 
     @Transactional
     void deleteByDeviceSerial(String string);
