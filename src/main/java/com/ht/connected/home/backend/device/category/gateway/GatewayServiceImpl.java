@@ -22,10 +22,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ht.connected.home.backend.client.home.Home;
 import com.ht.connected.home.backend.client.home.HomeRepository;
 import com.ht.connected.home.backend.client.user.User;
-import com.ht.connected.home.backend.client.user.UserRepository;
+import com.ht.connected.home.backend.client.user.UserService;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.controller.mqtt.Message;
@@ -48,29 +47,22 @@ import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
 public class GatewayServiceImpl implements GatewayService {
 
     enum Type {
-        register, wifi_reset, manager
+        register, wifi_reset, alive
     }
 
     enum status {
         add, delete
     }
-    enum share {
-        share, shareRemove, masterModify
-    }
-    enum groupRole {
-        master, share, general
-    }
 
     Logger logger = LoggerFactory.getLogger(GatewayServiceImpl.class);
 
-    @Autowired
     UserGatewayRepository userGatewayRepository;
     
     @Autowired
     ProducerComponent producerRestController;
 
     @Autowired
-    UserRepository userRepository;
+    UserService userService;
 
     @Autowired
     GatewayRepository gatewayRepository;
@@ -100,15 +92,11 @@ public class GatewayServiceImpl implements GatewayService {
     @Autowired
     ZWaveService zwaveService;
     
-    public GatewayServiceImpl() {
-    }
-
     
     private ObjectMapper objectMapper = new ObjectMapper();
 
     public List<Gateway> getGatewayList(String status,String authUserEmail) {
-        List<User> users = userRepository.findByUserEmail(authUserEmail);
-        User user = users.get(0);
+        User user = userService.getUser(authUserEmail);
         List<Integer> nos = new ArrayList<>();
         if(Common.empty(status)) {
             List<UserGateway> userGateways = userGatewayRepository.findByUserNo(user.getNo());
@@ -137,23 +125,6 @@ public class GatewayServiceImpl implements GatewayService {
     }
 
     /**
-     * 호스트를 초기 등록할경우 마스터 유저와 호스트 맵핑
-     * @param jsonObject
-     * @param gateway
-     * @param userNo
-     */
-    private void updateUserGateway(Gateway gateway, int userNo) {
-        UserGateway userGateway = userGatewayRepository.findByUserNoAndGatewayNo(userNo, gateway.getNo());
-        if (isNull(userGateway)) {
-            userGateway = new UserGateway();
-        }
-        userGateway.setGatewayNo(gateway.getNo());
-        userGateway.setUserNo(userNo);
-        userGateway.setGroupRole("master");
-        userGatewayRepository.save(userGateway);
-    }
-
-    /**
      * Host reboot category = "type": "boot" Host regist category = "type": "register" topic alive host 가 마지막으로 부팅되어있는 메세지
      * @param topic
      * @param payload
@@ -164,17 +135,21 @@ public class GatewayServiceImpl implements GatewayService {
      */
     public void subscribe(String topic, String payload) throws JsonParseException, JsonMappingException, IOException, InterruptedException {
         String[] topicSplited = topic.trim().replace(".", ";").split(";");
-        Gateway gateway = objectMapper.readValue(payload, Gateway.class);
-        gateway.setTargetType(topicSplited[1]);
-        gateway.setModel(topicSplited[3]);
-        gateway.setSerial(topicSplited[4]);
-        gateway.setStatus(gateway.getType());
-        gateway.setCreated_user_id(gateway.getUser_email());
+        Gateway responseGateway = new Gateway();
+        if(Common.notEmpty(payload)) {
+        	responseGateway = objectMapper.readValue(payload, Gateway.class);
+        }
+        responseGateway.setTargetType(topicSplited[1]);
+        responseGateway.setModel(topicSplited[3]);
+        responseGateway.setSerial(topicSplited[4]);
+        responseGateway.setCreatedUserId(responseGateway.getUserEmail());
         if (Type.register.name().equals(topicSplited[6])) {
-            registerGateway(gateway);
+            registerGateway(responseGateway);
         }
         else if (Type.wifi_reset.name().equals(topicSplited[6])) {
-            registerGateway(gateway);
+            registerGateway(responseGateway);
+        }else if (Type.alive.name().equals(topicSplited[6])) {
+        	
         }
 
     }
@@ -245,8 +220,8 @@ public class GatewayServiceImpl implements GatewayService {
             if(Common.notEmpty(gateway.getStatus())) {
                 saveGateway.setStatus(gateway.getStatus());
             }
-            if(Common.notEmpty(gateway.getCreatedUserId())) {
-                saveGateway.setCreated_user_id(gateway.getCreatedUserId());
+            if(Common.notEmpty(gateway.getCreated_user_id())) {
+                saveGateway.setCreatedUserId(gateway.getCreated_user_id());
             }
             Gateway rtnGateway = gatewayRepository.save(originGateway);
             return rtnGateway;
@@ -261,47 +236,6 @@ public class GatewayServiceImpl implements GatewayService {
         return gatewayRepository.findOne(no);
     }
 
-
-    @Override
-    public boolean shareGateway(String mode, Gateway originGateway, User user) {
-        boolean bShare = false;
-        //공유
-        if(share.share.name().equals(mode)) {
-            UserGateway saveUserGateway= new UserGateway();
-            saveUserGateway.setGatewayNo(originGateway.getNo());
-            saveUserGateway.setUserNo(user.getNo());
-            saveUserGateway.setGroupRole(share.share.name());
-            userGatewayRepository.save(saveUserGateway);
-            bShare = true;
-        }
-        //공유해제
-        if(share.shareRemove.name().equals(mode)) {
-            userGatewayRepository.deleteByGatewayNoAndUserNo(originGateway.getNo(), user.getNo());
-            bShare = true;
-        }
-        //마스터 변경
-        if(share.masterModify.name().equals(mode)) {
-            List<User> users = userRepository.findByUserEmail(originGateway.getCreatedUserId());
-            User originUser;
-            if(users.size() > 0) {
-                originUser = users.get(0);
-                
-                //Gateway 정보의 마스터 이메일 변경
-                originGateway.setCreated_user_id(user.getUserEmail());
-                gatewayRepository.save(originGateway);
-                //master를 share로 변경
-                UserGateway originUserGateway = userGatewayRepository.findByUserNoAndGatewayNo(originGateway.getNo(), originUser.getNo());
-                originUserGateway.setGroupRole(groupRole.share.name());
-                userGatewayRepository.save(originUserGateway);
-                //share를 master로 변경
-                UserGateway shareUserGateway = userGatewayRepository.findByUserNoAndGatewayNo(originGateway.getNo(), user.getNo());
-                shareUserGateway.setGroupRole(groupRole.master.name());
-                userGatewayRepository.save(shareUserGateway);
-            }
-            bShare = true;
-        }
-        return bShare;
-    }
     @Override
     public void hostReset(String serial) {
         // host 정보삭제
@@ -326,17 +260,16 @@ public class GatewayServiceImpl implements GatewayService {
     private void registerGateway(Gateway gateway) throws JsonGenerationException, JsonMappingException, InterruptedException, IOException {
        
         Gateway exangeGateway = gatewayRepository.findBySerial(gateway.getSerial());
-        if(null != exangeGateway && (!exangeGateway.getCreatedUserId().equals(gateway.getCreatedUserId()))) {
+        if(null != exangeGateway && (!exangeGateway.getCreated_user_id().equals(gateway.getCreated_user_id()))) {
             exangeGateway.setLastModifiedTime(new Date());
             exangeGateway.setStatus("failAp");
             updateGateway(exangeGateway);
         }else {
-            List<User> users = userRepository.findByUserEmail(gateway.getUser_email());
-            if (users.size() > 0) {
-                User user = users.get(0);
-                if (exangeGateway == null) {
+            User user = userService.getUser(gateway.getCreated_user_id());
+            if (!Objects.isNull(user)) {
+				if (exangeGateway == null) {
                     exangeGateway = gateway;
-                    exangeGateway.setCreated_user_id(gateway.getUser_email());
+                    exangeGateway.setCreatedUserId(gateway.getCreated_user_id());
                 } else {
                     exangeGateway.setLastModifiedTime(new Date());
                 }
@@ -349,12 +282,18 @@ public class GatewayServiceImpl implements GatewayService {
                 exangeGateway.setNickname((String) Common.isNullrtnByobj(gateway.getNickname(), 
                         new StringBuffer().append(gateway.getTargetType()).append("_").append(gateway.getSerial())).toString());
                 updateGateway(exangeGateway);
-                updateUserGateway(exangeGateway, user.getNo());
                 Gateway rtnGateway = gatewayRepository.findBySerial(gateway.getSerial());
                 MqttCommon.publishNotificationData(producerRestController,callbackAckProperties,"zwave.product.registration", Target.app.name(), gateway.getModel(), gateway.getSerial(), rtnGateway);
             }
         }
             
+    }
+
+
+    @Override
+    public Gateway findBySerial(String serial) {
+        Gateway gateway = gatewayRepository.findBySerial(serial);
+        return gateway;
     }
 
     

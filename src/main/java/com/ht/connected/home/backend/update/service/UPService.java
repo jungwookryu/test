@@ -98,7 +98,7 @@ public class UPService {
     public void updateOwnDevice(UPDeviceVersion request) {
         Gateway gateway = gatewayRepository.findBySerial(request.getSerialNo());
         if (!isNull(gateway)) {
-            if (gateway.getCreatedUserId().equals(request.getIotAccount())) {
+            if (gateway.getCreated_user_id().equals(request.getIotAccount())) {
                 String topic = String.format("/server/device/update/%s/%s/update_now", gateway.getModel(),
                         gateway.getSerial());
                 upMqttPublishService.publish(topic, "");

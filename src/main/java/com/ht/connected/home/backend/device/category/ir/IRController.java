@@ -152,7 +152,7 @@ public class IRController extends CommonController {
         Gateway gateway = gatewayRepository.findOne(gatewayNo);
         if(gateway!=null) {
             if (Common.empty(ir.getUserEmail())||"anonymousUser".equals(ir.getUserEmail())) {
-                ir.setUserEmail(gateway.getCreatedUserId());
+                ir.setUserEmail(gateway.getCreated_user_id());
             }
             if (Common.empty(ir.getModel())) {
                 ir.setModel(gateway.getModel());
@@ -168,7 +168,7 @@ public class IRController extends CommonController {
         Gateway gateway = gatewayRepository.findBySerial(serial);
         if(gateway!=null) {
             if (Common.empty(ir.getUserEmail())||"anonymousUser".equals(ir.getUserEmail())) {
-                ir.setUserEmail(gateway.getCreatedUserId());
+                ir.setUserEmail(gateway.getCreated_user_id());
             }
             if (Common.empty(ir.getModel())) {
                 ir.setModel(gateway.getModel());

@@ -15,7 +15,7 @@ public interface GatewayService{
     void deleteCategory(GatewayCategory gatewayCategory);
     Gateway modifyGateway(Gateway originGateway, Gateway gateway);
     Gateway findOne(int no);
-    boolean shareGateway(String mode , Gateway originGateway, User user);
+    Gateway findBySerial(String serial);
     void subscribe(String topic, String payload) throws JsonParseException, JsonMappingException, IOException, InterruptedException;
     void hostReset(String serial);
 }

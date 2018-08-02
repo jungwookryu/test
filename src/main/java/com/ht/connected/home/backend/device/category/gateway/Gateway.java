@@ -19,7 +19,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Gateway {
-    @Id
+    public String getCreatedUserId() {
+		return createdUserId;
+	}
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "no")
     @JsonProperty("no")
@@ -65,6 +69,10 @@ public class Gateway {
     @JsonProperty("homeid")
     private String homeid;
 
+    @Column(name = "home_no")
+    @JsonProperty("home_no")
+    private String homeNo;
+    
     @Column(name = "created_user_id")
     @JsonProperty("created_user_id")
     private String createdUserId;
@@ -177,11 +185,11 @@ public class Gateway {
         this.status = status;
     }
 
-    public String getCreatedUserId() {
+    public String getCreated_user_id() {
         return createdUserId;
     }
 
-    public void setCreated_user_id(String createdUserId) {
+    public void setCreatedUserId(String createdUserId) {
         this.createdUserId = createdUserId;
     }
 
@@ -299,21 +307,23 @@ public class Gateway {
         return userEmail;
     }
 
-    /**
-     * @param createdUserId the createdUserId to set
-     */
-    public void setCreatedUserId(String createdUserId) {
-        this.createdUserId = createdUserId;
-    }
+	public String getHomeNo() {
+		return homeNo;
+	}
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "Gateway [no=" + no + ", nickname=" + nickname + ", id=" + id + ", ip=" + ip + ", ssid=" + ssid + ", bssid=" + bssid + ", serial=" + serial + ", version=" + version + ", model=" + model
-                + ", status=" + status + ", homeid=" + homeid + ", createdUserId=" + createdUserId + ", createdTime=" + createdTime + ", lastModifiedTime=" + lastModifiedTime + ", targetType="
-                + targetType + ", locLatitude=" + locLatitude + ", locLongitude=" + locLongitude + ", userEmail=" + userEmail + ", type=" + type + "]";
-    }
+	public void setHomeNo(String homeNo) {
+		this.homeNo = homeNo;
+	}
+
+	@Override
+	public String toString() {
+		return "Gateway [no=" + no + ", nickname=" + nickname + ", id=" + id + ", ip=" + ip + ", ssid=" + ssid
+				+ ", bssid=" + bssid + ", serial=" + serial + ", version=" + version + ", model=" + model + ", status="
+				+ status + ", homeid=" + homeid + ", homeNo=" + homeNo + ", createdUserId=" + createdUserId
+				+ ", createdTime=" + createdTime + ", lastModifiedTime=" + lastModifiedTime + ", targetType="
+				+ targetType + ", locLatitude=" + locLatitude + ", locLongitude=" + locLongitude + ", userEmail="
+				+ userEmail + ", type=" + type + "]";
+	}
+	
 
 }

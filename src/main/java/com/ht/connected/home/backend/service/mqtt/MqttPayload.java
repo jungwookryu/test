@@ -22,6 +22,9 @@ public class MqttPayload {
 	@JsonProperty(value = "set_data")
     private HashMap<String, Object> setData;
 
+	public MqttPayload() {
+	}
+	
 	public int getResultCode() {
 		return resultCode;
 	}

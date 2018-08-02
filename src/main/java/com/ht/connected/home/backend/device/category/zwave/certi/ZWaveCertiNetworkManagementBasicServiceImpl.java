@@ -3,6 +3,7 @@ package com.ht.connected.home.backend.device.category.zwave.certi;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 
 import javax.transaction.Transactional;
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.controller.mqtt.Message;
 import com.ht.connected.home.backend.controller.mqtt.ProducerComponent;
@@ -30,6 +32,7 @@ import com.ht.connected.home.backend.device.category.zwave.cmdcls.CmdClsReposito
 import com.ht.connected.home.backend.device.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointRepository;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointService;
+import com.ht.connected.home.backend.service.mqtt.MqttPayload;
 import com.ht.connected.home.backend.service.mqtt.Target;
 /**
  * 0x4D // NetworkManagementBasic Protocal Service
@@ -84,8 +87,13 @@ public class ZWaveCertiNetworkManagementBasicServiceImpl implements ZWaveCertiNe
     @SuppressWarnings("rawtypes")
     public void subscribe(ZWaveRequest zwaveRequest, String payload) throws JsonParseException, JsonMappingException, IOException, Exception {
 
+    	MqttPayload mqttPayload = new MqttPayload();
+    	if(Common.notEmpty(payload)) {
+    		mqttPayload = objectMapper.readValue(payload, MqttPayload.class);
+    	}
         // 기기 초기화 결과 0x4D/0x07 기기상태값모드 받은 경우
-        if (zwaveRequest.getCommandKey() == NetworkManagementBasicCommandClass.DEFAULT_SET_COMPLETE) {
+        if (zwaveRequest.getCommandKey() == NetworkManagementBasicCommandClass.DEFAULT_SET_COMPLETE &&
+        		(!Objects.isNull(mqttPayload.getResultData())) && ((int)mqttPayload.getResultData().getOrDefault("status", 255)==0)){
             // 해당기기의 정보를 모두 삭제한다.
             zwaveReset(zwaveRequest);
             String topic = callbackAckProperties.getProperty("manager.product.remove");

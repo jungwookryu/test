@@ -5,9 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,10 +22,6 @@ public class UserEmergencyServiceImpl extends CrudServiceImpl<UserEmergency, Int
 
     @Autowired
     UserEmergencyRepository userEmergencyRepository;
-
-    @Autowired
-    @Qualifier(value = "MqttOutbound")
-    MqttPahoMessageHandler messageHandler;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 

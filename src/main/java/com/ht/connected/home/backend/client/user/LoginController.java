@@ -91,7 +91,7 @@ public class LoginController extends CommonController {
             }
             if (!rtnUsers.getPassword().equals(Common.encryptHash(MessageDigestAlgorithms.SHA_256, password))) {
                 throw new BadClientCredentialsException();
-            };
+            }
 
             rtnUsers.setPushToken(users.getPushToken());
             rtnUsers.setPushType(users.getPushType());

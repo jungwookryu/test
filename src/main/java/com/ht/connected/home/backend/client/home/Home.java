@@ -1,6 +1,8 @@
 package com.ht.connected.home.backend.client.home;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -49,6 +51,14 @@ public class Home {
     @JsonProperty("lastmodified_time")
     private Date lastModifiedTime;
 
+    @Transient
+    @JsonProperty("homes")
+    List<Home> Homes;
+    
+    
+    public Home() {
+        
+    }
     public Home(int ownerUserNo, String ownerUserEmail, String ownerUserAor, String nickname, Date createdTime) {
         this.ownerUserNo = ownerUserNo;
         this.ownerUserEmail = ownerUserEmail;
@@ -153,6 +163,25 @@ public class Home {
      */
     public void setLastModifiedTime(Date lastModifiedTime) {
         this.lastModifiedTime = lastModifiedTime;
+    }
+    /**
+     * @return the homes
+     */
+    public List<Home> getHomes() {
+        return Homes;
+    }
+    /**
+     * @param homes the homes to set
+     */
+    public void setHomes(List<Home> homes) {
+        Homes = homes;
+    }
+    
+    public void addHome(Home home) {
+        if(this.Homes.size()==0) {
+            this.Homes = new ArrayList();
+        }
+            Homes.add(home);
     }
 
 }
