@@ -27,8 +27,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
                 @ColumnResult(name = "preset_id", type = String.class),
                 @ColumnResult(name = "nickname", type = String.class) }) })
 @NamedNativeQuery(name = "IPCDevicePreset.getAccountDevicePreset", query = "select a.iot_account, p.device_serial, p.preset_id, p.nickname "
-        + "from ipc_account a left join ipc_device d on a.seq=d.account_seq inner join ipc_device_preset p on d.device_serial=p.device_serial "
-        + "where d.device_serial=:deviceSerial and a.iot_account=:iotAccount", resultSetMapping = "AccountDevicePresetMapping")
+        + "from ipc_account a left join gateway d on a.iot_account=d.created_user_id inner join ipc_device_preset p on d.serial=p.device_serial "
+        + "where d.serial=:deviceSerial and a.iot_account=:iotAccount", resultSetMapping = "AccountDevicePresetMapping")
 @Entity
 @Table(name = "ipc_device_preset")
 @JsonIgnoreProperties({ "seq", "iotAccount" })
