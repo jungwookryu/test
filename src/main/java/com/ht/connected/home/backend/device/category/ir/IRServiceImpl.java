@@ -139,7 +139,7 @@ public class IRServiceImpl extends CrudServiceImpl<IR, Integer> implements IRSer
             String serial = topicSplited[4];
             if (Common.notEmpty(payload)) {
                 HashMap<String, Object> map = objectMapper.readValue(payload, HashMap.class);
-                if (Type.add.name().equals((String) map.getOrDefault("type", ""))
+                if (Type.add.name().equals(map.getOrDefault("type", ""))
                         && !AppController.Command.stop.name().equals(map.getOrDefault("action", ""))) {
                     HashMap rtnMap = (HashMap) map.getOrDefault("response", new HashMap());
                     List<IR> irs = irRepository.findBySerialAndStatusAndModel(serial, "", model);

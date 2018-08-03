@@ -6,7 +6,6 @@ import java.util.List;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
-import com.ht.connected.home.backend.client.user.User;
 import com.ht.connected.home.backend.device.category.gateway.gatewayCategory.GatewayCategory;
 
 public interface GatewayService{
@@ -18,4 +17,5 @@ public interface GatewayService{
     Gateway findBySerial(String serial);
     void subscribe(String topic, String payload) throws JsonParseException, JsonMappingException, IOException, InterruptedException;
     void hostReset(String serial);
+	List getGatewayListByHome(List<Integer> iHomes);
 }

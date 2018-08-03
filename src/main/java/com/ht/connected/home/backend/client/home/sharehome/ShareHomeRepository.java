@@ -22,6 +22,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ShareHomeRepository extends JpaRepository<ShareHome, Integer> {
     List<ShareHome> findByUserNo(int userNo);
+    List<ShareHome> findByUserNoAndRoleContaining (int userNo,String role);
     void deleteByHomeNoAndUserNo(int homeNo, int userNo);
     ShareHome findByUserNoAndHomeNo(int userNo, int homeNo);
 }

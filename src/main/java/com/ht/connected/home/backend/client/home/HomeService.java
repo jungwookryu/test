@@ -11,13 +11,19 @@ public interface HomeService{
 
     Page getHomeList(Pageable pageable, String nickname);
     
-    List<Home> getHomeListByEmail(String authUserEmail, String nickname);
-
+    List<Home> getHomeListByEmail(String authUserEmail, String nickname, String role);
+    
     Home createHome(Home requestHome);
 
     Home findOne(int no);
 
     boolean shareHome(String mode, Home originHome, User user);
+
+	Home getHomeByUserInfo(int userNo);
+
+	List<Home> getHomeListByEmail(String authUserEmail);
+
+	List<Home> getHomeListByEmail(String authUserEmail, String nickname);
     
     
 }

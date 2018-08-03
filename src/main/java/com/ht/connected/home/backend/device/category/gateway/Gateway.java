@@ -19,10 +19,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Gateway {
-    public String getCreatedUserId() {
-		return createdUserId;
-	}
-
+    
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "no")
@@ -71,7 +68,7 @@ public class Gateway {
 
     @Column(name = "home_no")
     @JsonProperty("home_no")
-    private String homeNo;
+    private int homeNo;
     
     @Column(name = "created_user_id")
     @JsonProperty("created_user_id")
@@ -217,10 +214,6 @@ public class Gateway {
         this.model = model;
     }
 
-    public String getUser_email() {
-        return userEmail;
-    }
-
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
     }
@@ -286,34 +279,14 @@ public class Gateway {
         this.locLongitude = locLongitude;
     }
 
-    /**
-     * @return the createdTime
-     */
-    public Date getCreatedTime() {
-        return createdTime;
-    }
-
-    /**
-     * @return the lastModifiedTime
-     */
-    public Date getLastModifiedTime() {
-        return lastModifiedTime;
-    }
-
-    /**
-     * @return the userEmail
-     */
-    public String getUserEmail() {
-        return userEmail;
-    }
-
-	public String getHomeNo() {
+	public int getHomeNo() {
 		return homeNo;
 	}
 
-	public void setHomeNo(String homeNo) {
+	public void setHomeNo(int homeNo) {
 		this.homeNo = homeNo;
 	}
+	
 
 	@Override
 	public String toString() {
@@ -324,6 +297,11 @@ public class Gateway {
 				+ targetType + ", locLatitude=" + locLatitude + ", locLongitude=" + locLongitude + ", userEmail="
 				+ userEmail + ", type=" + type + "]";
 	}
-	
+
+	public String getUserEmail() {
+		return userEmail;
+	}
+
+
 
 }

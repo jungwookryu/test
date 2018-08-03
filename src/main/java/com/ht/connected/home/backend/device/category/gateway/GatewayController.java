@@ -2,8 +2,10 @@ package com.ht.connected.home.backend.device.category.gateway;
 
 import static java.util.Objects.isNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,10 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.connected.home.backend.client.user.User;
 import com.ht.connected.home.backend.client.user.UserService;
-import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 import com.ht.connected.home.backend.device.category.zwave.ZWaveController;
-import com.ht.connected.home.backend.userGateway.UserGateway;
 import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
 
 /**
@@ -59,11 +59,14 @@ public class GatewayController extends CommonController {
         String authUserEmail = getAuthUserEmail();
         User user = userService.getUser(authUserEmail);
         Gateway gateway = gateWayService.findBySerial(req.get("serial"));
-
+        List lst = new ArrayList();
+        lst.add(gateway);
+        HashMap map = new HashMap<>();
+        map.put("list", lst);
         if (isNull(gateway)) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         } else {
-            return new ResponseEntity(gateway,HttpStatus.OK);
+            return new ResponseEntity(map,HttpStatus.OK);
         }
     }
 
@@ -74,16 +77,22 @@ public class GatewayController extends CommonController {
      * @throws Exception
      */
 
-    @GetMapping
-    public ResponseEntity<HashMap<String, Object>> getGatewayList(
-            @RequestParam(value = "status", required=false) String status)
-            throws Exception {
-        String authUserEmail = getAuthUserEmail();
-        List lstGateways = gateWayService.getGatewayList(status, authUserEmail);
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put("list", lstGateways);
-        return new ResponseEntity<HashMap<String, Object>>(map, HttpStatus.OK);
-    }
+	@GetMapping
+	public ResponseEntity<HashMap<String, Object>> getGatewayList(
+			@RequestParam(value = "status", required = false) String status,
+			@RequestParam(value = "shomeNos", required = false) String shomeNos) throws Exception {
+		List<Integer> iHomes = new ArrayList();
+		if (!Objects.isNull(shomeNos)) {
+			String[] sHomes = shomeNos.split(",");
+			for (String sHome : sHomes) {
+				iHomes.add(Integer.parseInt(sHome));
+			}
+		}
+		List lstGateways = gateWayService.getGatewayListByHome(iHomes);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("list", lstGateways);
+		return new ResponseEntity(map, HttpStatus.OK);
+	}
     
     @DeleteMapping(value = "/{no}")
     public ResponseEntity deleteGateway(@PathVariable("no") int no) throws Exception {

@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService{
 		user.setLastmodifiedTime(new Date());
 		user.setPassword(passwordUser.getRePassword());
 		user.setNo(no);
-		User modyfyUser = (User) userRepository.saveAndFlush(user);
+		User modyfyUser = userRepository.saveAndFlush(user);
 		return modyfyUser;
 	}
 

@@ -65,6 +65,7 @@ public class UserDetail implements UserDetails {
 	/**
 	 * @return the password
 	 */
+	@Override
 	public String getPassword() {
 		return password;
 	}

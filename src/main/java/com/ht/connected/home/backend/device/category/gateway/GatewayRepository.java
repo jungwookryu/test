@@ -30,7 +30,7 @@ public interface GatewayRepository extends JpaRepository<Gateway, Integer> {
 	Gateway findBySerial(String serial);
 	List<Gateway> findByNoIn(List<Integer> nos);
 	List<Gateway> findByNoInAndStatusContaining(List<Integer> nos, String status);
-	
+	List<Gateway> findByHomeNoIn(List<Integer> homeNos);
 	@Modifying
 	@Query("update Gateway set status = ?1 where no = ?2")
 	int setModifyStatusForNo(String status, int no);

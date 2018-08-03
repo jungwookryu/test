@@ -85,7 +85,7 @@ public class ZWaveConstant {
             if(null!=findByProtocalVersion(protocal)) {
                 return findByProtocalVersion(protocal).getSubVersion();
             }
-            return (String) null;
+            return null;
         }
         public static ProtocalVersion findByProtocalVersion(String protocal) {
             ProtocalVersion[] lstProtocal = ProtocalVersion.values();
@@ -94,7 +94,7 @@ public class ZWaveConstant {
                     return lstProtocal[i];
                 }
             }
-            return (ProtocalVersion) null;
+            return null;
         }
     }
     /**

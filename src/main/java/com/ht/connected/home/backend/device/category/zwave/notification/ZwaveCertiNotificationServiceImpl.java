@@ -112,7 +112,7 @@ public class ZwaveCertiNotificationServiceImpl implements ZwaveCertiNotification
             multilevelSensorCommandClass.setTypeAndScale(multilebelProperties, sensorType, level);
             int value = (int) requestNotification.getResult_data().getOrDefault("value", -1);
             String deviceTypeCode = endpoint.getGeneric() + "." + endpoint.getSpecific();
-            String functionCode = multilevelSensorCommandClass.functionCode;
+            String functionCode = MultilevelSensorCommandClass.functionCode;
             notification = new Notification(BinarySwitchCommandClass.MEVENT, BinarySwitchCommandClass.getNotificationCode(value), BinarySwitchCommandClass.DEFAULT_SEQUENCE, deviceTypeCode,
                     endpoint.getZwaveNo(), endpoint.getNo());
             notification.setFunctionCode(functionCode);

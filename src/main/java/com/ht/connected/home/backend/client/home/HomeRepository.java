@@ -21,4 +21,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface HomeRepository extends JpaRepository<Home, Integer> {
     List<Home> findByNoInAndNicknameContaining(List<Integer> nos, String nickname);
+    Home findByOwnerUserNo(int userNo);
 }

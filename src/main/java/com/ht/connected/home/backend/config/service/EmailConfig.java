@@ -78,7 +78,8 @@ public class EmailConfig {
     @Bean(name="emailAuth")
     public Authenticator auth() {
         Authenticator auth = new Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
+            @Override
+			protected PasswordAuthentication getPasswordAuthentication() {
                 MailProperties mailProperties = mailProperties();
                 return new PasswordAuthentication(mailProperties.getUsername(), mailProperties.getPassword());
             }

@@ -98,7 +98,7 @@ public class ZWaveController extends CommonController {
     @GetMapping(value = "/{gateway_no}")
     public ResponseEntity getList(@PathVariable("gateway_no") int gatewayNo) {
 
-        Map sRtnList = (Map) zWaveCommonService.getZWaveListApp(gatewayNo);
+        Map sRtnList = zWaveCommonService.getZWaveListApp(gatewayNo);
         return new ResponseEntity<>(sRtnList, HttpStatus.ACCEPTED);
     }
 

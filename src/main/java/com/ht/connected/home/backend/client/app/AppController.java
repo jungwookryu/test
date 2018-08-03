@@ -21,7 +21,6 @@ import com.ht.connected.home.backend.controller.rest.CommonController;
 import com.ht.connected.home.backend.device.category.ir.IR;
 import com.ht.connected.home.backend.device.category.ir.IRController;
 import com.ht.connected.home.backend.device.category.ir.IRRepository;
-import com.ht.connected.home.backend.device.category.ir.IRController.Devicetype;
 
 @RestController
 @RequestMapping("/app")

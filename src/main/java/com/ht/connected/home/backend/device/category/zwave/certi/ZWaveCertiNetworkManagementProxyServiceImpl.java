@@ -105,7 +105,7 @@ public class ZWaveCertiNetworkManagementProxyServiceImpl implements ZWaveCertiNe
                 if (lstOriginalZwave.size() == 0 && (!isNull(gateway)) && (zwaveReport.getNodelist() != null)) {
                     zWaveCommonService.saveGatewayCategory(zwaveRequest, zwaveRequest.getNodeId());
                     // 기기 리스트에 대한 정보일 경우
-                    List<ZWave> nodeListItem = (List<ZWave>) zwaveReport.getNodelist();
+                    List<ZWave> nodeListItem = zwaveReport.getNodelist();
                     for (int i = 0; i < nodeListItem.size(); i++) {
                         ZWave nodeItem = nodeListItem.get(i);
                         ZWave zwave = zWaveCommonService.saveZWaveList(zwaveRequest, nodeItem, gateway);
