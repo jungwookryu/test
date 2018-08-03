@@ -79,8 +79,15 @@ public class HomeServiceImpl implements HomeService {
 			List<Integer> nos = new ArrayList();
 
 			shareHomes.forEach(ShareHome -> nos.add(ShareHome.getHomeNo()));
-
 			homes = homeRepository.findByNoInAndNicknameContaining(nos, nickname);
+			
+			for (Home home : homes) {
+				shareHomes.forEach(ShareHome -> {
+					if(ShareHome.getHomeNo()==home.getNo() && ShareHome.getUserNo()==user.getNo()) {
+						home.setRole(ShareHome.getRole());
+					}
+				});
+			}
 		}
 		return homes;
 	}
@@ -100,43 +107,45 @@ public class HomeServiceImpl implements HomeService {
 	}
 
 	@Override
-	public boolean shareHome(String mode, Home originHome, User user) {
+	public boolean shareHome(Home originHome, User user) {
 		boolean bShare = false;
-		// 공유
-		if (Share.share.name().equals(mode)) {
-			ShareHome shareHome = new ShareHome(originHome.getNo(), user.getNo(), Share.share.name(),
-					Status.request.name());
-			shareHomeRepository.save(shareHome);
-			bShare = true;
-		}
-		// 공유해제
-		if (Share.shareRemove.name().equals(mode)) {
-			shareHomeRepository.deleteByHomeNoAndUserNo(originHome.getNo(), user.getNo());
-			bShare = true;
-		}
-		// 마스터 변경
-		if (Share.masterModify.name().equals(mode)) {
-			User originUser = userService.getUser(originHome.getOwnerUserEmail());
-			if (!Objects.isNull(user)) {
-				// Home 정보의 마스터 이메일 변경
-				originHome.setOwnerUserEmail(user.getUserEmail());
-				homeRepository.saveAndFlush(originHome);
-				// master를 share로 변경
-				ShareHome originShareHome = shareHomeRepository.findByUserNoAndHomeNo(originHome.getOwnerUserNo(),
-						originHome.getNo());
-				originShareHome.setRole(ShareRole.share.name());
-				shareHomeRepository.save(originShareHome);
-				// share를 master로 변경
-				ShareHome shareUserGateway = shareHomeRepository.findByUserNoAndHomeNo(originHome.getNo(),
-						user.getNo());
-				shareUserGateway.setRole(ShareRole.master.name());
-				shareHomeRepository.save(shareUserGateway);
-			}
-			bShare = true;
-		}
+		ShareHome shareHome = new ShareHome(originHome.getNo(), user.getNo(), Share.share.name(),
+				Status.request.name());
+		shareHomeRepository.save(shareHome);
+		bShare = true;
 		return bShare;
 	}
 
+	@Override
+	public boolean masterModifyHome(Home originHome, User user) {
+
+		boolean bShare = false;
+		if (!Objects.isNull(user)) {
+			// Home 정보의 마스터 이메일 변경
+			originHome.setOwnerUserEmail(user.getUserEmail());
+			originHome.setOwnerUserNo(user.getNo());
+			originHome.setOwnerUserAor(user.getUserAor());
+			homeRepository.saveAndFlush(originHome);
+			// master를 share로 변경
+			ShareHome originShareHome = shareHomeRepository.findByUserNoAndHomeNo(originHome.getOwnerUserNo(),
+					originHome.getNo());
+			shareHomeRepository.setModifyStatusForNo(ShareRole.share.name(), originShareHome.getNo());
+			// share를 master로 변경
+			ShareHome shareShareHome = shareHomeRepository.findByUserNoAndHomeNo(user.getNo(),originHome.getNo());
+			shareHomeRepository.setModifyStatusForNo(ShareRole.master.name(), shareShareHome.getNo());
+		}
+		bShare = true;
+		return bShare;
+
+	}
+	
+	@Override
+	public boolean shareRemoveHome(Home originHome, User user) {
+		boolean bShare = false;
+		shareHomeRepository.deleteByHomeNoAndUserNo(originHome.getNo(), user.getNo());
+		bShare = true;
+		return bShare;
+	}
 	@Override
 	public Home getHomeByUserInfo(int userNo) {
 		Home rtnHome = homeRepository.findByOwnerUserNo(userNo);

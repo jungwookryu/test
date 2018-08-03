@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.connected.home.backend.client.home.HomeServiceImpl.Share;
+import com.ht.connected.home.backend.client.home.HomeServiceImpl.ShareRole;
+import com.ht.connected.home.backend.client.home.HomeServiceImpl.Status;
+import com.ht.connected.home.backend.client.home.sharehome.ShareHome;
 import com.ht.connected.home.backend.client.user.User;
 import com.ht.connected.home.backend.client.user.UserService;
 import com.ht.connected.home.backend.common.Common;
@@ -73,8 +77,19 @@ public class HomeController extends CommonController {
             (Objects.isNull(user))) {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
-
-        boolean rtnShareHome = homeService.shareHome(mode, originHome, user);
+        boolean rtnShareHome = false;
+		// 공유
+		if (Share.share.name().equals(mode)) {
+			rtnShareHome = homeService.shareHome(originHome, user);
+		}
+		// 공유해제
+		if (Share.shareRemove.name().equals(mode)) {
+			rtnShareHome = homeService.shareRemoveHome(originHome, user);
+		}
+		// 마스터 변경
+		if (Share.masterModify.name().equals(mode)) {
+			rtnShareHome = homeService.masterModifyHome(originHome, user);
+		}
         if(rtnShareHome) {
             return new ResponseEntity<>(rtnShareHome,HttpStatus.OK);
         }else {
