@@ -59,13 +59,13 @@ public class GatewayController extends CommonController {
         String authUserEmail = getAuthUserEmail();
         User user = userService.getUser(authUserEmail);
         Gateway gateway = gateWayService.findBySerial(req.get("serial"));
-        List lst = new ArrayList();
-        lst.add(gateway);
-        HashMap map = new HashMap<>();
-        map.put("list", lst);
         if (isNull(gateway)) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         } else {
+        	List lst = new ArrayList();
+        	lst.add(gateway);
+        	HashMap map = new HashMap<>();
+        	map.put("list", lst);
             return new ResponseEntity(map,HttpStatus.OK);
         }
     }
