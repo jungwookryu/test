@@ -14,10 +14,10 @@ import org.mockito.Mockito;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.ht.connected.home.backend.client.user.UserRepository;
+import com.ht.connected.home.backend.client.user.UserService;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.service.impl.base.CrudServiceImpl;
-import com.ht.connected.home.backend.user.UserRepository;
-import com.ht.connected.home.backend.user.UsersService;
 
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
@@ -29,7 +29,7 @@ public class CommonServiceTest extends MockUtil {
     @Mock
     public CrudServiceImpl<Class, Integer> crudImplService;
     @InjectMocks
-    public UsersService usersService;
+    public UserService usersService;
 
     public static Common common = new Common();
 

@@ -11,18 +11,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.ht.connected.home.backend.client.user.User;
+import com.ht.connected.home.backend.client.user.UserActive;
+import com.ht.connected.home.backend.client.user.UserService;
 import com.ht.connected.home.backend.controller.rest.CommonController;
-import com.ht.connected.home.backend.user.User;
-import com.ht.connected.home.backend.user.UserActive;
-import com.ht.connected.home.backend.user.UsersService;
 
 @Controller
 public class EmailAuthController extends CommonController {
 
-    UsersService usersService;
+    UserService usersService;
 
     @Autowired
-    public EmailAuthController(UsersService usersService) {
+    public EmailAuthController(UserService usersService) {
         this.usersService = usersService;
     }
 

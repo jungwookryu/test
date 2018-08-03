@@ -11,9 +11,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ht.connected.home.backend.category.zwave.ZWaveServiceImpl.status;
+import com.ht.connected.home.backend.device.category.gateway.GatewayRepository;
+import com.ht.connected.home.backend.device.category.zwave.ZWaveCommonService;
+import com.ht.connected.home.backend.device.category.zwave.ZWaveRepository;
+import com.ht.connected.home.backend.device.category.zwave.ZWaveCommonServiceImpl.status;
 import com.ht.connected.home.backend.gateway.GatewayEntityTestData;
-import com.ht.connected.home.backend.gateway.GatewayRepository;
 import com.ht.connected.home.backend.service.MockUtil;
 
 
@@ -27,7 +29,7 @@ public class ZWaveServiceImplTest  extends MockUtil{
     GatewayRepository gatewayRepository;
     
     @InjectMocks
-    ZWaveServiceImpl zWaveService;
+    ZWaveCommonService zWaveCommonService;
 
     @Before
     public void setUp() throws Exception {
@@ -47,7 +49,7 @@ public class ZWaveServiceImplTest  extends MockUtil{
     @Test
     public void deleteByNo() throws JsonProcessingException, InterruptedException {
         int expectedResult = 1;
-        int result = zWaveService.deleteByNo(zwaveNo);
+        int result = zWaveCommonService.deleteByNo(zwaveNo);
         Assert.assertEquals(expectedResult, result);
     }
 

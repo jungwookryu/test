@@ -16,15 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import com.ht.connected.home.backend.client.user.User;
+import com.ht.connected.home.backend.client.user.UserRepository;
 import com.ht.connected.home.backend.common.Common;
-import com.ht.connected.home.backend.gateway.Gateway;
-import com.ht.connected.home.backend.gateway.GatewayRepository;
+import com.ht.connected.home.backend.device.category.gateway.Gateway;
+import com.ht.connected.home.backend.device.category.gateway.GatewayRepository;
 import com.ht.connected.home.backend.update.model.entity.UPDeviceVersion;
 import com.ht.connected.home.backend.update.model.entity.UPFileVersion;
 import com.ht.connected.home.backend.update.repository.UPDeviceVersionRepository;
 import com.ht.connected.home.backend.update.repository.UPFileVersionRepository;
-import com.ht.connected.home.backend.user.User;
-import com.ht.connected.home.backend.user.UserRepository;
 
 @Service
 public class UPService {
@@ -134,7 +134,7 @@ public class UPService {
     public void updateOwnDevice(UPDeviceVersion request) {
         Gateway gateway = gatewayRepository.findBySerial(request.getSerialNo());
         if (!isNull(gateway)) {
-            if (gateway.getCreatedUserId().equals(request.getIotAccount())) {
+            if (gateway.getCreated_user_id().equals(request.getIotAccount())) {
                 String topic = String.format("/server/device/update/%s/%s/update_now", gateway.getModel(),
                         gateway.getSerial());
                 upMqttPublishService.publish(topic, "");

@@ -9,16 +9,17 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.ht.connected.home.backend.category.ir.IRService;
-import com.ht.connected.home.backend.category.zwave.ZWaveRequest;
-import com.ht.connected.home.backend.category.zwave.ZWaveService;
-import com.ht.connected.home.backend.category.zwave.certi.ZWaveCertiService;
-import com.ht.connected.home.backend.gateway.GatewayService;
-import com.ht.connected.home.backend.gatewayCategory.CategoryActive;
+import com.ht.connected.home.backend.device.category.CategoryActive;
+import com.ht.connected.home.backend.device.category.gateway.GatewayService;
+import com.ht.connected.home.backend.device.category.ir.IRService;
+import com.ht.connected.home.backend.device.category.zwave.ZWaveRequest;
+import com.ht.connected.home.backend.device.category.zwave.ZWaveService;
+import com.ht.connected.home.backend.device.category.zwave.certi.ZWaveCertiService;
 import com.ht.connected.home.backend.service.mqtt.Target;
-
+ 
 @Component
 public class ConsumerListener {
+
 
 	static final Integer GATEWAY_MIN_LENGTH = 4;
 	static final Integer FROM = 1;
@@ -41,6 +42,7 @@ public class ConsumerListener {
 	private IRService irService;
 
 	private static final Logger logger = LoggerFactory.getLogger(ConsumerListener.class);
+
 
 	/**
 	 * mqtt received component
