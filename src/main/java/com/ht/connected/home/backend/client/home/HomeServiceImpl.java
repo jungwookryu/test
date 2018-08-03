@@ -62,7 +62,7 @@ public class HomeServiceImpl implements HomeService {
 	@Override
 	public List<Home> getHomeListByEmail(String authUserEmail, String nickname) {
 
-		if (Common.empty(nickname)) {
+		if (Objects.isNull(nickname)) {
 			nickname = "";
 		}
 		return getHomeListByEmail(authUserEmail, nickname, "");
