@@ -119,7 +119,6 @@ public class GatewayServiceImpl implements GatewayService {
     
     @Override
 	public List<Gateway> getGatewayListByHome(List<Integer> homeNos) {
-		//Home 추가
 		List<Gateway> gateways = gatewayRepository.findByHomeNoIn(homeNos);
 		return gateways;
     }
