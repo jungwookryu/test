@@ -17,7 +17,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 @RequestMapping("/gov")
 public class GovController {
     
-    Logger logger = LoggerFactory.getLogger(GovController.class);
+	private final static Logger logger = LoggerFactory.getLogger(GovController.class);
     
     @Autowired
     GovService govService;

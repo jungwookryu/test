@@ -16,7 +16,7 @@ import com.ht.connected.home.backend.service.mqtt.Target;
 @Service
 public class GovService {
 
-    Logger logger = LoggerFactory.getLogger(GovService.class);
+	private final static Logger logger = LoggerFactory.getLogger(GovService.class);
 
     @Autowired
     ProducerComponent producerRestController;

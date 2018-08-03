@@ -18,7 +18,7 @@ public class UserEmergencyServiceImpl extends CrudServiceImpl<UserEmergency, Int
         super(jpaRepository);
     }
 
-    Logger logger = LoggerFactory.getLogger(UserEmergencyServiceImpl.class);
+    private final static Logger logger = LoggerFactory.getLogger(UserEmergencyServiceImpl.class);
 
     @Autowired
     UserEmergencyRepository userEmergencyRepository;

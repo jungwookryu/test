@@ -16,12 +16,11 @@ import com.ht.connected.home.backend.client.home.sharehome.ShareHome;
 import com.ht.connected.home.backend.client.home.sharehome.ShareHomeRepository;
 import com.ht.connected.home.backend.client.user.User;
 import com.ht.connected.home.backend.client.user.UserService;
-import com.ht.connected.home.backend.common.Common;
 
 @Service
 public class HomeServiceImpl implements HomeService {
 
-	Logger logger = LoggerFactory.getLogger(HomeServiceImpl.class);
+	private final static Logger logger = LoggerFactory.getLogger(HomeServiceImpl.class);
 
 	@Autowired
 	HomeRepository homeRepository;

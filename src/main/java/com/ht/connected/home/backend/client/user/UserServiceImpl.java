@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService{
 	private ShareHomeRepository shareHomeRepository;
 	
 	
-	Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+	private final static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 	
 	@Override
 	public User getUser(String userEmail) {
