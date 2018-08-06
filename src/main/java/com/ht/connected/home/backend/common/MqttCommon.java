@@ -22,12 +22,18 @@ import com.ht.connected.home.backend.service.mqtt.MqttRequest;
 public class MqttCommon {
 
     private static Logger logger = LoggerFactory.getLogger(MqttCommon.class);
-    public static String STATIC_TARGET = "{target}";
-    public static String STATIC_MODEL = "{model}";
-    public static String STATIC_SERIAL = "{serial}";
-    public static String STATIC_ENDPOINT_NO = "{endpoint_no}";
-    public static String STATIC_SEQUENCE = "{sequence}";
-
+    
+    public final static String STATIC_TARGET = "{target}";
+    public final static String STATIC_MODEL = "{model}";
+    public final static String STATIC_SERIAL = "{serial}";
+    public final static String STATIC_ENDPOINT_NO = "{endpoint_no}";
+    public final static String STATIC_SEQUENCE = "{sequence}";
+    
+    public final static int INT_SOURCE = 1;
+    public final static int INT_TARGET = 2;
+    public final static int INT_MODEL = 3;
+    public final static int INT_SERIAL = 4;
+    public final static int INT_CATEGORY = 5;
     /**
      * mqtt publish 토픽 생성
      * @param topicLeadingPath

@@ -32,7 +32,7 @@ public class UserDetail implements UserDetails {
 
 	private boolean accountNonExpired, accountNonLocked, credentialsNonExpired, enabled;
 
-	protected Logger logger = LoggerFactory.getLogger(getClass());
+	Logger logger = LoggerFactory.getLogger(UserDetail.class);
 	private List<GrantedAuthority> authorities = new ArrayList();
 
 	public UserDetail() {
@@ -65,6 +65,7 @@ public class UserDetail implements UserDetails {
 	/**
 	 * @return the password
 	 */
+	@Override
 	public String getPassword() {
 		return password;
 	}

@@ -22,7 +22,10 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ht.connected.home.backend.client.home.HomeRepository;
+import com.ht.connected.home.backend.client.home.Home;
+import com.ht.connected.home.backend.client.home.HomeService;
+import com.ht.connected.home.backend.client.home.HomeServiceImpl;
+import com.ht.connected.home.backend.client.home.sharehome.ShareHomeRepository;
 import com.ht.connected.home.backend.client.user.User;
 import com.ht.connected.home.backend.client.user.UserService;
 import com.ht.connected.home.backend.common.Common;
@@ -68,8 +71,8 @@ public class GatewayServiceImpl implements GatewayService {
     GatewayRepository gatewayRepository;
 
     @Autowired
-    HomeRepository homeRepository;
-   
+    HomeService homeService;
+    
     @Autowired
     @Qualifier(value = "callbackAckProperties")
     Properties callbackAckProperties;
@@ -92,10 +95,14 @@ public class GatewayServiceImpl implements GatewayService {
     @Autowired
     ZWaveService zwaveService;
     
+    @Autowired
+    ShareHomeRepository shareHomeRepository;
+    
     
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public List<Gateway> getGatewayList(String status,String authUserEmail) {
+    @Override
+	public List<Gateway> getGatewayList(String status,String authUserEmail) {
         User user = userService.getUser(authUserEmail);
         List<Integer> nos = new ArrayList<>();
         if(Common.empty(status)) {
@@ -108,6 +115,12 @@ public class GatewayServiceImpl implements GatewayService {
             userGateways.forEach(UserGateway -> nos.add(UserGateway.getGatewayNo()));
             return gatewayRepository.findByNoInAndStatusContaining(nos,status);
         }
+    }
+    
+    @Override
+	public List<Gateway> getGatewayListByHome(List<Integer> homeNos) {
+		List<Gateway> gateways = gatewayRepository.findByHomeNoIn(homeNos);
+		return gateways;
     }
     
     
@@ -133,15 +146,16 @@ public class GatewayServiceImpl implements GatewayService {
      * @throws IOException
      * @throws InterruptedException 
      */
-    public void subscribe(String topic, String payload) throws JsonParseException, JsonMappingException, IOException, InterruptedException {
+    @Override
+	public void subscribe(String topic, String payload) throws JsonParseException, JsonMappingException, IOException, InterruptedException {
         String[] topicSplited = topic.trim().replace(".", ";").split(";");
         Gateway responseGateway = new Gateway();
         if(Common.notEmpty(payload)) {
         	responseGateway = objectMapper.readValue(payload, Gateway.class);
         }
-        responseGateway.setTargetType(topicSplited[1]);
-        responseGateway.setModel(topicSplited[3]);
-        responseGateway.setSerial(topicSplited[4]);
+        responseGateway.setTargetType(topicSplited[MqttCommon.INT_SOURCE]);
+        responseGateway.setModel(topicSplited[MqttCommon.INT_MODEL]);
+        responseGateway.setSerial(topicSplited[MqttCommon.INT_MODEL]);
         responseGateway.setCreatedUserId(responseGateway.getUserEmail());
         if (Type.register.name().equals(topicSplited[6])) {
             registerGateway(responseGateway);
@@ -279,8 +293,13 @@ public class GatewayServiceImpl implements GatewayService {
                 exangeGateway.setSsid(gateway.getSsid());
                 exangeGateway.setLocLatitude(gateway.getLocLatitude());
                 exangeGateway.setLocLongitude(gateway.getLocLongitude());
-                exangeGateway.setNickname((String) Common.isNullrtnByobj(gateway.getNickname(), 
+                exangeGateway.setNickname(Common.isNullrtnByobj(gateway.getNickname(), 
                         new StringBuffer().append(gateway.getTargetType()).append("_").append(gateway.getSerial())).toString());
+                exangeGateway.setHomeNo(gateway.getHomeNo());
+                if(Objects.isNull(gateway.getHomeNo())){
+                	List<Home> homes = homeService.getHomeListByEmail(user.getUserEmail(), "", HomeServiceImpl.ShareRole.master.name());
+                	exangeGateway.setHomeNo(homes.get(0).getNo());
+                }
                 updateGateway(exangeGateway);
                 Gateway rtnGateway = gatewayRepository.findBySerial(gateway.getSerial());
                 MqttCommon.publishNotificationData(producerRestController,callbackAckProperties,"zwave.product.registration", Target.app.name(), gateway.getModel(), gateway.getSerial(), rtnGateway);

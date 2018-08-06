@@ -41,7 +41,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .tokenStore(tokenStore);
     }
 
-    public void configure(HttpSecurity http) throws Exception {
+    @Override
+	public void configure(HttpSecurity http) throws Exception {
     	logger.debug("configure::::::::::HttpSecurity::::::::::::start22222222222"+SecurityProperties.ACCESS_OVERRIDE_ORDER);
     	http
     	.requestMatcher(new OAuthRequestedMatcher())
@@ -59,7 +60,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     }
 
     private static class OAuthRequestedMatcher implements RequestMatcher {
-        public boolean matches(HttpServletRequest request) {               
+        @Override
+		public boolean matches(HttpServletRequest request) {               
             String auth = request.getHeader("Authorization");
             // Determine if the client request contained an OAuth Authorization
             boolean haveOauth2Token = (auth != null) && (auth.startsWith("Bearer") || auth.startsWith("bearer"));

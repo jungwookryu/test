@@ -50,6 +50,10 @@ public class Home {
     @Column(name = "lastmodified_time")
     @JsonProperty("lastmodified_time")
     private Date lastModifiedTime;
+    
+    @Transient
+    @JsonProperty("role")
+    private String role;
 
     @Transient
     @JsonProperty("homes")
@@ -183,5 +187,11 @@ public class Home {
         }
             Homes.add(home);
     }
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
+	}
 
 }

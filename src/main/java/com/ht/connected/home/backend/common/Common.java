@@ -225,7 +225,7 @@ public class Common {
      * @throws UnsupportedEncodingException 키값의 길이가 16이하일 경우 발생
      */
     public void aES256Util(String key) throws UnsupportedEncodingException {
-        this.iv = key.substring(0, 16);
+        Common.iv = key.substring(0, 16);
         byte[] keyBytes = new byte[16];
         byte[] b = key.getBytes("UTF-8");
         int len = b.length;
@@ -235,7 +235,7 @@ public class Common {
         System.arraycopy(b, 0, keyBytes, 0, len);
         SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "AES");
 
-        this.keySpec = keySpec;
+        Common.keySpec = keySpec;
     }
 
     /**

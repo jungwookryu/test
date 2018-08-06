@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService{
 	private ShareHomeRepository shareHomeRepository;
 	
 	
-	Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+	private final static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 	
 	@Override
 	public User getUser(String userEmail) {
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService{
 		user.setLastmodifiedTime(new Date());
 		user.setPassword(passwordUser.getRePassword());
 		user.setNo(no);
-		User modyfyUser = (User) userRepository.saveAndFlush(user);
+		User modyfyUser = userRepository.saveAndFlush(user);
 		return modyfyUser;
 	}
 

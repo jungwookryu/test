@@ -96,7 +96,7 @@ public class IRController extends CommonController {
     // 기기리스트
     @GetMapping
     public ResponseEntity getIR(@RequestParam Map<String, String> parameters) {
-        String serial = (String) parameters.getOrDefault("serial", "");
+        String serial = parameters.getOrDefault("serial", "");
         String userEmail = getAuthUserEmail();
         List<IR> lstIR = iRService.getIRByUser(userEmail, serial);
         HashMap<String, List<?>> map = new HashMap<String, List<?>>();

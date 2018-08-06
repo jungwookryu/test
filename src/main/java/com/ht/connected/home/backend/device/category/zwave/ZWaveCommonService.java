@@ -1,7 +1,6 @@
 package com.ht.connected.home.backend.device.category.zwave;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

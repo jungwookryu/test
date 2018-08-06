@@ -2,7 +2,6 @@ package com.ht.connected.home.backend.client.user;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ht.connected.home.backend.client.home.Home;
 import com.ht.connected.home.backend.client.home.HomeRepository;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 

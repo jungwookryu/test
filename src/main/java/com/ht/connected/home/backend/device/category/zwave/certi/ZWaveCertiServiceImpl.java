@@ -10,7 +10,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -67,7 +66,8 @@ public class ZWaveCertiServiceImpl implements ZWaveCertiService {
     Properties zWaveFunctionProperties;
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @Transactional
+    @Override
+	@Transactional
     public void subscribe(ZWaveRequest zwaveRequest, String payload) throws JsonParseException, JsonMappingException, IOException, Exception {
 
         // binary switch report

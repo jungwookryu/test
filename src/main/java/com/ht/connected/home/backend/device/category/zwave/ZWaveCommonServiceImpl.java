@@ -18,7 +18,6 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +44,6 @@ import com.ht.connected.home.backend.device.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointReportByApp;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointRepository;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointService;
-import com.ht.connected.home.backend.service.mqtt.MqttPayload;
 import com.ht.connected.home.backend.service.mqtt.MqttRequest;
 import com.ht.connected.home.backend.userGateway.UserGateway;
 import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
@@ -115,7 +113,7 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
         List<ZWave> lstZwave = zwaveRepository.findByGatewayNo(gateway.getNo());
         ZWaveReport zwaveReport = objectMapper.readValue(data, ZWaveReport.class);
         if (!isNull(gateway) && !Objects.isNull(zwaveReport.getNodelist())) {
-            List<ZWave> nodeListItem = (List<ZWave>) zwaveReport.getNodelist();
+            List<ZWave> nodeListItem = zwaveReport.getNodelist();
             // 추가
             for (ZWave nodeItem : nodeListItem) {
                 int nodeId = nodeItem.getNodeId();
@@ -295,7 +293,8 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
      * @param zwaveRequest
      * @param mqttPayload
      */
-    public void saveGatewayCategory(ZWaveRequest zwaveRequest, int nodeId) {
+    @Override
+	public void saveGatewayCategory(ZWaveRequest zwaveRequest, int nodeId) {
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
         List<GatewayCategory> gatewayCategorys = gatewayCategoryRepository.findByGatewayNoAndNodeIdAndCategory(gateway.getNo(), nodeId, CategoryActive.gateway.zwave.name());
         if (gatewayCategorys.size() == 0) {

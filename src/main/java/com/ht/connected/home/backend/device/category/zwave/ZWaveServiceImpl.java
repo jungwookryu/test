@@ -57,7 +57,8 @@ public class ZWaveServiceImpl implements ZWaveService {
         publish(mqttRequest);
     }
 
-    @Transactional
+    @Override
+	@Transactional
     public void subscribe(ZWaveRequest zwaveRequest, String payload) throws Exception {
 
         Object resultData = null;
