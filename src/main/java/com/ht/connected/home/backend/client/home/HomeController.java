@@ -71,11 +71,17 @@ public class HomeController extends CommonController {
         String mode = (String) map.getOrDefault("mode","");
         Home originHome = homeService.findOne(no);
         User user =userService.getUser(share_user_email);
-        if(Common.empty(share_user_email) ||
-                (-1 == no) || Objects.isNull(originHome) || 
-                (!userEmail.equals(originHome.getOwnerUserEmail())) ||
-            (Objects.isNull(user))) {
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        if(Common.empty(share_user_email)) {
+        	return new ResponseEntity<>("requestUser not found", HttpStatus.NOT_ACCEPTABLE);
+        }
+        if((-1 == no) || Objects.isNull(originHome)) {
+        	return new ResponseEntity<>("original home not found", HttpStatus.NOT_ACCEPTABLE);
+        }
+        if((!userEmail.equals(originHome.getOwnerUserEmail()))) {
+        	return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+        if(Objects.isNull(user)) {
+            return new ResponseEntity<>("shareUser not found", HttpStatus.NOT_ACCEPTABLE);
         }
         boolean rtnShareHome = false;
 		// 공유

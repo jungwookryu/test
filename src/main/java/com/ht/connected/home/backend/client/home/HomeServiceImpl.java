@@ -11,6 +11,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ht.connected.home.backend.client.home.sharehome.ShareHome;
 import com.ht.connected.home.backend.client.home.sharehome.ShareHomeRepository;
@@ -47,7 +48,6 @@ public class HomeServiceImpl implements HomeService {
 	public Page getHomeList(Pageable pageable, String nickname) {
 		Home home = new Home();
 		home.setNickname(nickname);
-
 		Page<Home> page = homeRepository.findAll(Example.of(home), pageable);
 		return page;
 	}
@@ -116,22 +116,34 @@ public class HomeServiceImpl implements HomeService {
 	}
 
 	@Override
+	@Transactional
 	public boolean masterModifyHome(Home originHome, User user) {
 
 		boolean bShare = false;
 		if (!Objects.isNull(user)) {
+			// master를 share로 변경
+			ShareHome originShareHome = shareHomeRepository.findByUserNoAndHomeNo(originHome.getOwnerUserNo(),
+					originHome.getNo());
+			if(Objects.isNull(originShareHome)) {
+				originShareHome = new ShareHome(originHome.getNo(), originHome.getOwnerUserNo(), ShareRole.share.name(),Status.request.name());
+				shareHomeRepository.save(originShareHome);
+			}else {
+				shareHomeRepository.setModifyStatusForNo(ShareRole.share.name(), originShareHome.getNo());
+			}
+			// share를 master로 변경
+			ShareHome shareShareHome = shareHomeRepository.findByUserNoAndHomeNo(user.getNo(),originHome.getNo());
+			if(Objects.isNull(shareShareHome)) {
+				shareShareHome = new ShareHome(originHome.getNo(), user.getNo(), ShareRole.master.name(),Status.request.name());
+				shareHomeRepository.save(originShareHome);
+			}else {
+				shareHomeRepository.setModifyStatusForNo(ShareRole.master.name(), shareShareHome.getNo());
+			}
+			
 			// Home 정보의 마스터 이메일 변경
 			originHome.setOwnerUserEmail(user.getUserEmail());
 			originHome.setOwnerUserNo(user.getNo());
 			originHome.setOwnerUserAor(user.getUserAor());
-			homeRepository.saveAndFlush(originHome);
-			// master를 share로 변경
-			ShareHome originShareHome = shareHomeRepository.findByUserNoAndHomeNo(originHome.getOwnerUserNo(),
-					originHome.getNo());
-			shareHomeRepository.setModifyStatusForNo(ShareRole.share.name(), originShareHome.getNo());
-			// share를 master로 변경
-			ShareHome shareShareHome = shareHomeRepository.findByUserNoAndHomeNo(user.getNo(),originHome.getNo());
-			shareHomeRepository.setModifyStatusForNo(ShareRole.master.name(), shareShareHome.getNo());
+			homeRepository.save(originHome);
 		}
 		bShare = true;
 		return bShare;
