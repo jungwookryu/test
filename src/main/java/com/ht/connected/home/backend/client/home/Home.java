@@ -193,5 +193,11 @@ public class Home {
 	public void setRole(String role) {
 		this.role = role;
 	}
+	@Override
+	public String toString() {
+		return "Home [no=" + no + ", ownerUserNo=" + ownerUserNo + ", ownerUserEmail=" + ownerUserEmail
+				+ ", ownerUserAor=" + ownerUserAor + ", nickname=" + nickname + ", createdTime=" + createdTime
+				+ ", lastModifiedTime=" + lastModifiedTime + ", role=" + role + ", Homes=" + Homes + "]";
+	}
 
 }
