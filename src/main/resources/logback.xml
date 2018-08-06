@@ -1,24 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 	<property name="LOG_DIR" value="logs" />
-	<property name="LOG_PATH_NAME" value="${LOG_DIR}/iot_connected_home.log" />
-	<property name="LOG_PATH_NAME_SIP" value="${LOG_DIR}/iot_connected_home_sip.log" />
-	<property name="LOG_AMQP_PATH_NAME" value="iot_connected_home_amqp" />
+	<property name="LOG_DIR_AMQP" value="${LOG_DIR}/logs_amqp" />
+	<property name="LOG_DIR_DB" value="${LOG_DIR}/logs_db" />
+	
+	<property name="LOG_PATH_BASE_NAME" value="${LOG_DIR}/iot_connected_home.log" />
+	<property name="LOG_PATH_SIP_NAME" value="${LOG_DIR}/iot_connected_home_sip.log" />
+	<property name="LOG_PATH_AMQP_NAME" value="${LOG_DIR_AMQP}/iot_connected_home_amqp.log" />
+	<property name="LOG_PATH_DB_NAME" value="${LOG_DIR_DB}/iot_connected_home_db.log" />	
 	<timestamp key="bySecond" datePattern="yyyy-MM-dd HH:mm:ss" />
+	
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<!-- By default, encoders are assigned the hubType ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
 		<encoder>
 			<pattern>%d{yyyyMMdd HH:mm:ss.SSS} [%thread] %-3level %logger{5} - %msg %n</pattern>
 		</encoder>
 	</appender>
+	
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
 			<param name="Target" value="System.out" />
 			<pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-3level %logger{5} - %msg %n</pattern>
 		</layout>
 	</appender>
-	<appender name="File" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${LOG_PATH_NAME}</file>
+	
+	<appender name="LOG_BASE_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_PATH_BASE_NAME}</file>
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-3level %logger{5} - %msg %n</Pattern>
 		</encoder>
@@ -33,8 +40,9 @@
 			<maxHistory>30</maxHistory> 
 		</rollingPolicy>
 	</appender>
-	<appender name="FileSip" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${LOG_PATH_NAME_SIP}</file>
+	
+	<appender name="LOG_SIP_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_PATH_SIP_NAME}</file>
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-3level %logger{5} - %msg %n</Pattern>
 		</encoder>
@@ -48,12 +56,13 @@
 			</timeBasedFileNamingAndTriggeringPolicy>
 			<maxHistory>30</maxHistory> 
 		</rollingPolicy>
-
 	</appender>
-    <appender name="File_amqp" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	
+    <appender name="LOG_AMQP_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">        
+        <file>${LOG_PATH_AMQP_NAME}</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 파일이 하루에 한개씩 생성된다 -->
-            <fileNamePattern>${LOG_DIR}_amqp/${LOG_AMQP_PATH_NAME}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${LOG_DIR_AMQP}/iot_connected_home_amqp.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>300MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
@@ -66,17 +75,19 @@
                     logger.contains("messageArrived:")
                 </expression>
             </evaluator>
-            <onMatch>DENY</onMatch>
+            <onMatch>ACCEPT</onMatch>
             <!-- <onMismatch>DENY</onMismatch> -->
         </filter>
         <encoder>
             <pattern>%d{yyyyMMdd HH:mm:ss.SSS} [%thread] %-3level %logger{5} - %msg %n</pattern>
         </encoder>
     </appender>
-     <appender name="File_db" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    
+     <appender name="LOG_DB_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+     	<file>${LOG_PATH_DB_NAME}</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- 파일이 하루에 한개씩 생성된다 -->
-            <fileNamePattern>${LOG_DIR}_db/iot_connected_home_db.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- 파일이 하루에 한개씩 생성된다 -->            
+            <fileNamePattern>${LOG_DIR_DB}/iot_connected_home_db.%d{yyyy-MM-dd}.%i.log</fileNamePattern>            
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>100MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
@@ -85,38 +96,48 @@
             <pattern>%d{yyyyMMdd HH:mm:ss.SSS} [%thread] %-3level %logger{5} - %msg %n</pattern>
         </encoder>
     </appender>
+    
 	<!--jdbc.sqlonly : SQL문만을 로그로 남기며, PreparedStatement일 경우 관련된 argument 값으로 
 		대체된 SQL문이 보여진다. -->
 	<logger name="jdbc.sqlonly" level="DEBUG">
-	   <appender-ref ref="File_db" />
+	   <appender-ref ref="LOG_DB_FILE" />
 	   <appender-ref ref="console" />
 	</logger>
+	
 	<!--SQL문과 해당 SQL을 실행시키는데 수행된 시간 정보(milliseconds)를 포함한다. -->
 	<logger name="jdbc.sqltiming" level="DEBUG">
+		<appender-ref ref="LOG_DB_FILE" />
 		<appender-ref ref="console" />
 	</logger>
+	
 	<logger name="com.ht.connected.home.backend.sip" additivity="false" level="DEBUG">
-  	<appender-ref ref="FileSip" />
+	  	<appender-ref ref="LOG_SIP_FILE" />
+	  	<appender-ref ref="console" />
 	</logger>
-	<logger name=" com.ht.connected.home.backend.controller.mqtt.ConsumerListener" level="DEBUG">
-        <appender-ref ref="console" />
-  	    <appender-ref ref="File_amqp" />
+	
+	<logger name="com.ht.connected.home.backend.controller.mqtt.ConsumerListener" level="DEBUG">
+		<appender-ref ref="LOG_AMQP_FILE" />
+        <appender-ref ref="console" />  	    
 	</logger>
+	
 	<logger name="jdbc.connection" level="DEBUG">
 		<appender-ref ref="console" />
-		<appender-ref ref="File_db" />
+		<appender-ref ref="LOG_DB_FILE" />
 	</logger>
 	<!-- SQL 결과 조회된 데이터의 table을 로그로 남긴다. -->
 	<logger name="jdbc.resultsettable" level="DEBUG">
+		<appender-ref ref="LOG_DB_FILE" />
 		<appender-ref ref="console" />
-		<appender-ref ref="File_db" />
 	</logger>
+	
 	<root level="DEBUG">
 		<!-- <appender-ref ref="LogstashAppender" /> -->
+		<appender-ref ref="LOG_BASE_FILE" />
 		<appender-ref ref="console" />
 	</root>
 	<root level="INFO">
 		<!-- <appender-ref ref="LogstashAppender" /> -->
-		<appender-ref ref="File" />
+		<appender-ref ref="LOG_BASE_FILE" />
+		<appender-ref ref="console" />
     </root>
 </configuration>
