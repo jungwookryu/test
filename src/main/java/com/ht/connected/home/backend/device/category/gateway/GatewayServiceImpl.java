@@ -155,7 +155,7 @@ public class GatewayServiceImpl implements GatewayService {
         }
         responseGateway.setTargetType(topicSplited[MqttCommon.INT_SOURCE]);
         responseGateway.setModel(topicSplited[MqttCommon.INT_MODEL]);
-        responseGateway.setSerial(topicSplited[MqttCommon.INT_MODEL]);
+        responseGateway.setSerial(topicSplited[MqttCommon.INT_SERIAL]);
         responseGateway.setCreatedUserId(responseGateway.getUserEmail());
         if (Type.register.name().equals(topicSplited[6])) {
             registerGateway(responseGateway);
