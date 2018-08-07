@@ -17,7 +17,6 @@ import com.ht.connected.home.backend.client.home.Home;
 import com.ht.connected.home.backend.client.home.HomeService;
 import com.ht.connected.home.backend.client.home.HomeServiceImpl;
 import com.ht.connected.home.backend.client.home.sharehome.ShareHome;
-import com.ht.connected.home.backend.client.home.sharehome.ShareHomeRepository;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.config.service.EmailConfig;
 
@@ -33,10 +32,6 @@ public class UserServiceImpl implements UserService{
 	
 	@Autowired
 	private HomeService homeService;
-	
-	@Autowired
-	private ShareHomeRepository shareHomeRepository;
-	
 	
 	private final static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 	
@@ -80,9 +75,7 @@ public class UserServiceImpl implements UserService{
 		user.setUserAor(user.getUserEmail().replace("@", "^"));
 		User rtnUser = userRepository.saveAndFlush(user);
 		Home saveHome = new Home(rtnUser.getNo(), user.getUserEmail(), user.getUserEmail().replace("@", "^"), "MyHome", new Date());
-        Home home = homeService.createHome(saveHome);
-        ShareHome shareHome = new ShareHome(home.getNo(), rtnUser.getNo(), HomeServiceImpl.ShareRole.master.name(),HomeServiceImpl.Status.accept.name() );
-        shareHomeRepository.saveAndFlush(shareHome);
+        homeService.createHome(saveHome);
 		authSendEmail(rtnUser);
 		return rtnUser;
 	}

@@ -1,6 +1,7 @@
 package com.ht.connected.home.backend.client.home;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -92,9 +93,17 @@ public class HomeServiceImpl implements HomeService {
 	}
 
 	@Override
+	@Transactional
 	public Home createHome(Home requestHome) {
-
+		User user = userService.getUser(requestHome.getOwnerUserEmail());
+		requestHome.setOwnerUserAor(user.getUserAor());
+		requestHome.setOwnerUserNo(user.getNo());
+		requestHome.setCreatedTime(new Date());
+		
 		Home saveHome = homeRepository.save(requestHome);
+		ShareHome shareHome = new ShareHome(saveHome.getNo(), user.getNo(), ShareRole.master.name(),Status.request.name());
+		shareHomeRepository.save(shareHome);
+		saveHome.setRole(ShareRole.master.name());
 		return saveHome;
 	}
 
@@ -110,6 +119,7 @@ public class HomeServiceImpl implements HomeService {
 		boolean bShare = false;
 		ShareHome shareHome = new ShareHome(originHome.getNo(), user.getNo(), Share.share.name(),
 				Status.request.name());
+		shareHome.setNickname(originHome.getNickname());
 		shareHomeRepository.save(shareHome);
 		bShare = true;
 		return bShare;

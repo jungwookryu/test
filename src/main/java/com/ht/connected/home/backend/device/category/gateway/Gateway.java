@@ -93,7 +93,11 @@ public class Gateway {
     @Column(name = "loc_longitude")
     @JsonProperty("locLongitude")
     private String locLongitude;
-
+    
+    @Column(name = "certi_key")
+    @JsonProperty("certi_key")
+    private String certiKey;
+    
     @Transient
     @JsonProperty("user_email")
     private String userEmail;
@@ -287,6 +291,17 @@ public class Gateway {
 		this.homeNo = homeNo;
 	}
 	
+	public String getUserEmail() {
+		return userEmail;
+	}
+
+	public String getCertiKey() {
+		return certiKey;
+	}
+
+	public void setCertiKey(String certiKey) {
+		this.certiKey = certiKey;
+	}
 
 	@Override
 	public String toString() {
@@ -294,12 +309,8 @@ public class Gateway {
 				+ ", bssid=" + bssid + ", serial=" + serial + ", version=" + version + ", model=" + model + ", status="
 				+ status + ", homeid=" + homeid + ", homeNo=" + homeNo + ", createdUserId=" + createdUserId
 				+ ", createdTime=" + createdTime + ", lastModifiedTime=" + lastModifiedTime + ", targetType="
-				+ targetType + ", locLatitude=" + locLatitude + ", locLongitude=" + locLongitude + ", userEmail="
-				+ userEmail + ", type=" + type + "]";
-	}
-
-	public String getUserEmail() {
-		return userEmail;
+				+ targetType + ", locLatitude=" + locLatitude + ", locLongitude=" + locLongitude + ", certiKey="
+				+ certiKey + ", userEmail=" + userEmail + ", type=" + type + "]";
 	}
 
 

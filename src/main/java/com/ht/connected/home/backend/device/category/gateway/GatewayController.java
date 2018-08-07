@@ -79,7 +79,6 @@ public class GatewayController extends CommonController {
 
 	@GetMapping
 	public ResponseEntity<HashMap<String, Object>> getGatewayList(
-			@RequestParam(value = "status", required = false) String status,
 			@RequestParam(value = "shomeNos", required = false) String shomeNos) throws Exception {
 		List<Integer> iHomes = new ArrayList();
 		if (!Objects.isNull(shomeNos)) {
