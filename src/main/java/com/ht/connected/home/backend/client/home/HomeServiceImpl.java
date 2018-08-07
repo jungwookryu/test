@@ -18,6 +18,7 @@ import com.ht.connected.home.backend.client.home.sharehome.ShareHome;
 import com.ht.connected.home.backend.client.home.sharehome.ShareHomeRepository;
 import com.ht.connected.home.backend.client.user.User;
 import com.ht.connected.home.backend.client.user.UserService;
+import com.ht.connected.home.backend.common.AuditLogger;
 
 @Service
 public class HomeServiceImpl implements HomeService {
@@ -95,11 +96,12 @@ public class HomeServiceImpl implements HomeService {
 	@Override
 	@Transactional
 	public Home createHome(Home requestHome) {
+		AuditLogger.serviceLog(HomeServiceImpl.class, "Create Home : " + requestHome.getNickname());
 		User user = userService.getUser(requestHome.getOwnerUserEmail());
 		requestHome.setOwnerUserAor(user.getUserAor());
 		requestHome.setOwnerUserNo(user.getNo());
 		requestHome.setCreatedTime(new Date());
-		
+
 		Home saveHome = homeRepository.save(requestHome);
 		ShareHome shareHome = new ShareHome(saveHome.getNo(), user.getNo(), ShareRole.master.name(),Status.request.name());
 		shareHomeRepository.save(shareHome);

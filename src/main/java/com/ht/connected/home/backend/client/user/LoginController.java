@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.connected.home.backend.common.AuditLogger;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 
@@ -64,6 +65,10 @@ public class LoginController extends CommonController {
     public ResponseEntity<OAuth2AccessToken> postAccessToken(Principal principal,
             @RequestParam Map<String, String> parameters, @RequestBody User users)
             throws HttpRequestMethodNotSupportedException {
+        String userEmail = parameters.getOrDefault("user_email", "");
+        String password = parameters.getOrDefault("password", "");
+    	AuditLogger.startLog(this.getClass(), "User Login : " + userEmail);
+
         String grant_type = parameters.getOrDefault("grant_type", "");
         if (Common.empty(grant_type)) {
             parameters.put("grant_type", "password");
@@ -72,8 +77,6 @@ public class LoginController extends CommonController {
                 throw new BadClientCredentialsException();
             }
 
-            String userEmail = parameters.getOrDefault("user_email", "");
-            String password = parameters.getOrDefault("password", "");
             String userName = parameters.getOrDefault("username", "");
             if (Common.empty(userEmail) && Common.empty(userName)) {
                 throw new BadClientCredentialsException();
@@ -100,7 +103,10 @@ public class LoginController extends CommonController {
             User returnUsers = userRepository.save(rtnUsers);
             logger.debug("returnUsers:::" + returnUsers.toString());
         }
-        return tokenEndpoint.postAccessToken(principal, parameters);
+        
+        ResponseEntity<OAuth2AccessToken> responseEntity = tokenEndpoint.postAccessToken(principal, parameters);
+        AuditLogger.endLog(this.getClass(), "User Login succeed : " + userEmail);
+        return responseEntity;
     }
 
 }

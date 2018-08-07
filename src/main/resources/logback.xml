@@ -3,31 +3,26 @@
 	<property name="LOG_DIR" value="logs" />
 	<property name="LOG_DIR_AMQP" value="${LOG_DIR}/logs_amqp" />
 	<property name="LOG_DIR_DB" value="${LOG_DIR}/logs_db" />
-	
+	<property name="LOG_DIR_AUDIT" value="${LOG_DIR}/logs_audit" />
+
 	<property name="LOG_PATH_BASE_NAME" value="${LOG_DIR}/iot_connected_home.log" />
 	<property name="LOG_PATH_SIP_NAME" value="${LOG_DIR}/iot_connected_home_sip.log" />
 	<property name="LOG_PATH_AMQP_NAME" value="${LOG_DIR_AMQP}/iot_connected_home_amqp.log" />
-	<property name="LOG_PATH_DB_NAME" value="${LOG_DIR_DB}/iot_connected_home_db.log" />	
+	<property name="LOG_PATH_DB_NAME" value="${LOG_DIR_DB}/iot_connected_home_db.log" />
+	<property name="LOG_PATH_AUDIT_NAME" value="${LOG_DIR_AUDIT}/iot_connected_home_audit.log" />
 	<timestamp key="bySecond" datePattern="yyyy-MM-dd HH:mm:ss" />
-	
-	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<!-- By default, encoders are assigned the hubType ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
-		<encoder>
-			<pattern>%d{yyyyMMdd HH:mm:ss.SSS} [%thread] %-3level %logger{5} - %msg %n</pattern>
-		</encoder>
-	</appender>
-	
+
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
 			<param name="Target" value="System.out" />
-			<pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-3level %logger{5} - %msg %n</pattern>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} [%X{TRACE_ID}] %-3level %logger{5} - %msg %n</pattern>
 		</layout>
 	</appender>
-	
+
 	<appender name="LOG_BASE_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>${LOG_PATH_BASE_NAME}</file>
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-			<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-3level %logger{5} - %msg %n</Pattern>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%X{TRACE_ID}] %-3level %logger{5} - %msg %n</Pattern>
 		</encoder>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- rollover daily -->
@@ -40,11 +35,11 @@
 			<maxHistory>30</maxHistory> 
 		</rollingPolicy>
 	</appender>
-	
+
 	<appender name="LOG_SIP_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>${LOG_PATH_SIP_NAME}</file>
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-			<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-3level %logger{5} - %msg %n</Pattern>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%X{TRACE_ID}] %-3level %logger{5} - %msg %n</Pattern>
 		</encoder>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- rollover daily -->
@@ -68,21 +63,33 @@
             </timeBasedFileNamingAndTriggeringPolicy>
             <maxHistory>30</maxHistory> 
         </rollingPolicy>
-        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-            <!-- <level>INFO</level> -->
-            <evaluator name="loggingTaskAmqp">
-                <expression>
-                    logger.contains("messageArrived:")
-                </expression>
-            </evaluator>
-            <onMatch>ACCEPT</onMatch>
-            <!-- <onMismatch>DENY</onMismatch> -->
-        </filter>
         <encoder>
-            <pattern>%d{yyyyMMdd HH:mm:ss.SSS} [%thread] %-3level %logger{5} - %msg %n</pattern>
+            <pattern>%d{yyyyMMdd HH:mm:ss.SSS} [%X{TRACE_ID}] %-3level %logger{5} - %msg %n</pattern>
         </encoder>
     </appender>
-    
+
+    <appender name="LOG_AUDIT_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">        
+        <file>${LOG_PATH_AUDIT_NAME}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 파일이 하루에 한개씩 생성된다 -->
+            <fileNamePattern>${LOG_DIR_AUDIT}/iot_connected_home_audit.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>300MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory> 
+        </rollingPolicy>
+		<filter class="ch.qos.logback.core.filter.EvaluatorFilter"> 
+			<evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator"> 
+				<marker>AUDIT</marker> 
+			</evaluator> 
+			<OnMatch>ACCEPT</OnMatch>
+            <OnMismatch>DENY</OnMismatch>
+		</filter>
+        <encoder>
+            <pattern>%d{yyyyMMdd HH:mm:ss.SSS} [%X{TRACE_ID}] %logger{5} - %msg %n</pattern>
+        </encoder>
+    </appender>
+
      <appender name="LOG_DB_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
      	<file>${LOG_PATH_DB_NAME}</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -93,7 +100,7 @@
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyyMMdd HH:mm:ss.SSS} [%thread] %-3level %logger{5} - %msg %n</pattern>
+            <pattern>%d{yyyyMMdd HH:mm:ss.SSS} [%X{TRACE_ID}] %-3level %logger{5} - %msg %n</pattern>
         </encoder>
     </appender>
     
@@ -120,6 +127,11 @@
         <appender-ref ref="console" />  	    
 	</logger>
 	
+	<logger name="com.ht.connected.home.backend.common.MqttCommon" level="DEBUG">
+		<appender-ref ref="LOG_AMQP_FILE" />
+		<appender-ref ref="console" />
+	</logger>
+	 
 	<logger name="jdbc.connection" level="DEBUG">
 		<appender-ref ref="console" />
 		<appender-ref ref="LOG_DB_FILE" />
@@ -138,6 +150,7 @@
 	<root level="INFO">
 		<!-- <appender-ref ref="LogstashAppender" /> -->
 		<appender-ref ref="LOG_BASE_FILE" />
+		<appender-ref ref="LOG_AUDIT_FILE" />
 		<appender-ref ref="console" />
     </root>
 </configuration>

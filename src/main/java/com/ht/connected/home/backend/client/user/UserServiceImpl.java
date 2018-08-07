@@ -7,16 +7,13 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.ht.connected.home.backend.client.home.Home;
 import com.ht.connected.home.backend.client.home.HomeService;
-import com.ht.connected.home.backend.client.home.HomeServiceImpl;
-import com.ht.connected.home.backend.client.home.sharehome.ShareHome;
+import com.ht.connected.home.backend.common.AuditLogger;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.config.service.EmailConfig;
 
@@ -33,10 +30,9 @@ public class UserServiceImpl implements UserService{
 	@Autowired
 	private HomeService homeService;
 	
-	private final static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
-	
 	@Override
 	public User getUser(String userEmail) {
+		AuditLogger.serviceLog(UserServiceImpl.class, "Get user : " + userEmail);
 		List<User> user = userRepository.findByUserEmail(userEmail);
 		if (user.size()>0) {
 			return user.get(0);
@@ -48,6 +44,7 @@ public class UserServiceImpl implements UserService{
 	
 	@Override
 	public User modify(int no, User user) {
+		AuditLogger.serviceLog(UserServiceImpl.class, "Modify a user : " + no + ", " + user.getUserEmail());
 		User passwordUser = getUser(user.getUserEmail());
 		user.setLastmodifiedTime(new Date());
 		user.setPassword(passwordUser.getRePassword());
@@ -58,6 +55,7 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public Boolean getExistUser(String userEmail) {
+		AuditLogger.serviceLog(UserServiceImpl.class, "Check exist user : " + userEmail);
 		if( userRepository.findByUserEmail(userEmail).size()>0){
 			return true;
 		}
@@ -66,6 +64,7 @@ public class UserServiceImpl implements UserService{
 	
 	@Override
 	public User register(User user) {
+		AuditLogger.serviceLog(UserServiceImpl.class, "Register a user : " + user.getUserEmail());
 		user.setPassword(Common.encryptHash(MessageDigestAlgorithms.SHA_256, user.getPassword()));
 		user.setRedirectiedCode(Common.randomCode());
 		user.setActive(UserActive.NOT_EMAIL_AUTH.ordinal());
@@ -76,12 +75,13 @@ public class UserServiceImpl implements UserService{
 		User rtnUser = userRepository.saveAndFlush(user);
 		Home saveHome = new Home(rtnUser.getNo(), user.getUserEmail(), user.getUserEmail().replace("@", "^"), "MyHome", new Date());
         homeService.createHome(saveHome);
-		authSendEmail(rtnUser);
+        boolean result = authSendEmail(rtnUser);
+        AuditLogger.serviceLog(UserServiceImpl.class, "Send email is succeed : " + result);
 		return rtnUser;
 	}
  
-	public boolean authSendEmail(User rtnUsers) {
-		HashMap map = new HashMap<>();
+	private boolean authSendEmail(User rtnUsers) {
+		HashMap<String, Object> map = new HashMap<>();
 		Properties properties = emailConfig.properties();
 		if (null!=rtnUsers) {
 			map.put("rtnUsers", rtnUsers);
