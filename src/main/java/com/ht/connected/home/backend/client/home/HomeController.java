@@ -104,7 +104,7 @@ public class HomeController extends CommonController {
 	}
 
 	/**
-	 * 로그인한 사용자가 등록한 모든 Home를 조회한다.
+	 * 로그인한 사용자가 등록한 모든 Home를 등록한다.
 	 * 
 	 * @param req
 	 * @return
