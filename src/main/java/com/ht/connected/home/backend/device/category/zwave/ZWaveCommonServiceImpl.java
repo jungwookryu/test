@@ -71,8 +71,8 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
     @Autowired
     ProducerComponent producerComponent;
 
-    public static enum status {
-        add, delete, active, failed
+    public enum Status {
+        ADD, DELETE, ALIVE, DOWN, SLEEP
     }
 
     @Autowired
@@ -206,7 +206,7 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
 
         ZWave zwave = zwaveRepository.getOne(no);
         Gateway gateway = gatewayRepository.getOne(zwave.getGatewayNo());
-        int iRtn = zwaveRepository.setFixedStatusForNo(status.delete.name(), no);
+        int iRtn = zwaveRepository.setFixedStatusForNo(Status.DELETE.name().toLowerCase(), no);
         MqttRequest mqttRequest = new MqttRequest();
 
         mqttRequest.setSerialNo(gateway.getSerial());
@@ -303,7 +303,7 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
             gatewayCategory.setCategory(CategoryActive.gateway.zwave.name());
             gatewayCategory.setCategoryNo(CategoryActive.gateway.zwave.ordinal());
             gatewayCategory.setNodeId(nodeId);
-            gatewayCategory.setStatus(status.add.name());
+            gatewayCategory.setStatus(Status.ADD.name().toLowerCase());
             gatewayCategory.setCreatedTime(new Date());
             gatewayCategory.setLastmodifiedTime(new Date());
             gatewayCategoryRepository.save(gatewayCategory);
