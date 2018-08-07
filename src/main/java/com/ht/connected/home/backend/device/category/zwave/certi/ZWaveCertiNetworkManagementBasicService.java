@@ -14,4 +14,6 @@ public interface ZWaveCertiNetworkManagementBasicService {
 
 	void setLearnMode(Gateway gateway, int mode) throws JsonProcessingException, InterruptedException;
 
+	void setZWaveResetMode(Gateway gateway) throws JsonProcessingException, InterruptedException;
+
 }

@@ -161,12 +161,18 @@ public class ZWaveController extends CommonController {
     
     @PostMapping("/learn")
     public ResponseEntity registLearn(@RequestBody HashMap<String, Object> req) throws JsonProcessingException, InterruptedException {
-        String userEmail = getAuthUserEmail();
-        HashMap map = new HashMap<>();
         int mode = (int) req.getOrDefault("mode", -1);
         String serial = (String) req.getOrDefault("serial", "");
         Gateway gateway = gatewayRepository.findBySerial(serial);
         zWaveCertiNetworkManagementBasicService.setLearnMode(gateway, mode);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+    
+    @PostMapping("/reset")
+    public ResponseEntity registReset(@RequestBody HashMap<String, Object> req) throws JsonProcessingException, InterruptedException {
+    	String serial = (String) req.getOrDefault("serial", "");
+    	Gateway gateway = gatewayRepository.findBySerial(serial);
+    	zWaveCertiNetworkManagementBasicService.setZWaveResetMode(gateway);
+    	return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 }

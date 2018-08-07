@@ -117,19 +117,28 @@ public class ZWaveCertiNetworkManagementBasicServiceImpl implements ZWaveCertiNe
     	MqttRequest mqttRequest = new MqttRequest(gateway);
     	mqttRequest.setTarget(gateway.getTargetType());
     	mqttRequest.setClassKey(NetworkManagementBasicCommandClass.INT_ID);
-    	mqttRequest.setCommandKey(NetworkManagementBasicCommandClass.INT_ID);
+    	mqttRequest.setCommandKey(NetworkManagementBasicCommandClass.INT_LEARN_MODE_SET);
     	
     	String topic = MqttCommon.getMqttPublishTopic(mqttRequest);
     	HashMap<String, Object> publishPayload = new HashMap<>();
     	HashMap map = new HashMap<>();
         map.put("mode", mode);
-        HashMap map1 = new HashMap<>();
-        map1.put("set_data", map);
-        mqttRequest.setSetData(map1);
-    	publish(topic, publishPayload);
+        publishPayload.put("set_data", map);
+        mqttRequest.setSetData(publishPayload);
+    	publish(topic, mqttRequest.getSetData());
     }
     
-    
+    @Override
+    public void setZWaveResetMode(Gateway gateway) throws JsonProcessingException, InterruptedException {
+    	MqttRequest mqttRequest = new MqttRequest(gateway);
+    	mqttRequest.setTarget(gateway.getTargetType());
+    	mqttRequest.setClassKey(NetworkManagementBasicCommandClass.INT_ID);
+    	mqttRequest.setCommandKey(NetworkManagementBasicCommandClass.INT_DEFAULT_SET);
+    	
+    	String topic = MqttCommon.getMqttPublishTopic(mqttRequest);
+    	HashMap<String, Object> publishPayload = new HashMap<>();
+    	publish(topic, publishPayload);
+    }    
     
     
     private void publish(String topic, HashMap<String, Object> publishPayload) throws JsonProcessingException, InterruptedException {
