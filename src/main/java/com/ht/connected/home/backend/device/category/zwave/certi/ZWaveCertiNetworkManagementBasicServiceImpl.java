@@ -65,14 +65,14 @@ public class ZWaveCertiNetworkManagementBasicServiceImpl implements ZWaveCertiNe
             EndpointService endpointService,
             GatewayRepository gatewayRepository,
             Properties zWaveProperties,
-            ProducerComponent ProducerComponent) {
+            ProducerComponent producerComponent) {
         this.zwaveRepository = zwaveRepository;
         this.endpointRepository = endpointRepository;
         this.cmdClsRepository = cmdClsRepository;
         this.endpointService = endpointService;
         this.gatewayRepository = gatewayRepository;
         this.zWaveProperties = zWaveProperties;
-        this.producerComponent = ProducerComponent;
+        this.producerComponent = producerComponent;
     }
 
     @Autowired

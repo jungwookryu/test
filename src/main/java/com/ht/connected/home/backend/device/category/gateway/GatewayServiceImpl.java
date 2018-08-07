@@ -59,6 +59,7 @@ public class GatewayServiceImpl implements GatewayService {
 
     Logger logger = LoggerFactory.getLogger(GatewayServiceImpl.class);
 
+    @Autowired
     UserGatewayRepository userGatewayRepository;
     
     @Autowired
