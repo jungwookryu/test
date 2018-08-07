@@ -36,6 +36,7 @@ public class ZWaveServiceImpl implements ZWaveService {
         ProducerComponent producerComponent
      ) {
         this.zWaveCommonService = zWaveCommonService;
+        this.producerComponent = producerComponent;
     }
 
     

@@ -14,6 +14,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ht.connected.home.backend.client.user.UserDetail;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.config.security.SecretKeyProvider;
 

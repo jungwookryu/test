@@ -44,7 +44,7 @@ public class ZWaveCertiServiceImpl implements ZWaveCertiService {
     Properties callbackAckProperties;
 
     @Autowired
-    ProducerComponent producerRestController;
+    ProducerComponent producerRestComponent;
 
     @Autowired
     public ZWaveCertiServiceImpl(
@@ -131,7 +131,7 @@ public class ZWaveCertiServiceImpl implements ZWaveCertiService {
 
     private void publish(String topic, String payload) throws InterruptedException {
         Message message = new Message(topic, payload);
-        MqttCommon.publish(producerRestController, message);
+        MqttCommon.publish(producerRestComponent, message);
     }
 
 }

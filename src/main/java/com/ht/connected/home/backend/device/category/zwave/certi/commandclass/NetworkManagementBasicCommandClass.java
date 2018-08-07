@@ -20,14 +20,15 @@ import org.slf4j.LoggerFactory;
 public class NetworkManagementBasicCommandClass extends CommandClass {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public static final byte LEARN_MODE_SET = 0x02;
+    public static final byte LEARN_MODE_SET = 0x01;
+    public static final byte LEARN_MODE_SET_STATUS = 0x02;
     public static final byte NETWORK_UPDATE_REQUEST = 0x03;
     public static final byte NETWORK_UPDATE_REQUEST_STATUS = 0x04;
     public static final byte DEFAULT_SET = 0x06;
     public static final byte DEFAULT_SET_COMPLETE = 0x07;
     
-    public static final int INT_LEARN_MODE_SET = 0x02;
-    public static final int INT_LEARN_MODE_SET_STATUS = 0x05;
+    public static final int INT_LEARN_MODE_SET = 0x01;
+    public static final int INT_LEARN_MODE_SET_STATUS = 0x02;
     public static final int INT_NETWORK_UPDATE_REQUEST = 0x03;
     public static final int INT_NETWORK_UPDATE_REQUEST_STATUS = 0x04;
     public static final int INT_DEFAULT_SET = 0x06;
@@ -37,6 +38,7 @@ public class NetworkManagementBasicCommandClass extends CommandClass {
     public static final byte ID = (byte)0x4D;
     public static final int INT_ID = (byte)0x4D;
     public static final String functionCode ="4D";
+    
     
     private Byte value;
 
@@ -64,19 +66,16 @@ public class NetworkManagementBasicCommandClass extends CommandClass {
 
     @Override
     public String getDeviceType() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public String getNicknameType() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public String getFunctionType() {
-        // TODO Auto-generated method stub
         return null;
     }
     

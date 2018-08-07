@@ -104,7 +104,7 @@ public class MqttCommon {
     }
 
     public static void publish(ProducerComponent producerComponent, Message message) throws InterruptedException {
-        logger.info("amqp publish -t "+ message.getMessageType()+"-m "+message.getMessageBody());
+        logger.info("amqp publish -t "+ message.getMessageType()+" -m "+ message.getMessageBody());
         producerComponent.run(message);
 
     }

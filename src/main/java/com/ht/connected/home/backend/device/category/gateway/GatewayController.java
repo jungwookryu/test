@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ht.connected.home.backend.client.home.Home;
+import com.ht.connected.home.backend.client.home.HomeService;
 import com.ht.connected.home.backend.client.user.User;
 import com.ht.connected.home.backend.client.user.UserService;
 import com.ht.connected.home.backend.controller.rest.CommonController;
@@ -41,6 +43,8 @@ public class GatewayController extends CommonController {
     UserGatewayRepository userGatewayRepository;
     @Autowired
     ZWaveController zwaveController;
+    @Autowired
+    HomeService homeService;
     @Autowired
     public GatewayController(GatewayService gateWayService) {
         this.gateWayService = gateWayService;
@@ -80,12 +84,16 @@ public class GatewayController extends CommonController {
 	@GetMapping
 	public ResponseEntity<HashMap<String, Object>> getGatewayList(
 			@RequestParam(value = "shomeNos", required = false) String shomeNos) throws Exception {
+		
 		List<Integer> iHomes = new ArrayList();
 		if (!Objects.isNull(shomeNos)) {
 			String[] sHomes = shomeNos.split(",");
 			for (String sHome : sHomes) {
 				iHomes.add(Integer.parseInt(sHome));
 			}
+		}else {
+			List<Home> home = homeService.getHomeListByEmail(getAuthUserEmail());
+			iHomes.add(home.get(0).getNo());
 		}
 		List lstGateways = gateWayService.getGatewayListByHome(iHomes);
 		HashMap<String, Object> map = new HashMap<String, Object>();

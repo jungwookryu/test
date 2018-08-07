@@ -1,5 +1,7 @@
 package com.ht.connected.home.backend.device.category.zwave.certi;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ht.connected.home.backend.device.category.gateway.Gateway;
 import com.ht.connected.home.backend.device.category.zwave.ZWaveRequest;
 
 /**
@@ -9,5 +11,9 @@ import com.ht.connected.home.backend.device.category.zwave.ZWaveRequest;
 public interface ZWaveCertiNetworkManagementBasicService {
 
     void subscribe(ZWaveRequest zwaveRequest, String payload) throws Exception;
+
+	void setLearnMode(Gateway gateway, int mode) throws JsonProcessingException, InterruptedException;
+
+	void setZWaveResetMode(Gateway gateway) throws JsonProcessingException, InterruptedException;
 
 }

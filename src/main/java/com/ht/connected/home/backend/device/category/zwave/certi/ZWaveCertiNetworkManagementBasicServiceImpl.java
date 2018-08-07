@@ -33,6 +33,7 @@ import com.ht.connected.home.backend.device.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointRepository;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointService;
 import com.ht.connected.home.backend.service.mqtt.MqttPayload;
+import com.ht.connected.home.backend.service.mqtt.MqttRequest;
 import com.ht.connected.home.backend.service.mqtt.Target;
 /**
  * 0x4D // NetworkManagementBasic Protocal Service
@@ -42,7 +43,7 @@ import com.ht.connected.home.backend.service.mqtt.Target;
 @Service
 public class ZWaveCertiNetworkManagementBasicServiceImpl implements ZWaveCertiNetworkManagementBasicService {
 
-    private ZWaveRepository zwaveRepository;
+    ZWaveRepository zwaveRepository;
     EndpointRepository endpointRepository;
     CmdClsRepository cmdClsRepository;
     EndpointService endpointService;
@@ -64,14 +65,14 @@ public class ZWaveCertiNetworkManagementBasicServiceImpl implements ZWaveCertiNe
             EndpointService endpointService,
             GatewayRepository gatewayRepository,
             Properties zWaveProperties,
-            ProducerComponent ProducerComponent) {
+            ProducerComponent producerComponent) {
         this.zwaveRepository = zwaveRepository;
         this.endpointRepository = endpointRepository;
         this.cmdClsRepository = cmdClsRepository;
         this.endpointService = endpointService;
         this.gatewayRepository = gatewayRepository;
         this.zWaveProperties = zWaveProperties;
-        this.producerComponent = ProducerComponent;
+        this.producerComponent = producerComponent;
     }
 
     @Autowired
@@ -102,7 +103,7 @@ public class ZWaveCertiNetworkManagementBasicServiceImpl implements ZWaveCertiNe
 
         }
         
-        if (zwaveRequest.getCommandKey() == NetworkManagementBasicCommandClass.LEARN_MODE_SET) {
+        else if (zwaveRequest.getCommandKey() == NetworkManagementBasicCommandClass.LEARN_MODE_SET) {
             String topic = callbackAckProperties.getProperty("manager.product.remove");
             String exeTopic = MqttCommon.rtnCallbackAck(topic, Target.app.name(), zwaveRequest.getModel(), zwaveRequest.getSerialNo());
             publish(exeTopic, new HashMap());
@@ -111,14 +112,45 @@ public class ZWaveCertiNetworkManagementBasicServiceImpl implements ZWaveCertiNe
 
     }
 
+    @Override
+    public void setLearnMode(Gateway gateway, int mode) throws JsonProcessingException, InterruptedException {
+    	MqttRequest mqttRequest = new MqttRequest(gateway);
+    	mqttRequest.setTarget(gateway.getTargetType());
+    	mqttRequest.setClassKey(NetworkManagementBasicCommandClass.INT_ID);
+    	mqttRequest.setCommandKey(NetworkManagementBasicCommandClass.INT_LEARN_MODE_SET);
+    	
+    	String topic = MqttCommon.getMqttPublishTopic(mqttRequest);
+    	HashMap<String, Object> publishPayload = new HashMap<>();
+    	HashMap map = new HashMap<>();
+        map.put("mode", mode);
+        publishPayload.put("set_data", map);
+        mqttRequest.setSetData(publishPayload);
+    	publish(topic, mqttRequest.getSetData());
+    }
+    
+    @Override
+    public void setZWaveResetMode(Gateway gateway) throws JsonProcessingException, InterruptedException {
+    	MqttRequest mqttRequest = new MqttRequest(gateway);
+    	mqttRequest.setTarget(gateway.getTargetType());
+    	mqttRequest.setClassKey(NetworkManagementBasicCommandClass.INT_ID);
+    	mqttRequest.setCommandKey(NetworkManagementBasicCommandClass.INT_DEFAULT_SET);
+    	
+    	String topic = MqttCommon.getMqttPublishTopic(mqttRequest);
+    	HashMap<String, Object> publishPayload = new HashMap<>();
+    	publish(topic, publishPayload);
+    }    
+    
+    
     private void publish(String topic, HashMap<String, Object> publishPayload) throws JsonProcessingException, InterruptedException {
         String payload = objectMapper.writeValueAsString(publishPayload);
         Message message = new Message(topic, payload);
         MqttCommon.publish(producerComponent, message);
     }
 
+    @Transactional
     private void zwaveReset(ZWaveRequest zwaveRequest) {
         // host 정보삭제
+    	//TODO Service 호출을 통한 한번에 지우는 로직으로 수정하도록 함. 
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
 
         List<ZWave> lstZWave = zwaveRepository.findByGatewayNo(gateway.getNo());
