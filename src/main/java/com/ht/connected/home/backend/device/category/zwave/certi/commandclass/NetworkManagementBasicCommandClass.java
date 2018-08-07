@@ -40,10 +40,6 @@ public class NetworkManagementBasicCommandClass extends CommandClass {
     public static final String functionCode ="4D";
     
     
-    public static final int start = (byte)0x01;
-    public static final int stop = (byte)0x05;
-    
-    
     private Byte value;
 
     @Override

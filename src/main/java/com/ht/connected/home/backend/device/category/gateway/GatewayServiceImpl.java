@@ -158,13 +158,12 @@ public class GatewayServiceImpl implements GatewayService {
         responseGateway.setModel(topicSplited[MqttCommon.INT_MODEL]);
         responseGateway.setSerial(topicSplited[MqttCommon.INT_SERIAL]);
         responseGateway.setCreatedUserId(responseGateway.getUserEmail());
-        if (Type.register.name().equals(topicSplited[6])) {
+        if ((Type.register.name().equals(topicSplited[6]))||
+        	(Type.wifi_reset.name().equals(topicSplited[6]))||
+        	(Type.register.name().equals(responseGateway.getType()))
+        	)
+        {
             registerGateway(responseGateway);
-        }
-        else if (Type.wifi_reset.name().equals(topicSplited[6])) {
-            registerGateway(responseGateway);
-        }else if (Type.alive.name().equals(topicSplited[6])) {
-        	
         }
 
     }
