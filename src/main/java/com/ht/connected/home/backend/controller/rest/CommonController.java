@@ -54,9 +54,8 @@ public class CommonController extends Common {
     public String getAuthUserEmail() {
 	    String userEmail="";
 	    try {
-	    	
 	        userEmail = (String) getAuthentication().getPrincipal();
-	        
+            
         } catch (Exception e) {
            e.printStackTrace();
 	    }
