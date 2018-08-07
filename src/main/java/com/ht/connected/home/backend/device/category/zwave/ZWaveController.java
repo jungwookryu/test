@@ -26,6 +26,7 @@ import com.ht.connected.home.backend.client.user.UserRepository;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 import com.ht.connected.home.backend.device.category.gateway.Gateway;
 import com.ht.connected.home.backend.device.category.gateway.GatewayRepository;
+import com.ht.connected.home.backend.device.category.zwave.certi.ZWaveCertiNetworkManagementBasicService;
 import com.ht.connected.home.backend.device.category.zwave.certi.commandclass.NetworkManagementInclusionCommandClass;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointRepository;
@@ -60,6 +61,10 @@ public class ZWaveController extends CommonController {
 
     @Autowired
     EndpointRepository endpointRepository;
+    
+    @Autowired
+    ZWaveCertiNetworkManagementBasicService zWaveCertiNetworkManagementBasicService;
+    
 
     /**
      * 기기등록 취소
@@ -89,7 +94,7 @@ public class ZWaveController extends CommonController {
         }
         requestMap.put("set_data", map);
         ZWaveRequest zwaveRequest = new ZWaveRequest(req, classKey, commandKey, "v1");
-        zwaveRequest.setTarget(gateway.getTargetType());
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                zwaveRequest.setTarget(gateway.getTargetType());
         zwaveRequest.setModel(gateway.getModel());
         zwaveService.publish(requestMap, zwaveRequest);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
@@ -151,6 +156,17 @@ public class ZWaveController extends CommonController {
     public ResponseEntity control(@PathVariable int endpoint_no, @RequestBody ZWaveControl zWaveControl) throws InterruptedException, JsonGenerationException, JsonMappingException, IOException {
         zWaveControl.setEndpoint_no(endpoint_no);
         endpointService.zwaveControl(zWaveControl);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+    
+    @PostMapping("/learn")
+    public ResponseEntity registLearn(@RequestBody HashMap<String, Object> req) throws JsonProcessingException, InterruptedException {
+        String userEmail = getAuthUserEmail();
+        HashMap map = new HashMap<>();
+        int mode = (int) req.getOrDefault("mode", -1);
+        String serial = (String) req.getOrDefault("serial", "");
+        Gateway gateway = gatewayRepository.findBySerial(serial);
+        zWaveCertiNetworkManagementBasicService.setLearnMode(gateway, mode);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 }

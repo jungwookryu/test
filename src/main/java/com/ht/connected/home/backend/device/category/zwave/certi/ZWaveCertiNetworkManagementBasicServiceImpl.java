@@ -33,6 +33,7 @@ import com.ht.connected.home.backend.device.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointRepository;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointService;
 import com.ht.connected.home.backend.service.mqtt.MqttPayload;
+import com.ht.connected.home.backend.service.mqtt.MqttRequest;
 import com.ht.connected.home.backend.service.mqtt.Target;
 /**
  * 0x4D // NetworkManagementBasic Protocal Service
@@ -111,6 +112,26 @@ public class ZWaveCertiNetworkManagementBasicServiceImpl implements ZWaveCertiNe
 
     }
 
+    @Override
+    public void setLearnMode(Gateway gateway, int mode) throws JsonProcessingException, InterruptedException {
+    	MqttRequest mqttRequest = new MqttRequest(gateway);
+    	mqttRequest.setTarget(gateway.getTargetType());
+    	mqttRequest.setClassKey(NetworkManagementBasicCommandClass.INT_ID);
+    	mqttRequest.setCommandKey(NetworkManagementBasicCommandClass.INT_ID);
+    	
+    	String topic = MqttCommon.getMqttPublishTopic(mqttRequest);
+    	HashMap<String, Object> publishPayload = new HashMap<>();
+    	HashMap map = new HashMap<>();
+        map.put("mode", mode);
+        HashMap map1 = new HashMap<>();
+        map1.put("set_data", map);
+        mqttRequest.setSetData(map1);
+    	publish(topic, publishPayload);
+    }
+    
+    
+    
+    
     private void publish(String topic, HashMap<String, Object> publishPayload) throws JsonProcessingException, InterruptedException {
         String payload = objectMapper.writeValueAsString(publishPayload);
         Message message = new Message(topic, payload);
