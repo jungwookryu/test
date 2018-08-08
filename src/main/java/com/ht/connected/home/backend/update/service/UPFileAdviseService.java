@@ -82,11 +82,10 @@ public class UPFileAdviseService {
                 jo.put("force", fileVersion.getForce());                
                 payload = jo.toString();
             } catch (JSONException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOGGER.warn("error message", e);
             }  
         } else {
-            LOGGER.error(String.format("원격파일을 찾을수 없습니다 : %s", fileURL));
+            LOGGER.error(String.format("Remote file is not valid or not exists : %s", fileURL));
         }
 
         return payload;
