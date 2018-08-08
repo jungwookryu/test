@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.connected.home.backend.client.home.HomeRepository;
+import com.ht.connected.home.backend.common.AuditLogger;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 
 @RestController
@@ -52,15 +53,19 @@ public class UserController extends CommonController {
 	 */
 	@PostMapping
 	public ResponseEntity createUser(@RequestBody User users, HttpServletRequest request) throws IllegalArgumentException, UnsupportedEncodingException {
+		AuditLogger.startLog(this.getClass(), "Add a new user : " + users.getUserEmail());
 
 		boolean rtnUser = usersService.getExistUser(users.getUserEmail());
 		if (rtnUser) {
 			HttpHeaders responseHeaders = new HttpHeaders();
 			responseHeaders.set("message", "exist useremail");
+			
+			AuditLogger.endLog(this.getClass(), "Add a new user : failed (already exist userEmail)");
 			return new ResponseEntity("exist userEmail", responseHeaders, HttpStatus.NOT_ACCEPTABLE);
 		}else {
 			User rtnUsers = usersService.register(users);
 			logger.debug(rtnUsers.toString());
+			AuditLogger.endLog(this.getClass(), "Add a new user : successed");
 			return new ResponseEntity(HttpStatus.CREATED);
 		}
 
@@ -68,9 +73,11 @@ public class UserController extends CommonController {
 
 	@GetMapping
 	public ResponseEntity<HashMap<String, List>> getUsers() {
+		AuditLogger.startLog(this.getClass(), "Get user list");
 		HashMap<String, List> map = new HashMap<>();
 		List rtnUsers = userRepository.findAll();
 		map.put("users", rtnUsers);
+		AuditLogger.endLog(this.getClass(), "Get user list : " + rtnUsers.size());
 		return new ResponseEntity<HashMap<String, List>>(map, HttpStatus.OK);
 	}
 

@@ -104,9 +104,8 @@ public class MqttCommon {
     }
 
     public static void publish(ProducerComponent producerComponent, Message message) throws InterruptedException {
-        logger.info("amqp publish -t "+ message.getMessageType()+" -m "+ message.getMessageBody());
+        AuditLogger.log(MqttCommon.class, "amqp publish -t "+ message.getMessageType()+" -m "+ message.getMessageBody());
         producerComponent.run(message);
-
     }
 
     public static void publishNotificationData(ProducerComponent producerComponent, Properties callbackAckProperties, String sAckPropertyName, String target, String model, String serial,

@@ -91,7 +91,7 @@ public class GlobalControllerException {
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<String> authenticationException(
             AuthenticationException exception) {
-        exception.printStackTrace();
+    	logger.warn("Auth Exception occurs", exception.fillInStackTrace());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body("AuthenticationException request: " + exception.getMessage());
     }
@@ -99,7 +99,7 @@ public class GlobalControllerException {
     @ExceptionHandler(GenericJDBCException.class)
     public ResponseEntity<String> genericJDBCException(
             GenericJDBCException exception) {
-        exception.printStackTrace();
+    	logger.warn("JDBC Exception occurs", exception.fillInStackTrace());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("server error: " + exception.getMessage());
     }
@@ -107,17 +107,18 @@ public class GlobalControllerException {
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<String> noHandlerFoundHandler(
             NoHandlerFoundException exception) {
-        exception.printStackTrace();
+    	logger.warn("NoHandlerFoundException occurs", exception.fillInStackTrace());
         return ResponseEntity.badRequest()
                 .body("Invalid request: " + exception.getMessage());
     }
     
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler(BadClientCredentialsException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<String> noBadClientCredentialsException(
             BadClientCredentialsException exception) {
-        exception.printStackTrace();
-        return ResponseEntity.notFound().build();
+    	logger.warn("BadClientCredentialsException occurs", exception.fillInStackTrace());
+    	return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body("AuthenticationException request: " + exception.getMessage());
     }
 
 

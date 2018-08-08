@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ht.connected.home.backend.client.home.HomeServiceImpl.Share;
 import com.ht.connected.home.backend.client.user.User;
 import com.ht.connected.home.backend.client.user.UserService;
+import com.ht.connected.home.backend.common.AuditLogger;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 
@@ -113,8 +114,10 @@ public class HomeController extends CommonController {
 	@PostMapping
 	public ResponseEntity<HashMap<String, Object>> registHome(@RequestBody Home requestHome) throws Exception {
 		String authUserEmail = getAuthUserEmail();
+		AuditLogger.startLog(this.getClass(), "Add a Home : [" + authUserEmail + ", " + requestHome.getNickname() + "]");
 		requestHome.setOwnerUserEmail(authUserEmail);
 		Home rtnHome = homeService.createHome(requestHome);
+		AuditLogger.endLog(this.getClass(), "Add a Home : Succeed");
 		return new ResponseEntity(rtnHome, HttpStatus.OK);
 	}
 
