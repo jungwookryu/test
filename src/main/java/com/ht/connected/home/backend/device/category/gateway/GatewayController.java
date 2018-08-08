@@ -78,38 +78,48 @@ public class GatewayController extends CommonController {
     }
 
     /**
-     * 로그인한 사용자가 등록한 모든 gateway를 조회한다.
-     * @param req
+     * 요청된 Home 들에 속한 모든 Gateway 정보를 가져온다. 
+     * 요청 Home 이 없다면 현재 로그인한 사용자의 기본 Gateway 정보를 가져온다. 
+     * 
+     * @param shomeNos Home no 목록 (',' 구분자)
      * @return
      * @throws Exception
      */
-
 	@GetMapping
 	public ResponseEntity<HashMap<String, Object>> getGatewayList(
 			@RequestParam(value = "shomeNos", required = false) String shomeNos) throws Exception {
-		
+		AuditLogger.startLog(GatewayController.class, "Get gateway list of Homes : " + shomeNos);
 		List<Integer> iHomes = new ArrayList();
 		if (!Objects.isNull(shomeNos)) {
+			/*
+			 * TODO need to check authentication
+			 */
 			String[] sHomes = shomeNos.split(",");
 			for (String sHome : sHomes) {
-				iHomes.add(Integer.parseInt(sHome));
+				try {
+					iHomes.add(Integer.parseInt(sHome));
+				} catch (NumberFormatException ex) {
+					AuditLogger.endLog(GatewayController.class, "Get gateway list of Homes : Failed (invalid parameter : " + shomeNos + ")");
+					return new ResponseEntity(HttpStatus.BAD_REQUEST);
+				}
 			}
-		}else {
+		} else {
 			List<Home> home = homeService.getHomeListByEmail(getAuthUserEmail());
 			iHomes.add(home.get(0).getNo());
 		}
 		List lstGateways = gateWayService.getGatewayListByHome(iHomes);
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("list", lstGateways);
+		AuditLogger.endLog(GatewayController.class, "Get gateway list of Homes : Succeed");
 		return new ResponseEntity(map, HttpStatus.OK);
 	}
-    
+
     @DeleteMapping(value = "/{no}")
     public ResponseEntity deleteGateway(@PathVariable("no") int no) throws Exception {
         gateWayService.delete(no);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);	// TODO async request. 202?
     }
-    
+
     @PutMapping(value = "/{no}")
     public ResponseEntity modifyGateway(@PathVariable("no") int no, @RequestBody Gateway gateway) {
         String userEmail = getAuthUserEmail();
@@ -120,9 +130,6 @@ public class GatewayController extends CommonController {
                 return new ResponseEntity<>(rtnGateway,HttpStatus.OK);
             }
         }
-        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);	// TODO not found gateway. 404?
     }
-    
-
-    
 }
