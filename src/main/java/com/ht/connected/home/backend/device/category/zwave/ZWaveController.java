@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.client.user.User;
 import com.ht.connected.home.backend.client.user.UserRepository;
+import com.ht.connected.home.backend.common.AuditLogger;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 import com.ht.connected.home.backend.device.category.gateway.Gateway;
 import com.ht.connected.home.backend.device.category.gateway.GatewayRepository;
@@ -81,10 +82,14 @@ public class ZWaveController extends CommonController {
         // mode 1 == add, 5==stop
         int mode = (int) req.getOrDefault("mode", -1);
         String s2pin = (String) req.get("s2pin");
-        logger.debug("mode:::" + mode);
         int commandKey = NetworkManagementInclusionCommandClass.INT_NODE_ADD;
         String serial = (String) req.getOrDefault("serial", "");
+        AuditLogger.startLog(ZWaveController.class, "Register ZWave [mode : " + mode + ", s2pin : " + s2pin + ", serial : " + serial + "]");
         Gateway gateway = gatewayRepository.findBySerial(serial);
+        if (gateway == null) {
+        	AuditLogger.endLog(ZWaveController.class, "Register ZWave : failed. not found gateway (" + serial + ")");
+        	return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         HashMap requestMap = new HashMap<>();
         if (mode != -1) {
             map.put("mode", mode);
@@ -94,9 +99,9 @@ public class ZWaveController extends CommonController {
         }
         requestMap.put("set_data", map);
         ZWaveRequest zwaveRequest = new ZWaveRequest(req, classKey, commandKey, "v1");
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                zwaveRequest.setTarget(gateway.getTargetType());
         zwaveRequest.setModel(gateway.getModel());
         zwaveService.publish(requestMap, zwaveRequest);
+        AuditLogger.endLog(ZWaveController.class, "Register ZWave : succeed");
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
