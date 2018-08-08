@@ -24,6 +24,7 @@ import com.ht.connected.home.backend.client.home.Home;
 import com.ht.connected.home.backend.client.home.HomeService;
 import com.ht.connected.home.backend.client.user.User;
 import com.ht.connected.home.backend.client.user.UserService;
+import com.ht.connected.home.backend.common.AuditLogger;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 import com.ht.connected.home.backend.device.category.zwave.ZWaveController;
 import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
@@ -60,16 +61,18 @@ public class GatewayController extends CommonController {
     @PostMapping
     public ResponseEntity registerGateway(@RequestBody HashMap<String, String> req)
             throws Exception {
-        String authUserEmail = getAuthUserEmail();
-        User user = userService.getUser(authUserEmail);
-        Gateway gateway = gateWayService.findBySerial(req.get("serial"));
+    	String serial = req.get("serial");
+    	AuditLogger.startLog(this.getClass(), "Checking a gateway is registered : " + serial);
+        Gateway gateway = gateWayService.findBySerial(serial);
         if (isNull(gateway)) {
+        	AuditLogger.endLog(this.getClass(), "Checking a gateway is registered : failed");
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         } else {
         	List lst = new ArrayList();
         	lst.add(gateway);
         	HashMap map = new HashMap<>();
         	map.put("list", lst);
+        	AuditLogger.endLog(this.getClass(), "Checking a gateway is registered : succeed");
             return new ResponseEntity(map,HttpStatus.OK);
         }
     }
