@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.security.MessageDigest;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,17 +70,22 @@ public class UPFileAdviseService {
             fileVersion.setUrl(fileURL);
             if (fileVersion.getForce().equals("Y")) {
                 fileVersion.setForce("true");
-            } else {
+            } else if(!fileVersion.getForce().equals("true")){
                 fileVersion.setForce("false");
             }
             fileVersion.setUpdateType(updateType);
             try {
-                payload = objectMapper.writeValueAsString(fileVersion);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                JSONObject jo = new JSONObject();
+                jo.put("update_type", fileVersion.getUpdateType());
+                jo.put("url", fileVersion.getUrl());
+                jo.put("md5", fileVersion.getMd5());
+                jo.put("force", fileVersion.getForce());                
+                payload = jo.toString();
+            } catch (JSONException e) {
+                LOGGER.warn("JSONObject put method arguments are not matched", e);
+            }  
         } else {
-            LOGGER.error(String.format("원격파일을 찾을수 없습니다 : %s", fileURL));
+            LOGGER.error(String.format("Remote file is not valid or not exists : %s", fileURL));
         }
 
         return payload;

@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
                 @ColumnResult(name = "version_app", type = String.class),
                 @ColumnResult(name = "version_fw", type = String.class) }) })
 @NamedNativeQuery(name = "UPDeviceVersion.getByModelName", query = "select g.serial, d.version_os, d.version_api, d.version_app, d.version_fw "
-        + "from gateway g " + "left join up_device_version d on g.serial=d.serial_no "
+        + "from gateway g " + "inner join up_device_version d on g.serial=d.serial_no "
         + "where g.model = :modelName", resultSetMapping = "ResultDeviceVersionByModel")
 
 @Entity
