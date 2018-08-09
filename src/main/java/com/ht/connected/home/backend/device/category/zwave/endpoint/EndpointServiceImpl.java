@@ -203,11 +203,11 @@ public class EndpointServiceImpl implements EndpointService {
 	}
 
 	private String getControlfunctionCode(HashMap controlSetData, String functionCode) {
-		Integer userStatus = (Integer) controlSetData.get("userStatus");
-		Integer userIdentifier = (Integer) controlSetData.get("userIdentifier");
+		Integer userStatus = (Integer) controlSetData.getOrDefault("userStatus",-1);
+		Integer userIdentifier = (Integer) controlSetData.getOrDefault("userIdentifier",-1);
 		if (userIdentifier == 1 && userStatus == 1) {
 			return "0x" + UserCodeCommandClass.functionCode;
 		}
-		return String.format("%2s", functionCode).replace(' ', '0');
+		return "0x" + functionCode;
 	}
 }
