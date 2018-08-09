@@ -31,7 +31,6 @@ import com.ht.connected.home.backend.device.category.zwave.certi.commandclass.Bi
 import com.ht.connected.home.backend.device.category.zwave.certi.commandclass.CommandClass;
 import com.ht.connected.home.backend.device.category.zwave.certi.commandclass.CommandClassFactory;
 import com.ht.connected.home.backend.device.category.zwave.certi.commandclass.UserCodeCommandClass;
-import com.ht.connected.home.backend.device.category.zwave.cmdcls.CmdCls;
 import com.ht.connected.home.backend.device.category.zwave.cmdcls.CmdClsRepository;
 import com.ht.connected.home.backend.device.category.zwave.notification.NotificationRepository;
 import com.ht.connected.home.backend.device.category.zwave.notification.ZwaveCertiNotificationService;
