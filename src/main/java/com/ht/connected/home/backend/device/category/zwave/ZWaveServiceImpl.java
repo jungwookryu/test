@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,7 +33,7 @@ public class ZWaveServiceImpl implements ZWaveService {
 
     @Autowired
     public ZWaveServiceImpl(
-        ZWaveCommonService zWaveCommonService,
+        @Lazy ZWaveCommonService zWaveCommonService,
         ProducerComponent producerComponent
      ) {
         this.zWaveCommonService = zWaveCommonService;
