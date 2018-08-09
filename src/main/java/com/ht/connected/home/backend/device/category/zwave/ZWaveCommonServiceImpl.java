@@ -80,7 +80,7 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
             GatewayRepository gatewayRepository,
             EndpointRepository endpointRepository,
             CmdClsRepository cmdClsRepository,
-            GatewayService gatewayService,
+            @Lazy GatewayService gatewayService,
             EndpointService endpointService,
             @Lazy ZWaveCertiService zWaveCertiService,
             GatewayCategoryRepository gatewayCategoryRepository,
