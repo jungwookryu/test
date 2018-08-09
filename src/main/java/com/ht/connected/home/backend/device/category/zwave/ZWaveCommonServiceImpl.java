@@ -25,7 +25,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ht.connected.home.backend.client.user.User;
 import com.ht.connected.home.backend.client.user.UserRepository;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
@@ -34,6 +33,7 @@ import com.ht.connected.home.backend.controller.mqtt.ProducerComponent;
 import com.ht.connected.home.backend.device.category.CategoryActive;
 import com.ht.connected.home.backend.device.category.gateway.Gateway;
 import com.ht.connected.home.backend.device.category.gateway.GatewayRepository;
+import com.ht.connected.home.backend.device.category.gateway.GatewayService;
 import com.ht.connected.home.backend.device.category.gateway.gatewayCategory.GatewayCategory;
 import com.ht.connected.home.backend.device.category.gateway.gatewayCategory.GatewayCategoryRepository;
 import com.ht.connected.home.backend.device.category.zwave.certi.ZWaveCertiService;
@@ -44,17 +44,15 @@ import com.ht.connected.home.backend.device.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointReportByApp;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointRepository;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointService;
+import com.ht.connected.home.backend.service.mqtt.MqttPayload;
 import com.ht.connected.home.backend.service.mqtt.MqttRequest;
-import com.ht.connected.home.backend.userGateway.UserGateway;
-import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
 
 @Service
 public class ZWaveCommonServiceImpl implements ZWaveCommonService {
 
     private ZWaveRepository zwaveRepository;
-    private UserRepository userRepository;
     private GatewayRepository gatewayRepository;
-    private UserGatewayRepository userGatewayRepository;
+    private GatewayService gatewayService;
     private EndpointRepository endpointRepository;
     private CmdClsRepository cmdClsRepository;
     private EndpointService endpointService;
@@ -80,24 +78,23 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
             ZWaveRepository zwaveRepository,
             UserRepository userRepository,
             GatewayRepository gatewayRepository,
-            UserGatewayRepository userGatewayRepository,
             EndpointRepository endpointRepository,
             CmdClsRepository cmdClsRepository,
+            GatewayService gatewayService,
             EndpointService endpointService,
             @Lazy ZWaveCertiService zWaveCertiService,
             GatewayCategoryRepository gatewayCategoryRepository,
             Properties zWaveProperties
      ) {
         this.zwaveRepository = zwaveRepository;
-        this.userRepository = userRepository;
         this.gatewayRepository = gatewayRepository;
-        this.userGatewayRepository = userGatewayRepository;
         this.endpointRepository = endpointRepository;
         this.cmdClsRepository = cmdClsRepository;
         this.endpointService = endpointService;
         this.zWaveCertiService = zWaveCertiService;
         this.gatewayCategoryRepository = gatewayCategoryRepository;
         this.zWaveProperties = zWaveProperties;
+        this.gatewayService = gatewayService;
     }
 
     @Autowired
@@ -145,6 +142,17 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
             }
         }
     }
+    
+    @Override
+    public void reportStatus(ZWaveRequest zwaveRequest, String data) throws JsonParseException, JsonMappingException, IOException, JSONException, InterruptedException {
+    	
+    	Gateway gateway = gatewayService.findBySerial(zwaveRequest.getSerialNo());
+    	MqttPayload payload = objectMapper.readValue(data, MqttPayload.class);
+    	String status =(String) payload.getResultData().getOrDefault("status", "");
+    	int nodeId = (Integer) payload.getResultData().getOrDefault("nodeId", -1);
+    	zwaveRepository.setModifyStatusAndLastModifiedDateByNodeIdANDGatewayNo(status, new Date(), nodeId, gateway.getNo());
+    	
+    }
 
     private void publish(MqttRequest mqttRequest) throws JsonProcessingException, InterruptedException {
 
@@ -159,18 +167,6 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
     private void publish(String topic, String payload) throws InterruptedException {
         Message message = new Message(topic, payload);
         MqttCommon.publish(producerComponent, message);
-    }
-
-    @Override
-    public int getByUserEmailAndNo(String userEmail, int no) {
-        List<Integer> lstGatewayNos = new ArrayList<>();
-        List<User> user = userRepository.findByUserEmail(userEmail);
-        List<UserGateway> lstUserGateway = userGatewayRepository.findByUserNo(user.get(0).getNo());
-        lstUserGateway.forEach(userGateway -> {
-            lstGatewayNos.add(userGateway.getGatewayNo());
-        });
-        List<ZWave> lstZwave = zwaveRepository.findByNoAndGatewayNoIn(no, lstGatewayNos);
-        return lstZwave.size();
     }
 
     @Override
@@ -230,7 +226,7 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
 
         Gateway gateway = gatewayRepository.findOne(zWaveControl.getGateway_no());
         Endpoint endpoint = endpointRepository.findOne(zWaveControl.getEndpoint_no());
-        ZWave zwave = zwaveRepository.findOne(endpoint.getZwaveNo());
+        ZWave zwave = zwaveRepository.findOne(zWaveControl.getZwave_no());
 
         MqttRequest mqttRequest = new MqttRequest();
         mqttRequest.setNodeId(zwave.getNodeId());
@@ -240,9 +236,10 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
         mqttRequest.setSerialNo(gateway.getSerial());
         mqttRequest.setModel(gateway.getModel());
         zWaveControl.setFunctionCode(BasicCommandClass.functionCode);
-        mqttRequest.setClassKey(zWaveControl.getFunctionCode());
+        mqttRequest.setClassKey(BasicCommandClass.INT_ID);
         mqttRequest.setCommandKey(zWaveControl.getControlCode());
         mqttRequest.setTarget(gateway.getTargetType());
+        mqttRequest.setSetData(zWaveControl.getSetData());
         zwaveBasicControl(mqttRequest);
     }
 
@@ -317,10 +314,9 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
         List rtnList = new ArrayList();
         List<ZWave> lstZWave = zwaveRepository.findByGatewayNoAndNodeId(gatewayNo, nodeId);
         for (ZWave zWave : lstZWave) {
-
-            endpointService.deleteEndpoint(zWave);
             rtnList.add(zWave.getNo());
         }
+        endpointService.deleteEndpoints(rtnList);
         zwaveRepository.deleteByGatewayNoAndNodeId(gatewayNo, nodeId);
         return rtnList;
     }
@@ -339,7 +335,7 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
         mqttRequest.setSecurityOption("0");
         HashMap map = new HashMap<>();
         HashMap map1 = new HashMap<>();
-        map1.put("set_data", map);
+        map1.put("set_data", mqttRequest.getSetData());
         mqttRequest.setSetData(map1);
         publish(mqttRequest);
     }

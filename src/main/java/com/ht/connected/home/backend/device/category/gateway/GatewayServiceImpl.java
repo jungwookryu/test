@@ -3,7 +3,6 @@ package com.ht.connected.home.backend.device.category.gateway;
 import static java.util.Objects.isNull;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -43,8 +42,6 @@ import com.ht.connected.home.backend.device.category.zwave.cmdcls.CmdClsReposito
 import com.ht.connected.home.backend.device.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointRepository;
 import com.ht.connected.home.backend.service.mqtt.Target;
-import com.ht.connected.home.backend.userGateway.UserGateway;
-import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
 
 @Service
 public class GatewayServiceImpl implements GatewayService {
@@ -59,8 +56,6 @@ public class GatewayServiceImpl implements GatewayService {
 
     Logger logger = LoggerFactory.getLogger(GatewayServiceImpl.class);
 
-    @Autowired
-    UserGatewayRepository userGatewayRepository;
     
     @Autowired
     ProducerComponent producerRestController;
@@ -102,22 +97,6 @@ public class GatewayServiceImpl implements GatewayService {
     
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @Override
-	public List<Gateway> getGatewayList(String status,String authUserEmail) {
-        User user = userService.getUser(authUserEmail);
-        List<Integer> nos = new ArrayList<>();
-        if(Common.empty(status)) {
-            List<UserGateway> userGateways = userGatewayRepository.findByUserNo(user.getNo());
-            userGateways.forEach(UserGateway -> nos.add(UserGateway.getGatewayNo()));
-            return gatewayRepository.findByNoIn(nos);
-        }
-        else {
-            List<UserGateway> userGateways = userGatewayRepository.findByUserNo(user.getNo());
-            userGateways.forEach(UserGateway -> nos.add(UserGateway.getGatewayNo()));
-            return gatewayRepository.findByNoInAndStatusContaining(nos,status);
-        }
-    }
-    
     @Override
 	public List<Gateway> getGatewayListByHome(List<Integer> homeNos) {
 		List<Gateway> gateways = gatewayRepository.findByHomeNoIn(homeNos);
@@ -204,13 +183,8 @@ public class GatewayServiceImpl implements GatewayService {
 
     private void updateDeleteDB(int gatewayNo) {
         gatewayRepository.setModifyStatusForNo(status.delete.name(), gatewayNo);
-        userGatewayRepository.setModifyStatusForGatewayNo(status.delete.name(), gatewayNo);
     }
 
-    private void deleteDB(int gatewayNo) {
-        gatewayRepository.delete(gatewayNo);
-        userGatewayRepository.deleteByGatewayNo(gatewayNo);
-    }
 
     @Override
     public void deleteCategory(GatewayCategory gatewayCategory) {
@@ -255,7 +229,6 @@ public class GatewayServiceImpl implements GatewayService {
         // host 정보삭제
         Gateway gateway = gatewayRepository.findBySerial(serial);
         gatewayRepository.delete(gateway.getNo());
-        userGatewayRepository.deleteByGatewayNo(gateway.getNo());
         // zwaveNo
         gatewayCategoryRepository.deleteByGatewayNo(gateway.getNo());
         List<ZWave> lstZWave = zwaveRepository.findByGatewayNo(gateway.getNo());
@@ -308,13 +281,11 @@ public class GatewayServiceImpl implements GatewayService {
             
     }
 
-
     @Override
     public Gateway findBySerial(String serial) {
         Gateway gateway = gatewayRepository.findBySerial(serial);
         return gateway;
     }
-
     
 }
 

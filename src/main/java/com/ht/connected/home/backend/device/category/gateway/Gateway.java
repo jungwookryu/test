@@ -68,7 +68,7 @@ public class Gateway {
 
     @Column(name = "home_no")
     @JsonProperty("home_no")
-    private int homeNo;
+    private Integer homeNo;
     
     @Column(name = "created_user_id")
     @JsonProperty("created_user_id")
@@ -283,11 +283,11 @@ public class Gateway {
         this.locLongitude = locLongitude;
     }
 
-	public int getHomeNo() {
+	public Integer getHomeNo() {
 		return homeNo;
 	}
 
-	public void setHomeNo(int homeNo) {
+	public void setHomeNo(Integer homeNo) {
 		this.homeNo = homeNo;
 	}
 	

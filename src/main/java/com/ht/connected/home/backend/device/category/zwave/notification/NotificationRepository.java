@@ -11,4 +11,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
     List<Notification> findByEndpointNo(int endpointNo);
     
     void deleteByZwaveNo(int zwaveNo);
+    
+    void deleteByZwaveNoIn(List<Integer> zwaveNos);
 }

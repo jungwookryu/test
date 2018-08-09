@@ -34,6 +34,13 @@ public class MqttCommon {
     public final static int INT_MODEL = 3;
     public final static int INT_SERIAL = 4;
     public final static int INT_CATEGORY = 5;
+    public final static int INT_MODE = 6;
+    public final static int INT_CLASS_KEY = 7;
+    public final static int INT_COMMAND_KEY = 8;
+    public final static int INT_VERSION = 9;
+    public final static int INT_NODEID = 10;
+    public final static int INT_ENDPOINTID = 11;
+    public final static int INT_OPTION = 11;
     /**
      * mqtt publish 토픽 생성
      * @param topicLeadingPath

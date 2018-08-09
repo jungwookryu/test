@@ -69,8 +69,12 @@ public class ZWaveServiceImpl implements ZWaveService {
             resultData = mqttPayload.getResultData();
         }
 
-        if (CategoryActive.zwave.init.name().equals(zwaveRequest.getCategoryActive())) {
-            zWaveCommonService.reportZWaveList(zwaveRequest, (String) resultData);
+        if (CategoryActive.zwave.init.name().equals(zwaveRequest.getCategoryMethod())) {
+            zWaveCommonService.reportZWaveList(zwaveRequest, payload);
+        }
+
+        else if (CategoryActive.zwave.status.name().equals(zwaveRequest.getCategoryMethod())) {
+        	zWaveCommonService.reportStatus(zwaveRequest, payload);
         }
 
     }

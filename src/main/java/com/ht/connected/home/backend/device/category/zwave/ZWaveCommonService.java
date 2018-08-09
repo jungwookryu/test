@@ -19,8 +19,6 @@ import com.ht.connected.home.backend.service.mqtt.MqttRequest;
 
 public interface ZWaveCommonService {
 
-    int getByUserEmailAndNo(String userEmail, int no);
-
     ZWaveReport getZWaveList(int gatewayNo);
 
     Map getZWaveListApp(int gatewayNo);
@@ -38,4 +36,7 @@ public interface ZWaveCommonService {
     void reportZWaveList(ZWaveRequest zwaveRequest, String data) throws JsonParseException, JsonMappingException, IOException, JSONException, InterruptedException;
 
     void zwaveBasicControl(MqttRequest mqttRequest) throws JsonProcessingException, InterruptedException;
+
+	void reportStatus(ZWaveRequest zwaveRequest, String data)
+			throws JsonParseException, JsonMappingException, IOException, JSONException, InterruptedException;
 }

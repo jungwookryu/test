@@ -1,5 +1,6 @@
 package com.ht.connected.home.backend.device.category.zwave;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface ZWaveRepository extends JpaRepository<ZWave, Integer>{
 
     List<ZWave> findByNoAndGatewayNoIn(int no, List gatewayNos);
+    List<ZWave> findByNoAndGatewayNo(int no, int gatewayNo);
     
     void deleteByGatewayNoAndNodeId(int GatewayNo, int nodeId);
     
@@ -32,4 +34,10 @@ public interface ZWaveRepository extends JpaRepository<ZWave, Integer>{
     @Query("update ZWave z set z.status = ?1  where z.gatewayNo = ?2")
     int updateStatusByGatewayNo(String status, int gatewayNo);
 
+    
+    @Modifying
+    @Transactional
+    @Query("update ZWave set status = ?1, lastModifiedDate=?2 where nodeId = ?3 and gatewayNo =?4")
+    int setModifyStatusAndLastModifiedDateByNodeIdANDGatewayNo (String status, Date lastModifiedDate, int nodeId, int gatewayNo );
+    
 }
