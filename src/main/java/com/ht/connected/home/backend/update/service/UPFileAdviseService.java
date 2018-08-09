@@ -82,7 +82,7 @@ public class UPFileAdviseService {
                 jo.put("force", fileVersion.getForce());                
                 payload = jo.toString();
             } catch (JSONException e) {
-                LOGGER.warn("error message", e);
+                LOGGER.warn("JSONObject put method arguments are not matched", e);
             }  
         } else {
             LOGGER.error(String.format("Remote file is not valid or not exists : %s", fileURL));
