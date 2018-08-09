@@ -38,6 +38,7 @@ import com.ht.connected.home.backend.device.category.gateway.gatewayCategory.Gat
 import com.ht.connected.home.backend.device.category.gateway.gatewayCategory.GatewayCategoryRepository;
 import com.ht.connected.home.backend.device.category.zwave.certi.ZWaveCertiService;
 import com.ht.connected.home.backend.device.category.zwave.certi.commandclass.BasicCommandClass;
+import com.ht.connected.home.backend.device.category.zwave.certi.commandclass.NetworkManagementInclusionCommandClass;
 import com.ht.connected.home.backend.device.category.zwave.cmdcls.CmdCls;
 import com.ht.connected.home.backend.device.category.zwave.cmdcls.CmdClsRepository;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.Endpoint;
@@ -69,7 +70,7 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
     @Autowired
     ProducerComponent producerComponent;
 
-    public enum Status {
+    public static enum STATUS {
         ADD, DELETE, ALIVE, DOWN, SLEEP
     }
 
@@ -198,21 +199,27 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
     // 삭제 토픽
     @Override
     @Transactional
-    public int deleteByNo(int no) throws JsonProcessingException, InterruptedException {
+    public int deleteByNo(ZWave zwave) throws JsonProcessingException, InterruptedException {
 
-        ZWave zwave = zwaveRepository.getOne(no);
         Gateway gateway = gatewayRepository.getOne(zwave.getGatewayNo());
-        int iRtn = zwaveRepository.setFixedStatusForNo(Status.DELETE.name().toLowerCase(), no);
+        int iRtn = zwaveRepository.setFixedStatusForNo(STATUS.DELETE.name().toLowerCase(), zwave.getNo());
         MqttRequest mqttRequest = new MqttRequest();
 
         mqttRequest.setSerialNo(gateway.getSerial());
         mqttRequest.setModel(gateway.getModel());
         mqttRequest.setNodeId(zwave.getNodeId());
         mqttRequest.setTarget(gateway.getTargetType());
+        mqttRequest.setClassKey(NetworkManagementInclusionCommandClass.INT_ID);
+        if(zwave.getStatus().equals(ZWaveCommonServiceImpl.STATUS.DOWN.name().toLowerCase())) {
+            mqttRequest.setCommandKey(NetworkManagementInclusionCommandClass.INT_FAILED_NODE_REMOVE);
+        }else {
+            mqttRequest.setCommandKey(NetworkManagementInclusionCommandClass.INT_NODE_REMOVE);
+        }
         zWaveCertiService.publishDelete(mqttRequest);
         return iRtn;
 
     }
+
 
     /**
      * Zwave 기기제어
@@ -300,7 +307,7 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
             gatewayCategory.setCategory(CategoryActive.gateway.zwave.name());
             gatewayCategory.setCategoryNo(CategoryActive.gateway.zwave.ordinal());
             gatewayCategory.setNodeId(nodeId);
-            gatewayCategory.setStatus(Status.ADD.name().toLowerCase());
+            gatewayCategory.setStatus(STATUS.ADD.name().toLowerCase());
             gatewayCategory.setCreatedTime(new Date());
             gatewayCategory.setLastmodifiedTime(new Date());
             gatewayCategoryRepository.save(gatewayCategory);

@@ -23,8 +23,8 @@ public interface ZWaveCommonService {
 
     Map getZWaveListApp(int gatewayNo);
 
-    int deleteByNo(int no) throws JsonProcessingException, InterruptedException;
-
+    int deleteByNo(ZWave zwave) throws JsonProcessingException, InterruptedException;
+    
     void zwaveBasicControl(ZWaveControl zWaveControl) throws JsonProcessingException, InterruptedException;
 
     ZWave saveZWaveList(ZWaveRequest zwaveRequest, ZWave nodeItem, Gateway gateway);

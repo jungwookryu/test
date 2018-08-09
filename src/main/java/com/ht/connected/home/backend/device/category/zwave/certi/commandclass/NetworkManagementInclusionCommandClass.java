@@ -19,6 +19,7 @@ public class NetworkManagementInclusionCommandClass extends CommandClass {
     public static final int INT_NODE_REMOVE = 0x03;
     public static final int INT_NODE_REMOVE_STATUS = 0x04;
     public static final int INT_NODE_STOP = 0x05;
+    public static final int INT_FAILED_NODE_REMOVE = 0x07;
     public static final int INT_FAILED_NODE_STATUS = 0x08;
     public static final int INT_FAILED_NODE_REPLACE = 0x09;
     

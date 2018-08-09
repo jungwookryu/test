@@ -142,13 +142,12 @@ public class ZWaveController extends CommonController {
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}
 		
-		ZWave zwaves = zWaveRepository.findOne(no);
-		if (!Objects.isNull(zwaves)) {
-			zWaveCommonService.deleteByNo(no);
-		} else {
+		ZWave zwave = zWaveRepository.findOne(no);
+		if (Objects.isNull(zwave)) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-
+		
+		zWaveCommonService.deleteByNo(zwave);
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
 
