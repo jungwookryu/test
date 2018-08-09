@@ -71,7 +71,7 @@ public class ZWaveServiceImpl implements ZWaveService {
         }
 
         if (CategoryActive.zwave.init.name().equals(zwaveRequest.getCategoryMethod())) {
-            zWaveCommonService.reportZWaveList(zwaveRequest, payload);
+            zWaveCommonService.reportZWaveList(zwaveRequest, objectMapper.writeValueAsString(resultData));
         }
 
         else if (CategoryActive.zwave.status.name().equals(zwaveRequest.getCategoryMethod())) {

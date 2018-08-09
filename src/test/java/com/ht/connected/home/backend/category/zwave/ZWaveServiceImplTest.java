@@ -14,7 +14,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ht.connected.home.backend.device.category.gateway.GatewayRepository;
 import com.ht.connected.home.backend.device.category.zwave.ZWaveCommonService;
 import com.ht.connected.home.backend.device.category.zwave.ZWaveRepository;
-import com.ht.connected.home.backend.device.category.zwave.ZWaveCommonServiceImpl.Status;
+import com.ht.connected.home.backend.device.category.zwave.ZWaveCommonServiceImpl.STATUS;
 import com.ht.connected.home.backend.gateway.GatewayEntityTestData;
 import com.ht.connected.home.backend.service.MockUtil;
 
@@ -40,7 +40,7 @@ public class ZWaveServiceImplTest  extends MockUtil{
          */
         Mockito.when(zwaveRepository.getOne(zwaveNo)).thenReturn(ZWaveEntityTestData.getOneZwave());
         Mockito.when(gatewayRepository.getOne(gatewayNo)).thenReturn(GatewayEntityTestData.getOne());
-        Mockito.when(zwaveRepository.setFixedStatusForNo(Status.DELETE.name().toLowerCase(), zwaveNo)).thenReturn(rtnInt1);
+        Mockito.when(zwaveRepository.setFixedStatusForNo(STATUS.DELETE.name().toLowerCase(), zwaveNo)).thenReturn(rtnInt1);
 //        Mockito.doNothing().when(messageHandler).setDefaultTopic(topic);
 //        Mockito.doNothing().when(mqttGateway).sendToMqtt(payload);
 //        Mockito.when(zwaveServiceImpl.deleteByNo(zwaveNo)).thenReturn(rtnInt1);

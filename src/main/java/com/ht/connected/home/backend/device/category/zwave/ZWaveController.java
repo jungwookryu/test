@@ -101,6 +101,7 @@ public class ZWaveController extends CommonController {
 		}
 		requestMap.put("set_data", map);
 		ZWaveRequest zwaveRequest = new ZWaveRequest(req, classKey, commandKey, "v1");
+		zwaveRequest.setTarget(gateway.getTargetType());
 		zwaveRequest.setModel(gateway.getModel());
 		zwaveService.publish(requestMap, zwaveRequest);
 		AuditLogger.endLog(ZWaveController.class, "Register ZWave : succeed");
@@ -141,13 +142,12 @@ public class ZWaveController extends CommonController {
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}
 		
-		ZWave zwaves = zWaveRepository.findOne(no);
-		if (!Objects.isNull(zwaves)) {
-			zWaveCommonService.deleteByNo(no);
-		} else {
+		ZWave zwave = zWaveRepository.findOne(no);
+		if (Objects.isNull(zwave)) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-
+		
+		zWaveCommonService.deleteByNo(zwave);
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
 
