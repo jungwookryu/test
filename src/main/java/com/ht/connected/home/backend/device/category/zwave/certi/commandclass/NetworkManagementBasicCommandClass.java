@@ -1,22 +1,9 @@
-/*
- *******************************************************************************
- * Copyright (c) 2013 Whizzo Software, LLC.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************
-*/
+
 package com.ht.connected.home.backend.device.category.zwave.certi.commandclass;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * NetworkManagementBasic Command Class
- *
- * @author ijlee
- */
 public class NetworkManagementBasicCommandClass extends CommandClass {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
