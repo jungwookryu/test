@@ -101,6 +101,7 @@ public class ZWaveController extends CommonController {
 		}
 		requestMap.put("set_data", map);
 		ZWaveRequest zwaveRequest = new ZWaveRequest(req, classKey, commandKey, "v1");
+		zwaveRequest.setTarget(gateway.getTargetType());
 		zwaveRequest.setModel(gateway.getModel());
 		zwaveService.publish(requestMap, zwaveRequest);
 		AuditLogger.endLog(ZWaveController.class, "Register ZWave : succeed");
