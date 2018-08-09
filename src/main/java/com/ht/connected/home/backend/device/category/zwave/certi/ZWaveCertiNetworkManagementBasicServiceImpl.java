@@ -1,6 +1,7 @@
 package com.ht.connected.home.backend.device.category.zwave.certi;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -29,7 +30,6 @@ import com.ht.connected.home.backend.device.category.zwave.ZWaveRepository;
 import com.ht.connected.home.backend.device.category.zwave.ZWaveRequest;
 import com.ht.connected.home.backend.device.category.zwave.certi.commandclass.NetworkManagementBasicCommandClass;
 import com.ht.connected.home.backend.device.category.zwave.cmdcls.CmdClsRepository;
-import com.ht.connected.home.backend.device.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointRepository;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointService;
 import com.ht.connected.home.backend.service.mqtt.MqttPayload;
@@ -150,17 +150,14 @@ public class ZWaveCertiNetworkManagementBasicServiceImpl implements ZWaveCertiNe
     @Transactional
     private void zwaveReset(ZWaveRequest zwaveRequest) {
         // host 정보삭제
-    	//TODO Service 호출을 통한 한번에 지우는 로직으로 수정하도록 함. 
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
 
         List<ZWave> lstZWave = zwaveRepository.findByGatewayNo(gateway.getNo());
+        List<Integer> zWaveNos  = new ArrayList();
         for (ZWave zWave : lstZWave) {
-            List<Endpoint> lstEndpoint = endpointRepository.findByZwaveNo(zWave.getNo());
-            for (Endpoint endpoint : lstEndpoint) {
-                cmdClsRepository.deleteByEndpointNo(endpoint.getNo());
-            }
-            endpointRepository.deleteByZwaveNo(zWave.getNo());
+        	zWaveNos.add(zWave.getNo());
         }
+        endpointService.deleteEndpoints(zWaveNos);
         zwaveRepository.deleteByGatewayNo(gateway.getNo());
 
     }

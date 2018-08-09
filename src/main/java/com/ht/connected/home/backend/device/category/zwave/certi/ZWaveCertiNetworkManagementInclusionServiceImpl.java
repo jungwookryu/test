@@ -35,7 +35,6 @@ import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointRepo
 import com.ht.connected.home.backend.service.mqtt.MqttPayload;
 import com.ht.connected.home.backend.service.mqtt.MqttRequest;
 import com.ht.connected.home.backend.service.mqtt.Target;
-import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
 
 @Service
 public class ZWaveCertiNetworkManagementInclusionServiceImpl implements ZWaveCertiNetworkManagementInclusionService {
@@ -47,7 +46,6 @@ public class ZWaveCertiNetworkManagementInclusionServiceImpl implements ZWaveCer
     Properties callbackAckProperties;
     ProducerComponent producerComponent;
     GatewayRepository gatewayRepository;
-    UserGatewayRepository userGatewayRepository;
     EndpointRepository endpointRepository;
     ZWaveService zWaveService;
     ZWaveCommonService zWaveCommonService;
@@ -57,14 +55,12 @@ public class ZWaveCertiNetworkManagementInclusionServiceImpl implements ZWaveCer
             ZWaveCommonService zWaveCommonService,
             ProducerComponent producerComponent,
             GatewayRepository gatewayRepository,
-            UserGatewayRepository userGatewayRepository,
             EndpointRepository endpointRepository,
             ZWaveService zWaveService
             ) {
         this.zWaveCommonService = zWaveCommonService;
         this.producerComponent = producerComponent;
         this.gatewayRepository = gatewayRepository;
-        this.userGatewayRepository = userGatewayRepository;
         this.endpointRepository = endpointRepository;
         this.zWaveService = zWaveService;
     }

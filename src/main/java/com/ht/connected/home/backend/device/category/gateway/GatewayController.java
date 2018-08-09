@@ -22,12 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ht.connected.home.backend.client.home.Home;
 import com.ht.connected.home.backend.client.home.HomeService;
-import com.ht.connected.home.backend.client.user.User;
 import com.ht.connected.home.backend.client.user.UserService;
 import com.ht.connected.home.backend.common.AuditLogger;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 import com.ht.connected.home.backend.device.category.zwave.ZWaveController;
-import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
 
 /**
  * gateway(호스트)관련 요청 처리
@@ -37,11 +35,10 @@ import com.ht.connected.home.backend.userGateway.UserGatewayRepository;
 @RequestMapping("/gateway")
 public class GatewayController extends CommonController {
 
+	@Autowired
     GatewayService gateWayService;
     @Autowired
     UserService userService;
-    @Autowired
-    UserGatewayRepository userGatewayRepository;
     @Autowired
     ZWaveController zwaveController;
     @Autowired
@@ -68,12 +65,8 @@ public class GatewayController extends CommonController {
         	AuditLogger.endLog(this.getClass(), "Checking a gateway is registered : failed");
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         } else {
-        	List lst = new ArrayList();
-        	lst.add(gateway);
-        	HashMap map = new HashMap<>();
-        	map.put("list", lst);
         	AuditLogger.endLog(this.getClass(), "Checking a gateway is registered : succeed");
-            return new ResponseEntity(map,HttpStatus.OK);
+        	return new ResponseEntity(gateway,HttpStatus.OK);
         }
     }
 

@@ -178,6 +178,11 @@ public class ZwaveCertiNotificationServiceImpl implements ZwaveCertiNotification
     public void delete(ZWave zwave) {
         notificationRepository.deleteByZwaveNo(zwave.getNo());
     }
+    
+    @Override
+    public void deleteZwaveNos(List<Integer> zwaveNos) {
+    	notificationRepository.deleteByZwaveNoIn(zwaveNos);
+    }
 
     @Override
     public List<Notification> getNotification(Endpoint endpoint) {

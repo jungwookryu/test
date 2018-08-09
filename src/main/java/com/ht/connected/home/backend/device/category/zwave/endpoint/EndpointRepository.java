@@ -8,8 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface EndpointRepository extends JpaRepository<Endpoint, Integer>{
     List<Endpoint> findByZwaveNo(int zwaveNo);
+    List<Endpoint> findByZwaveNoIn(List<Integer> zwaveNo);
     void deleteByZwaveNo(int zwaveNo);
-    
+    void deleteByZwaveNoIn(List<Integer> zwaveNos);
     Endpoint findByZwaveNoAndEpid(int zwaveNo, int epid);
     
     @Modifying

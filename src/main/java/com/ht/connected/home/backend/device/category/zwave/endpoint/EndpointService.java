@@ -27,5 +27,7 @@ public interface EndpointService{
     void zwaveControl(ZWaveControl zWaveControl) throws JsonProcessingException, InterruptedException, JsonGenerationException, JsonMappingException, IOException;
 
     Endpoint saveEndpoint(Endpoint endpoint);
+
+	void deleteEndpoints(List<Integer> zWaveNos);
     
 }

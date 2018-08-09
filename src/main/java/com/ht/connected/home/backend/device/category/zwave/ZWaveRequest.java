@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ht.connected.home.backend.common.ByteUtil;
+import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.device.category.CategoryActive;
 
 /**
@@ -48,29 +49,32 @@ public class ZWaveRequest extends ZWave{
     private HashMap<String, Object> setData;
 
     private String categoryActive;
+    
+    private String categoryMethod;
     /**
      * 경로를 배열로 받을경우 생성자
      * @param topic
      */
     public ZWaveRequest(String[] topic) {
         if (topic.length > 2) {
-            this.source = topic[1];
-            this.model = topic[3];
-            this.serialNo = topic[4];
-            this.categoryActive = topic[6];
-            if (CategoryActive.zwave.certi.name().equals(categoryActive)) {
+            this.source = topic[MqttCommon.INT_SOURCE];
+            this.model = topic[MqttCommon.INT_MODEL];
+            this.serialNo = topic[MqttCommon.INT_SERIAL];
+            this.categoryActive = topic[MqttCommon.INT_CATEGORY];
+            this.categoryMethod = topic[MqttCommon.INT_MODE];
+            if (CategoryActive.zwave.certi.name().equals(categoryMethod)) {
                 if (7 < topic.length) {
-                    this.classKey = ByteUtil.getStringtoInt(topic[7]);
-                    this.sClassKey = topic[7].toString();
+                    this.classKey = ByteUtil.getStringtoInt(topic[MqttCommon.INT_CLASS_KEY]);
+                    this.sClassKey = topic[MqttCommon.INT_CLASS_KEY].toString();
                     if (8 < topic.length) {
-                        this.sCommandKey = topic[8].toString();
-                        this.commandKey = ByteUtil.getStringtoInt(topic[8]);
+                        this.sCommandKey = topic[MqttCommon.INT_COMMAND_KEY].toString();
+                        this.commandKey = ByteUtil.getStringtoInt(topic[MqttCommon.INT_COMMAND_KEY]);
                         if (9 < topic.length) {
                             this.version = topic[9].toString();
                             if (10 < topic.length) {
-                                this.nodeId = ByteUtil.getStringtoInt(topic[10].toString());
+                                this.nodeId = ByteUtil.getStringtoInt(topic[MqttCommon.INT_NODEID].toString());
                                 if (11 < topic.length) {
-                                    this.endpointId = ByteUtil.getStringtoInt(topic[11].toString());
+                                    this.endpointId = ByteUtil.getStringtoInt(topic[MqttCommon.INT_ENDPOINTID].toString());
                                 }
                             }
                         }
@@ -226,5 +230,13 @@ public class ZWaveRequest extends ZWave{
     public void setCategoryActive(String categoryActive) {
         this.categoryActive = categoryActive;
     }
+
+	public String getCategoryMethod() {
+		return categoryMethod;
+	}
+
+	public void setCategoryMethod(String categoryMethod) {
+		this.categoryMethod = categoryMethod;
+	}
 
 }

@@ -30,6 +30,7 @@ import com.ht.connected.home.backend.device.category.zwave.ZWaveRepository;
 import com.ht.connected.home.backend.device.category.zwave.certi.commandclass.BinarySwitchCommandClass;
 import com.ht.connected.home.backend.device.category.zwave.certi.commandclass.CommandClass;
 import com.ht.connected.home.backend.device.category.zwave.certi.commandclass.CommandClassFactory;
+import com.ht.connected.home.backend.device.category.zwave.cmdcls.CmdCls;
 import com.ht.connected.home.backend.device.category.zwave.cmdcls.CmdClsRepository;
 import com.ht.connected.home.backend.device.category.zwave.notification.NotificationRepository;
 import com.ht.connected.home.backend.device.category.zwave.notification.ZwaveCertiNotificationService;
@@ -95,11 +96,27 @@ public class EndpointServiceImpl implements EndpointService {
     @Override
     public void deleteEndpoint(ZWave zWave) {
         List<Endpoint> lstEndpoint = endpointRepository.findByZwaveNo(zWave.getNo());
+        List<Integer >endpointNos = new ArrayList();
         for (Endpoint endpoint : lstEndpoint) {
-            cmdClsRepository.deleteByEndpointNo(endpoint.getNo());
-            notificationService.delete(zWave);
+        	endpointNos.add(endpoint.getNo());
         }
+        notificationService.delete(zWave);
+        cmdClsRepository.deleteByEndpointNoIn(endpointNos);
         endpointRepository.deleteByZwaveNo(zWave.getNo());
+    }
+    
+    @Override
+    @Transactional
+    public void deleteEndpoints(List<Integer> zWaveNos) {
+    	
+    	List<Endpoint> endpoinsts = endpointRepository.findByZwaveNoIn(zWaveNos);
+    	List<Integer> endpointNos = new ArrayList();
+    	for (Endpoint endpoinst : endpoinsts) {
+    		endpointNos.add(endpoinst.getNo());
+		}
+    	cmdClsRepository.deleteByEndpointNoIn(endpointNos);
+    	endpointRepository.deleteByZwaveNoIn(zWaveNos);
+    	notificationService.deleteZwaveNos(zWaveNos);
     }
     
     @Override

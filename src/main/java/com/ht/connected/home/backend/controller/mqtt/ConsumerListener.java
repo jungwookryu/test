@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.device.category.CategoryActive;
 import com.ht.connected.home.backend.device.category.gateway.GatewayService;
 import com.ht.connected.home.backend.device.category.ir.IRService;
@@ -22,12 +23,6 @@ public class ConsumerListener {
 
 
 	static final Integer GATEWAY_MIN_LENGTH = 4;
-	static final Integer FROM = 1;
-	static final Integer TO = 2;
-	static final Integer PRODUCT_NAME = 3;
-	static final Integer SERIAL_ID = 4;
-	static final Integer SERVICE_NAME = 5;
-	static final Integer ACTIVE_CODE = 6;
 
 	@Autowired
 	private ZWaveService zwaveService;
@@ -61,27 +56,24 @@ public class ConsumerListener {
 
 		logger.info("messageArrived: Topic=" + topic + ", Payload=" + payload);
 		String[] topicSplited = topic.trim().replace(".", ";").split(";");
-		// message topic 4개이상이어야 gateway관련 메세지임.
-		if (topicSplited.length <= GATEWAY_MIN_LENGTH) {
-			return;
-		}
+
 		// 서버에서 보낸것이 아닐경우만 subscribe함.
-		if (Target.server.name().equals(topicSplited[FROM].toString())) {
+		if (Target.server.name().equals(topicSplited[MqttCommon.INT_SOURCE].toString())) {
 			return;
 		}
 
 		// 서버에서 보낸것이 아닐경우만 subscribe함.
-		if (CategoryActive.gateway.manager.name().equals(topicSplited[SERVICE_NAME].toString())) { // manager service
-			logger.info(topicSplited[SERVICE_NAME].toString() + " subStart");
+		if (CategoryActive.gateway.manager.name().equals(topicSplited[MqttCommon.INT_CATEGORY].toString())) { // manager service
+			logger.info(topicSplited[MqttCommon.INT_CATEGORY].toString() + " subStart");
 			gateWayService.subscribe(topic, payload);
-		} else if (CategoryActive.gateway.zwave.name().equals(topicSplited[SERVICE_NAME].toString())) { // zwave service
+		} else if (CategoryActive.gateway.zwave.name().equals(topicSplited[MqttCommon.INT_CATEGORY].toString())) { // zwave service
 			ZWaveRequest zwaveRequest = new ZWaveRequest(topicSplited);
-			if (CategoryActive.zwave.certi.name().equals(topicSplited[6].toString())) {
+			if (CategoryActive.zwave.certi.name().equals(topicSplited[MqttCommon.INT_MODE].toString())) {
 				zWaveCertiService.subscribe(zwaveRequest, payload);
 			} else {
 				zwaveService.subscribe(zwaveRequest, payload);
 			}
-		} else if (CategoryActive.gateway.ir.name().equals(topicSplited[SERVICE_NAME].toString().trim())) { // ir service
+		} else if (CategoryActive.gateway.ir.name().equals(topicSplited[MqttCommon.INT_CATEGORY].toString().trim())) { // ir service
 			irService.subscribe(topicSplited, payload);
 		}
 	}

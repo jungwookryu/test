@@ -21,5 +21,6 @@ public interface ZwaveCertiNotificationService {
     void subscribe(ZWaveRequest zwaveRequest, String payload) throws JsonGenerationException, JsonMappingException, IOException, InterruptedException;
     void delete(ZWave zwave);
     List<Notification> getNotification(Endpoint endpoint);
+	void deleteZwaveNos(List<Integer> zwaveNos);
    
 }
