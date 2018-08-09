@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class AuditLogger {
 	private static final Marker AUDIT_MARKER = MarkerFactory.getMarker("AUDIT");
@@ -14,7 +15,14 @@ public class AuditLogger {
 	}
 
 	public static void startLog(Class<?> clazz, String msg) {
-		log(clazz, "[START] " + msg);
+		String userEmail = "";
+		if (SecurityContextHolder.getContext() != null) {
+			Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			if (principal instanceof String) {
+				userEmail = (String) principal;
+			}
+		}
+		log(clazz, "[START - " + userEmail + "] " + msg);
 	}
 
 	public static void endLog(Class<?> clazz, String msg) {
