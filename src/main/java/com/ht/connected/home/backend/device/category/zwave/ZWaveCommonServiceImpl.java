@@ -210,7 +210,7 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
         mqttRequest.setNodeId(zwave.getNodeId());
         mqttRequest.setTarget(gateway.getTargetType());
         mqttRequest.setClassKey(NetworkManagementInclusionCommandClass.INT_ID);
-        if(zwave.getStatus().equals(ZWaveCommonServiceImpl.STATUS.DOWN.name().toLowerCase())) {
+        if((!Objects.isNull(zwave.getStatus())) && zwave.getStatus().equals(ZWaveCommonServiceImpl.STATUS.DOWN.name().toLowerCase())) {
             mqttRequest.setCommandKey(NetworkManagementInclusionCommandClass.INT_FAILED_NODE_REMOVE);
         }else {
             mqttRequest.setCommandKey(NetworkManagementInclusionCommandClass.INT_NODE_REMOVE);
