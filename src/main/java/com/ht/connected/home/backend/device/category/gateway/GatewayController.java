@@ -109,20 +109,25 @@ public class GatewayController extends CommonController {
 
     @DeleteMapping(value = "/{no}")
     public ResponseEntity deleteGateway(@PathVariable("no") int no) throws Exception {
+    	AuditLogger.startLog(GatewayController.class, "Delete a Gateway : " + no);
         gateWayService.delete(no);
+        AuditLogger.endLog(GatewayController.class, "Delete a Gateway : MQTT command send");
         return new ResponseEntity<>(HttpStatus.OK);	// TODO async request. 202?
     }
 
     @PutMapping(value = "/{no}")
     public ResponseEntity modifyGateway(@PathVariable("no") int no, @RequestBody Gateway gateway) {
+    	AuditLogger.startLog(GatewayController.class, "Edit a Gateway : " + no);
         String userEmail = getAuthUserEmail();
         Gateway originGateway = gateWayService.findOne(no);
-        if(null!=originGateway) {
+        if(null != originGateway) {
             if(originGateway.getCreated_user_id().equals(userEmail)){
                 Gateway rtnGateway = gateWayService.modifyGateway(originGateway, gateway);
+                AuditLogger.endLog(GatewayController.class, "Edit a Gateway : Succeed");
                 return new ResponseEntity<>(rtnGateway,HttpStatus.OK);
             }
         }
+        AuditLogger.endLog(GatewayController.class, "Edit a Gateway : Failed (Not found gateway)");
         return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);	// TODO not found gateway. 404?
     }
 }

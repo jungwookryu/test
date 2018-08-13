@@ -41,19 +41,21 @@ public class HomeController extends CommonController {
 	}
 
 	/**
-	 * 로그인한 사용자가 등록한 모든 Home를 조회한다.
+	 * 로그인 사용자의 Home 목록을 조회한다. 매개변수로 nickname 이 있는 경우는 nickname 에 해당되는 Home 목록을 조회한다.
 	 * 
-	 * @param req
+	 * @param nickname Home 의 nickname
 	 * @return
 	 * @throws Exception
 	 */
 	@GetMapping
 	public ResponseEntity<HashMap<String, Object>> getHomeList(
 			@RequestParam(value = "nickname", required = false) String nickname) throws Exception {
+		AuditLogger.startLog(HomeController.class, "Get Home list : " + nickname);
 		String authUserEmail = getAuthUserEmail();
 		List<Home> homes = homeService.getHomeListByEmail(authUserEmail, nickname);
 		Home rtnHome = new Home();
 		rtnHome.setHomes(homes);
+		AuditLogger.endLog(HomeController.class, "Get Home list : succeed");
 		return new ResponseEntity(rtnHome, HttpStatus.OK);
 	}
 

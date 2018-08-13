@@ -110,20 +110,25 @@ public class ZWaveController extends CommonController {
 
 	@GetMapping(value = "/{gateway_no}")
 	public ResponseEntity getList(@PathVariable("gateway_no") int gatewayNo) {
-
+		AuditLogger.startLog(ZWaveController.class, "Get zwave device list : " + gatewayNo);
 		Map sRtnList = zWaveCommonService.getZWaveListApp(gatewayNo);
+		AuditLogger.endLog(ZWaveController.class, "Get zwave device list : Succeed");
 		return new ResponseEntity<>(sRtnList, HttpStatus.ACCEPTED);
 	}
 
 	@PutMapping("/zwaveInfo/{zwaveNo}")
 	public ResponseEntity modifyEndpointInfo(@PathVariable int zwaveNo, @RequestBody ZWave requestZwave)
 			throws JsonProcessingException {
+		String deviceNickname = requestZwave.getNickname();
+		AuditLogger.startLog(ZWaveController.class, "Modify zwave device info : " + zwaveNo + ", " + deviceNickname);
 		Endpoint endpoint = endpointRepository.findByZwaveNoAndEpid(zwaveNo, 0);
 		if (endpoint != null) {
-			endpoint.setNickname(requestZwave.getNickname());
+			endpoint.setNickname(deviceNickname);
 			ZWave rtnZwave = endpointService.modify(endpoint.getNo(), endpoint);
+			AuditLogger.endLog(ZWaveController.class, "Modify zwave device info : Succeed");
 			return new ResponseEntity<>(rtnZwave, HttpStatus.OK);
 		} else {
+			AuditLogger.endLog(ZWaveController.class, "Modify zwave device info : failed (not found zwave device)");
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
 	}
@@ -136,6 +141,7 @@ public class ZWaveController extends CommonController {
 	 */
 	@DeleteMapping(value = "/remove/{no}")
 	public ResponseEntity delete(@PathVariable int no) throws JsonProcessingException, InterruptedException {
+		AuditLogger.startLog(ZWaveController.class, "Delete a zwave device : " + no);
 		String userEmail = getAuthUserEmail();
 		List<User> lstUser = userRepository.findByUserEmail(userEmail);
 		if (lstUser.size() == 0) {
@@ -144,26 +150,32 @@ public class ZWaveController extends CommonController {
 		
 		ZWave zwave = zWaveRepository.findOne(no);
 		if (Objects.isNull(zwave)) {
+			AuditLogger.endLog(ZWaveController.class, "Delete a zwave device : failed (Not found zwave device)");
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		
 		zWaveCommonService.deleteByNo(zwave);
+		AuditLogger.endLog(ZWaveController.class, "Delete a zwave device : Server request to Gateway");
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
 
 	@PutMapping("/{zwave_no}")
 	public ResponseEntity basicControl(@PathVariable int zwave_no, @RequestBody ZWaveControl zWaveControl)
 			throws JsonProcessingException, InterruptedException {
+		AuditLogger.startLog(ZWaveController.class, "Control a zwave device (Basic): " + zwave_no);
 		zWaveControl.setZwave_no(zwave_no);
 		zWaveCommonService.zwaveBasicControl(zWaveControl);
+		AuditLogger.endLog(ZWaveController.class, "Control a zwave device (Basic): MQTT command send");
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
 
 	@PutMapping("/function/{endpoint_no}")
 	public ResponseEntity control(@PathVariable int endpoint_no, @RequestBody ZWaveControl zWaveControl)
 			throws InterruptedException, JsonGenerationException, JsonMappingException, IOException {
+		AuditLogger.startLog(ZWaveController.class, "Control a zwave device (Function endpoint) : " + endpoint_no);
 		zWaveControl.setEndpoint_no(endpoint_no);
 		endpointService.zwaveControl(zWaveControl);
+		AuditLogger.endLog(ZWaveController.class, "Control a zwave device (Function endpoint) : MQTT Command send");
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
 
@@ -172,8 +184,10 @@ public class ZWaveController extends CommonController {
 			throws JsonProcessingException, InterruptedException {
 		int mode = (int) req.getOrDefault("mode", -1);
 		String serial = (String) req.getOrDefault("serial", "");
+		AuditLogger.startLog(ZWaveController.class, "Set zwave \"Learn\" mode : " + serial + ", " + mode);
 		Gateway gateway = gatewayRepository.findBySerial(serial);
 		zWaveCertiNetworkManagementBasicService.setLearnMode(gateway, mode);
+		AuditLogger.endLog(ZWaveController.class, "Set zwave \"Learn\" mode : MQTT Command send");
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
 
@@ -181,8 +195,10 @@ public class ZWaveController extends CommonController {
 	public ResponseEntity registReset(@RequestBody HashMap<String, Object> req)
 			throws JsonProcessingException, InterruptedException {
 		String serial = (String) req.getOrDefault("serial", "");
+		AuditLogger.startLog(ZWaveController.class, "Set zwave \"Reset\" mode : " + serial);
 		Gateway gateway = gatewayRepository.findBySerial(serial);
 		zWaveCertiNetworkManagementBasicService.setZWaveResetMode(gateway);
+		AuditLogger.endLog(ZWaveController.class, "Set zwave \"Reset\" mode : MQTT Command send");
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
 }
