@@ -27,6 +27,7 @@ import com.ht.connected.home.backend.client.home.HomeServiceImpl;
 import com.ht.connected.home.backend.client.home.sharehome.ShareHomeRepository;
 import com.ht.connected.home.backend.client.user.User;
 import com.ht.connected.home.backend.client.user.UserService;
+import com.ht.connected.home.backend.common.AuditLogger;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.controller.mqtt.Message;
@@ -173,10 +174,12 @@ public class GatewayServiceImpl implements GatewayService {
         // host 삭제 모드 요청 publish
         Gateway gateway = findOne(no);
         if(Objects.isNull(gateway)) {
-            throw new BadCredentialsException("not found gateway");
+        	AuditLogger.serviceLog(this.getClass(), "Not found gateway : " + no);
+            throw new BadCredentialsException("not found gateway");	// TODO Apply new policy about Exception, response
         }
         //데이터 삭제
         hostReset(gateway.getSerial());
+        AuditLogger.serviceLog(this.getClass(), "All Database is updated. (Gateway, ZWave, Endpoint, Cmdcls)");
         String exeTopic = String.format("/" + Target.server.name() + "/" + gateway.getTargetType() + "/%s/%s/manager/reset", gateway.getModel(), gateway.getSerial());
         publish(exeTopic, null);
     }

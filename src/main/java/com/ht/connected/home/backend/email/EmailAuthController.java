@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.ht.connected.home.backend.client.user.User;
 import com.ht.connected.home.backend.client.user.UserActive;
 import com.ht.connected.home.backend.client.user.UserService;
+import com.ht.connected.home.backend.common.AuditLogger;
 import com.ht.connected.home.backend.controller.rest.CommonController;
 
 @Controller
@@ -29,6 +30,7 @@ public class EmailAuthController extends CommonController {
     @GetMapping("/adduser")
     public ResponseEntity<String> addAuthUser(@RequestParam(value = "user_email", required = true) String userEmail,
             @RequestParam(value = "redirected_code", required = true) String redirected_code) throws IOException {
+    	AuditLogger.startLog(EmailAuthController.class, "Attempt Email certification : " + userEmail);
         User rtnUsers = usersService.getUser(userEmail);
         if (null != rtnUsers) {
             if (redirected_code.equals(rtnUsers.getRedirectiedCode())) {
@@ -36,8 +38,10 @@ public class EmailAuthController extends CommonController {
                 usersService.modify(rtnUsers.getNo(), rtnUsers);
             }
             InputStream file =getClass().getClassLoader().getResourceAsStream("templates/email/userRegisterConfirm.html");
-            return new ResponseEntity(IOUtils.toString(file, "UTF-8").replace("{{user.email}}", userEmail), HttpStatus.ACCEPTED);
+            AuditLogger.endLog(EmailAuthController.class, "Attempt Email certification : Succeed");
+            return new ResponseEntity(IOUtils.toString(file, "UTF-8").replace("{{user.email}}", userEmail), HttpStatus.OK);
         }
+        AuditLogger.endLog(EmailAuthController.class, "Attempt Email certification : failed (Invalid parameter)");
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 }

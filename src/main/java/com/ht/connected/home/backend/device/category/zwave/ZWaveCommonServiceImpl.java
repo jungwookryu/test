@@ -26,6 +26,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ht.connected.home.backend.client.user.UserRepository;
+import com.ht.connected.home.backend.common.AuditLogger;
 import com.ht.connected.home.backend.common.Common;
 import com.ht.connected.home.backend.common.MqttCommon;
 import com.ht.connected.home.backend.controller.mqtt.Message;
@@ -203,6 +204,7 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
 
         Gateway gateway = gatewayRepository.getOne(zwave.getGatewayNo());
         int iRtn = zwaveRepository.setFixedStatusForNo(STATUS.DELETE.name().toLowerCase(), zwave.getNo());
+        AuditLogger.serviceLog(ZWaveCommonServiceImpl.class, "Zwave status is set delete");
         MqttRequest mqttRequest = new MqttRequest();
 
         mqttRequest.setSerialNo(gateway.getSerial());
@@ -215,6 +217,7 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
         }else {
             mqttRequest.setCommandKey(NetworkManagementInclusionCommandClass.INT_NODE_REMOVE);
         }
+        AuditLogger.serviceLog(ZWaveCommonServiceImpl.class, "Server send MQTT request to Gateway");
         zWaveCertiService.publishDelete(mqttRequest);
         return iRtn;
 
