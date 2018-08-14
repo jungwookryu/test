@@ -21,4 +21,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
 	List<User> findByUserEmail(String userEmail);
+
+    List<User> findByNoIn(List<Integer> usersNo);
 }

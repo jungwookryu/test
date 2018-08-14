@@ -30,6 +30,7 @@ import com.ht.connected.home.backend.device.category.zwave.certi.commandclass.Bi
 import com.ht.connected.home.backend.device.category.zwave.certi.commandclass.MultilevelSensorCommandClass;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.Endpoint;
 import com.ht.connected.home.backend.device.category.zwave.endpoint.EndpointRepository;
+import com.ht.connected.home.backend.pushwise.service.PWService;
 import com.ht.connected.home.backend.service.mqtt.Target;
 
 @Service
@@ -67,6 +68,9 @@ public class ZwaveCertiNotificationServiceImpl implements ZwaveCertiNotification
 
     @Autowired
     ZWaveRepository zWaveRepository;
+    
+    @Autowired
+    PWService pwService;
 
     private static final Log logger = LogFactory.getLog(ZWaveServiceImpl.class);
 
@@ -95,7 +99,7 @@ public class ZwaveCertiNotificationServiceImpl implements ZwaveCertiNotification
         logger.debug("notification::" + notification.toString());
         Notification rtnNotification = saveNotification(notification);
         publishAppStatus(zwaveRequest, endpoint.getNo(), rtnNotification);
-
+        pwService.pushWiseNotification(rtnNotification);
     }
 
     private void multilevelSensorReport(ZWaveRequest zwaveRequest, String payload) throws JsonGenerationException, JsonMappingException, IOException, InterruptedException {

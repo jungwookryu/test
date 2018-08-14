@@ -30,4 +30,5 @@ public interface ShareHomeRepository extends JpaRepository<ShareHome, Integer> {
     @Modifying
     @Query("update ShareHome set status = ?1 where no = ?2")
 	int setModifyStatusForNo(String status, int no);
+    List<ShareHome> findByHomeNo(int homeNo);
 }
