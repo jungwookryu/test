@@ -4,12 +4,14 @@
 	<property name="LOG_DIR_AMQP" value="${LOG_DIR}/logs_amqp" />
 	<property name="LOG_DIR_DB" value="${LOG_DIR}/logs_db" />
 	<property name="LOG_DIR_AUDIT" value="${LOG_DIR}/logs_audit" />
+	<property name="LOG_DIR_HTTP" value="${LOG_DIR}/logs_http" />
 
 	<property name="LOG_PATH_BASE_NAME" value="${LOG_DIR}/iot_connected_home.log" />
 	<property name="LOG_PATH_SIP_NAME" value="${LOG_DIR}/iot_connected_home_sip.log" />
 	<property name="LOG_PATH_AMQP_NAME" value="${LOG_DIR_AMQP}/iot_connected_home_amqp.log" />
 	<property name="LOG_PATH_DB_NAME" value="${LOG_DIR_DB}/iot_connected_home_db.log" />
 	<property name="LOG_PATH_AUDIT_NAME" value="${LOG_DIR_AUDIT}/iot_connected_home_audit.log" />
+	<property name="LOG_PATH_HTTP_NAME" value="${LOG_DIR_HTTP}/iot_connected_home_http.log" />
 	<timestamp key="bySecond" datePattern="yyyy-MM-dd HH:mm:ss" />
 
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
@@ -104,6 +106,20 @@
         </encoder>
     </appender>
     
+	<appender name="LOG_HTTP_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+     	<file>${LOG_PATH_HTTP_NAME}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 파일이 하루에 한개씩 생성된다 -->            
+            <fileNamePattern>${LOG_DIR_DB}/iot_connected_home_http.%d{yyyy-MM-dd}.%i.log</fileNamePattern>            
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyyMMdd HH:mm:ss.SSS} [%X{TRACE_ID}] %msg %n</pattern>
+        </encoder>
+    </appender>
+    
 	<logger name="com.ht.connected.home.backend.sip" additivity="false" level="DEBUG">
 	  	<appender-ref ref="LOG_SIP_FILE" />
 	</logger>
@@ -132,10 +148,14 @@
 	<logger name="com.ht.connected.home.backend" level="DEBUG">
 		<appender-ref ref="LOG_AUDIT_FILE" />
 	</logger>
+
+	<logger name="HTTP" level="DEBUG">
+		<appender-ref ref="LOG_HTTP_FILE" />
+	</logger>
 	
 	<root level="INFO">
 		<appender-ref ref="LOG_BASE_FILE" />
 		<appender-ref ref="console" />
-	</root> 
+	</root>
     
 </configuration>
