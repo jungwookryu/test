@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import com.ht.connected.home.backend.config.HttpLoggerFilter;
 import com.ht.connected.home.backend.config.LoggerFilter;
 
 @Configuration
@@ -21,4 +22,8 @@ public class FilterConfig {
 		return new LoggerFilter();
 	}
 
+	@Bean
+	public HttpLoggerFilter httpLoggerFilter() {
+		return new HttpLoggerFilter();
+	}
 }
