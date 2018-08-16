@@ -77,20 +77,28 @@ public class PWService {
      */
     public void pushWiseNotification(Notification event) {
         List<User> users = null;
-        PWHomeSecurity homeSecurity = homeSecurityRepository.getHomeSecurityGatewaySerial(event.getZwave_no());
-        if (isNull(homeSecurity)) {
-            homeSecurity = new PWHomeSecurity();
-        }
-        if (notifyCatchService.isMagneticDetected(event.getEvent_code(), event.getNotification_code(),
-                homeSecurity.getSecurityStatus())
-                || notifyCatchService.isMotionDetected(event.getEvent_code(), event.getNotification_code(),
-                        homeSecurity.getSecurityStatus())) {
-            users = getUsersByHomeNo(homeSecurity.getHomeNo());
-            sendPushMessage(users, MSG_TYPE_SECURITY_ALERT, homeSecurity, event);
-        } else if (notifyCatchService.isControllableDeviceNotify(event.getEvent_name())) {
+        if (notifyCatchService.isPushwise(event.getEvent_code(), event.getNotification_code())) {
+            PWHomeSecurity homeSecurity = getHomeSecurity(event.getZwave_no());
+            if (notifyCatchService.isMagneticDetected(event.getEvent_code(), event.getNotification_code(),
+                    homeSecurity.getSecurityStatus())
+                    || notifyCatchService.isMotionDetected(event.getEvent_code(), event.getNotification_code(),
+                            homeSecurity.getSecurityStatus())) {                
+                users = getUsersByHomeNo(homeSecurity.getHomeNo());
+                sendPushMessage(users, MSG_TYPE_SECURITY_ALERT, homeSecurity, event);
+            }
+        }else if (notifyCatchService.isControllableDeviceNotify(event.getEvent_name())) {
+            PWHomeSecurity homeSecurity = getHomeSecurity(event.getZwave_no());
             users = getUsersByHomeNo(homeSecurity.getHomeNo());
             sendPushMessage(users, MSG_TYPE_CONTROLLABLE_DEVICE_NOTIFY, homeSecurity, event);
         }
+    }
+
+    private PWHomeSecurity getHomeSecurity(int zwaveNo) {
+        PWHomeSecurity homeSecurity = homeSecurityRepository.getHomeSecurityGatewaySerial(zwaveNo);
+        if (isNull(homeSecurity)) {
+            homeSecurity = new PWHomeSecurity();
+        }
+        return homeSecurity;
     }
 
     /**

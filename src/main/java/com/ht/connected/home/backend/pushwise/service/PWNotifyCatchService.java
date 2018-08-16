@@ -18,6 +18,24 @@ public class PWNotifyCatchService {
     private static final Integer MOTION_EVENT_DETECTION = 8;
     private static final Integer SECURITY_STATUS_HOME = 2;
     private static final Integer SECURITY_STATUS_OUT = 1;
+    
+    /**
+     * 방범관련 센서인지 여부
+     * 
+     * @param eventCode
+     * @param deviceType
+     * @return
+     */
+    public boolean isPushwise(Integer eventCode, Integer deviceType) {
+        boolean detected = false;
+        if (deviceType.equals(MOTION_DEVICE_CODE) && eventCode.equals(MOTION_EVENT_DETECTION)) {
+            detected = true;
+        }else if (deviceType.equals(MAGNETIC_DEVICE_CODE)
+                && (eventCode.equals(MAGNETIC_EVENT_OPEN) || eventCode.equals(MAGNETIC_EVENT_CLOSE))) {
+            detected = true;
+        }
+        return detected;
+    }
 
     /**
      * 자석 감지 여부
@@ -45,7 +63,7 @@ public class PWNotifyCatchService {
      */
     public boolean isMagneticDetected(Integer eventCode, Integer deviceType, Integer securityStatus) {
         boolean detected = false;
-        if (securityStatus.equals(SECURITY_STATUS_HOME)) {
+        if (securityStatus.equals(SECURITY_STATUS_HOME) || securityStatus.equals(SECURITY_STATUS_OUT)) {
             if (deviceType.equals(MAGNETIC_DEVICE_CODE)
                     && (eventCode.equals(MAGNETIC_EVENT_OPEN) || eventCode.equals(MAGNETIC_EVENT_CLOSE))) {
                 detected = true;
