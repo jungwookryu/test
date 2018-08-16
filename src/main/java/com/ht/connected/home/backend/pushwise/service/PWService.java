@@ -113,7 +113,7 @@ public class PWService {
                 LOGGER.info(message.toString());
                 fireBasePushClient.send(message.toString(), FCM_SERVER_KEY);
             } else if (user.getConnectedType().equals("1")) {
-
+                // TODO : iOS 기기로 메세지 발송 
             }
         });
     }
@@ -170,7 +170,7 @@ public class PWService {
             jo.put("notification", joNotify);
             jo.put("data", joData);
         } catch (JSONException e) {
-            LOGGER.error("Get push message failed in getFCMPushMessage", e);
+            LOGGER.warn("Get push message failed in getFCMPushMessage", e);
         }
         return jo;
     }
@@ -303,7 +303,7 @@ public class PWService {
                 jo.put("security_status", homeSecurity.getSecurityStatus());
             }
         } catch (JSONException e) {
-            LOGGER.error("JSONException at getHomeSecurityStatus", e);
+            LOGGER.warn("JSONException at getHomeSecurityStatus", e);
         }
         return new ResponseEntity<String>(jo.toString(), HttpStatus.OK);
     }
