@@ -288,8 +288,16 @@ public class IPCAccessService {
                 device.setCreatedUserId(account.getIotAccount());
                 device.setSerial(request.get("deviceSerial"));
                 device.setCreatedTime(new Date());
+                device.setLastModifiedTime(new Date());
                 device.setModel(IPC_DEVICE_MODEL_NAME);
                 device.setStatus(IPC_DEVICE_STATUS);
+                
+                device.setNickname(String.format("ipc_%s", request.get("deviceSerial")));
+                device.setSsid(request.get("ssid"));
+                device.setBssid(request.get("bssid"));
+                device.setLocLatitude(request.get("latitude"));
+                device.setLocLongitude(request.get("longitude"));
+                device.setHomeNo(Integer.valueOf(request.get("homeNo")));
                 gatewayRepository.save(device);
             }
         }
