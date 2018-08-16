@@ -77,20 +77,34 @@ public class PWService {
      */
     public void pushWiseNotification(Notification event) {
         List<User> users = null;
-        PWHomeSecurity homeSecurity = homeSecurityRepository.getHomeSecurityGatewaySerial(event.getZwave_no());
-        if (isNull(homeSecurity)) {
-            homeSecurity = new PWHomeSecurity();
-        }
-        if (notifyCatchService.isMagneticDetected(event.getEvent_code(), event.getNotification_code(),
-                homeSecurity.getSecurityStatus())
-                || notifyCatchService.isMotionDetected(event.getEvent_code(), event.getNotification_code(),
-                        homeSecurity.getSecurityStatus())) {
-            users = getUsersByHomeNo(homeSecurity.getHomeNo());
-            sendPushMessage(users, MSG_TYPE_SECURITY_ALERT, homeSecurity, event);
-        } else if (notifyCatchService.isControllableDeviceNotify(event.getEvent_name())) {
+        if (notifyCatchService.isPushwise(event.getEvent_code(), event.getNotification_code())) {
+            PWHomeSecurity homeSecurity = getHomeSecurity(event.getZwave_no());
+            if (notifyCatchService.isMagneticDetected(event.getEvent_code(), event.getNotification_code(),
+                    homeSecurity.getSecurityStatus())
+                    || notifyCatchService.isMotionDetected(event.getEvent_code(), event.getNotification_code(),
+                            homeSecurity.getSecurityStatus())) {                
+                users = getUsersByHomeNo(homeSecurity.getHomeNo());
+                sendPushMessage(users, MSG_TYPE_SECURITY_ALERT, homeSecurity, event);
+            }
+        }else if (notifyCatchService.isControllableDeviceNotify(event.getEvent_name())) {
+            PWHomeSecurity homeSecurity = getHomeSecurity(event.getZwave_no());
             users = getUsersByHomeNo(homeSecurity.getHomeNo());
             sendPushMessage(users, MSG_TYPE_CONTROLLABLE_DEVICE_NOTIFY, homeSecurity, event);
         }
+    }
+
+    /**
+     * 홈 방범설정과 gateway, 홈정보 (조인쿼리 사용)
+     * 
+     * @param zwaveNo
+     * @return
+     */
+    private PWHomeSecurity getHomeSecurity(int zwaveNo) {
+        PWHomeSecurity homeSecurity = homeSecurityRepository.getHomeSecurityGatewaySerial(zwaveNo);
+        if (isNull(homeSecurity)) {
+            homeSecurity = new PWHomeSecurity();
+        }
+        return homeSecurity;
     }
 
     /**
@@ -103,15 +117,17 @@ public class PWService {
         users.stream().forEach(user -> {
             if (user.getConnectedType().equals("0")) {
                 String msgBody = getLocaleMessage(user.getLocale(), type, homeSecurity, event, user);
-                JSONObject message = getFCMPushMessage(user.getPushToken(), msgBody,
-                        getLocaleTitle(user.getLocale(), type), homeSecurity.getGatewaySerial(),
-                        homeSecurity.getHomeNo());
-                if (isHistoryAdded) {
-                    addHistory(type, msgBody, homeSecurity);
-                }
-                LOGGER.info("====== PUSH sending ======");
-                LOGGER.info(message.toString());
-                fireBasePushClient.send(message.toString(), FCM_SERVER_KEY);
+                if(!isNull(msgBody)) {
+                    JSONObject message = getFCMPushMessage(user.getPushToken(), msgBody,
+                            getLocaleTitle(user.getLocale(), type), homeSecurity.getGatewaySerial(),
+                            homeSecurity.getHomeNo());
+                    if (isHistoryAdded) {
+                        addHistory(type, msgBody, homeSecurity);
+                    }
+                    LOGGER.info("====== PUSH sending ======");
+                    LOGGER.info(message.toString());
+                    fireBasePushClient.send(message.toString(), FCM_SERVER_KEY);    
+                }                
             } else if (user.getConnectedType().equals("1")) {
                 // TODO : iOS 기기로 메세지 발송 
             }
@@ -187,28 +203,34 @@ public class PWService {
      */
     private String getLocaleMessage(String locale, String type, PWHomeSecurity homeSecurity, Notification event,
             User user) {
-        locale = locale.split("_")[0];
-        String message = env.getProperty(String.format("secuirty.pushmsg.%s.%s", locale, type));
-        if (type.equals(MSG_TYPE_SECURITY_ALERT)) {
-            // {event} was detected at {home} {device} sensor.
-            message = String.format(message, encodeUTF8(event.getEvent_name()),
-                    encodeUTF8(homeSecurity.getHomeNickname()), encodeUTF8(homeSecurity.getZwaveNickname()));
-        } else if (type.equals(MSG_TYPE_CONTROLLABLE_DEVICE_NOTIFY)) {
-            // {user} has controlled the {home} {deviceNickname} device to {status}.
-            message = String.format(message, encodeUTF8(user.getNickName()), encodeUTF8(homeSecurity.getHomeNickname()),
-                    encodeUTF8(homeSecurity.getZwaveNickname()), encodeUTF8(event.getEvent_name()));
-        } else if (type.equals(MSG_TYPE_SECURITY_SETTING)) {
-            // {user} has changed the {home} security status to {status}.
-            String securityStatusName = env
-                    .getProperty(String.format("secuirty.status.%s%s", locale, homeSecurity.getSecurityStatus()));
-            message = String.format(message, encodeUTF8(user.getNickName()), encodeUTF8(homeSecurity.getHomeNickname()),
-                    securityStatusName);
-        }
+        String message = null;
+        if(locale.contains("_")) {
+            locale = locale.split("_")[0];
+            String msgTemplateKey = String.format("secuirty.pushmsg.%s.%s", locale, type);
+            message = env.getProperty(msgTemplateKey);
+            if(!isNull(message)) {
+                if (type.equals(MSG_TYPE_SECURITY_ALERT)) {
+                    // {event} was detected at {home} {device} sensor.
+                    message = String.format(message, event.getEvent_name(),
+                            homeSecurity.getHomeNickname(), homeSecurity.getZwaveNickname());
+                } else if (type.equals(MSG_TYPE_CONTROLLABLE_DEVICE_NOTIFY)) {
+                    // {user} has controlled the {home} {deviceNickname} device to {status}.
+                    message = String.format(message, user.getNickName(), homeSecurity.getHomeNickname(),
+                            homeSecurity.getZwaveNickname(), event.getEvent_name());
+                } else if (type.equals(MSG_TYPE_SECURITY_SETTING)) {
+                    // {user} has changed the {home} security status to {status}.
+                    String securityStatusName = env
+                            .getProperty(String.format("secuirty.status.%s%s", locale, homeSecurity.getSecurityStatus()));
+                    message = String.format(message, (user.getNickName()), (homeSecurity.getHomeNickname()),
+                            securityStatusName);
+                }
+            }else {
+                LOGGER.warn(String.format("No message template found from property file for language : %s", msgTemplateKey));
+            }            
+        }else {
+            LOGGER.warn(String.format("User %s has no locale info in user table", user.getUserEmail()));
+        }        
         return message;
-    }
-
-    private String encodeUTF8(String str) {
-        return str;
     }
 
     /**
@@ -273,13 +295,15 @@ public class PWService {
             homeSecurityRepository.save(homeSecurity);
             User user = users.get(0);
             String message = getLocaleMessage(user.getLocale(), MSG_TYPE_SECURITY_SETTING, homeSecurity, null, user);
-            String title = getLocaleTitle(user.getLocale(), MSG_TYPE_SECURITY_SETTING);
-            JSONObject payload = getFCMPushMessage(user.getPushToken(), message, title,
-                    String.valueOf(request.get("home_no")), homeSecurity.getHomeNo());
-            LOGGER.info("====== PUSH sending ======");
-            LOGGER.info(payload.toString());
-            fireBasePushClient.send(payload.toString(), FCM_SERVER_KEY);
-            addHistory(MSG_TYPE_SECURITY_SETTING, message.toString(), homeSecurity);
+            if(!isNull(message)) {
+                String title = getLocaleTitle(user.getLocale(), MSG_TYPE_SECURITY_SETTING);
+                JSONObject payload = getFCMPushMessage(user.getPushToken(), message, title,
+                        String.valueOf(request.get("home_no")), homeSecurity.getHomeNo());
+                LOGGER.info("====== PUSH sending ======");
+                LOGGER.info(payload.toString());
+                fireBasePushClient.send(payload.toString(), FCM_SERVER_KEY);
+                addHistory(MSG_TYPE_SECURITY_SETTING, message.toString(), homeSecurity);    
+            }
         } else {
             httpStatus = HttpStatus.FORBIDDEN;
         }
