@@ -105,9 +105,10 @@ public class IPCAccessService {
                 account.setUpdatedAt(IPCMasterAccessTokenService.dateFormat.format(new Date()));
                 account.setAreaDomain(getResponseDataValue(response.getBody(), "areaDomain").toString());
                 accountRepository.save(account);
-                LOGGER.info(String.format("IPC - Create sub account successfully: {ID: %s, name: %s}", accountId, accountName));
+                LOGGER.info(String.format("IPC - Create sub account successfully: {ID: %s, name: %s}", accountId,
+                        accountName));
             }
-        }else {
+        } else {
             LOGGER.info(String.format("IPC - Create sub account failed: {name: %s}", iotAccount));
             LOGGER.info(String.format("IPC - Response body: %s", response.getBody()));
         }
@@ -279,9 +280,9 @@ public class IPCAccessService {
         ResponseEntity<String> response = remoteRequestService.registerDevice(
                 masterAccessTokenService.getMasterAccessToken(), request.get("deviceSerial"),
                 request.get("validateCode"));
-        LOGGER.info(String.format("IPC - Register device(serial: %s) with master account successfully",
-                request.get("deviceSerial")));
         if (isSuccessResponseStatus(response)) {
+            LOGGER.info(String.format("IPC - Register device(serial: %s) with master account successfully",
+                    request.get("deviceSerial")));
             IPCAccount account = accountRepository.findByIotAccount(iotAccount);
             if (isNull(account)) {
                 createSubAccount(iotAccount);
@@ -299,13 +300,14 @@ public class IPCAccessService {
                 device.setLastModifiedTime(new Date());
                 device.setModel(IPC_DEVICE_MODEL_NAME);
                 device.setStatus(IPC_DEVICE_STATUS);
+                device.setTargetType("ipc");
 
                 device.setNickname(String.format("ipc_%s", request.get("deviceSerial")));
                 device.setSsid(request.get("ssid"));
                 device.setBssid(request.get("bssid"));
                 device.setLocLatitude(request.get("latitude"));
                 device.setLocLongitude(request.get("longitude"));
-                if(!isNull(request.get("homeNo"))) {
+                if (!isNull(request.get("homeNo"))) {
                     device.setHomeNo(Integer.valueOf(request.get("homeNo")));
                 }
                 gatewayRepository.save(device);
@@ -313,6 +315,9 @@ public class IPCAccessService {
                         "IPC - Save registered device info to database successfully : {serial: %s, user: %s}",
                         device.getSerial(), account.getIotAccount()));
             }
+        } else {
+            LOGGER.info(String.format("IPC - Register device(serial: %s) with master account failed",
+                    request.get("deviceSerial")));
         }
         return response;
     }
