@@ -105,7 +105,11 @@ public class IPCAccessService {
                 account.setUpdatedAt(IPCMasterAccessTokenService.dateFormat.format(new Date()));
                 account.setAreaDomain(getResponseDataValue(response.getBody(), "areaDomain").toString());
                 accountRepository.save(account);
+                LOGGER.info(String.format("IPC - Create sub account successfully: {ID: %s, name: %s}", accountId, accountName));
             }
+        }else {
+            LOGGER.info(String.format("IPC - Create sub account failed: {name: %s}", iotAccount));
+            LOGGER.info(String.format("IPC - Response body: %s", response.getBody()));
         }
         return response;
     }
@@ -122,7 +126,6 @@ public class IPCAccessService {
         if (!isNull(account)) {
             if (isNull(account.getAccessToken())) {
                 masterAccessTokenService.getMasterAccessToken();
-                LOGGER.info(String.format("요청시작, 서브계정명 : %s", account.getAccountName()));
                 response = remoteRequestService.getIPCSubAccountToken(masterAccessTokenService.getMasterAccessToken(),
                         account.getAccountId());
                 updateSubAccountAccessToken(response, account);
@@ -136,7 +139,6 @@ public class IPCAccessService {
                 response = getSubAccountAccessTokenResponseEntity(account);
             }
         } else {
-            LOGGER.info(String.format("서브계정 없음, iot account : %s", iotAccount));
             createSubAccount(iotAccount);
             response = getSubAccountAccessToken(iotAccount);
         }
@@ -178,7 +180,8 @@ public class IPCAccessService {
     private void updateSubAccountAccessToken(ResponseEntity<String> response, IPCAccount account) {
         if (isSuccessResponseStatus(response)) {
             String accessToken = getResponseDataValue(response.getBody(), "accessToken").toString();
-            LOGGER.info(String.format("서브게정 토큰, 서브계정명 : %s, 발급받은 토큰 : %s", account.getAccountName(), accessToken));
+            LOGGER.info(String.format("IPC - Sub account token received successfully: {name: %s, token: %s}",
+                    account.getAccountName(), accessToken));
 
             long t = Long.valueOf(getResponseDataValue(response.getBody(), "expireTime").toString());
             Timestamp timestamp = new java.sql.Timestamp(t);
@@ -188,6 +191,9 @@ public class IPCAccessService {
             account.setTokenExpireAt(tokenExpireAt);
             account.setAreaDomain(getResponseDataValue(response.getBody(), "areaDomain").toString());
             accountRepository.save(account);
+        } else {
+            LOGGER.info(String.format("IPC - Sub account token received failed: {name: %s}", account.getAccountName()));
+            LOGGER.info(String.format("IPC - Response body: %s", response.getBody()));
         }
     }
 
@@ -273,6 +279,8 @@ public class IPCAccessService {
         ResponseEntity<String> response = remoteRequestService.registerDevice(
                 masterAccessTokenService.getMasterAccessToken(), request.get("deviceSerial"),
                 request.get("validateCode"));
+        LOGGER.info(String.format("IPC - Register device(serial: %s) with master account successfully",
+                request.get("deviceSerial")));
         if (isSuccessResponseStatus(response)) {
             IPCAccount account = accountRepository.findByIotAccount(iotAccount);
             if (isNull(account)) {
@@ -291,14 +299,19 @@ public class IPCAccessService {
                 device.setLastModifiedTime(new Date());
                 device.setModel(IPC_DEVICE_MODEL_NAME);
                 device.setStatus(IPC_DEVICE_STATUS);
-                
+
                 device.setNickname(String.format("ipc_%s", request.get("deviceSerial")));
                 device.setSsid(request.get("ssid"));
                 device.setBssid(request.get("bssid"));
                 device.setLocLatitude(request.get("latitude"));
                 device.setLocLongitude(request.get("longitude"));
-                device.setHomeNo(Integer.valueOf(request.get("homeNo")));
+                if(!isNull(request.get("homeNo"))) {
+                    device.setHomeNo(Integer.valueOf(request.get("homeNo")));
+                }
                 gatewayRepository.save(device);
+                LOGGER.info(String.format(
+                        "IPC - Save registered device info to database successfully : {serial: %s, user: %s}",
+                        device.getSerial(), account.getIotAccount()));
             }
         }
         return response;
@@ -338,6 +351,14 @@ public class IPCAccessService {
                     request.get("deviceSerial"));
             response = remoteRequestService.stateAccountPermission(masterAccessTokenService.getMasterAccessToken(),
                     account.getAccountId(), statement);
+            if (isSuccessResponseStatus(response)) {
+                LOGGER.info(String.format("IPC - Device(serial: %s) shared to user(%s) successfully",
+                        request.get("deviceSerial"), account.getIotAccount()));
+            } else {
+                LOGGER.info(String.format("IPC - Device(serial: %s) shared to user(%s) failed",
+                        request.get("deviceSerial"), account.getIotAccount()));
+                LOGGER.info(String.format("IPC - Response body: %s", response.getBody()));
+            }
         }
         return response;
     }
@@ -350,10 +371,21 @@ public class IPCAccessService {
      */
     @Transactional
     public ResponseEntity<String> deleteDevice(HashMap<String, String> request, String iotAccount) {
-        gatewayRepository.deleteBySerial(request.get("deviceSerial"));
-        devicePresetRepository.deleteByDeviceSerial(request.get("deviceSerial"));
         ResponseEntity<String> response = remoteRequestService
                 .deleteDevice(masterAccessTokenService.getMasterAccessToken(), request.get("deviceSerial"));
+        if (isSuccessResponseStatus(response)) {
+            LOGGER.info(String.format("IPC - Delete device(serial: %s) from HIK server successfully",
+                    request.get("deviceSerial")));
+            gatewayRepository.deleteBySerial(request.get("deviceSerial"));
+            LOGGER.info(String.format("IPC - Delete device(serial: %s) successfully", request.get("deviceSerial")));
+            devicePresetRepository.deleteByDeviceSerial(request.get("deviceSerial"));
+            LOGGER.info(String.format("IPC - Delete presets of device(serial: %s) successfully",
+                    request.get("deviceSerial")));
+        } else {
+            LOGGER.info(String.format("IPC - Delete device(serial: %s) from HIK server failed",
+                    request.get("deviceSerial")));
+            LOGGER.info(String.format("IPC - Response body: %s", response.getBody()));
+        }
         return response;
     }
 
@@ -442,7 +474,15 @@ public class IPCAccessService {
             request.setPresetId(availablePresetId);
             remoteRequestService.deleteDevicePreset(account, request);
         }
-        return remoteRequestService.addDevicePreset(account, request);
+        ResponseEntity<String> response = remoteRequestService.addDevicePreset(account, request);
+        if (isSuccessResponseStatus(response)) {
+            LOGGER.info(
+                    String.format("IPC - Add preset of device(serial: %s) successfully", request.getDeviceSerial()));
+        } else {
+            LOGGER.info(String.format("IPC - Add preset of device(serial: %s) failed", request.getDeviceSerial()));
+            LOGGER.info(String.format("IPC - Response body: %s", response.getBody()));
+        }
+        return response;
     }
 
     /**
@@ -466,7 +506,7 @@ public class IPCAccessService {
                 break;
             }
         }
-        LOGGER.info(String.format("AVAILABLE PRESET ID FOUND : %s", presetId));
+        LOGGER.info(String.format("Available preset id found : %s", presetId));
         return presetId;
     }
 
@@ -505,6 +545,13 @@ public class IPCAccessService {
         devicePresetRepository.deleteByDeviceSerialAndChannelNoAndPresetId(request.getDeviceSerial(),
                 request.getChannelNo(), request.getPresetId());
         ResponseEntity<String> response = remoteRequestService.deleteDevicePreset(account, request);
+        if (isSuccessResponseStatus(response)) {
+            LOGGER.info(
+                    String.format("IPC - Delete preset of device(serial: %s) successfully", request.getDeviceSerial()));
+        } else {
+            LOGGER.info(String.format("IPC - Delete preset of device(serial: %s) failed", request.getDeviceSerial()));
+            LOGGER.info(String.format("IPC - Response body: %s", response.getBody()));
+        }
         return response;
     }
 
