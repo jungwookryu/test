@@ -142,6 +142,7 @@ public class ZwaveCertiNotificationServiceImpl implements ZwaveCertiNotification
         Notification rtnNotification = saveNotification(notification);
         publishAppStatus(zwaveRequest, endpoint.getNo(), rtnNotification);
         logger.debug("binaryswitch notification::" + rtnNotification.toString());
+        pwService.pushWiseNotification(rtnNotification);
     }
 
     /**
