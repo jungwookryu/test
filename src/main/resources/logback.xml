@@ -5,6 +5,7 @@
 	<property name="LOG_DIR_DB" value="${LOG_DIR}/logs_db" />
 	<property name="LOG_DIR_AUDIT" value="${LOG_DIR}/logs_audit" />
 	<property name="LOG_DIR_HTTP" value="${LOG_DIR}/logs_http" />
+	<property name="LOG_DIR_IPC" value="${LOG_DIR}/logs_ipc" />
 
 	<property name="LOG_PATH_BASE_NAME" value="${LOG_DIR}/iot_connected_home.log" />
 	<property name="LOG_PATH_SIP_NAME" value="${LOG_DIR}/iot_connected_home_sip.log" />
@@ -12,6 +13,7 @@
 	<property name="LOG_PATH_DB_NAME" value="${LOG_DIR_DB}/iot_connected_home_db.log" />
 	<property name="LOG_PATH_AUDIT_NAME" value="${LOG_DIR_AUDIT}/iot_connected_home_audit.log" />
 	<property name="LOG_PATH_HTTP_NAME" value="${LOG_DIR_HTTP}/iot_connected_home_http.log" />
+	<property name="LOG_PATH_IPC_NAME" value="${LOG_DIR_IPC}/iot_connected_home_ipc.log" />
 	<timestamp key="bySecond" datePattern="yyyy-MM-dd HH:mm:ss" />
 
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
@@ -120,6 +122,21 @@
         </encoder>
     </appender>
     
+	<appender name="LOG_IPC_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">        
+        <file>${LOG_PATH_IPC_NAME}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 파일이 하루에 한개씩 생성된다 -->
+            <fileNamePattern>${LOG_DIR_IPC}/iot_connected_home_ipc.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>300MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory> 
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyyMMdd HH:mm:ss.SSS} [%X{TRACE_ID}] %-3level %logger{5} - %msg %n</pattern>
+        </encoder>
+    </appender>
+    
 	<logger name="com.ht.connected.home.backend.sip" additivity="false" level="DEBUG">
 	  	<appender-ref ref="LOG_SIP_FILE" />
 	</logger>
@@ -130,6 +147,10 @@
 	
 	<logger name="com.ht.connected.home.backend.common.MqttCommon" level="DEBUG">
 		<appender-ref ref="LOG_AMQP_FILE" />
+	</logger>
+
+	<logger name="com.ht.connected.home.backend.ipc" level="INFO">
+		<appender-ref ref="LOG_IPC_FILE" />
 	</logger>
 
 	<!-- Raw DATABASE log -->
