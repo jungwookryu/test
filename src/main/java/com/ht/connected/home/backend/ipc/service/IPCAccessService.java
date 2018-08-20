@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
+import org.apache.tomcat.util.bcel.Const;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,10 +45,11 @@ import com.ht.connected.home.backend.ipc.repository.IPCDevicePresetRepository;
  */
 @Service
 public class IPCAccessService {
-
+    
     private static final String IPC_DEVICE_MODEL_NAME = "HIK-HT-IPC";
     private static final String IPC_DEVICE_STATUS = "sucessAp";
     private static final int MAX_PRESET_ID = 16;
+    private static final String IPC_TARGET_TYPE = "ipc";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IPCAccessController.class);
 
@@ -300,7 +302,7 @@ public class IPCAccessService {
                 device.setLastModifiedTime(new Date());
                 device.setModel(IPC_DEVICE_MODEL_NAME);
                 device.setStatus(IPC_DEVICE_STATUS);
-                device.setTargetType("ipc");
+                device.setTargetType(IPC_TARGET_TYPE);
 
                 device.setNickname(String.format("ipc_%s", request.get("deviceSerial")));
                 device.setSsid(request.get("ssid"));
