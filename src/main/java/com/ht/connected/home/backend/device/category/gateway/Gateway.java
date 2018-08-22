@@ -97,7 +97,11 @@ public class Gateway {
     @Column(name = "certi_key")
     @JsonProperty("certi_key")
     private String certiKey;
-    
+
+    @Column(name = "dsk")
+    @JsonProperty("dsk")
+    private String dsk;	// Zwave specific
+
     @Transient
     @JsonProperty("user_email")
     private String userEmail;
@@ -105,7 +109,7 @@ public class Gateway {
     @Transient
     @JsonProperty("type")
     private String type;
-    
+
     public Gateway() {
     }
     
@@ -301,6 +305,14 @@ public class Gateway {
 
 	public void setCertiKey(String certiKey) {
 		this.certiKey = certiKey;
+	}
+
+	public String getDsk() {
+		return dsk;
+	}
+
+	public void setDsk(String dsk) {
+		this.dsk = dsk;
 	}
 
 	@Override
