@@ -13,9 +13,9 @@ import java.util.Properties;
 
 import javax.transaction.Transactional;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
@@ -61,8 +61,8 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
     private ZWaveCertiService zWaveCertiService;
     private GatewayCategoryRepository gatewayCategoryRepository;
     private Properties zWaveProperties;
-    
-    private static final Log logging = LogFactory.getLog(ZWaveCommonServiceImpl.class);
+
+    private final Logger logger = LoggerFactory.getLogger(ZWaveCommonServiceImpl.class);
 
     @Autowired
     @Qualifier(value = "callbackAckProperties")
@@ -106,12 +106,19 @@ public class ZWaveCommonServiceImpl implements ZWaveCommonService {
 
     @Override
     public void reportZWaveList(ZWaveRequest zwaveRequest, String data) throws JsonParseException, JsonMappingException, IOException, JSONException, InterruptedException {
-
         Gateway gateway = gatewayRepository.findBySerial(zwaveRequest.getSerialNo());
+        if (gateway == null) {
+        	logger.warn("gateway (" + zwaveRequest.getSerialNo() + ") does not exist.");
+        	return;
+        }
         zwaveRequest.setGatewayNo(gateway.getNo());
         List<ZWave> lstZwave = zwaveRepository.findByGatewayNo(gateway.getNo());
         ZWaveReport zwaveReport = objectMapper.readValue(data, ZWaveReport.class);
+
         if (!isNull(gateway) && !Objects.isNull(zwaveReport.getNodelist())) {
+            gateway.setDsk(zwaveReport.getDsk());
+            gatewayRepository.save(gateway);
+            	
             List<ZWave> nodeListItem = zwaveReport.getNodelist();
             // 추가
             for (ZWave nodeItem : nodeListItem) {
