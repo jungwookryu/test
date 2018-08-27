@@ -10,6 +10,12 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * 업데이트 파일 등록 엔터티
+ * 
+ * @author 구정화
+ *
+ */
 @Entity
 @Table(name = "up_file_version")
 @JsonIgnoreProperties({ "seq", "updatedAt", "versionOS", "versionAPI", "versionAPP" })
@@ -18,6 +24,9 @@ public class UPFileVersion {
     public static String UPDATE_TYPE_OS = "os";
     public static String UPDATE_TYPE_API = "api";
     public static String UPDATE_TYPE_APP = "app";
+    
+    public static String SPECIFIC_SERIAL_SINGLE = "1";
+    public static String SPECIFIC_SERIAL_MULTIPLE = "2";
 
     @Id
     @GeneratedValue
@@ -29,12 +38,15 @@ public class UPFileVersion {
     private String modelName;
 
     @Column(name = "version_os")
+    @JsonProperty(value = "os_version")
     private String versionOS;
 
     @Column(name = "version_api")
+    @JsonProperty(value = "api_version")
     private String versionAPI;
 
     @Column(name = "version_app")
+    @JsonProperty(value = "app_version")
     private String versionAPP;
 
     @Column(name = "updated_at")
@@ -45,8 +57,20 @@ public class UPFileVersion {
     private String updateType;
 
     @Transient
-    @JsonProperty(value = "version")
-    private String version;
+    @JsonProperty(value = "serial_type")
+    private String serialType;
+
+    @Transient
+    @JsonProperty(value = "serial_single")
+    private String serialSingle;
+
+    @Transient
+    @JsonProperty(value = "serial_from")
+    private String serialFrom;
+
+    @Transient
+    @JsonProperty(value = "serial_to")
+    private String serialTo;
 
     @Transient
     @JsonProperty(value = "url")
@@ -120,14 +144,6 @@ public class UPFileVersion {
         this.updateType = updateType;
     }
 
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
     public String getUrl() {
         return url;
     }
@@ -158,6 +174,38 @@ public class UPFileVersion {
 
     public void setDeviceType(String deviceType) {
         this.deviceType = deviceType;
+    }
+
+    public String getSerialType() {
+        return serialType;
+    }
+
+    public void setSerialType(String serialType) {
+        this.serialType = serialType;
+    }
+
+    public String getSerialSingle() {
+        return serialSingle;
+    }
+
+    public void setSerialSingle(String serialSingle) {
+        this.serialSingle = serialSingle;
+    }
+
+    public String getSerialFrom() {
+        return serialFrom;
+    }
+
+    public void setSerialFrom(String serialFrom) {
+        this.serialFrom = serialFrom;
+    }
+
+    public String getSerialTo() {
+        return serialTo;
+    }
+
+    public void setSerialTo(String serialTo) {
+        this.serialTo = serialTo;
     }
 
 }

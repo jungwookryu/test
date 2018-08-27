@@ -1,155 +1,471 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <title>Getting Started: Serving Web Content</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>	
-		          
-  <style>
-    body {
-  padding-top: 40px;
-  padding-bottom: 40px;
-  background-color: #eee;
+<title>Getting Started: Serving Web Content</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+<script
+	src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+<style>
+body {
+	padding-top: 40px;
+	padding-bottom: 40px;
+	background-color: #eee;
 }
 
 .container {
-  margin:auto;
-  width:800px;
+	margin: auto;
+	width: 800px;
 }
+
 .form-signin {
-  max-width: 330px;
-  padding: 15px;
-  margin: 0 auto;
+	max-width: 330px;
+	padding: 15px;
+	margin: 0 auto;
 }
-.form-signin .form-signin-heading,
+
+.form-signin .form-signin-heading, .form-signin .checkbox {
+	margin-bottom: 10px;
+}
+
 .form-signin .checkbox {
-  margin-bottom: 10px;
+	font-weight: 400;
 }
-.form-signin .checkbox {
-  font-weight: 400;
-}
+
 .form-signin .form-control {
-  position: relative;
-  box-sizing: border-box;
-  height: auto;
-  padding: 10px;
-  font-size: 16px;
+	position: relative;
+	box-sizing: border-box;
+	height: auto;
+	padding: 10px;
 }
+
 .form-signin .form-control:focus {
-  z-index: 2;
+	z-index: 2;
 }
+
 .form-signin input[type="email"] {
-  margin-bottom: -1px;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
+	margin-bottom: -1px;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 0;
 }
+
 .form-signin input[type="password"] {
-  margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+	margin-bottom: 10px;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
 }
 
-#force_update {width:}
+#force_update {
+	width:
+}
 
-  </style>
+.first-custom-control-group {
+	margin-top: 25px
+}
+</style>
 </head>
 <body>
 
-<div class="container">
-  <h3>업데이트 파일 정보 등록</h3>
+	<div class="container">
+		<h3>Update file info registration</h3>
 
-  <form action="/admin/update" method="post">
+		<form action="/admin/update" method="post">
 
+			<div class="form-group row first-custom-control-group">
+				<label for="app_version" class="col-sm-2 col-form-label">Device</label>
+				<div class="col-sm-10">
+					<select class="custom-select form-control" id="device_type"
+						name="device_type">
+						<option value="">Select device to update</option>
+						<option value="host">Host device</option>
+						<option value="iotm">IoTM device</option>
+					</select>
+				</div>
+			</div>
 
-    <div class="form-group row">
-      <!-- label class="col-sm-2 col-form-label">Current</label>
-      <div class="col-sm-10">
-        <div class="lastest_update_version"></div>
-      </div-->
-    </div>
+			<div class="form-group row">
+				<label for="app_version" class="col-sm-2 col-form-label">Model</label>
+				<div class="col-sm-10">
+					<select class="custom-select form-control" id="model_name"
+						name="model_name">
+						<option value="">Select device model name</option>
+						<option value="hcs-w1001">hcs-w1001</option>
+						<option value="hws-w1001">hws-w1001</option>
+					</select>
+				</div>
+			</div>
 
+			<div class="form-group row">
+				<label for="patch_server_ip" class="col-sm-2 col-form-label">OS
+					Version</label>
+				<div class="col-sm-3">
+					<select class="custom-select form-control" name="os_version_year">
+						<option value="">Year</option>
+						<option value="18">18</option>
+						<option value="19">19</option>
+						<option value="20">20</option>
+					</select>
+				</div>
+				<div class="col-sm-3">
+					<select class="custom-select form-control" name="os_version_month">
+						<option value="">Month</option>
+						<option value="01">01</option>
+						<option value="02">02</option>
+						<option value="03">03</option>
+						<option value="04">04</option>
+						<option value="05">05</option>
+						<option value="06">06</option>
+						<option value="07">07</option>
+						<option value="08">08</option>
+						<option value="09">09</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+					</select>
+				</div>
+				<div class="col-sm-3">
+					<select class="custom-select form-control" name="os_version_day">
+						<option value="">Day</option>
+						<option value="01">01</option>
+						<option value="02">02</option>
+						<option value="03">03</option>
+						<option value="04">04</option>
+						<option value="05">05</option>
+						<option value="06">06</option>
+						<option value="07">07</option>
+						<option value="08">08</option>
+						<option value="09">09</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+						<option value="13">13</option>
+						<option value="14">14</option>
+						<option value="15">15</option>
+						<option value="16">16</option>
+						<option value="17">17</option>
+						<option value="18">18</option>
+						<option value="19">19</option>
+						<option value="20">20</option>
+						<option value="21">21</option>
+						<option value="22">22</option>
+						<option value="23">23</option>
+						<option value="24">24</option>
+						<option value="25">25</option>
+						<option value="26">26</option>
+						<option value="27">27</option>
+						<option value="28">28</option>
+						<option value="29">29</option>
+						<option value="30">30</option>
+						<option value="31">31</option>
+					</select>
+				</div>
+			</div>
 
-    <div class="form-group row">
-      <label for="app_version" class="col-sm-2 col-form-label">기기 선택</label>
-      <div class="col-sm-10">
-        <select class="form-control" id="device_type" name="device_type">
-        	<option value="">업데이트할 기기명을 선택하세요</option>
-        	<option value="host">호스트</option>
-        	<option value="iotm">무선모듈</option>
-        </select>
-      </div>
-    </div>
-    
-    <div class="form-group row">
-      <label for="app_version" class="col-sm-2 col-form-label">모델명</label>
-      <div class="col-sm-10">
-        <input type="text" class="form-control" id="model_name" name="model_name" placeholder="hcs-w1001"/>
-      </div>
-    </div>
+			<div class="form-group row api_version">
+				<label for="patch_server_ip" class="col-sm-2 col-form-label">API
+					Version</label>
+				<div class="col-sm-3">
+					<select class="custom-select form-control" name="api_version_year">
+						<option value="">Year</option>
+						<option value="18">18</option>
+						<option value="19">19</option>
+						<option value="20">20</option>
+					</select>
+				</div>
+				<div class="col-sm-3">
+					<select class="custom-select form-control" name="api_version_month">
+						<option value="">Month</option>
+						<option value="01">01</option>
+						<option value="02">02</option>
+						<option value="03">03</option>
+						<option value="04">04</option>
+						<option value="05">05</option>
+						<option value="06">06</option>
+						<option value="07">07</option>
+						<option value="08">08</option>
+						<option value="09">09</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+					</select>
+				</div>
+				<div class="col-sm-3">
+					<select class="custom-select form-control" name="api_version_day">
+						<option value="">Day</option>
+						<option value="01">01</option>
+						<option value="02">02</option>
+						<option value="03">03</option>
+						<option value="04">04</option>
+						<option value="05">05</option>
+						<option value="06">06</option>
+						<option value="07">07</option>
+						<option value="08">08</option>
+						<option value="09">09</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+						<option value="13">13</option>
+						<option value="14">14</option>
+						<option value="15">15</option>
+						<option value="16">16</option>
+						<option value="17">17</option>
+						<option value="18">18</option>
+						<option value="19">19</option>
+						<option value="20">20</option>
+						<option value="21">21</option>
+						<option value="22">22</option>
+						<option value="23">23</option>
+						<option value="24">24</option>
+						<option value="25">25</option>
+						<option value="26">26</option>
+						<option value="27">27</option>
+						<option value="28">28</option>
+						<option value="29">29</option>
+						<option value="30">30</option>
+						<option value="31">31</option>
+					</select>
+				</div>
+			</div>
 
-    <div class="form-group row">
-      <label for="patch_server_ip" class="col-sm-2 col-form-label">업데이트 유형</label>
-      <div class="col-sm-10">
-        <select class="form-control" id="update_type" name="update_type">
-        	<option value="">업데이트 유형 선택</option>
-        	<option value="os">OS</option>
-        	<option value="api">API</option>
-        	<option value="app">APP</option>
-        </select>
-      </div>
-    </div>
+			<div class="form-group row app_version">
+				<label for="patch_server_ip" class="col-sm-2 col-form-label">APP
+					Version</label>
+				<div class="col-sm-3">
+					<select class="custom-select form-control" name="app_version_year">
+						<option value="">Year</option>
+						<option value="18">18</option>
+						<option value="19">19</option>
+						<option value="20">20</option>
+					</select>
+				</div>
+				<div class="col-sm-3">
+					<select class="custom-select form-control" name="app_version_month">
+						<option value="">Month</option>
+						<option value="01">01</option>
+						<option value="02">02</option>
+						<option value="03">03</option>
+						<option value="04">04</option>
+						<option value="05">05</option>
+						<option value="06">06</option>
+						<option value="07">07</option>
+						<option value="08">08</option>
+						<option value="09">09</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+					</select>
+				</div>
+				<div class="col-sm-3">
+					<select class="custom-select form-control" name="app_version_day">
+						<option value="">Day</option>
+						<option value="01">01</option>
+						<option value="02">02</option>
+						<option value="03">03</option>
+						<option value="04">04</option>
+						<option value="05">05</option>
+						<option value="06">06</option>
+						<option value="07">07</option>
+						<option value="08">08</option>
+						<option value="09">09</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+						<option value="13">13</option>
+						<option value="14">14</option>
+						<option value="15">15</option>
+						<option value="16">16</option>
+						<option value="17">17</option>
+						<option value="18">18</option>
+						<option value="19">19</option>
+						<option value="20">20</option>
+						<option value="21">21</option>
+						<option value="22">22</option>
+						<option value="23">23</option>
+						<option value="24">24</option>
+						<option value="25">25</option>
+						<option value="26">26</option>
+						<option value="27">27</option>
+						<option value="28">28</option>
+						<option value="29">29</option>
+						<option value="30">30</option>
+						<option value="31">31</option>
+					</select>
+				</div>
+			</div>
 
-    <div class="form-group row">
-      <label for="app_version" class="col-sm-2 col-form-label">버전</label>
-      <div class="col-sm-10">
-        <input type="text" class="form-control" id="version" name="version" placeholder="1.0.0"/>
-      </div>
-    </div>
-    
-    <div class="form-group row">
-      <label for="app_version" class="col-sm-2 col-form-label">강제 업데이트</label>
-      <div class="col-sm-10">
-        <input type="checkbox" class="align-bottom" id="force_update" value="Y" name="force_update"/>
-      </div>
-    </div>
-    <button type="submit" class="save-file-info btn btn-primary mb-2 col-sm-12">저장</button>
-  </form>
-</div>
+			<div class="form-group row">
+				<label for="app_version" class="col-sm-3 col-form-label">Specific
+					device serial(s)</label>
+				<div class="col-sm-9">
+					<div class="custom-control custom-radio">
+						<input type="radio" id="customRadio1" name="serial_type"
+							class="custom-control-input serial-input-type" value="1"> <label
+							class="custom-control-label" for="customRadio1">One
+							device serial number</label>
+					</div>
+					<div class="custom-control custom-radio">
+						<input type="radio" id="customRadio2" name="serial_type"
+							class="custom-control-input serial-input-type" value="2" checked> <label
+							class="custom-control-label" for="customRadio2">Or
+							multiple device serial numbers in range</label>
+					</div>
+				</div>
+			</div>
 
-<script type="text/javascript">
+			<div class="form-group row serial-single">
+				<label for="app_version" class="col-sm-3 col-form-label"></label>
+				<div class="col-sm-9">
+					<div class="input-group">
+						<input type="text" class="form-control" name="serial_single">
+					</div>
+				</div>
+			</div>
 
-	$(document).ready(function(){
-		
-		$('.save-file-info').on('click', function(e) {
-			e.preventDefault();
-			var input = $('#device_type, #model_name, #file_type, #update_type, #version, #force_update');
-			var postData = {device_type:$.trim(input.eq(0).val().toLowerCase()), 
-					model_name:$.trim(input.eq(1).val().toLowerCase()), 
-					update_type:$.trim(input.eq(2).val().toLowerCase()), 
-					version:$.trim(input.eq(3).val().toLowerCase()),
-					force:input.eq(4).val()}			
-			$.ajax({
-				  url : '/update/file/register',
-				    dataType : "json",				    
-				    type : 'POST',
-				    headers: { "Content-Type":"application/json", "Accept": "application/json" },
-				    contentType: "application/json",
-				    data : JSON.stringify(postData),
-				    success : function (data) {
-				    	alert("등록완료")
-				    	location.href = '/update/login';
-				    },
-				    error : function (data, errorThrown) {
-				    	console.log(data)
-				    	console.log(errorThrown)
-				    }
-				});
-		})
-		
-	});
-</script>
+			<div class="form-group row serial-multiple">
+				<label for="app_version" class="col-sm-3 col-form-label"></label>
+				<div class="col-sm-9">
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text" id="">From</span>
+						</div>
+						<input type="text" class="form-control" name="serial_from">
+						<div class="input-group-prepend">
+							<span class="input-group-text" id="">To</span>
+						</div>
+						<input type="text" class="form-control" name="serial_to">
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label for="app_version" class="col-sm-2 col-form-label">Force
+					update</label>
+				<div class="col-sm-10">
+					<input type="checkbox" class="align-bottom" id="force_update"
+						value="Y" name="force_update" />
+				</div>
+			</div>
+			<button type="submit"
+				class="save-file-info btn btn-primary mb-2 col-sm-12">Submit</button>
+		</form>
+	</div>
+
+	<script type="text/javascript">
+		$(document)
+				.ready(
+						function() {
+							$('.save-file-info')
+									.on(
+											'click',
+											function(e) {
+												e.preventDefault();
+
+												var frm = $('form').get(0);
+												var d = {
+													device_type : frm.device_type.value,
+													model_name : frm.model_name.value,
+													os_version : [
+															frm.os_version_year.value,
+															frm.os_version_month.value,
+															frm.os_version_day.value ]
+															.join(''),
+													api_version : [
+															frm.api_version_year.value,
+															frm.api_version_month.value,
+															frm.api_version_day.value ]
+															.join(''),
+													app_version : [
+															frm.app_version_year.value,
+															frm.app_version_month.value,
+															frm.app_version_day.value ]
+															.join(''),
+													serial_type : frm.serial_type.value,
+													serial_single : frm.serial_single.value,
+													serial_from : frm.serial_from.value,
+													serial_to : frm.serial_to.value,
+													force : frm.force_update.value
+												}
+												for ( var k in d)
+													d[k] = $
+															.trim(d[k]);
+												console.log(d)
+												if(!d.device_type) {
+													alert('Please select device');
+													frm.device_type.focus();
+													return;
+												}else if(!d.model_name) {
+													alert('Please select model');
+													frm.model_name.focus();
+													return;
+												}else if(!d.os_version || d.os_version.length < 6) {
+													alert('Please select os version');
+													frm.os_version_year.focus();
+													return;
+												}else if(!d.api_version || d.api_version.length < 6) {
+													alert('Please select api version');
+													frm.api_version_year.focus();
+													return;
+												}else if(!d.app_version || d.app_version.length < 6) {
+													alert('Please select app version');
+													frm.app_version_year.focus();
+													return;
+												}else if(d.serial_type == 1 && !d.serial_single) {
+													alert('Please input device serial');
+													frm.serial_single.focus();
+													return;
+												}else if(d.serial_type == 2 && !d.serial_from) {
+													alert('Please input device serial');
+													frm.serial_from.focus();
+													return;
+												}else if(d.serial_type == 2 && !d.serial_to) {
+													alert('Please input device serial');
+													frm.serial_to.focus();
+													return;
+												}
+												$
+														.ajax({
+															url : '/update/file/register',
+															dataType : "json",
+															type : 'POST',
+															headers : {
+																"Content-Type" : "application/json",
+																"Accept" : "application/json"
+															},
+															contentType : "application/json",
+															data : JSON
+																	.stringify(d),
+															success : function(
+																	data) {
+																alert("Update file info registered successfully!")
+																location.href = '/update/login';
+															},
+															error : function(
+																	data,
+																	errorThrown) {
+																console
+																		.log(data)
+																console
+																		.log(errorThrown)
+															}
+														});
+											});
+
+							var serialInput = $('.serial-single, .serial-multiple');
+							$('.serial-input-type').click('on', function(e) {
+								serialInput.hide();
+								if (this.id == 'customRadio1') {
+									serialInput.eq(0).show();
+								} else {
+									serialInput.eq(1).show();
+								}
+							});
+							serialInput.eq(0).hide();
+						});
+	</script>
 </body>
 </html>
