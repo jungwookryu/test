@@ -3,6 +3,7 @@ package com.ht.connected.home.backend.update.service;
 import static java.util.Objects.isNull;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,13 @@ import com.ht.connected.home.backend.update.model.entity.UPFileVersion;
 import com.ht.connected.home.backend.update.repository.UPDeviceVersionRepository;
 import com.ht.connected.home.backend.update.repository.UPFileVersionRepository;
 
+
+/**
+ * 업데이트 기능 지원
+ * 
+ * @author 구정화
+ *
+ */
 @Service
 public class UPService {
 
@@ -49,6 +57,13 @@ public class UPService {
     @Autowired
     private UPFileAdviseService upFileAdviseService;
 
+    /**
+     * 로그인 처리
+     * 
+     * @param body
+     * @param session
+     * @return
+     */
     public boolean login(Map<String, String> body, HttpSession session) {
         boolean isUserFound = false;
         List<User> users = userRepository.findByUserEmail(body.get("user_email"));
@@ -65,41 +80,50 @@ public class UPService {
         return isUserFound;
     }
 
+    /**
+     * 로그인 여부
+     * 
+     * @param session
+     * @return
+     */
     public boolean isLoggedIn(HttpSession session) {
         return !isNull(session.getAttribute("username"));
     }
 
+    /**
+     * 업데이트 파일 등록 알림 MQTT 
+     * 
+     * @param request
+     * @return
+     */
     @Async
     public Integer addVersion(UPFileVersion request) {
         UPFileVersion fileVersion = upFileVersionRepository.findByModelName(request.getModelName());
         if (isNull(fileVersion)) {
             fileVersion = request;
-            fileVersion.setVersionOS(request.getVersion());
-            fileVersion.setVersionAPI(request.getVersion());
-            fileVersion.setVersionAPP(request.getVersion());
         }
-        fileVersion.setVersion(request.getVersion());
         fileVersion.setDeviceType(request.getDeviceType());
         fileVersion.setForce(request.getForce());
         fileVersion.setUpdatedAt(LocalDateTime.now().toString());
-        if (request.getUpdateType().equals(UPFileVersion.UPDATE_TYPE_OS)) {
-            fileVersion.setVersionOS(request.getVersion());
-        } else if (request.getUpdateType().equals(UPFileVersion.UPDATE_TYPE_API)) {
-            fileVersion.setVersionAPI(request.getVersion());
-        } else if (request.getUpdateType().equals(UPFileVersion.UPDATE_TYPE_APP)) {
-            fileVersion.setVersionAPP(request.getVersion());
-        }
+        fileVersion.setVersionOS(request.getVersionOS());
+        fileVersion.setVersionAPI(request.getVersionAPI());
+        fileVersion.setVersionAPP(request.getVersionAPP());
+
         fileVersion = upFileVersionRepository.save(fileVersion);
         if (!isNull(fileVersion.getSeq())) {
             HashMap<String, String> fileMD5 = new HashMap<>();
             List<UPDeviceVersion> deviceVersions = upDeviceVersionRepository.getByModelName(request.getModelName());
+            List<String> serialNumbers = upFileAdviseService.getSerialNumbers(request);            
             for (UPDeviceVersion deviceVersion : deviceVersions) {
-                LOGGER.info(String.format("Compare version device (%s)", deviceVersion.getSerialNo()));
-                String updateType = upFileAdviseService.getUpdateType(fileVersion, deviceVersion);
-                if (!isNull(updateType)) {
+                if(serialNumbers.size() != 0 && !serialNumbers.contains(deviceVersion.getSerialNo())) {
+                    continue;
+                }
+                LOGGER.info(String.format("Compare device(%s) version", deviceVersion.getSerialNo()));
+                HashMap<String, String> updateType = upFileAdviseService.getUpdateType(fileVersion, deviceVersion);
+                if (!isNull(updateType.get("update"))) {
                     String md5 = null;
-                    String fileURL = upFileAdviseService.getRemoteFileURL(fileVersion, deviceVersion);
-                    String md5TmpKey = updateType + fileVersion.getVersion();
+                    String fileURL = upFileAdviseService.getRemoteFileURL(fileVersion.getDeviceType(), updateType);
+                    String md5TmpKey = updateType + updateType.get("version");
                     if (fileMD5.containsKey(md5TmpKey)) {
                         md5 = fileMD5.get(md5TmpKey);
                     } else {
@@ -115,15 +139,15 @@ public class UPService {
                             LOGGER.info("===== UPDATE INFORM TO DEVICE =====");
                             LOGGER.info(topic);
                             LOGGER.info(payload);
-                             upMqttPublishService.publish(topic, payload);
+                            upMqttPublishService.publish(topic, payload);
                         }
                     } else {
                         LOGGER.info(
-                                String.format("UPDATE FILE MD5 IS NULL FOR DEVICE(%s)", deviceVersion.getSerialNo()));
+                                String.format("Update file md5 is null for device(%s)", deviceVersion.getSerialNo()));
                     }
                 } else {
                     LOGGER.info(String.format(
-                            "UPDATE TYPE IS NULL SINCE REGISTERED VERSION IS OLDER THEN DEVICE(%s) VERSION",
+                            "Update type is null since registered version is older then device(%s) version",
                             deviceVersion.getSerialNo()));
                 }
             }
@@ -131,6 +155,11 @@ public class UPService {
         return request.getSeq();
     }
 
+    /**
+     * 앱에서 업데이트 명령
+     * 
+     * @param request
+     */
     public void updateOwnDevice(UPDeviceVersion request) {
         Gateway gateway = gatewayRepository.findBySerial(request.getSerialNo());
         if (!isNull(gateway)) {
